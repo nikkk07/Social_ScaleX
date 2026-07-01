@@ -44,7 +44,7 @@ export function Footer() {
               <li><a href="#work" className="hover:text-[var(--color-violet)] transition-colors">Client Portfolio</a></li>
               <li><a href="#results" className="hover:text-[var(--color-violet)] transition-colors">Results</a></li>
               <li><a href="#services" className="hover:text-[var(--color-violet)] transition-colors">Our Process</a></li>
-              <li><a href="#services" className="hover:text-[var(--color-violet)] transition-colors">Carrers</a></li>
+              <li><a href="https://forms.gle/uDWsX4886U4jGukK8" className="hover:text-[var(--color-violet)] transition-colors">Careers</a></li>
             </ul>
           </div>
 
