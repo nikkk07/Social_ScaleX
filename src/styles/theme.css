@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", sans-serif;
+  --font-sans: "Inter", sans-serif;
+
+  --color-violet: #7C3AED;
+  --color-violet-light: #A78BFA;
+  --color-emerald: #34D399;
+  --color-emerald-dark: #059669;
+  --color-amber: #F59E0B;
+  --color-paper-white: #FAF9F6;
+  --color-void-black: #0B0A10;
+  --color-ink: #15131C;
+}
+
+html, body {
+  position: relative;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-paper-white);
+  color: var(--color-ink);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+/* Richer gradient — violet → mid-violet → emerald */
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-violet) 0%, #9B5CF6 50%, var(--color-emerald) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Glass panels ─────────────────────────────────────── */
+
+/* Light glass: higher opacity for clarity on white/light bg */
+.glass-panel-light {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.88) 0%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.04),
+    0 20px 48px rgba(124, 58, 237, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+}
+
+/* Dark glass: clearer frosted surface on dark bg */
+.glass-panel-dark {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.10) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  backdrop-filter: blur(28px) saturate(1.2);
+  -webkit-backdrop-filter: blur(28px) saturate(1.2);
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.2),
+    0 20px 48px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* ── Section backgrounds ──────────────────────────────── */
+
+.dark-section {
+  background-color: var(--color-void-black);
+  /* Subtle violet glow at top center for depth */
+  background-image: radial-gradient(
+    ellipse 80% 40% at 50% 0%,
+    rgba(124, 58, 237, 0.12) 0%,
+    transparent 70%
+  );
+  color: white;
+}
+
+.light-section {
+  background-color: var(--color-paper-white);
+  color: var(--color-ink);
+}
+
+/* ── Marquee animation ────────────────────────────────── */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* ── Global interaction tweaks ────────────────────────── */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
