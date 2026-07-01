@@ -1,6 +1,6 @@
 import React from "react";
 import { GlassCard } from "../GlassCard";
-import { Instagram, Youtube } from "lucide-react";
+import { FaInstagram, FaYoutube } from "react-icons/fa";
 
 export function Results() {
   const results = [
@@ -77,8 +77,8 @@ export function Results() {
                   <div>
                     <h3 className="font-bold text-ink">{result.handle}</h3>
                     <div className="flex items-center space-x-1.5 mt-1">
-                      {result.platform.includes("Instagram") && <Instagram size={14} className="text-ink/50" />}
-                      {result.platform.includes("YouTube") && <Youtube size={14} className="text-ink/50" />}
+                      {result.platform.includes("Instagram") && <FaInstagram size={14} className="text-ink/50" />}
+                      {result.platform.includes("YouTube") && <FaYoutube size={14} className="text-ink/50" />}
                       <span className="text-xs text-ink/50">{result.platform}</span>
                     </div>
                   </div>

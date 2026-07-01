@@ -1,6 +1,7 @@
 import React from "react";
 import { GlassCard } from "../GlassCard";
-import { ArrowRight, Instagram, Youtube } from "lucide-react";
+import { ArrowRight } from "lucide-react";
+import { FaInstagram, FaYoutube } from "react-icons/fa";
 
 export function Work() {
   const portfolio = [
@@ -62,13 +63,13 @@ export function Work() {
     if (platform === "Instagram + YouTube") {
       return (
         <div className="flex -space-x-1">
-          <Instagram size={14} className="text-white" />
-          <Youtube size={14} className="text-white" />
+          <FaInstagram size={14} className="text-white" />
+          <FaYoutube size={14} className="text-white" />
         </div>
       );
     }
-    if (platform === "Instagram") return <Instagram size={14} className="text-white" />;
-    return <Youtube size={14} className="text-white" />;
+    if (platform === "Instagram") return <FaInstagram size={14} className="text-white" />;
+    return <FaYoutube size={14} className="text-white" />;
   };
 
   return (

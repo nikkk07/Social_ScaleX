@@ -1,5 +1,5 @@
 import React from "react";
-import { Instagram, Linkedin, Youtube } from "lucide-react";
+import { FaInstagram, FaLinkedin, FaYoutube } from "react-icons/fa";
 
 export function Footer() {
   return (
@@ -15,13 +15,13 @@ export function Footer() {
             <p className="text-ink/70 font-medium mb-6">We grow brands. Real clients, verified results.</p>
             <div className="flex items-center space-x-4">
               <a href="#" className="w-10 h-10 rounded-full bg-ink/5 hover:bg-ink/10 flex items-center justify-center transition-colors text-ink">
-                <Instagram size={18} />
+                <FaInstagram size={18} />
               </a>
               <a href="#" className="w-10 h-10 rounded-full bg-ink/5 hover:bg-ink/10 flex items-center justify-center transition-colors text-ink">
-                <Linkedin size={18} />
+                <FaLinkedin size={18} />
               </a>
               <a href="#" className="w-10 h-10 rounded-full bg-ink/5 hover:bg-ink/10 flex items-center justify-center transition-colors text-ink">
-                <Youtube size={18} />
+                <FaYoutube size={18} />
               </a>
             </div>
           </div>
