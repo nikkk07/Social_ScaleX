@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { motion } from "motion/react";
+import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -14,33 +14,51 @@ interface GlassCardProps {
   tiltMax?: number;
 }
 
+/**
+ * Liquid glass card: 3D cursor tilt + a specular glow that tracks the
+ * cursor. Everything runs on motion values and compositor-only
+ * properties (transform/opacity) — mousemove triggers no React
+ * re-renders and no repaints, so it stays smooth on 120Hz displays.
+ */
 export function GlassCard({
   children,
   className,
-  theme = "light",
-  tiltMax = 7,
+  theme = "dark",
+  tiltMax = 6,
 }: GlassCardProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
-  const [glarePos, setGlarePos] = useState({ x: 50, y: 50 });
   const [isHovered, setIsHovered] = useState(false);
+
+  // Pointer position as 0..1 percentages of the card
+  const px = useMotionValue(0.5);
+  const py = useMotionValue(0.5);
+
+  const spring = { stiffness: 280, damping: 28, mass: 0.8 };
+  const rotateX = useSpring(useTransform(py, [0, 1], [tiltMax, -tiltMax]), spring);
+  const rotateY = useSpring(useTransform(px, [0, 1], [-tiltMax, tiltMax]), spring);
+  const scale = useSpring(1, spring);
+
+  // Glow is a fixed pre-painted radial layer moved with transforms only
+  const glowX = useTransform(px, (v) => `${v * 100 - 50}%`);
+  const glowY = useTransform(py, (v) => `${v * 100 - 50}%`);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
-    const xPct = (e.clientX - rect.left) / rect.width;
-    const yPct = (e.clientY - rect.top) / rect.height;
-    setRotateX(-(yPct - 0.5) * 2 * tiltMax);
-    setRotateY((xPct - 0.5) * 2 * tiltMax);
-    setGlarePos({ x: xPct * 100, y: yPct * 100 });
+    px.set((e.clientX - rect.left) / rect.width);
+    py.set((e.clientY - rect.top) / rect.height);
   };
 
-  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    scale.set(1.015);
+  };
+
   const handleMouseLeave = () => {
     setIsHovered(false);
-    setRotateX(0);
-    setRotateY(0);
+    scale.set(1);
+    px.set(0.5);
+    py.set(0.5);
   };
 
   return (
@@ -49,38 +67,28 @@ export function GlassCard({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      animate={{
+      style={{
         rotateX,
         rotateY,
-        scale: isHovered ? 1.015 : 1,
-      }}
-      transition={{
-        type: "spring",
-        stiffness: 280,
-        damping: 28,
-        mass: 0.8,
-      }}
-      style={{
+        scale,
         perspective: "1200px",
         transformStyle: "preserve-3d",
       }}
       className={cn(
-        "relative rounded-3xl overflow-hidden will-change-transform",
-        theme === "light"
-          ? "glass-panel-light border border-black/6"
-          : "glass-panel-dark border border-white/10",
+        "relative rounded-3xl overflow-hidden will-change-transform liquid-glass",
         className
       )}
     >
-      {/* Moving glare highlight */}
-      <div
-        className="pointer-events-none absolute inset-0 z-50 rounded-3xl transition-opacity duration-300"
+      {/* Cursor-tracking specular glow — painted once, moved via transform */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-40 transition-opacity duration-300"
         style={{
-          background: `radial-gradient(circle at ${glarePos.x}% ${glarePos.y}%, rgba(255,255,255,${
-            theme === "light" ? "0.45" : "0.15"
-          }) 0%, transparent 55%)`,
+          x: glowX,
+          y: glowY,
           opacity: isHovered ? 1 : 0,
-          mixBlendMode: "overlay",
+          background:
+            "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.10) 0%, rgba(167,139,250,0.07) 30%, transparent 60%)",
         }}
       />
 

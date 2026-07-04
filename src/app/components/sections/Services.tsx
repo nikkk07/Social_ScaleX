@@ -108,16 +108,20 @@ export function Services() {
   return (
     <section
       id="services"
-      className="py-24 md:py-32 dark-section relative border-t border-white/5"
+      className="py-24 md:py-32 relative border-t border-white/5"
     >
       <div className="max-w-7xl mx-auto px-6">
         <div className="max-w-3xl mb-16">
           <span className="text-[var(--color-violet-light)] font-medium tracking-wider uppercase text-sm mb-4 block">
             What we do
           </span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">
             Everything your brand needs to scale.
           </h2>
+          <p className="text-white/60 text-lg leading-relaxed">
+            Instagram page management, Reels production, Meta ads, influencer
+            marketing — delivered as one connected system, not a menu of add-ons.
+          </p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8">
@@ -136,7 +140,7 @@ export function Services() {
                     onClick={() => setActiveTab(service.id)}
                     className={`w-full text-left p-6 rounded-2xl transition-all duration-300 border ${
                       isActive
-                        ? "bg-white/10 border-white/20 shadow-lg shadow-black/20"
+                        ? "liquid-glass shadow-lg shadow-black/20"
                         : "bg-transparent border-transparent hover:bg-white/5 hover:border-white/10"
                     }`}
                   >
@@ -185,7 +189,7 @@ export function Services() {
 
           {/* ── Right: sticky visual panel (desktop only) ── */}
           <div className="hidden lg:block w-full lg:w-1/2 sticky top-28 self-start h-[520px]">
-            <GlassCard theme="dark" className="w-full h-full p-2" tiltMax={4}>
+            <GlassCard className="w-full h-full p-2" tiltMax={4}>
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeService.id}
@@ -229,7 +233,7 @@ export function Services() {
                     initial={{ y: 16, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ delay: 0.15, duration: 0.3 }}
-                    className="absolute bottom-7 right-7 bg-white text-[var(--color-ink)] px-4 py-2 rounded-full font-bold text-sm shadow-xl flex items-center space-x-2"
+                    className="absolute bottom-7 right-7 bg-white text-[#0B0A10] px-4 py-2 rounded-full font-bold text-sm shadow-xl flex items-center space-x-2"
                   >
                     <span className="w-2 h-2 rounded-full bg-[var(--color-emerald)] animate-pulse shrink-0" />
                     <span>{activeService.badge}</span>

@@ -43,12 +43,12 @@ export function Process() {
   ];
 
   return (
-    <section className="py-24 md:py-32 dark-section relative border-t border-white/5 overflow-hidden">
+    <section id="process" aria-label="How we work" className="py-24 md:py-32 relative border-t border-white/5 overflow-hidden section-cv">
       <div className="max-w-4xl mx-auto px-6 relative">
         
         <div className="text-center mb-20">
           <span className="text-[var(--color-amber)] font-medium tracking-wider uppercase text-sm mb-4 block">How we work</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">Growth isn't luck. It's engineered.</h2>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">Growth isn't luck. It's engineered.</h2>
         </div>
 
         <div ref={containerRef} className="relative">
@@ -56,8 +56,8 @@ export function Process() {
           <div className="absolute left-[27px] md:left-1/2 top-0 bottom-0 w-[2px] bg-white/10 md:-translate-x-1/2" />
           
           {/* Vertical Timeline Progress Fill */}
-          <motion.div 
-            className="absolute left-[27px] md:left-1/2 top-0 bottom-0 w-[2px] bg-[var(--color-violet)] md:-translate-x-1/2 origin-top"
+          <motion.div
+            className="absolute left-[27px] md:left-1/2 top-0 bottom-0 w-[2px] bg-gradient-to-b from-[var(--color-violet)] via-[var(--color-cyan)] to-[var(--color-emerald)] md:-translate-x-1/2 origin-top shadow-[0_0_12px_rgba(139,92,246,0.8)]"
             style={{ scaleY }}
           />
 
@@ -79,7 +79,7 @@ export function Process() {
                     <p className="text-white/60 leading-relaxed mb-6">{step.desc}</p>
                     <div className={`flex flex-wrap gap-2 ${isEven ? "md:justify-end" : "justify-start"}`}>
                       {step.tags.map(tag => (
-                        <span key={tag} className="px-3 py-1 rounded-full border border-white/20 bg-white/5 text-xs text-white/80 whitespace-nowrap">
+                        <span key={tag} className="liquid-glass-lite px-3 py-1 rounded-full text-xs text-white/80 whitespace-nowrap">
                           {tag}
                         </span>
                       ))}

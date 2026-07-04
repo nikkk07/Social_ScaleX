@@ -4,14 +4,16 @@
   --font-display: "Space Grotesk", sans-serif;
   --font-sans: "Inter", sans-serif;
 
-  --color-violet: #7C3AED;
+  --color-violet: #8B5CF6;
   --color-violet-light: #A78BFA;
   --color-emerald: #34D399;
   --color-emerald-dark: #059669;
-  --color-amber: #F59E0B;
+  --color-amber: #FBBF24;
+  --color-cyan: #22D3EE;
   --color-paper-white: #FAF9F6;
-  --color-void-black: #0B0A10;
-  --color-ink: #15131C;
+  --color-void-black: #050508;
+  --color-void-deep: #08070E;
+  --color-ink: #F4F3F8;
 }
 
 html, body {
@@ -20,7 +22,7 @@ html, body {
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-paper-white);
+  background-color: var(--color-void-black);
   color: var(--color-ink);
   margin: 0;
   padding: 0;
@@ -31,78 +33,233 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
+  letter-spacing: -0.02em;
 }
 
-/* Richer gradient — violet → mid-violet → emerald */
+::selection {
+  background: rgba(139, 92, 246, 0.4);
+  color: #fff;
+}
+
+/* ── Scrollbar (Apple-thin) ───────────────────────────── */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+/* ── Gradient text ────────────────────────────────────── */
 .text-gradient {
-  background: linear-gradient(135deg, var(--color-violet) 0%, #9B5CF6 50%, var(--color-emerald) 100%);
+  background: linear-gradient(120deg, #A78BFA 0%, #8B5CF6 35%, #34D399 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* ── Glass panels ─────────────────────────────────────── */
-
-/* Light glass: higher opacity for clarity on white/light bg */
-.glass-panel-light {
+/* Hero gradient word. Static on purpose: animating background-position
+   on clipped text repaints the glyphs every frame, forever. */
+.text-gradient-animated {
   background: linear-gradient(
-    160deg,
-    rgba(255, 255, 255, 0.88) 0%,
-    rgba(255, 255, 255, 0.55) 100%
+    120deg,
+    #A78BFA 0%,
+    #8B5CF6 25%,
+    #22D3EE 60%,
+    #34D399 100%
   );
-  backdrop-filter: blur(28px) saturate(1.4);
-  -webkit-backdrop-filter: blur(28px) saturate(1.4);
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.04),
-    0 20px 48px rgba(124, 58, 237, 0.07),
-    inset 0 1px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.03);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Dark glass: clearer frosted surface on dark bg */
-.glass-panel-dark {
+/* ── Liquid glass surfaces ────────────────────────────── */
+
+/*
+ * Core liquid glass. NO backdrop-filter: the WebGL canvas underneath
+ * updates every frame, and each backdrop-filtered panel would re-blur
+ * its backdrop on every one of those frames. Frost is faked with a
+ * translucent dark base + white gradient sheen — visually equivalent
+ * over an already-soft dark background, at near-zero GPU cost.
+ */
+.liquid-glass {
+  background:
+    linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.09) 0%,
+      rgba(255, 255, 255, 0.02) 45%,
+      rgba(255, 255, 255, 0.05) 100%
+    ),
+    rgba(16, 14, 24, 0.42);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 24px 64px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    inset 1px 0 0 rgba(255, 255, 255, 0.06),
+    inset -1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/* Heavier frost for nav / modals — the ONLY surfaces that keep a real
+   backdrop-filter (small area, and true blur is visible under them) */
+.liquid-glass-strong {
   background: linear-gradient(
     160deg,
-    rgba(255, 255, 255, 0.10) 0%,
-    rgba(255, 255, 255, 0.03) 100%
+    rgba(20, 18, 30, 0.72) 0%,
+    rgba(12, 10, 20, 0.62) 100%
   );
-  backdrop-filter: blur(28px) saturate(1.2);
-  -webkit-backdrop-filter: blur(28px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.6);
+  -webkit-backdrop-filter: blur(12px) saturate(1.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.2),
-    0 20px 48px rgba(0, 0, 0, 0.45),
+    0 8px 32px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 rgba(255, 255, 255, 0.18),
     inset 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 
-/* ── Section backgrounds ──────────────────────────────── */
-
-.dark-section {
-  background-color: var(--color-void-black);
-  /* Subtle violet glow at top center for depth */
-  background-image: radial-gradient(
-    ellipse 80% 40% at 50% 0%,
-    rgba(124, 58, 237, 0.12) 0%,
-    transparent 70%
-  );
-  color: white;
+/* Subtle inset glass — inputs, wells (no backdrop-filter: these sit
+   inside already-blurred panels, so a plain translucent fill reads
+   identically at a fraction of the compositing cost) */
+.liquid-glass-inset {
+  background: rgba(255, 255, 255, 0.055);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 2px 8px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(0, 0, 0, 0.2);
 }
 
+/* Cheap glass for small pills, badges and icon chips — every
+   backdrop-filter element costs a separate compositing pass over the
+   live WebGL canvas, so tiny elements skip it entirely */
+.liquid-glass-lite {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* ── Section backgrounds (now transparent over the 3D scene) ── */
+.dark-section,
 .light-section {
-  background-color: var(--color-paper-white);
+  background-color: transparent;
   color: var(--color-ink);
 }
 
-/* ── Marquee animation ────────────────────────────────── */
+/* ── Below-fold rendering skip ────────────────────────── */
+/* Offscreen sections skip layout + paint entirely until scrolled near */
+.section-cv {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
+/* ── Skip link (a11y / SEO) ───────────────────────────── */
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -100px;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  background: #fff;
+  color: #0b0a10;
+  font-weight: 600;
+  transition: top 0.2s ease-out;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* ── Shine sweep (buttons, cards on hover) ────────────── */
+.shine-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.shine-sweep::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.25) 48%,
+    rgba(255, 255, 255, 0.45) 50%,
+    rgba(255, 255, 255, 0.25) 52%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0s;
+  pointer-events: none;
+}
+.shine-sweep:hover::after {
+  transform: translateX(120%);
+  transition: transform 0.9s cubic-bezier(0.25, 0.6, 0.3, 1);
+}
+
+/* ── Marquee ──────────────────────────────────────────── */
 @keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 .animate-marquee {
-  animation: marquee 30s linear infinite;
+  animation: marquee 32s linear infinite;
+}
+.marquee-mask {
+  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+}
+
+/* ── Ambient float for decorative orbs ────────────────── */
+/* Translate-only: scaling a blur()ed layer forces re-rasterization
+   every frame, pure translation reuses the cached texture */
+@keyframes float-slow {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  33% { transform: translate3d(28px, -36px, 0); }
+  66% { transform: translate3d(-24px, 20px, 0); }
+}
+.animate-float-slow {
+  animation: float-slow 16s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* ── Focus rings (keyboard nav) ───────────────────────── */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid rgba(167, 139, 250, 0.9);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 /* ── Global interaction tweaks ────────────────────────── */
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+a, button {
+  cursor: pointer;
+}
+
+/* ── Reduced motion ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

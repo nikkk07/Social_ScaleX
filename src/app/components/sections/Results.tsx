@@ -1,5 +1,7 @@
 import React from "react";
 import { GlassCard } from "../GlassCard";
+import { Reveal } from "../effects/Reveal";
+import { AnimatedCounter } from "../effects/AnimatedCounter";
 import { FaInstagram, FaYoutube } from "react-icons/fa";
 
 export function Results() {
@@ -51,56 +53,61 @@ export function Results() {
   ];
 
   return (
-    <section id="results" className="py-24 md:py-32 light-section relative border-t border-ink/5">
+    <section id="results" aria-label="Verified client results" className="py-24 md:py-32 relative border-t border-white/5 section-cv">
       <div className="max-w-7xl mx-auto px-6">
-        
-        <div className="max-w-3xl mb-16">
-          <span className="text-[var(--color-violet)] font-medium tracking-wider uppercase text-sm mb-4 block">Verified results</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-ink mb-6">Numbers pulled straight from the dashboard.</h2>
-          <p className="text-ink/60 text-lg leading-relaxed">
+
+        <Reveal className="max-w-3xl mb-16">
+          <span className="text-[var(--color-violet-light)] font-medium tracking-wider uppercase text-sm mb-4 block">Verified results</span>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-white mb-6">Numbers pulled straight from the dashboard.</h2>
+          <p className="text-white/60 text-lg leading-relaxed">
             No rounding up, no projections — every figure here is from the client's own Instagram or YouTube analytics.
           </p>
-        </div>
+        </Reveal>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {results.map((result, i) => (
-            <GlassCard 
-              key={result.id} 
-              theme="light" 
-              className={`p-8 ${result.featured ? "md:col-span-2 lg:col-span-2" : ""}`}
+            <Reveal
+              key={result.id}
+              delay={i * 0.1}
+              className={result.featured ? "md:col-span-2 lg:col-span-2" : ""}
             >
-              <div className="flex items-start justify-between mb-8">
-                <div className="flex items-center space-x-4">
-                  <div className={`w-12 h-12 rounded-full ${result.color} text-white flex items-center justify-center font-display font-bold text-xl shadow-inner`}>
-                    {result.initial}
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-ink">{result.handle}</h3>
-                    <div className="flex items-center space-x-1.5 mt-1">
-                      {result.platform.includes("Instagram") && <FaInstagram size={14} className="text-ink/50" />}
-                      {result.platform.includes("YouTube") && <FaYoutube size={14} className="text-ink/50" />}
-                      <span className="text-xs text-ink/50">{result.platform}</span>
+              <GlassCard className="p-8 h-full">
+                <div className="flex items-start justify-between mb-8">
+                  <div className="flex items-center space-x-4">
+                    <div className={`w-12 h-12 rounded-full ${result.color} text-white flex items-center justify-center font-display font-bold text-xl border border-white/25 shadow-[inset_0_1px_0_rgba(255,255,255,0.4)]`}>
+                      {result.initial}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-white">{result.handle}</h3>
+                      <div className="flex items-center space-x-1.5 mt-1">
+                        {result.platform.includes("Instagram") && <FaInstagram size={14} className="text-white/50" />}
+                        {result.platform.includes("YouTube") && <FaYoutube size={14} className="text-white/50" />}
+                        <span className="text-xs text-white/50">{result.platform}</span>
+                      </div>
                     </div>
                   </div>
+                  <div className="px-3 py-1 rounded-full liquid-glass-lite text-[var(--color-emerald)] text-xs font-bold uppercase tracking-wider">
+                    Verified
+                  </div>
                 </div>
-                <div className="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase tracking-wider">
-                  Verified
+
+                <div className="mb-6">
+                  <AnimatedCounter
+                    value={result.metric}
+                    className="text-5xl md:text-6xl font-display font-bold text-gradient mb-2 block"
+                  />
+                  <div className="text-lg font-medium text-white/70">{result.label}</div>
                 </div>
-              </div>
 
-              <div className="mb-6">
-                <div className="text-5xl md:text-6xl font-display font-bold text-gradient mb-2">{result.metric}</div>
-                <div className="text-lg font-medium text-ink/70">{result.label}</div>
-              </div>
-
-              <div className="pt-6 border-t border-ink/10">
-                <p className="text-sm text-ink/60 leading-relaxed">{result.detail}</p>
-              </div>
-            </GlassCard>
+                <div className="pt-6 border-t border-white/10">
+                  <p className="text-sm text-white/60 leading-relaxed">{result.detail}</p>
+                </div>
+              </GlassCard>
+            </Reveal>
           ))}
         </div>
 
-        <p className="text-sm text-ink/40 text-center">
+        <p className="text-sm text-white/40 text-center">
           Client data shared with permission. Analytics shown for demonstration purposes only.
         </p>
 

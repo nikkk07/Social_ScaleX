@@ -1,0 +1,6 @@
+# Social ScaleX — allow all crawlers
+# Replace socialscalex.com with your real domain before going live.
+User-agent: *
+Allow: /
+
+Sitemap: https://socialscalex.com/sitemap.xml
