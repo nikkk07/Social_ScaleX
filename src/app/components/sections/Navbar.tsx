@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Menu, X } from "lucide-react";
+import { Link } from "react-router";
+import { useSession } from "../../hooks/useSession";
+
+const links = [
+  { name: "Work", href: "#work" },
+  { name: "Services", href: "#services" },
+  { name: "Process", href: "#process" },
+  { name: "Contact", href: "#contact" },
+];
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const session = useSession();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -13,11 +23,23 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = [
-    { name: "Work", href: "#work" },
-    { name: "Services", href: "#services" },
-    { name: "FAQ", href: "#faq" },
-  ];
+  // Logged in -> CRM entry; logged out -> the marketing CTA. No standalone
+  // "Login" link in the nav (internal tool, not a customer portal).
+  const desktopCta = session ? (
+    <Link
+      to="/crm"
+      className="ml-2 bg-[var(--color-violet-cta)] text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
+    >
+      CRM
+    </Link>
+  ) : (
+    <a
+      href="#contact"
+      className="ml-2 bg-white text-[#0B0A10] px-5 py-2.5 rounded-full text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
+    >
+      Start growing
+    </a>
+  );
 
   return (
     <>
@@ -33,7 +55,6 @@ export function Navbar() {
             scrolled ? "h-14 shadow-2xl shadow-black/40" : "h-16"
           }`}
         >
-          {/* Logo */}
           <a
             href="/"
             aria-label="Social ScaleX home"
@@ -42,7 +63,7 @@ export function Navbar() {
             Social <span className="text-gradient">ScaleX</span>
           </a>
 
-          {/* Desktop Nav */}
+          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-1">
             {links.map((link) => (
               <a
@@ -53,15 +74,10 @@ export function Navbar() {
                 {link.name}
               </a>
             ))}
-            <a
-              href="#contact"
-              className="shine-sweep ml-2 bg-white text-[#0B0A10] px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-white/90 transition-all duration-200 hover:scale-[1.04] active:scale-95"
-            >
-              Start growing
-            </a>
+            {desktopCta}
           </div>
 
-          {/* Mobile Toggle */}
+          {/* Mobile toggle */}
           <button
             className="md:hidden p-3 text-white z-50 relative"
             aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -72,7 +88,7 @@ export function Navbar() {
         </div>
       </motion.nav>
 
-      {/* Mobile Menu */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -88,24 +104,32 @@ export function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  initial={{ opacity: 0, y: 24, filter: "blur(8px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  transition={{ delay: 0.08 * i, duration: 0.5 }}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.06 * i, duration: 0.4 }}
                   className="text-3xl font-display font-bold text-white"
                 >
                   {link.name}
                 </motion.a>
               ))}
-              <motion.a
-                href="#contact"
-                onClick={() => setIsOpen(false)}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                className="w-full max-w-xs text-center bg-white text-[#0B0A10] px-8 py-4 rounded-full font-semibold text-lg mt-6"
-              >
-                Start growing
-              </motion.a>
+
+              {session ? (
+                <Link
+                  to="/crm"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full max-w-xs text-center bg-[var(--color-violet-cta)] text-white px-8 py-4 rounded-full font-semibold text-lg mt-6"
+                >
+                  CRM
+                </Link>
+              ) : (
+                <a
+                  href="#contact"
+                  onClick={() => setIsOpen(false)}
+                  className="w-full max-w-xs text-center bg-white text-[#0B0A10] px-8 py-4 rounded-full font-semibold text-lg mt-6"
+                >
+                  Start growing
+                </a>
+              )}
             </div>
           </motion.div>
         )}

@@ -103,6 +103,8 @@ export function Footer() {
           <div className="flex items-center space-x-6">
             <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+            {/* Internal team entry point — deliberately understated (A4). */}
+            <Link to="/login" className="hover:text-white transition-colors">Team Login</Link>
           </div>
         </div>
 
