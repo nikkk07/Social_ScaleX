@@ -96,6 +96,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ── Liquid glass surfaces ────────────────────────────── */
+/*
+ * TODO(glass-consolidation): the redesign brief wants TWO glass treatments
+ * (one panel + one inset). Four still exist — deferred deliberately because
+ * collapsing them blind risks the nav frost and chip legibility. Do this as
+ * a visual pass on the preview, not blind. Current classes + consumers:
+ *   .liquid-glass        — panels. GlassCard (Work/StatsBand/Contact), FAQ
+ *                          items, WhyUs cards, Services strip, Hero eyebrow,
+ *                          Work "Work with us" button.   [KEEP as the panel]
+ *   .liquid-glass-inset  — input wells. Contact inputClasses.  [KEEP as inset]
+ *   .liquid-glass-strong — nav capsule + mobile drawer (Navbar). Heavier
+ *                          frost; fold into .liquid-glass only if the floating
+ *                          capsule still reads well.
+ *   .liquid-glass-lite   — chips/badges/tags: Work platform badge, Services
+ *                          icon chips, Process tags, Footer social icons.
+ *                          Fold into .liquid-glass or a small pill variant.
+ */
 
 /*
  * Core liquid glass. Real backdrop-filter is back: the live WebGL canvas

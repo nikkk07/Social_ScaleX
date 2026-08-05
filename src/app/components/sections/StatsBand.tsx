@@ -4,6 +4,9 @@ import { Reveal } from "../effects/Reveal";
 import { AnimatedCounter } from "../effects/AnimatedCounter";
 
 export function StatsBand() {
+  // TODO(verify-metrics): these are point-in-time figures recorded in-repo
+  // pre-2026-08-05; currency unconfirmed. 496K reconciles to IG followers
+  // (~376K) + YT subscribers (~119K). Confirm before production.
   const stats = [
     { value: "4+", label: "Brands actively managed" },
     { value: "9.3M+", label: "Combined monthly views" },

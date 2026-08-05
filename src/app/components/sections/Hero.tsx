@@ -78,6 +78,8 @@ export function Hero() {
           transition={{ duration: 0.4, ease }}
           className="text-sm text-white/60 font-medium tracking-wide mt-10"
         >
+          {/* TODO(verify-metrics): 376K = 336+10.6+15.9+14 (IG followers) from
+              the Work data. Recorded in-repo pre-2026-08-05; currency unconfirmed. */}
           376K+ combined Instagram followers across the brands we manage.
         </motion.p>
       </motion.div>
