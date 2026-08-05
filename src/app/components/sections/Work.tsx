@@ -1,10 +1,24 @@
 import React from "react";
 import { GlassCard } from "../GlassCard";
 import { Reveal } from "../effects/Reveal";
-import { ArrowRight, Instagram, Youtube, BadgeCheck } from "lucide-react";
+import { ArrowRight, Instagram, Youtube } from "lucide-react";
+
+interface Metric {
+  value: string;
+  label: string;
+}
+
+interface PortfolioItem {
+  id: string;
+  category: string;
+  platform: string;
+  client: string;
+  description: string;
+  metrics: Metric[];
+}
 
 export function Work() {
-  const portfolio = [
+  const portfolio: PortfolioItem[] = [
     {
       id: "acdelhivlogs",
       category: "Travel & Lifestyle Vlogging",
@@ -17,7 +31,6 @@ export function Work() {
         { value: "4.2M", label: "Views/30 days" },
         { value: "96.6K", label: "YT Subscribers" },
       ],
-      gradient: "from-purple-500/25 to-blue-500/25",
     },
     {
       id: "journey",
@@ -31,7 +44,6 @@ export function Work() {
         { value: "22.1K", label: "YT Subscribers" },
         { value: "+514", label: "Subs/28 days" },
       ],
-      gradient: "from-emerald-500/25 to-teal-500/25",
     },
     {
       id: "subh",
@@ -45,7 +57,6 @@ export function Work() {
         { value: "1.6M", label: "Views/30 days" },
         { value: "109.6K", label: "Interactions" },
       ],
-      gradient: "from-amber-500/25 to-orange-500/25",
     },
     {
       id: "prago",
@@ -57,9 +68,7 @@ export function Work() {
       metrics: [
         { value: "14K", label: "Followers" },
         { value: "3.1M", label: "Views/30 days" },
-        { value: "Verified", label: "Business" },
       ],
-      gradient: "from-rose-500/25 to-pink-500/25",
     },
   ];
 
@@ -100,10 +109,11 @@ export function Work() {
           {portfolio.map((item, i) => (
             <Reveal key={item.id} delay={(i % 2) * 0.1}>
               <GlassCard className="h-full">
-                {/* Screenshot mock */}
-                <div
-                  className={`h-44 bg-gradient-to-br ${item.gradient} relative overflow-hidden border-b border-white/10`}
-                >
+                {/* Screenshot mock — one neutral treatment for every card;
+                    differentiation comes from the name and the numbers, not
+                    colour themes. A single faint violet wash, brand token only. */}
+                <div className="h-44 relative overflow-hidden border-b border-white/10 bg-white/[0.03]">
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(139,92,246,0.16),transparent_65%)]" />
                   <div className="absolute inset-x-10 top-9 bottom-0 rounded-t-2xl bg-black/30 border border-white/10 p-5">
                     <div className="w-12 h-1 rounded-full bg-white/20 mb-4" />
                     <div className="space-y-3">
@@ -114,10 +124,6 @@ export function Work() {
                   <div className="absolute top-4 left-4 liquid-glass-lite rounded-full px-3 py-1.5 flex items-center gap-2">
                     {getPlatformIcon(item.platform)}
                     <span className="text-xs font-medium text-white">{item.platform}</span>
-                  </div>
-                  <div className="absolute top-4 right-4 liquid-glass-lite rounded-full px-2.5 py-1 flex items-center gap-1.5 text-[var(--color-emerald)]">
-                    <BadgeCheck size={13} />
-                    <span className="text-[11px] font-bold uppercase tracking-wider">Verified</span>
                   </div>
                 </div>
 
@@ -130,9 +136,13 @@ export function Work() {
                   </h3>
                   <p className="text-white/65 text-sm leading-relaxed mb-6">{item.description}</p>
 
-                  <div className="grid grid-cols-3 gap-3 pt-5 border-t border-white/10">
-                    {item.metrics.map((metric, mi) => (
-                      <div key={mi}>
+                  <div
+                    className={`grid ${
+                      item.metrics.length === 2 ? "grid-cols-2" : "grid-cols-3"
+                    } gap-3 pt-5 border-t border-white/10`}
+                  >
+                    {item.metrics.map((metric) => (
+                      <div key={metric.label}>
                         <div className="text-lg md:text-xl font-display font-bold text-white mb-1">
                           {metric.value}
                         </div>
