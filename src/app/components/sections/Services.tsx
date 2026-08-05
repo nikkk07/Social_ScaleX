@@ -62,7 +62,7 @@ const services = [
 ];
 
 export function Services() {
-  const [activeTab, setActiveTab] = useState(services[0].id);
+  const [activeTab, setActiveTab] = useState(services[0]?.id ?? "");
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // Scroll-based: whichever item's center is closest to the viewport center becomes active.
@@ -86,7 +86,8 @@ export function Services() {
         }
       });
 
-      setActiveTab(services[closestIdx].id);
+      const active = services[closestIdx];
+      if (active) setActiveTab(active.id);
     };
 
     const onScroll = () => {

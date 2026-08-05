@@ -1,0 +1,114 @@
+/* ─────────────────────────────────────────────────────────────────────
+ * CRM design tokens (shadcn/ui) — brand-mapped, CRM-scoped.
+ *
+ * Supersedes the orphaned root-level `default_shadcn_theme.css`, which was
+ * imported nowhere and left every shadcn token undefined (~399 token
+ * utility occurrences across 39 `ui/` components generated no CSS).
+ *
+ * Tailwind v4 mechanics that make this work:
+ *   1. `@theme inline` MUST be top level — it registers utility NAMES
+ *      globally (bg-card → var(--card)). Nesting it in a selector will not
+ *      compile.
+ *   2. The `inline` keyword is load-bearing: it defers value resolution to
+ *      the use site, so the scoped `.crm-root` values below win via the
+ *      cascade. A plain `@theme` would hard-bake build-time values.
+ *   3. `@custom-variant dark` pins shadcn's class-based dark mode; without
+ *      it the ~35 `dark:` rules in ui/ would follow OS prefers-color-scheme.
+ *
+ * Marketing sections import zero ui/ components and use zero shadcn tokens,
+ * so nothing here leaks into the marketing bundle.
+ * ──────────────────────────────────────────────────────────────────── */
+
+/* Top level: registers utility NAMES. Tailwind only emits utilities it
+   finds in scanned source, so this costs the marketing bundle nothing. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* Pin the dark branch to a class. shadcn assumes class-based dark mode;
+   Tailwind v4 defaults to prefers-color-scheme. */
+@custom-variant dark (&:is(.dark *));
+
+/* Scoped VALUES: brand-mapped, CRM-only. Applied to the CRM/login layout
+   wrapper, which carries BOTH `crm-root` and `dark`. Every value derives
+   from theme.css tokens where one exists; the only two new hexes are
+   --popover (#0E0C16, a near-black raised surface for menus/dialogs) and
+   --destructive (#F43F5E, rose — theme.css has no danger colour). */
+.crm-root {
+  --background:             var(--color-void-black);
+  --foreground:             var(--color-ink);
+  --card:                   rgba(255, 255, 255, 0.04);
+  --card-foreground:        var(--color-ink);
+  --popover:                #0E0C16;
+  --popover-foreground:     var(--color-ink);
+  --primary:                var(--color-violet);
+  --primary-foreground:     #FFFFFF;
+  --secondary:              rgba(255, 255, 255, 0.07);
+  --secondary-foreground:   var(--color-ink);
+  --muted:                  rgba(255, 255, 255, 0.05);
+  --muted-foreground:       rgba(244, 243, 248, 0.55);
+  --accent:                 rgba(139, 92, 246, 0.14);
+  --accent-foreground:      var(--color-violet-light);
+  --destructive:            #F43F5E;
+  --destructive-foreground: #FFFFFF;
+  --border:                 rgba(255, 255, 255, 0.10);
+  --input:                  rgba(255, 255, 255, 0.055);
+  --input-background:       rgba(255, 255, 255, 0.055);
+  --switch-background:      rgba(255, 255, 255, 0.18);
+  --ring:                   var(--color-violet-light);
+
+  --sidebar:                     var(--color-void-deep);
+  --sidebar-foreground:          var(--color-ink);
+  --sidebar-primary:             var(--color-violet);
+  --sidebar-primary-foreground:  #FFFFFF;
+  --sidebar-accent:              rgba(139, 92, 246, 0.14);
+  --sidebar-accent-foreground:   var(--color-violet-light);
+  --sidebar-border:              rgba(255, 255, 255, 0.08);
+  --sidebar-ring:                var(--color-violet-light);
+
+  --chart-1: var(--color-violet);
+  --chart-2: var(--color-emerald);
+  --chart-3: var(--color-cyan);
+  --chart-4: var(--color-amber);
+  --chart-5: var(--color-violet-light);
+
+  /* Tighter than marketing's 0.625rem — this is a data tool. */
+  --radius: 0.5rem;
+}

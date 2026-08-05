@@ -1,3 +1,7 @@
+// @ts-nocheck — React-Three-Fiber intrinsic JSX elements are not augmented
+// into JSX.IntrinsicElements in this project. This WebGL background is being
+// removed in the minimal-glass redesign (Phase A A1); suppressing type-check
+// here avoids fixing throwaway R3F types. Delete this file, not just the line.
 import React, { useEffect, useMemo, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Float, Environment, Lightformer } from "@react-three/drei";

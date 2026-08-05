@@ -23,9 +23,9 @@ export function AnimatedCounter({
   useEffect(() => {
     const match = value.match(/^([^0-9]*)([0-9]+(?:\.[0-9]+)?)(.*)$/);
     if (!match) return;
-    const [, prefix, numStr, suffix] = match;
+    const [, prefix = "", numStr = "", suffix = ""] = match;
     const target = parseFloat(numStr);
-    const decimals = numStr.includes(".") ? numStr.split(".")[1].length : 0;
+    const decimals = numStr.includes(".") ? (numStr.split(".")[1]?.length ?? 0) : 0;
 
     setDisplay(`${prefix}${(0).toFixed(decimals)}${suffix}`);
     if (!inView) return;
