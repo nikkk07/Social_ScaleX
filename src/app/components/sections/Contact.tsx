@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { toast } from "sonner";
+import { toast, Toaster } from "sonner";
 import { GlassCard } from "../GlassCard";
 import { Reveal } from "../effects/Reveal";
 
 const inputClasses =
-  "w-full liquid-glass-inset rounded-xl px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-[var(--color-violet-light)] transition-colors";
+  "w-full liquid-glass-inset rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-[var(--color-violet-light)] transition-colors";
 const errorClasses = "text-[#F87171] text-xs mt-1.5";
 // Off-screen honeypot: real users never see or fill it; bots do.
 const honeypotClasses = "absolute left-[-9999px] w-px h-px overflow-hidden";
@@ -229,6 +229,7 @@ export function Contact() {
           </Reveal>
         </div>
       </div>
+      <Toaster position="bottom-center" theme="dark" richColors />
     </section>
   );
 }
