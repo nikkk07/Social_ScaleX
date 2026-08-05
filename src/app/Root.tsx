@@ -8,7 +8,6 @@ import { Work } from "./components/sections/Work";
 import { Services } from "./components/sections/Services";
 import { Platforms } from "./components/sections/Platforms";
 import { Process } from "./components/sections/Process";
-import { Results } from "./components/sections/Results";
 import { WhyUs } from "./components/sections/WhyUs";
 import { FAQ } from "./components/sections/FAQ";
 import { Contact } from "./components/sections/Contact";
@@ -30,7 +29,6 @@ export function Root() {
         <Services />
         <Platforms />
         <Process />
-        <Results />
         <WhyUs />
         <FAQ />
         <Contact />

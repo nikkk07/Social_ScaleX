@@ -6,6 +6,11 @@
 
   --color-violet: #8B5CF6;
   --color-violet-light: #A78BFA;
+  /* Deeper violet for solid fills that carry WHITE text. #8B5CF6 only
+     hits 4.23:1 on white (fails WCAG AA); #7C3AED hits 5.70:1 (passes).
+     Use --color-violet for gradient text, borders and glows; use this
+     for any violet button/pill with white text. */
+  --color-violet-cta: #7C3AED;
   --color-emerald: #34D399;
   --color-emerald-dark: #059669;
   --color-amber: #FBBF24;
@@ -93,11 +98,10 @@ h1, h2, h3, h4, h5, h6 {
 /* ── Liquid glass surfaces ────────────────────────────── */
 
 /*
- * Core liquid glass. NO backdrop-filter: the WebGL canvas underneath
- * updates every frame, and each backdrop-filtered panel would re-blur
- * its backdrop on every one of those frames. Frost is faked with a
- * translucent dark base + white gradient sheen — visually equivalent
- * over an already-soft dark background, at near-zero GPU cost.
+ * Core liquid glass. Real backdrop-filter is back: the live WebGL canvas
+ * that once forced a re-blur every frame is gone (minimal-glass redesign),
+ * so a genuine blur over the now-static background is affordable and reads
+ * far truer than the faked frost it replaces.
  */
 .liquid-glass {
   background:
@@ -108,6 +112,8 @@ h1, h2, h3, h4, h5, h6 {
       rgba(255, 255, 255, 0.05) 100%
     ),
     rgba(16, 14, 24, 0.42);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.25),

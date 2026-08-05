@@ -63,7 +63,7 @@ export function Footer() {
             <ul className="space-y-3 text-white/60 text-sm">
               <li><a href="/#why-us" className="hover:text-[var(--color-violet-light)] transition-colors">About Us</a></li>
               <li><a href="/#work" className="hover:text-[var(--color-violet-light)] transition-colors">Client Portfolio</a></li>
-              <li><a href="/#results" className="hover:text-[var(--color-violet-light)] transition-colors">Results</a></li>
+              <li><a href="/#work" className="hover:text-[var(--color-violet-light)] transition-colors">Results</a></li>
               <li><a href="/#process" className="hover:text-[var(--color-violet-light)] transition-colors">Our Process</a></li>
               <li><a href="/#faq" className="hover:text-[var(--color-violet-light)] transition-colors">FAQ</a></li>
               <li>

@@ -81,7 +81,7 @@ export function Contact() {
                         <label className="block text-sm font-medium text-white/70 mb-2">What do you need help with?</label>
                         <textarea rows={3} className={`${inputClasses} resize-none`} placeholder="Tell us about your brand..." />
                       </div>
-                      <button className="shine-sweep w-full bg-gradient-to-r from-[var(--color-violet)] to-[#6D28D9] text-white font-bold py-4 rounded-xl transition-all hover:scale-[1.01] active:scale-[0.98] shadow-xl shadow-[var(--color-violet)]/25 border border-white/20">
+                      <button className="w-full bg-[var(--color-violet-cta)] text-white font-bold py-4 rounded-xl transition-transform hover:scale-[1.01] active:scale-[0.98] shadow-xl shadow-[var(--color-violet)]/25 border border-white/20">
                         Send query
                       </button>
                     </form>

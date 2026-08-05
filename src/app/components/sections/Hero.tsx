@@ -59,7 +59,7 @@ export function Hero() {
         >
           <a
             href="#contact"
-            className="w-full sm:w-auto inline-flex items-center justify-center bg-gradient-to-br from-[var(--color-violet)] to-[#6D28D9] text-white px-8 py-4 rounded-full font-semibold text-base border border-white/15 shadow-[0_8px_28px_rgba(139,92,246,0.35)] transition-transform duration-200 hover:scale-[1.02] active:scale-[0.99]"
+            className="w-full sm:w-auto inline-flex items-center justify-center bg-[var(--color-violet-cta)] text-white px-8 py-4 rounded-full font-semibold text-base border border-white/15 shadow-[0_8px_28px_rgba(124,58,237,0.35)] transition-[transform,background-color] duration-200 hover:bg-[var(--color-violet)] hover:scale-[1.02] active:scale-[0.99]"
           >
             Get a free strategy call
           </a>
@@ -78,7 +78,7 @@ export function Hero() {
           transition={{ duration: 0.4, ease }}
           className="text-sm text-white/60 font-medium tracking-wide mt-10"
         >
-          Managing channels with 350K+ combined followers across Instagram &amp; YouTube.
+          376K+ combined Instagram followers across the brands we manage.
         </motion.p>
       </motion.div>
     </section>
