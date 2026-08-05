@@ -2,11 +2,9 @@ import React from "react";
 import { LiquidBackground } from "./components/effects/LiquidBackground";
 import { Navbar } from "./components/sections/Navbar";
 import { Hero } from "./components/sections/Hero";
-import { MarqueeStrip } from "./components/sections/Marquee";
 import { StatsBand } from "./components/sections/StatsBand";
 import { Work } from "./components/sections/Work";
 import { Services } from "./components/sections/Services";
-import { Platforms } from "./components/sections/Platforms";
 import { Process } from "./components/sections/Process";
 import { WhyUs } from "./components/sections/WhyUs";
 import { FAQ } from "./components/sections/FAQ";
@@ -23,11 +21,9 @@ export function Root() {
       <Navbar />
       <main id="main-content" className="relative z-10">
         <Hero />
-        <MarqueeStrip />
         <StatsBand />
         <Work />
         <Services />
-        <Platforms />
         <Process />
         <WhyUs />
         <FAQ />
