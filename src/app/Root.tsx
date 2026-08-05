@@ -1,4 +1,5 @@
 import React from "react";
+import { Toaster } from "sonner";
 import { LiquidBackground } from "./components/effects/LiquidBackground";
 import { Navbar } from "./components/sections/Navbar";
 import { Hero } from "./components/sections/Hero";
@@ -30,6 +31,7 @@ export function Root() {
         <Contact />
       </main>
       <Footer />
+      <Toaster position="bottom-center" theme="dark" richColors />
     </div>
   );
 }
