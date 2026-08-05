@@ -1,16 +1,17 @@
 import React from "react";
 import { Link } from "react-router";
-import { FaInstagram, FaLinkedin, FaYoutube, FaWhatsapp } from "react-icons/fa";
+import { Instagram, Linkedin, Youtube } from "lucide-react";
+import { WhatsappIcon } from "../icons/WhatsappIcon";
 
 /*
  * Set these to the agency's real profile URLs when ready — icons for
  * empty entries are hidden automatically, so nothing ever links to "#".
  */
 const SOCIAL_LINKS = [
-  { name: "WhatsApp", url: "https://wa.me/918077727669", icon: FaWhatsapp },
-  { name: "Instagram", url: "", icon: FaInstagram },
-  { name: "LinkedIn", url: "", icon: FaLinkedin },
-  { name: "YouTube", url: "", icon: FaYoutube },
+  { name: "WhatsApp", url: "https://wa.me/918077727669", icon: WhatsappIcon },
+  { name: "Instagram", url: "", icon: Instagram },
+  { name: "LinkedIn", url: "", icon: Linkedin },
+  { name: "YouTube", url: "", icon: Youtube },
 ];
 
 export function Footer() {

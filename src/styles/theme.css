@@ -16,6 +16,13 @@
   --color-ink: #F4F3F8;
 }
 
+html {
+  /* Native smooth scroll for anchor links — replaces Lenis, which was
+     removed in the redesign (scroll hijacking is an a11y liability and
+     breaks modal scroll-locking). Disabled under reduced-motion below. */
+  scroll-behavior: smooth;
+}
+
 html, body {
   position: relative;
 }

@@ -1,14 +1,13 @@
 import React from "react";
 import { GlassCard } from "../GlassCard";
 import { Reveal } from "../effects/Reveal";
-import { CheckCircle2 } from "lucide-react";
-import { FaInstagram, FaFacebook, FaYoutube } from "react-icons/fa";
+import { CheckCircle2, Instagram, Facebook, Youtube } from "lucide-react";
 
 export function Platforms() {
   const platforms = [
     {
       name: "Instagram",
-      icon: <FaInstagram size={26} className="text-white" />,
+      icon: <Instagram size={26} className="text-white" />,
       orb: "from-fuchsia-500/60 to-amber-500/50",
       users: "2 billion monthly users.",
       desc: "Feed curation, Reels strategy, Stories, Collabs — we know the algorithm and work with it, not against it.",
@@ -22,7 +21,7 @@ export function Platforms() {
     },
     {
       name: "Facebook",
-      icon: <FaFacebook size={26} className="text-white" />,
+      icon: <Facebook size={26} className="text-white" />,
       orb: "from-blue-500/60 to-cyan-500/50",
       users: "3 billion monthly users.",
       desc: "Precision-targeted ads, retargeting funnels, and creative testing at scale — every rupee working harder.",
@@ -36,7 +35,7 @@ export function Platforms() {
     },
     {
       name: "YouTube",
-      icon: <FaYoutube size={26} className="text-white" />,
+      icon: <Youtube size={26} className="text-white" />,
       orb: "from-red-500/60 to-rose-500/50",
       users: "2.7 billion monthly users.",
       desc: "SEO-led content strategy, Shorts flywheel, thumbnail science, and channel authority building that compounds.",
