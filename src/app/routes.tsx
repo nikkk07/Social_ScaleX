@@ -10,6 +10,7 @@ import { Terms } from "./pages/Terms";
 const CrmLayout = lazy(() => import("./crm/CrmLayout"));
 const LoginPage = lazy(() => import("./crm/auth/LoginPage"));
 const DashboardRoute = lazy(() => import("./crm/DashboardRoute"));
+const LeadFormRoute = lazy(() => import("./crm/LeadFormRoute"));
 
 // Neutral fallback with NO imports from ./crm, so nothing CRM-related is
 // pulled into the initial bundle just to render a spinner background.
@@ -54,6 +55,22 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={bootFallback}>
             <DashboardRoute />
+          </Suspense>
+        ),
+      },
+      {
+        path: "crm/leads/new",
+        element: (
+          <Suspense fallback={bootFallback}>
+            <LeadFormRoute />
+          </Suspense>
+        ),
+      },
+      {
+        path: "crm/leads/:id/edit",
+        element: (
+          <Suspense fallback={bootFallback}>
+            <LeadFormRoute />
           </Suspense>
         ),
       },

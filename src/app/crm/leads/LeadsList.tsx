@@ -3,7 +3,7 @@
 // in the browser (PostgREST caps at 1000 rows, so that would silently
 // truncate). URL reflects q/status/owner/etc so a view is bookmarkable.
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 import {
@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Download,
   MoreHorizontal,
+  Plus,
   Search,
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
@@ -224,15 +225,23 @@ export function LeadsList() {
                   : '—'}
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onExport}
-            disabled={exporting || total === 0}
-            className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
-          >
-            <Download size={15} />
-            {exporting ? 'Exporting…' : 'Export CSV'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onExport}
+              disabled={exporting || total === 0}
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
+            >
+              <Download size={15} />
+              {exporting ? 'Exporting…' : 'Export CSV'}
+            </button>
+            <Link
+              to="/crm/leads/new"
+              className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-violet-cta)] px-3 py-2 text-sm font-semibold text-white transition-transform hover:scale-[1.03] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
+            >
+              <Plus size={15} /> Add lead
+            </Link>
+          </div>
         </div>
 
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
@@ -394,6 +403,7 @@ function RowActions({
   lead: LeadRow;
   onArchive: (l: LeadRow) => void;
 }) {
+  const navigate = useNavigate();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -406,6 +416,9 @@ function RowActions({
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuItem onSelect={() => navigate(`/crm/leads/${lead.id}/edit`)}>
+          Edit
+        </DropdownMenuItem>
         <DropdownMenuItem
           variant="destructive"
           onSelect={() => onArchive(lead)}

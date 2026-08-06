@@ -9,6 +9,7 @@ import {
   DEFAULT_QUERY,
   type LeadRow,
 } from './leadsQuery';
+import { normalizeHandle, toRpcPayload, emptyLeadForm } from './leadFormSchema';
 
 // Node global at runtime; declared here so tsc doesn't need @types/node.
 declare const process: { exit(code: number): never };
@@ -85,6 +86,22 @@ check('valid sort kept', good.sort === 'brand_name');
 check('valid dir kept', good.dir === 'asc');
 check('valid status kept', good.status === 'pending');
 check('valid page kept', good.page === 3);
+
+// ── 4. Lead form: handle normalization + outcome coherence in payload ──
+check(
+  'handle from full URL → bare lowercase (underscore kept)',
+  normalizeHandle('https://www.instagram.com/The_Subh_Journey/?hl=en') === 'the_subh_journey',
+  normalizeHandle('https://www.instagram.com/The_Subh_Journey/?hl=en'),
+);
+check('handle strips @ + lowercases', normalizeHandle('@Nimbus') === 'nimbus');
+const pendingPayload = toRpcPayload({ ...emptyLeadForm(), status: 'pending', outcome: 'interested' });
+check('pending clears outcome in payload', pendingPayload.outcome === null);
+const contactedPayload = toRpcPayload({ ...emptyLeadForm(), status: 'contacted', outcome: 'interested' });
+check('contacted keeps outcome', contactedPayload.outcome === 'interested');
+check(
+  'blank instagram → null in payload',
+  toRpcPayload(emptyLeadForm()).instagram_username === null,
+);
 
 console.log(failures === 0 ? '\nALL PASS' : `\n${failures} FAILED`);
 process.exit(failures === 0 ? 0 : 1);
