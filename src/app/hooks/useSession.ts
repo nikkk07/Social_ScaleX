@@ -8,9 +8,13 @@
  * initial bundle.
  *
  * How that constraint is met:
- *   - The Supabase client is loaded via a DEFERRED dynamic import (after
- *     first paint, on idle), so it lands in a separate async chunk, never the
- *     homepage's initial chunk.
+ *   - ZERO-COST GATE: we first read Supabase's persisted-session key from
+ *     localStorage synchronously (no import, no network, no KB). An anonymous
+ *     visitor — which is everyone except the two staff who ever sign in — has
+ *     no such key, so the 218 kB Supabase client is NEVER fetched for them.
+ *   - Only when the key is present do we DEFER (on idle) a dynamic import of
+ *     the client to confirm the session and subscribe to changes. That chunk
+ *     is separate from the homepage's initial chunk either way.
  *   - Until that chunk resolves — or if it fails (e.g. env missing) — the hook
  *     returns null, i.e. the nav degrades gracefully to signed-out.
  */
@@ -18,6 +22,19 @@ import { useEffect, useState } from 'react';
 
 export interface MarketingSession {
   userId: string;
+}
+
+// MUST match the `storageKey` passed to createClient in src/lib/supabase.ts.
+// supabase-js persists its session JSON under exactly this localStorage key.
+const AUTH_STORAGE_KEY = 'ssx-crm-auth';
+
+function hasStoredSession(): boolean {
+  try {
+    return window.localStorage.getItem(AUTH_STORAGE_KEY) != null;
+  } catch {
+    // localStorage unavailable (private mode / blocked) — treat as signed-out.
+    return false;
+  }
 }
 
 // Run a callback when the browser is idle, falling back to a short timeout.
@@ -38,6 +55,10 @@ export function useSession(): MarketingSession | null {
   const [session, setSession] = useState<MarketingSession | null>(null);
 
   useEffect(() => {
+    // No stored token → the visitor has never signed in. Skip the client
+    // entirely: no dynamic import, no 218 kB, stay signed-out.
+    if (!hasStoredSession()) return;
+
     let active = true;
     let unsubscribe: (() => void) | undefined;
 
