@@ -38,9 +38,11 @@ revoke all on public.keepalive from anon;
 revoke all on sequence public.keepalive_id_seq from anon;
 
 -- SECURITY DEFINER: runs as the owner (postgres), so it bypasses both the
--- anon table grant we just removed and RLS. It inserts exactly one heartbeat
--- row and prunes anything older than 14 days, bounding the table's size no
--- matter how often anon calls it.
+-- anon table grant we just removed and RLS. It inserts one heartbeat row and
+-- prunes rows older than 14 days.
+-- WARNING: this prune is TIME-based and does NOT bound table size — anon can
+-- call the RPC at any rate and every row survives 14 days (~10M rows fills the
+-- 500MB free tier). 090007 replaces this with a volume bound. See that file.
 create or replace function public.ping_keepalive()
 returns void
 language sql

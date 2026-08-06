@@ -122,6 +122,15 @@ select count(*) as heartbeats,
        count(*) filter (where source='anon direct write') as via_anon
 from public.keepalive;
 
+\echo '#K4 VOLUME bound (090007): hammer the RPC 150× as anon → table stays ~100 rows'
+set role anon;
+do $$ begin for i in 1..150 loop perform public.ping_keepalive(); end loop; end $$;
+reset role;
+\echo '-- expect rows <= 101 and bounded = t (time-based prune would show ~151):'
+select count(*) as rows_after_150_calls,
+       (count(*) <= 101) as bounded
+from public.keepalive;
+
 \echo ''
 \echo '════════ DEFAULT PRIVILEGES lockdown (fix #1) ════════'
 \echo '-- Create a table the way Phase 3+ will (as postgres, after 090006 ran).'
