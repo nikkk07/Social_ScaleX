@@ -18,7 +18,8 @@ psql "$DATABASE_URL" -f supabase/seed.sql   # optional dev data
 ```
 
 Order matters: `090001` (tables) → `090002` (indexes) → `090003` (functions/
-triggers) → `090004` (RLS/grants) → `090005` (RPC).
+triggers) → `090004` (RLS/grants) → `090005` (RPC) → `090006` (RLS hardening:
+default-privilege lockdown, keepalive RPC, profiles read gated to staff).
 
 ## Prove it locally (no cloud project needed)
 
@@ -27,8 +28,11 @@ bash supabase/test/verify_local.sh
 ```
 Spins up a throwaway local Postgres, replicates the Supabase-provided bits
 (`anon`/`authenticated` roles, `auth.uid()`) via `test/00_compat.sql`, applies
-every migration + seed, and runs the 8 RLS/constraint checks. `test/` is a test
-harness only — **never** run it against real Supabase.
+every migration + seed, and runs the RLS/constraint checks. Checks 1–8 are
+grant-level; checks 9–14 (plus the keepalive `K1–K3` set) reach the policy /
+`WITH CHECK` / trigger layer and report **row counts** — because "0 rows" (the
+policy ran and filtered) and "error" (the grant blocked first) are different
+proofs. `test/` is a test harness only — **never** run it against real Supabase.
 
 ## What the policies do
 
@@ -37,13 +41,22 @@ gate; grants are managed explicitly as a second layer.
 
 | Table | anon | authenticated (staff, has a profile) |
 |-------|------|--------------------------------------|
-| `profiles` | none | read all; update only own row; **cannot change own role** (trigger) |
+| `profiles` | none | **staff** read all; update only own row; **cannot change own role** (trigger) |
 | `allowed_emails` | none | owner/admin only, full CRUD |
 | `leads` | none | select/insert/update; **no delete** (archive via `deleted_at`, owner/admin only) |
 | `lead_contacts`, `lead_phones` | none | select/insert/update; no delete |
 | `lead_activities` | none | select/insert; no update/delete (audit log) |
 | `inbound_enquiries` | **insert only** | select/update/delete |
-| `keepalive` | insert/select/delete | select |
+| `keepalive` | none — heartbeat via `ping_keepalive()` RPC only | select |
+
+`profiles` read is gated on `is_staff()`, so a valid session with **no
+`profiles` row** sees zero team members (not the roster). The `keepalive`
+heartbeat is a `SECURITY DEFINER` RPC, `public.ping_keepalive()` (execute
+granted to anon only): it inserts one row and prunes rows older than 14 days,
+so the anon key can neither flood nor wipe the table. New tables inherit **no**
+anon/authenticated grant — `090006` locks Supabase's default privileges with
+`ALTER DEFAULT PRIVILEGES FOR ROLE postgres … REVOKE ALL` (pinned to
+`postgres`, the role that owns every public object in Supabase).
 
 Role checks use `public.current_app_role()` / `is_staff()` / `is_admin()` —
 `SECURITY DEFINER` helpers that read `profiles` without tripping a `profiles`

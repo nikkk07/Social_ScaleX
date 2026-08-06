@@ -61,3 +61,79 @@ select l.brand_name, l.status, l.outcome,
        (select count(*) from public.lead_contacts c where c.lead_id=l.id) as contacts,
        (select count(*) from public.lead_phones p where p.lead_id=l.id) as phones
 from public.leads l where l.brand_name='RPC Test Brand';
+
+\echo ''
+\echo '════════ POLICY-LAYER TESTS (9–14) — reach the policy, not just the grant ════════'
+\echo '-- These pass the grant check and exercise the USING / WITH CHECK / trigger'
+\echo '-- layer. Report ROW COUNTS: "0 rows" (policy ran) ≠ "error" (grant blocked).'
+
+\echo '-- SETUP: a member (non-admin) staff user via the gated-signup trigger:'
+insert into public.allowed_emails (email, role) values ('member@socialscalex.test','member') on conflict do nothing;
+insert into auth.users (id, email) values ('22222222-2222-2222-2222-222222222222','member@socialscalex.test') on conflict do nothing;
+select id, email, role from public.profiles where id='22222222-2222-2222-2222-222222222222';
+
+\echo ''
+\echo '════════ PROFILE-LESS authenticated (valid session, no profiles row) ════════'
+set app.current_user_id = '99999999-9999-9999-9999-999999999999';
+set role authenticated;
+\echo '#9  profile-less SELECT leads  → expect 0 ROWS (is_staff()=false, policy ran), NOT an error'
+select count(*) as leads_visible from public.leads;
+\echo '#10 profile-less INSERT leads  → expect BLOCKED by WITH CHECK (0 inserted)'
+insert into public.leads (brand_name) values ('ghost insert');
+reset role;
+reset app.current_user_id;
+\echo '-- confirm #10 inserted nothing (expect 0):'
+select count(*) as ghost_rows from public.leads where brand_name='ghost insert';
+
+\echo ''
+\echo '════════ MEMBER (non-admin staff) ════════'
+set app.current_user_id = '22222222-2222-2222-2222-222222222222';
+set role authenticated;
+\echo '#11 member sets deleted_at on leads  → expect BLOCKED by tg_leads_guard_soft_delete'
+update public.leads set deleted_at = now() where deleted_at is null;
+\echo '#12 member updates ANOTHER user''s profiles row (owner''s)  → expect UPDATE 0 (USING filters it out)'
+update public.profiles set full_name = 'hijacked' where id='11111111-1111-1111-1111-111111111111';
+\echo '#13 member changes OWN profiles.role → admin  → expect BLOCKED by tg_profiles_guard_role'
+update public.profiles set role='admin' where id='22222222-2222-2222-2222-222222222222';
+\echo '#14 member SELECT inbound_enquiries  → expect ALLOWED (is_staff()=true), report count'
+select count(*) as enquiries_visible from public.inbound_enquiries;
+reset role;
+reset app.current_user_id;
+\echo '-- confirm #11 archived nothing (leads with deleted_at set, expect 0):'
+select count(*) as archived_leads from public.leads where deleted_at is not null;
+\echo '-- confirm #12 changed nothing (owner full_name must NOT be "hijacked"):'
+select coalesce(full_name,'(null)') as owner_full_name from public.profiles where id='11111111-1111-1111-1111-111111111111';
+\echo '-- confirm #13 changed nothing (member role still "member"):'
+select role as member_role from public.profiles where id='22222222-2222-2222-2222-222222222222';
+
+\echo ''
+\echo '════════ KEEPALIVE lockdown (fix #3) ════════'
+set role anon;
+\echo '#K1 anon INSERT keepalive directly  → expect BLOCKED (grant revoked)'
+insert into public.keepalive (source) values ('anon direct write');
+\echo '#K2 anon DELETE keepalive directly  → expect BLOCKED (grant revoked)'
+delete from public.keepalive;
+\echo '#K3 anon calls ping_keepalive() RPC  → expect ALLOWED (SECURITY DEFINER, execute granted)'
+select public.ping_keepalive();
+reset role;
+\echo '-- confirm the RPC wrote exactly one heartbeat and no anon direct write landed:'
+select count(*) as heartbeats,
+       count(*) filter (where source='ping_keepalive') as via_rpc,
+       count(*) filter (where source='anon direct write') as via_anon
+from public.keepalive;
+
+\echo ''
+\echo '════════ DEFAULT PRIVILEGES lockdown (fix #1) ════════'
+\echo '-- Create a table the way Phase 3+ will (as postgres, after 090006 ran).'
+\echo '-- It must inherit NO anon/authenticated grant. Pre-090006 this would'
+\echo '-- have silently been GRANT ALL to both roles.'
+create table public.phase3_probe (id bigserial primary key, x text);
+\echo '#D1 anon privilege on the new table  → expect all f (false):'
+select has_table_privilege('anon','public.phase3_probe','select') as anon_select,
+       has_table_privilege('anon','public.phase3_probe','insert') as anon_insert,
+       has_table_privilege('authenticated','public.phase3_probe','select') as auth_select,
+       has_table_privilege('authenticated','public.phase3_probe','insert') as auth_insert;
+\echo '#D2 anon privilege on the new table''s sequence  → expect all f (false):'
+select has_sequence_privilege('anon','public.phase3_probe_id_seq','usage') as anon_usage,
+       has_sequence_privilege('authenticated','public.phase3_probe_id_seq','select') as auth_select;
+drop table public.phase3_probe;

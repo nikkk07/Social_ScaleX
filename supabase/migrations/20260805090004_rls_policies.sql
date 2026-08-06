@@ -11,10 +11,15 @@
 --      the SECURITY DEFINER RPC in Phase 7; activities are immutable).
 --   inbound_enquiries -> staff may delete (spam / after conversion).
 --   allowed_emails    -> owner/admin may delete (revoke an invite).
---   keepalive         -> anon may delete (the heartbeat prunes old rows).
+--   keepalive         -> (superseded by 090006: anon no longer touches the
+--                          table at all; heartbeat runs through an RPC).
 -- ─────────────────────────────────────────────────────────────────────
 
--- Reset any Supabase default privileges, then grant precisely.
+-- Revoke Supabase's grants on the tables that EXIST right now, then grant
+-- precisely below. NOTE: this does NOT touch ALTER DEFAULT PRIVILEGES, so it
+-- says nothing about tables created by later migrations — those defaults are
+-- locked in 090006 (ALTER DEFAULT PRIVILEGES ... REVOKE ALL). Adding a new
+-- table before 090006 ran would inherit Supabase's GRANT ALL to anon.
 revoke all on all tables in schema public from anon, authenticated;
 grant usage on schema public to anon, authenticated;
 
@@ -105,6 +110,10 @@ create policy inbound_staff_manage on public.inbound_enquiries
 -- anon has NO select/update/delete grant, so enquiries are never public.
 
 -- ── keepalive (anon heartbeat; staff read) ───────────────────────────
+-- NOTE: the anon grants + keepalive_anon policy below are SUPERSEDED by
+-- 090006, which revokes all anon access and routes the heartbeat through the
+-- SECURITY DEFINER ping_keepalive() RPC. Kept here only as the historical
+-- record; do not re-grant anon on this table.
 grant insert, select, delete on public.keepalive to anon;
 grant usage, select on sequence public.keepalive_id_seq to anon;
 grant select on public.keepalive to authenticated;

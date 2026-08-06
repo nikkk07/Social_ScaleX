@@ -19,6 +19,18 @@ begin
   end if;
 end $$;
 
+-- Supabase bootstraps PERMISSIVE default privileges: every table/sequence the
+-- `postgres` role creates in `public` is auto-GRANTed ALL to anon and
+-- authenticated. A bare Postgres has no such default, which would make the
+-- lockdown in migration 090004 (revoke existing) and 090006 (ALTER DEFAULT
+-- PRIVILEGES) silent no-ops here. Replicate Supabase's default so the harness
+-- actually exercises the revokes — without this, the "permission denied"
+-- results below would pass trivially.
+alter default privileges for role postgres in schema public
+  grant all on tables to anon, authenticated;
+alter default privileges for role postgres in schema public
+  grant all on sequences to anon, authenticated;
+
 create schema if not exists auth;
 grant usage on schema auth to anon, authenticated;
 
