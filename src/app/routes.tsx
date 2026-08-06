@@ -11,6 +11,7 @@ const CrmLayout = lazy(() => import("./crm/CrmLayout"));
 const LoginPage = lazy(() => import("./crm/auth/LoginPage"));
 const DashboardRoute = lazy(() => import("./crm/DashboardRoute"));
 const LeadFormRoute = lazy(() => import("./crm/LeadFormRoute"));
+const LeadDetailRoute = lazy(() => import("./crm/LeadDetailRoute"));
 
 // Neutral fallback with NO imports from ./crm, so nothing CRM-related is
 // pulled into the initial bundle just to render a spinner background.
@@ -71,6 +72,15 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={bootFallback}>
             <LeadFormRoute />
+          </Suspense>
+        ),
+      },
+      {
+        // Static "new" and "/edit" out-rank this dynamic segment.
+        path: "crm/leads/:id",
+        element: (
+          <Suspense fallback={bootFallback}>
+            <LeadDetailRoute />
           </Suspense>
         ),
       },

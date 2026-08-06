@@ -103,6 +103,28 @@ export const leadFormSchema = z
 
 export type LeadFormValues = z.infer<typeof leadFormSchema>;
 
+// Contacts-only schema for the detail view's editor (update_lead_with_contacts).
+export const contactsEditSchema = z
+  .object({
+    contacts: z.array(contactSchema),
+    lead_phones: z.array(phoneSchema),
+  })
+  .superRefine((val, ctx) => {
+    if (val.contacts.filter((c) => c.is_primary).length > 1) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['contacts'], message: 'Only one contact can be primary' });
+    }
+    if (val.lead_phones.filter((p) => p.is_primary).length > 1) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['lead_phones'], message: 'Only one office phone can be primary' });
+    }
+    val.contacts.forEach((c, i) => {
+      if (c.phones.filter((p) => p.is_primary).length > 1) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['contacts', i, 'phones'], message: 'Only one phone per contact can be primary' });
+      }
+    });
+  });
+
+export type ContactsEditValues = z.infer<typeof contactsEditSchema>;
+
 export function emptyLeadForm(): LeadFormValues {
   return {
     brand_name: '',
@@ -137,6 +159,31 @@ export function toRpcPayload(v: LeadFormValues): Record<string, unknown> {
     source: v.source,
     notes: clean(v.notes),
     owner_id: v.owner_id || null,
+    contacts: v.contacts.map((c, i) => ({
+      name: c.name.trim(),
+      designation: clean(c.designation),
+      email: clean(c.email),
+      is_primary: c.is_primary,
+      sort_order: i,
+      phones: c.phones.map((p, j) => ({
+        phone_e164: p.phone_e164.trim(),
+        label: clean(p.label),
+        is_primary: p.is_primary,
+        sort_order: j,
+      })),
+    })),
+    lead_phones: v.lead_phones.map((p, j) => ({
+      phone_e164: p.phone_e164.trim(),
+      label: clean(p.label),
+      is_primary: p.is_primary,
+      sort_order: j,
+    })),
+  };
+}
+
+// Children-only payload for update_lead_with_contacts (replace-children).
+export function toChildrenPayload(v: ContactsEditValues): Record<string, unknown> {
+  return {
     contacts: v.contacts.map((c, i) => ({
       name: c.name.trim(),
       designation: clean(c.designation),

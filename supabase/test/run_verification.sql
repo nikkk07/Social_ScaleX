@@ -146,3 +146,27 @@ select has_table_privilege('anon','public.phase3_probe','select') as anon_select
 select has_sequence_privilege('anon','public.phase3_probe_id_seq','usage') as anon_usage,
        has_sequence_privilege('authenticated','public.phase3_probe_id_seq','select') as auth_select;
 drop table public.phase3_probe;
+
+\echo ''
+\echo '════════ update_lead_with_contacts (090008) — replace-children + auth ════════'
+set app.current_user_id='11111111-1111-1111-1111-111111111111'; set role authenticated;
+select public.create_lead_with_contacts($json$
+{"brand_name":"Edit Target","contacts":[{"name":"Before","is_primary":true}]}$json$::jsonb) as edit_lead_id \gset
+reset role; reset app.current_user_id;
+
+\echo '#U1 profile-less caller → REJECTED by internal is_staff() (definer bypasses RLS)'
+set app.current_user_id='99999999-9999-9999-9999-999999999999'; set role authenticated;
+select public.update_lead_with_contacts(:'edit_lead_id', $json$
+{"contacts":[{"name":"Hijack","is_primary":true}]}$json$::jsonb);
+reset role; reset app.current_user_id;
+\echo '-- unchanged (expect Before):'
+select name from public.lead_contacts where lead_id=:'edit_lead_id';
+
+\echo '#U2 staff replace-children (expect After, exactly 1 contact)'
+set app.current_user_id='11111111-1111-1111-1111-111111111111'; set role authenticated;
+select public.update_lead_with_contacts(:'edit_lead_id', $json$
+{"contacts":[{"name":"After","is_primary":true,"sort_order":0,"phones":[{"phone_e164":"+919000000000","is_primary":true}]}]}$json$::jsonb);
+reset role; reset app.current_user_id;
+select (select name from public.lead_contacts where lead_id=:'edit_lead_id') as contact,
+       (select count(*) from public.lead_contacts where lead_id=:'edit_lead_id') as n_contacts,
+       (select kind from public.lead_activities where lead_id=:'edit_lead_id' and kind='edited' limit 1) as logged;

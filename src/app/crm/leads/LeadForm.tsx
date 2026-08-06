@@ -1,17 +1,21 @@
-// Add / edit a lead. ADD creates the lead + contacts + phones atomically via
-// the create_lead_with_contacts RPC (one transaction — a partial failure never
-// orphans rows). EDIT updates the lead-level fields via the leads row; editing
-// existing contacts/phones lands with the lead detail view (a reconcile against
-// the single-primary partial-unique indexes), so it's out of scope here.
-import React, { useEffect } from 'react';
-import { useForm, useFieldArray, type Control, type UseFormRegister } from 'react-hook-form';
+// Add / edit a lead. ADD creates lead + contacts + phones atomically via the
+// create_lead_with_contacts RPC. EDIT updates lead-level fields via the leads
+// row (contact editing lives on the detail view via update_lead_with_contacts).
+//
+// Also here: duplicate detection (handle + phone, non-blocking), an unsaved-
+// changes guard (in-app nav + tab close), Esc-to-leave, and ⌘/Ctrl+Enter save.
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { toast } from 'sonner';
-import { Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import type { Json } from '../../../lib/database.types';
 import { useProfiles } from './useProfiles';
+import { ContactsFields } from './ContactsFields';
+import { useDuplicateCheck, type DupLead } from './useDuplicateCheck';
+import { useUnsavedGuard } from './useUnsavedGuard';
+import { UnsavedChangesDialog } from './UnsavedChangesDialog';
 import {
   leadFormSchema,
   toRpcPayload,
@@ -26,13 +30,25 @@ const errClass = 'mt-1 text-xs text-[var(--destructive)]';
 
 function friendlyError(e: unknown): string {
   const msg = (e as { message?: string })?.message ?? '';
-  if (/leads_instagram_unique/.test(msg))
-    return 'A lead with that Instagram handle already exists.';
-  if (/outcome_requires_contacted/.test(msg))
-    return 'An outcome can only be set once the lead is contacted.';
-  if (/lead_found_not_future/.test(msg))
-    return 'Found date can’t be in the future.';
+  if (/leads_instagram_unique/.test(msg)) return 'A lead with that Instagram handle already exists.';
+  if (/outcome_requires_contacted/.test(msg)) return 'An outcome can only be set once the lead is contacted.';
+  if (/lead_found_not_future/.test(msg)) return 'Found date can’t be in the future.';
   return msg || 'Something went wrong. Please try again.';
+}
+
+function DupBanner({ label, lead }: { label: string; lead: DupLead }) {
+  return (
+    <div
+      role="alert"
+      className="rounded-lg border border-[color-mix(in_oklab,var(--color-amber)_45%,transparent)] bg-[color-mix(in_oklab,var(--color-amber)_12%,transparent)] px-3 py-2 text-sm text-[var(--color-amber)]"
+    >
+      {label}{' '}
+      <Link to={`/crm/leads/${lead.id}`} className="font-semibold underline hover:no-underline">
+        {lead.brand_name}
+      </Link>
+      . You can still save.
+    </div>
+  );
 }
 
 export function LeadForm({
@@ -46,6 +62,9 @@ export function LeadForm({
 }) {
   const navigate = useNavigate();
   const profiles = useProfiles();
+  const dup = useDuplicateCheck(leadId);
+  const [dupConfirm, setDupConfirm] = useState(false);
+
   const {
     register,
     control,
@@ -53,35 +72,34 @@ export function LeadForm({
     watch,
     setValue,
     getValues,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isDirty },
   } = useForm<LeadFormValues>({
     resolver: zodResolver(leadFormSchema),
     defaultValues: initial,
   });
 
+  const { blocker, markSaved } = useUnsavedGuard(isDirty);
+
   const status = watch('status');
   useEffect(() => {
-    if (status === 'pending' && getValues('outcome') !== '') {
-      setValue('outcome', '');
-    }
+    if (status === 'pending' && getValues('outcome') !== '') setValue('outcome', '');
   }, [status, getValues, setValue]);
 
-  const contacts = useFieldArray({ control, name: 'contacts' });
-  const officePhones = useFieldArray({ control, name: 'lead_phones' });
-
-  // Enforce single-primary in the UI (the DB enforces it too).
-  const setPrimaryContact = (idx: number, checked: boolean) => {
-    getValues('contacts').forEach((_, i) =>
-      setValue(`contacts.${i}.is_primary`, checked && i === idx),
-    );
-  };
-  const setPrimaryOfficePhone = (idx: number, checked: boolean) => {
-    getValues('lead_phones').forEach((_, i) =>
-      setValue(`lead_phones.${i}.is_primary`, checked && i === idx),
-    );
-  };
+  // Any edit invalidates a prior "save anyway" acknowledgement.
+  useEffect(() => {
+    const sub = watch(() => setDupConfirm(false));
+    return () => sub.unsubscribe();
+  }, [watch]);
 
   const onSubmit = async (values: LeadFormValues) => {
+    // Re-run duplicate checks (blur results go stale). Non-blocking: first
+    // submit surfaces them and flips to "Save anyway"; second submit proceeds.
+    const anyDup = await dup.checkAll(values);
+    if (anyDup && !dupConfirm) {
+      setDupConfirm(true);
+      toast.warning('Possible duplicate — review the warning, then Save anyway.');
+      return;
+    }
     try {
       if (mode === 'add') {
         const { error } = await supabase.rpc('create_lead_with_contacts', {
@@ -90,27 +108,35 @@ export function LeadForm({
         if (error) throw error;
         toast.success('Lead created.');
       } else {
-        const { error } = await supabase
-          .from('leads')
-          .update(toUpdatePayload(values))
-          .eq('id', leadId!);
+        const { error } = await supabase.from('leads').update(toUpdatePayload(values)).eq('id', leadId!);
         if (error) throw error;
         toast.success('Lead updated.');
       }
-      navigate('/crm');
+      markSaved(); // successful save → no unsaved-changes prompt on redirect
+      navigate(mode === 'edit' && leadId ? `/crm/leads/${leadId}` : '/crm');
     } catch (e) {
       toast.error(friendlyError(e));
     }
   };
 
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault();
+      void handleSubmit(onSubmit)();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      navigate('/crm'); // guard intercepts if dirty
+    }
+  };
+
+  const handleReg = register('instagram_username');
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
-      <h1 className="mb-6 text-lg font-semibold">
-        {mode === 'add' ? 'Add lead' : 'Edit lead'}
-      </h1>
+      <UnsavedChangesDialog blocker={blocker} />
+      <h1 className="mb-6 text-lg font-semibold">{mode === 'add' ? 'Add lead' : 'Edit lead'}</h1>
 
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-8">
-        {/* ── Lead fields ── */}
+      <form onSubmit={handleSubmit(onSubmit)} onKeyDown={onKeyDown} noValidate className="space-y-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label htmlFor="brand_name" className={labelClass}>
@@ -120,15 +146,24 @@ export function LeadForm({
             {errors.brand_name && <p className={errClass}>{errors.brand_name.message}</p>}
           </div>
 
-          <div>
+          <div className="sm:col-span-2">
             <label htmlFor="instagram_username" className={labelClass}>Instagram</label>
             <input
               id="instagram_username"
               placeholder="@handle or profile URL"
               className={inputClass}
-              {...register('instagram_username')}
+              {...handleReg}
+              onBlur={(e) => {
+                handleReg.onBlur(e);
+                dup.checkHandle(e.target.value);
+              }}
             />
             <p className="mt-1 text-xs text-white/35">Stored as the lowercase handle.</p>
+            {dup.handleDup && (
+              <div className="mt-2">
+                <DupBanner label="This handle is already on" lead={dup.handleDup} />
+              </div>
+            )}
           </div>
 
           <div>
@@ -149,12 +184,7 @@ export function LeadForm({
 
           <div>
             <label htmlFor="outcome" className={labelClass}>Outcome</label>
-            <select
-              id="outcome"
-              className={inputClass}
-              disabled={status !== 'contacted'}
-              {...register('outcome')}
-            >
+            <select id="outcome" className={inputClass} disabled={status !== 'contacted'} {...register('outcome')}>
               <option value="">—</option>
               <option value="interested">Interested</option>
               <option value="not_interested">Not interested</option>
@@ -193,96 +223,43 @@ export function LeadForm({
           </div>
         </div>
 
-        {/* ── Contacts + phones (add mode only) ── */}
         {mode === 'add' ? (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-white/80">Contacts</h2>
-              <button
-                type="button"
-                onClick={() =>
-                  contacts.append({ name: '', designation: '', email: '', is_primary: contacts.fields.length === 0, phones: [] })
-                }
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm text-white/80 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
-              >
-                <Plus size={14} /> Add contact
-              </button>
-            </div>
-            {typeof errors.contacts?.message === 'string' && (
-              <p className={errClass}>{errors.contacts.message}</p>
-            )}
-            {contacts.fields.map((f, i) => (
-              <ContactCard
-                key={f.id}
-                index={i}
-                control={control}
-                register={register}
-                onRemove={() => contacts.remove(i)}
-                onPrimary={(checked) => setPrimaryContact(i, checked)}
-                nameError={errors.contacts?.[i]?.name?.message}
-                emailError={errors.contacts?.[i]?.email?.message}
-                phonesError={
-                  typeof errors.contacts?.[i]?.phones?.message === 'string'
-                    ? (errors.contacts?.[i]?.phones?.message as string)
-                    : undefined
-                }
-                phoneItemError={(j) =>
-                  errors.contacts?.[i]?.phones?.[j]?.phone_e164?.message
-                }
-              />
-            ))}
-
-            <div className="flex items-center justify-between pt-2">
-              <h2 className="text-sm font-semibold text-white/80">Office phones</h2>
-              <button
-                type="button"
-                onClick={() =>
-                  officePhones.append({ phone_e164: '', label: '', is_primary: officePhones.fields.length === 0 })
-                }
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm text-white/80 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
-              >
-                <Plus size={14} /> Add office phone
-              </button>
-            </div>
-            {typeof errors.lead_phones?.message === 'string' && (
-              <p className={errClass}>{errors.lead_phones.message}</p>
-            )}
-            {officePhones.fields.map((f, i) => (
-              <div key={f.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--border)] p-3">
-                <input placeholder="+91…" className={`${inputClass} flex-1`} {...register(`lead_phones.${i}.phone_e164`)} />
-                <input placeholder="Label" className={`${inputClass} w-32`} {...register(`lead_phones.${i}.label`)} />
-                <label className="flex items-center gap-1.5 text-xs text-white/60">
-                  <input
-                    type="checkbox"
-                    {...register(`lead_phones.${i}.is_primary`)}
-                    onChange={(e) => setPrimaryOfficePhone(i, e.target.checked)}
-                  />
-                  Primary
-                </label>
-                <button type="button" onClick={() => officePhones.remove(i)} aria-label="Remove phone" className="text-white/40 hover:text-[var(--destructive)]">
-                  <Trash2 size={15} />
-                </button>
-                {errors.lead_phones?.[i]?.phone_e164 && (
-                  <p className={`${errClass} w-full`}>{errors.lead_phones[i]?.phone_e164?.message}</p>
-                )}
+          <>
+            <ContactsFields
+              control={control}
+              register={register}
+              getValues={getValues}
+              setValue={setValue}
+              errors={errors}
+              onPhoneBlur={dup.checkPhone}
+            />
+            {Object.entries(dup.phoneDups).length > 0 && (
+              <div className="space-y-2">
+                {Object.entries(dup.phoneDups).map(([phone, lead]) => (
+                  <DupBanner key={phone} label={`${phone} is already on`} lead={lead} />
+                ))}
               </div>
-            ))}
-          </div>
+            )}
+          </>
         ) : (
           <p className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-3 text-xs text-white/40">
-            Contacts and phone numbers are managed from the lead’s detail view
-            (coming in a later phase). This form edits the lead’s own fields.
+            Contacts and phone numbers are edited on the lead’s detail view.
           </p>
         )}
 
-        {/* ── Actions ── */}
         <div className="flex items-center gap-3">
           <button
             type="submit"
             disabled={isSubmitting}
             className="rounded-lg bg-[var(--color-violet-cta)] px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
           >
-            {isSubmitting ? 'Saving…' : mode === 'add' ? 'Create lead' : 'Save changes'}
+            {isSubmitting
+              ? 'Saving…'
+              : dupConfirm
+                ? 'Save anyway'
+                : mode === 'add'
+                  ? 'Create lead'
+                  : 'Save changes'}
           </button>
           <button
             type="button"
@@ -291,95 +268,9 @@ export function LeadForm({
           >
             Cancel
           </button>
+          <span className="ml-auto hidden text-xs text-white/30 sm:inline">⌘/Ctrl+Enter to save · Esc to leave</span>
         </div>
       </form>
-    </div>
-  );
-}
-
-function ContactCard({
-  index,
-  control,
-  register,
-  onRemove,
-  onPrimary,
-  nameError,
-  emailError,
-  phonesError,
-  phoneItemError,
-}: {
-  index: number;
-  control: Control<LeadFormValues>;
-  register: UseFormRegister<LeadFormValues>;
-  onRemove: () => void;
-  onPrimary: (checked: boolean) => void;
-  nameError?: string;
-  emailError?: string;
-  phonesError?: string;
-  phoneItemError: (j: number) => string | undefined;
-}) {
-  const phones = useFieldArray({ control, name: `contacts.${index}.phones` });
-  return (
-    <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <div>
-          <label className={labelClass}>Name <span className="text-[var(--destructive)]">*</span></label>
-          <input className={inputClass} {...register(`contacts.${index}.name`)} />
-          {nameError && <p className={errClass}>{nameError}</p>}
-        </div>
-        <div>
-          <label className={labelClass}>Designation</label>
-          <input className={inputClass} {...register(`contacts.${index}.designation`)} />
-        </div>
-        <div>
-          <label className={labelClass}>Email</label>
-          <input className={inputClass} {...register(`contacts.${index}.email`)} />
-          {emailError && <p className={errClass}>{emailError}</p>}
-        </div>
-        <div className="flex items-end justify-between">
-          <label className="flex items-center gap-1.5 text-sm text-white/70">
-            <input
-              type="checkbox"
-              {...register(`contacts.${index}.is_primary`)}
-              onChange={(e) => onPrimary(e.target.checked)}
-            />
-            Primary contact
-          </label>
-          <button type="button" onClick={onRemove} aria-label="Remove contact" className="text-white/40 hover:text-[var(--destructive)]">
-            <Trash2 size={16} />
-          </button>
-        </div>
-      </div>
-
-      <div className="mt-3 border-t border-[var(--border)] pt-3">
-        <div className="mb-2 flex items-center justify-between">
-          <span className="text-xs font-medium text-white/60">Phones</span>
-          <button
-            type="button"
-            onClick={() => phones.append({ phone_e164: '', label: '', is_primary: phones.fields.length === 0 })}
-            className="inline-flex items-center gap-1 text-xs text-[var(--color-violet-light)] hover:underline"
-          >
-            <Plus size={12} /> Add phone
-          </button>
-        </div>
-        {phonesError && <p className={errClass}>{phonesError}</p>}
-        <div className="space-y-2">
-          {phones.fields.map((pf, j) => (
-            <div key={pf.id} className="flex flex-wrap items-center gap-2">
-              <input placeholder="+91…" className={`${inputClass} flex-1`} {...register(`contacts.${index}.phones.${j}.phone_e164`)} />
-              <input placeholder="Label" className={`${inputClass} w-28`} {...register(`contacts.${index}.phones.${j}.label`)} />
-              <label className="flex items-center gap-1 text-xs text-white/60">
-                <input type="checkbox" {...register(`contacts.${index}.phones.${j}.is_primary`)} />
-                Primary
-              </label>
-              <button type="button" onClick={() => phones.remove(j)} aria-label="Remove phone" className="text-white/40 hover:text-[var(--destructive)]">
-                <Trash2 size={14} />
-              </button>
-              {phoneItemError(j) && <p className={`${errClass} w-full`}>{phoneItemError(j)}</p>}
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

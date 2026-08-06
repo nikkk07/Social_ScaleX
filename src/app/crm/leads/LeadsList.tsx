@@ -466,7 +466,9 @@ function DesktopTable({
             return (
               <TableRow key={lead.id} className="border-[var(--border)]">
                 <TableCell className="pl-4 font-medium text-white/90">
-                  {lead.brand_name}
+                  <Link to={`/crm/leads/${lead.id}`} className="hover:text-[var(--color-violet-light)] hover:underline">
+                    {lead.brand_name}
+                  </Link>
                 </TableCell>
                 <TableCell className="text-white/60">
                   <InstagramLink handle={lead.instagram_username} />
@@ -524,7 +526,9 @@ function MobileCards({
           >
             <div className="mb-3 flex items-start justify-between gap-2">
               <div>
-                <div className="font-medium text-white/90">{lead.brand_name}</div>
+                <Link to={`/crm/leads/${lead.id}`} className="font-medium text-white/90 hover:text-[var(--color-violet-light)]">
+                  {lead.brand_name}
+                </Link>
                 <div className="text-sm">
                   <InstagramLink handle={lead.instagram_username} />
                 </div>

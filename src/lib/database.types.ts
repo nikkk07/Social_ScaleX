@@ -313,6 +313,11 @@ export interface Database {
         Args: { payload: Json };
         Returns: string;
       };
+      // 090008 — replace-children editor (SECURITY DEFINER, re-checks is_staff).
+      update_lead_with_contacts: {
+        Args: { p_lead_id: string; payload: Json };
+        Returns: undefined;
+      };
       // 090003 — role helpers (SECURITY DEFINER).
       is_staff: {
         Args: Record<PropertyKey, never>;
