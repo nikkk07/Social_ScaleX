@@ -1,62 +1,41 @@
-// Fetch the leads list. Staff-only access is enforced by RLS (leads_select →
-// is_staff()); a provisioned user reaches this, an unprovisioned one never does
-// (RequireAuth stops them). Soft-deleted rows (deleted_at) are excluded.
+// Fetch ONE server-side page of leads for the given query. Staff-only access is
+// enforced by RLS (leads_select → is_staff()); soft-deleted rows are excluded
+// in the query. Distinct loading / ready / error states — zero rows is a valid
+// ready state (empty or no-match), never an error.
 //
-// States mirror the AuthProvider discipline: distinct loading / ready / error,
-// never a bare boolean. "Zero rows" is a valid ready state (empty list), NOT an
-// error — the same distinction that mattered in Phase 3.
+// The reqIdRef supersession guard matters MORE with debounced search + rapid
+// filter changes: several fetches can be in flight; only the newest may write.
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { supabase } from '../../../lib/supabase';
-import type { Database } from '../../../lib/database.types';
+import { fetchLeadsPage, type LeadRow, type LeadsQuery } from './leadsQuery';
 
-// Only the columns the list needs — keeps the payload small.
-export type LeadRow = Pick<
-  Database['public']['Tables']['leads']['Row'],
-  | 'id'
-  | 'brand_name'
-  | 'instagram_username'
-  | 'status'
-  | 'outcome'
-  | 'source'
-  | 'lead_found_on'
-  | 'created_at'
->;
-
-const COLUMNS =
-  'id, brand_name, instagram_username, status, outcome, source, lead_found_on, created_at';
+export type { LeadRow };
 
 export type LeadsState =
   | { status: 'loading' }
-  | { status: 'ready'; leads: LeadRow[] }
+  | { status: 'ready'; leads: LeadRow[]; total: number }
   | { status: 'error' };
 
-export function useLeads(): LeadsState & { refetch: () => void } {
+export function useLeads(query: LeadsQuery): LeadsState & { refetch: () => void } {
   const [state, setState] = useState<LeadsState>({ status: 'loading' });
   const reqIdRef = useRef(0);
 
   const load = useCallback(async () => {
     const reqId = ++reqIdRef.current;
     setState({ status: 'loading' });
-
-    const { data, error } = await supabase
-      .from('leads')
-      .select(COLUMNS)
-      .is('deleted_at', null)
-      .order('created_at', { ascending: false });
-
-    if (reqId !== reqIdRef.current) return; // superseded by a newer load
-
-    if (error) {
+    try {
+      const { rows, total } = await fetchLeadsPage(query);
+      if (reqId !== reqIdRef.current) return; // superseded by a newer load
+      setState({ status: 'ready', leads: rows, total });
+    } catch {
+      if (reqId !== reqIdRef.current) return;
       setState({ status: 'error' });
-      return;
     }
-    setState({ status: 'ready', leads: (data ?? []) as LeadRow[] });
-  }, []);
+  }, [query]);
 
   useEffect(() => {
     void load();
     return () => {
-      reqIdRef.current++; // ignore any in-flight result after unmount
+      reqIdRef.current++; // ignore any in-flight result after unmount/refetch
     };
   }, [load]);
 
