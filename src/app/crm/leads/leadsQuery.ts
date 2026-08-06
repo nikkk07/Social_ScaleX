@@ -68,14 +68,19 @@ export type LeadRow = Pick<
   | 'owner_id'
 > & { lead_contacts: LeadContactRow[] };
 
-// Strip characters that are STRUCTURAL in PostgREST's or()/filter grammar
-// (commas, parens) and LIKE/ilike wildcards (%, _, and PostgREST's * alias)
-// plus the escape char, so a user typing `%` or `,` can't corrupt the filter.
-// The term is then matched literally, wrapped in our own wildcards.
+// Strip only what's STRUCTURAL in PostgREST's or()/filter grammar (commas,
+// parens), the `%` wildcard, and the escape char `\`, so a user typing `%` or
+// `,` can't corrupt the filter. We deliberately KEEP `_` and `*`:
+//   - `_` is a real character in handles (e.g. "the_subh_journey"); stripping
+//     it makes that lead unfindable. In ILIKE `_` matches any single char, so
+//     an unstripped "the_subh" still matches "the_subh_journey" — harmless.
+//   - `*` isn't special in ILIKE at all.
+// (For strict-literal matching we'd instead escape `\_`/`\%` with an ESCAPE
+// clause, which PostgREST's .ilike doesn't expose — so keep-and-tolerate wins.)
 export function sanitizeSearch(raw: string): string {
   return raw
     .replace(/[,()]/g, ' ')
-    .replace(/[%_*\\]/g, '')
+    .replace(/[%\\]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -118,19 +123,36 @@ export async function fetchLeadsPage(q: LeadsQuery): Promise<LeadsPage> {
 
 // Every matching row, fetched server-side in pages (for CSV export). Never the
 // on-screen page only, and never one-query-per-row.
+//
+// Driven by the exact COUNT, not by "a short batch means we're done" — if the
+// server's row cap (db-max-rows) is lower than EXPORT_PAGE_SIZE, EVERY batch
+// comes back short and the old "< PAGE_SIZE → stop" logic would export one page
+// and silently drop the rest (the very truncation 4b exists to prevent). We
+// advance by the number of rows actually returned (robust to any cap) and fail
+// loudly if a page comes back empty before we've reached the total.
 export async function fetchAllLeads(q: LeadsQuery): Promise<LeadRow[]> {
   const all: LeadRow[] = [];
-  for (let page = 0; ; page++) {
-    const from = page * EXPORT_PAGE_SIZE;
+  let total = Infinity;
+  while (all.length < total) {
+    const from = all.length;
     const to = from + EXPORT_PAGE_SIZE - 1;
-    const { data, error } = await filteredLeads(q, false)
+    const { data, error, count } = await filteredLeads(q, true)
       .order(q.sort, { ascending: q.dir === 'asc' })
       .order('id', { ascending: true })
       .range(from, to);
     if (error) throw error;
+    if (typeof count === 'number') total = count;
     const batch = (data ?? []) as unknown as LeadRow[];
+    if (batch.length === 0) {
+      if (all.length < total) {
+        throw new Error(
+          `Export incomplete: fetched ${all.length} of ${total} leads before ` +
+            `the server returned an empty page (row cap lower than expected?).`,
+        );
+      }
+      break;
+    }
     all.push(...batch);
-    if (batch.length < EXPORT_PAGE_SIZE) break;
   }
   return all;
 }
@@ -174,17 +196,44 @@ export function toSearchParams(q: LeadsQuery): URLSearchParams {
   return p;
 }
 
+// Whitelists so a stale or hand-edited URL can't push an invalid value into a
+// PostgREST filter (which would 400 and blank the screen). Anything unknown
+// falls back to a safe default rather than being cast through with `as`.
+const SORT_COLUMNS: readonly SortColumn[] = [
+  'lead_found_on',
+  'brand_name',
+  'status',
+  'created_at',
+];
+const STATUSES: readonly LeadStatus[] = ['pending', 'contacted'];
+const OUTCOMES: readonly LeadOutcome[] = ['interested', 'not_interested'];
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+function oneOf<T extends string>(
+  value: string | null,
+  allowed: readonly T[],
+  fallback: T,
+): T {
+  return value != null && (allowed as readonly string[]).includes(value)
+    ? (value as T)
+    : fallback;
+}
+
 export function fromSearchParams(p: URLSearchParams): LeadsQuery {
   const num = parseInt(p.get('page') ?? '1', 10);
+  const owner = p.get('owner') ?? '';
+  const from = p.get('from') ?? '';
+  const to = p.get('to') ?? '';
   return {
     q: p.get('q') ?? '',
-    status: (p.get('status') as LeadStatus | null) ?? '',
-    outcome: (p.get('outcome') as LeadOutcome | null) ?? '',
-    owner: p.get('owner') ?? '',
-    foundFrom: p.get('from') ?? '',
-    foundTo: p.get('to') ?? '',
-    sort: (p.get('sort') as SortColumn | null) ?? DEFAULT_QUERY.sort,
-    dir: (p.get('dir') as 'asc' | 'desc' | null) ?? DEFAULT_QUERY.dir,
+    status: oneOf(p.get('status'), STATUSES, ''),
+    outcome: oneOf(p.get('outcome'), OUTCOMES, ''),
+    owner: UUID_RE.test(owner) ? owner : '',
+    foundFrom: DATE_RE.test(from) ? from : '',
+    foundTo: DATE_RE.test(to) ? to : '',
+    sort: oneOf(p.get('sort'), SORT_COLUMNS, DEFAULT_QUERY.sort),
+    dir: oneOf(p.get('dir'), ['asc', 'desc'] as const, DEFAULT_QUERY.dir),
     page: Number.isFinite(num) && num > 0 ? num : 1,
   };
 }
@@ -197,8 +246,15 @@ export function hasActiveFilters(q: LeadsQuery): boolean {
 }
 
 // ── CSV ───────────────────────────────────────────────────────────────
+// Neutralise spreadsheet formula injection BEFORE quoting. Excel/Sheets execute
+// a cell that begins with = + - @ (or a leading tab/CR) on open. This is
+// reachable end-to-end: a stranger's public-form submission becomes an enquiry,
+// then (Phase 8) a lead_contacts.name, then a CSV cell that fires on our
+// machine. Prefixing a single quote defuses it; the quote is standard, harmless
+// text once imported.
 function csvCell(value: string): string {
-  const s = value ?? '';
+  let s = value ?? '';
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
