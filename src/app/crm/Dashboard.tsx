@@ -1,7 +1,8 @@
-// Placeholder /crm dashboard. The real lead UI arrives Phase 4+. This exists
-// so route protection, provisioning, and sign-out can be verified end to end.
+// The /crm shell: top bar + the leads list (Phase 4). Route protection and
+// provisioning are handled upstream by RequireAuth.
 import React from 'react';
 import { useAuth } from './auth/AuthProvider';
+import { LeadsList } from './leads/LeadsList';
 
 export default function Dashboard() {
   const { user, profile, role, signOut } = useAuth();
@@ -25,14 +26,8 @@ export default function Dashboard() {
           </button>
         </div>
       </header>
-      <main className="px-6 py-16">
-        <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-2xl font-semibold mb-2">You’re in.</h1>
-          <p className="text-sm text-white/50">
-            Lead management lands in the next phase. This placeholder confirms
-            auth, provisioning, and route protection are working.
-          </p>
-        </div>
+      <main>
+        <LeadsList />
       </main>
     </div>
   );
