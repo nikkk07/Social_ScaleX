@@ -280,7 +280,14 @@ export interface Database {
           converted_lead_id?: string | null;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'inbound_enquiries_converted_lead_id_fkey';
+            columns: ['converted_lead_id'];
+            referencedRelation: 'leads';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       keepalive: {
         Row: {

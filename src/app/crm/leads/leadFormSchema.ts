@@ -148,8 +148,18 @@ const clean = (s: string | undefined) => {
 
 // Payload for create_lead_with_contacts(payload jsonb). owner_id omitted when
 // blank so the RPC defaults it to auth.uid().
-export function toRpcPayload(v: LeadFormValues): Record<string, unknown> {
+//
+// `enquiryId` (090010) makes this a CONVERSION: the RPC stamps
+// inbound_enquiries.converted_lead_id inside the same transaction that creates
+// the lead, so we can never end up with a lead whose enquiry still reads
+// unconverted. Omitted entirely when absent — the RPC treats a missing key as
+// "just create a lead".
+export function toRpcPayload(
+  v: LeadFormValues,
+  enquiryId?: string,
+): Record<string, unknown> {
   return {
+    ...(enquiryId ? { enquiry_id: enquiryId } : {}),
     brand_name: v.brand_name.trim(),
     instagram_username: normalizeHandle(v.instagram_username ?? '') || null,
     address: clean(v.address),

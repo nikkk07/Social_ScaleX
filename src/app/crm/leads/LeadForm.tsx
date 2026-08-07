@@ -31,8 +31,14 @@ const errClass = 'mt-1 text-xs text-[var(--destructive)]';
 function friendlyError(e: unknown): string {
   const msg = (e as { message?: string })?.message ?? '';
   if (/leads_instagram_unique/.test(msg)) return 'A lead with that Instagram handle already exists.';
+  if (/leads_instagram_normalised/.test(msg)) return 'That Instagram handle isn’t valid — use the bare handle, e.g. nimbuscoffee.';
+  if (/lead_phones_e164/.test(msg)) return 'A phone number isn’t in E.164 format, e.g. +918077727669.';
   if (/outcome_requires_contacted/.test(msg)) return 'An outcome can only be set once the lead is contacted.';
   if (/lead_found_not_future/.test(msg)) return 'Found date can’t be in the future.';
+  // 090010: the enquiry was converted by someone else between opening this
+  // form and saving. The lead was rolled back with it, so nothing was created.
+  if (/enquiry_already_converted/.test(msg))
+    return 'That enquiry was already converted by someone else. Nothing was saved — reopen it from Enquiries to see the lead.';
   return msg || 'Something went wrong. Please try again.';
 }
 
@@ -55,10 +61,13 @@ export function LeadForm({
   mode,
   leadId,
   initial,
+  enquiry,
 }: {
   mode: 'add' | 'edit';
   leadId?: string;
   initial: LeadFormValues;
+  // Present only when converting a website enquiry (add mode).
+  enquiry?: { id: string; name: string };
 }) {
   const navigate = useNavigate();
   const profiles = useProfiles();
@@ -103,21 +112,32 @@ export function LeadForm({
     try {
       if (mode === 'add') {
         const { error } = await supabase.rpc('create_lead_with_contacts', {
-          payload: toRpcPayload(values) as unknown as Json,
+          payload: toRpcPayload(values, enquiry?.id) as unknown as Json,
         });
         if (error) throw error;
-        toast.success('Lead created.');
+        toast.success(enquiry ? 'Enquiry converted to a lead.' : 'Lead created.');
       } else {
         const { error } = await supabase.from('leads').update(toUpdatePayload(values)).eq('id', leadId!);
         if (error) throw error;
         toast.success('Lead updated.');
       }
       markSaved(); // successful save → no unsaved-changes prompt on redirect
-      navigate(mode === 'edit' && leadId ? `/crm/leads/${leadId}` : '/crm');
+      // Back to where the work came from: the queue for a conversion, the
+      // lead itself after an edit, the list otherwise.
+      navigate(
+        mode === 'edit' && leadId
+          ? `/crm/leads/${leadId}`
+          : enquiry
+            ? '/crm/enquiries'
+            : '/crm',
+      );
     } catch (e) {
       toast.error(friendlyError(e));
     }
   };
+
+  // Cancel / Esc go back where the work came from.
+  const cancelTo = enquiry ? '/crm/enquiries' : '/crm';
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
@@ -125,7 +145,7 @@ export function LeadForm({
       void handleSubmit(onSubmit)();
     } else if (e.key === 'Escape') {
       e.preventDefault();
-      navigate('/crm'); // guard intercepts if dirty
+      navigate(cancelTo); // guard intercepts if dirty
     }
   };
 
@@ -134,7 +154,19 @@ export function LeadForm({
   return (
     <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6">
       <UnsavedChangesDialog blocker={blocker} />
-      <h1 className="mb-6 text-lg font-semibold">{mode === 'add' ? 'Add lead' : 'Edit lead'}</h1>
+      <h1 className={`text-lg font-semibold ${enquiry ? 'mb-2' : 'mb-6'}`}>
+        {mode === 'edit' ? 'Edit lead' : enquiry ? 'Convert enquiry' : 'Add lead'}
+      </h1>
+
+      {enquiry && (
+        <div className="mb-6 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 text-sm text-white/60">
+          Converting the website enquiry from{' '}
+          <span className="font-medium text-white/90">{enquiry.name}</span>. Their
+          details are prefilled below — add the{' '}
+          <span className="font-medium text-white/90">brand name</span>, since an
+          enquiry only tells us who got in touch, not the business.
+        </div>
+      )}
 
       <form onSubmit={handleSubmit(onSubmit)} onKeyDown={onKeyDown} noValidate className="space-y-8">
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -257,13 +289,15 @@ export function LeadForm({
               ? 'Saving…'
               : dupConfirm
                 ? 'Save anyway'
-                : mode === 'add'
-                  ? 'Create lead'
-                  : 'Save changes'}
+                : mode === 'edit'
+                  ? 'Save changes'
+                  : enquiry
+                    ? 'Create lead & close enquiry'
+                    : 'Create lead'}
           </button>
           <button
             type="button"
-            onClick={() => navigate('/crm')}
+            onClick={() => navigate(cancelTo)}
             className="rounded-lg border border-[var(--border)] px-4 py-2.5 text-sm text-white/80 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
           >
             Cancel

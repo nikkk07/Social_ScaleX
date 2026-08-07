@@ -15,6 +15,7 @@ import {
   MoreHorizontal,
   Plus,
   Search,
+  X,
 } from 'lucide-react';
 import { supabase } from '../../../lib/supabase';
 import { Badge } from '../../components/ui/badge';
@@ -40,6 +41,7 @@ import { PhoneActions } from './PhoneActions';
 import {
   DEFAULT_QUERY,
   PAGE_SIZE,
+  RECENT_DAYS,
   fetchAllLeads,
   fromSearchParams,
   hasActiveFilters,
@@ -261,13 +263,18 @@ export function LeadsList() {
             />
           </div>
 
+          {/* Disabled (not hidden) while "needs follow-up" is on: that view
+              already pins status=contacted + no outcome, so leaving these live
+              would let you pick a combination the query quietly ignores. */}
           <select
             aria-label="Filter by status"
-            value={query.status}
+            value={query.followup ? 'contacted' : query.status}
+            disabled={query.followup}
+            title={query.followup ? 'Set by the follow-up view' : undefined}
             onChange={(e) =>
               setFilters({ status: e.target.value as LeadsQuery['status'] })
             }
-            className={inputClass}
+            className={`${inputClass} disabled:opacity-50`}
           >
             <option value="">Any status</option>
             <option value="pending">Pending</option>
@@ -276,11 +283,13 @@ export function LeadsList() {
 
           <select
             aria-label="Filter by outcome"
-            value={query.outcome}
+            value={query.followup ? '' : query.outcome}
+            disabled={query.followup}
+            title={query.followup ? 'Set by the follow-up view' : undefined}
             onChange={(e) =>
               setFilters({ outcome: e.target.value as LeadsQuery['outcome'] })
             }
-            className={inputClass}
+            className={`${inputClass} disabled:opacity-50`}
           >
             <option value="">Any outcome</option>
             <option value="interested">Interested</option>
@@ -332,6 +341,26 @@ export function LeadsList() {
             </button>
           )}
         </div>
+
+        {/* Arriving from a dashboard tile, the list is filtered by something
+            none of the controls above show. Without this the view just looks
+            mysteriously short. */}
+        {(query.followup || query.recent) && (
+          <div className="flex flex-wrap items-center gap-2">
+            {query.followup && (
+              <FilterChip
+                label={`Needs follow-up · contacted over ${RECENT_DAYS} days ago, no outcome`}
+                onClear={() => setFilters({ followup: false })}
+              />
+            )}
+            {query.recent && (
+              <FilterChip
+                label={`Added in the last ${RECENT_DAYS} days`}
+                onClear={() => setFilters({ recent: false })}
+              />
+            )}
+          </div>
+        )}
       </div>
 
       {/* Content area */}
@@ -364,6 +393,28 @@ export function LeadsList() {
 }
 
 // ── Sub-views ───────────────────────────────────────────────────────────
+function FilterChip({
+  label,
+  onClear,
+}: {
+  label: string;
+  onClear: () => void;
+}) {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_oklab,var(--color-violet-light)_35%,transparent)] bg-[color-mix(in_oklab,var(--color-violet-light)_12%,transparent)] py-1 pl-3 pr-1 text-xs text-[var(--color-violet-light)]">
+      {label}
+      <button
+        type="button"
+        onClick={onClear}
+        aria-label={`Remove filter: ${label}`}
+        className="inline-flex h-5 w-5 items-center justify-center rounded-full transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
+      >
+        <X size={12} />
+      </button>
+    </span>
+  );
+}
+
 function SortHeader({
   label,
   col,

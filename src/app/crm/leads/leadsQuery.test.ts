@@ -6,10 +6,20 @@ import {
   sanitizeSearch,
   leadsToCsv,
   fromSearchParams,
+  toSearchParams,
+  hasActiveFilters,
   DEFAULT_QUERY,
   type LeadRow,
 } from './leadsQuery';
 import { normalizeHandle, toRpcPayload, emptyLeadForm } from './leadFormSchema';
+import {
+  DEFAULT_ENQUIRIES_QUERY,
+  fromSearchParams as enqFromParams,
+  toSearchParams as enqToParams,
+  hasActiveFilters as enqHasFilters,
+  type EnquiryRow,
+} from '../enquiries/enquiriesQuery';
+import { cleanPhone, enquiryToLeadForm } from '../enquiries/enquiryPrefill';
 
 // Node global at runtime; declared here so tsc doesn't need @types/node.
 declare const process: { exit(code: number): never };
@@ -101,6 +111,101 @@ check('contacted keeps outcome', contactedPayload.outcome === 'interested');
 check(
   'blank instagram → null in payload',
   toRpcPayload(emptyLeadForm()).instagram_username === null,
+);
+
+// ── 5. Dashboard-tile filters round-trip through the URL ────────────────
+// A tile links to /crm?followup=1; if the parse drops it, the tile silently
+// opens an unfiltered list that disagrees with the number on the tile.
+const tile = fromSearchParams(new URLSearchParams('followup=1'));
+check('followup=1 parses', tile.followup === true);
+check('recent absent → false', tile.recent === false);
+check(
+  'followup survives a toSearchParams round-trip',
+  fromSearchParams(toSearchParams({ ...DEFAULT_QUERY, followup: true })).followup === true,
+);
+check(
+  'recent survives a toSearchParams round-trip',
+  fromSearchParams(toSearchParams({ ...DEFAULT_QUERY, recent: true })).recent === true,
+);
+check(
+  'followup=yes (not "1") → false, not truthy-string',
+  fromSearchParams(new URLSearchParams('followup=yes')).followup === false,
+);
+check('followup counts as an active filter', hasActiveFilters(tile));
+check('DEFAULT_QUERY has no active filters', !hasActiveFilters(DEFAULT_QUERY));
+
+// ── 6. Enquiries list query ─────────────────────────────────────────────
+check('default enquiry state is the open queue', DEFAULT_ENQUIRIES_QUERY.state === 'open');
+const eBad = enqFromParams(new URLSearchParams('state=deleted&kind=smoke&page=0'));
+check('bad enquiry state → default', eBad.state === 'open', eBad.state);
+check('bad kind → empty', eBad.kind === '', eBad.kind);
+check('page 0 → 1', eBad.page === 1, String(eBad.page));
+const eGood = enqFromParams(new URLSearchParams('state=converted&kind=callback&page=2'));
+check('valid enquiry state kept', eGood.state === 'converted');
+check('valid kind kept', eGood.kind === 'callback');
+check(
+  'default state omitted from the URL',
+  !enqToParams(DEFAULT_ENQUIRIES_QUERY).has('state'),
+);
+check('default enquiry query is unfiltered', !enqHasFilters(DEFAULT_ENQUIRIES_QUERY));
+check('converted state counts as a filter', enqHasFilters(eGood));
+
+// ── 7. Enquiry → lead prefill ───────────────────────────────────────────
+check('phone separators stripped', cleanPhone(' +91 98765-43210 ') === '+919876543210');
+check('parens and dots stripped', cleanPhone('(98765).43210') === '9876543210');
+check(
+  'no country code is invented for a bare 10-digit number',
+  cleanPhone('9876543210') === '9876543210',
+);
+
+function mkEnquiry(over: Partial<EnquiryRow> = {}): EnquiryRow {
+  return {
+    id: 'e1',
+    kind: 'callback',
+    name: 'Ananya Rao',
+    phone: '+91 98765 43210',
+    email: null,
+    best_time: 'Tomorrow afternoon',
+    message: 'Need help with Reels.',
+    converted_lead_id: null,
+    created_at: '2026-08-01T09:30:00Z',
+    converted_lead: null,
+    ...over,
+  };
+}
+
+const prefill = enquiryToLeadForm(mkEnquiry());
+check('brand_name is left blank for a human to fill', prefill.brand_name === '');
+check('callback → website_callback source', prefill.source === 'website_callback');
+check(
+  'query → website_query source',
+  enquiryToLeadForm(mkEnquiry({ kind: 'query' })).source === 'website_query',
+);
+check(
+  'found-on is when the enquiry arrived',
+  prefill.lead_found_on === '2026-08-01',
+  prefill.lead_found_on,
+);
+check('enquirer becomes the primary contact', prefill.contacts[0]?.name === 'Ananya Rao');
+check('contact is flagged primary', prefill.contacts[0]?.is_primary === true);
+check(
+  'phone is carried over, normalised',
+  prefill.contacts[0]?.phones[0]?.phone_e164 === '+919876543210',
+);
+check('message lands in notes', prefill.notes?.includes('Need help with Reels.') === true);
+check('best_time lands in notes', prefill.notes?.includes('Preferred time: Tomorrow afternoon') === true);
+const noPhone = enquiryToLeadForm(mkEnquiry({ phone: null, message: null, best_time: null }));
+check('no phone → no empty phone row', noPhone.contacts[0]?.phones.length === 0);
+check('no message/best_time → empty notes, not "undefined"', noPhone.notes === '');
+
+// ── 8. enquiry_id rides in the RPC payload only when converting ─────────
+check(
+  'enquiry_id omitted entirely when not converting',
+  !('enquiry_id' in toRpcPayload(emptyLeadForm())),
+);
+check(
+  'enquiry_id included when converting',
+  toRpcPayload(emptyLeadForm(), 'e-123').enquiry_id === 'e-123',
 );
 
 console.log(failures === 0 ? '\nALL PASS' : `\n${failures} FAILED`);

@@ -260,3 +260,13 @@ select
   bool_or(indexname='leads_created_at_idx')             as created_at_idx,
   bool_or(indexname='inbound_enquiries_unconverted_idx') as unconverted_idx
 from pg_indexes where schemaname='public';
+
+\echo '-- The enquiries list embeds the converted lead as converted_lead:leads(...)'
+\echo '-- with no !fkey hint, which PostgREST only resolves when exactly ONE'
+\echo '-- foreign key joins the two tables. A second one would make every request'
+\echo '-- to /crm/enquiries a 300 (expect fks_to_leads = 1):'
+select count(*) as fks_to_leads
+from pg_constraint
+where contype = 'f'
+  and conrelid = 'public.inbound_enquiries'::regclass
+  and confrelid = 'public.leads'::regclass;

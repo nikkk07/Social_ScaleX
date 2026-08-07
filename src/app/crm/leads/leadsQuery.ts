@@ -19,6 +19,15 @@ export const LEAD_SELECT =
 
 export type SortColumn = 'lead_found_on' | 'brand_name' | 'status' | 'created_at';
 
+// Both dashboard tiles use a 7-day window. Single source of truth: the tile's
+// COUNT and the list it links to must never disagree, or the tile reads "4" and
+// opens a list of 6.
+export const RECENT_DAYS = 7;
+
+export function daysAgoISO(days: number): string {
+  return new Date(Date.now() - days * 86_400_000).toISOString();
+}
+
 export interface LeadsQuery {
   q: string;
   status: LeadStatus | '';
@@ -26,6 +35,15 @@ export interface LeadsQuery {
   owner: string; // owner_id, or '' for any
   foundFrom: string; // 'YYYY-MM-DD' or ''
   foundTo: string; // 'YYYY-MM-DD' or ''
+  // "Needs follow-up": contacted, still no outcome, and last contacted more
+  // than RECENT_DAYS ago. Implies status/outcome, so it overrides both (see
+  // filteredLeads) rather than ANDing into a contradiction like
+  // status=pending + followup, which would always return zero rows.
+  followup: boolean;
+  // "Added this week" — on created_at (when WE recorded it), deliberately not
+  // lead_found_on (when the lead was spotted, which is user-entered and can be
+  // backdated).
+  recent: boolean;
   sort: SortColumn;
   dir: 'asc' | 'desc';
   page: number; // 1-based
@@ -38,6 +56,8 @@ export const DEFAULT_QUERY: LeadsQuery = {
   owner: '',
   foundFrom: '',
   foundTo: '',
+  followup: false,
+  recent: false,
   sort: 'lead_found_on', // has leads_found_on_idx; created_at does not
   dir: 'desc',
   page: 1,
@@ -86,13 +106,27 @@ export function sanitizeSearch(raw: string): string {
 }
 
 // Base builder with all filters applied; caller adds order + range.
-function filteredLeads(q: LeadsQuery, withCount: boolean) {
+//
+// `cutoff` is passed in, never computed here: fetchAllLeads calls this once per
+// export page, so a freshly-computed "7 days ago" would slide forward a few
+// milliseconds between pages. For `recent` (created_at >= cutoff) a later
+// cutoff drops rows off the front of the result, which renumbers every
+// subsequent offset — the export would silently skip rows. One instant for the
+// whole query.
+function filteredLeads(q: LeadsQuery, withCount: boolean, cutoff: string) {
   let b = withCount
     ? supabase.from('leads').select(LEAD_SELECT, { count: 'exact' })
     : supabase.from('leads').select(LEAD_SELECT);
   b = b.is('deleted_at', null);
-  if (q.status) b = b.eq('status', q.status);
-  if (q.outcome) b = b.eq('outcome', q.outcome);
+  if (q.followup) {
+    // Matches leads_followup_idx's predicate exactly (090010), so the index
+    // holds only rows that can be in the answer.
+    b = b.eq('status', 'contacted').is('outcome', null).lte('contacted_at', cutoff);
+  } else {
+    if (q.status) b = b.eq('status', q.status);
+    if (q.outcome) b = b.eq('outcome', q.outcome);
+  }
+  if (q.recent) b = b.gte('created_at', cutoff);
   if (q.owner) b = b.eq('owner_id', q.owner);
   if (q.foundFrom) b = b.gte('lead_found_on', q.foundFrom);
   if (q.foundTo) b = b.lte('lead_found_on', q.foundTo);
@@ -113,7 +147,7 @@ export interface LeadsPage {
 export async function fetchLeadsPage(q: LeadsQuery): Promise<LeadsPage> {
   const from = (q.page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
-  const { data, error, count } = await filteredLeads(q, true)
+  const { data, error, count } = await filteredLeads(q, true, daysAgoISO(RECENT_DAYS))
     .order(q.sort, { ascending: q.dir === 'asc' })
     .order('id', { ascending: true }) // stable tiebreaker → deterministic paging
     .range(from, to);
@@ -133,10 +167,11 @@ export async function fetchLeadsPage(q: LeadsQuery): Promise<LeadsPage> {
 export async function fetchAllLeads(q: LeadsQuery): Promise<LeadRow[]> {
   const all: LeadRow[] = [];
   let total = Infinity;
+  const cutoff = daysAgoISO(RECENT_DAYS); // pinned for the whole export
   while (all.length < total) {
     const from = all.length;
     const to = from + EXPORT_PAGE_SIZE - 1;
-    const { data, error, count } = await filteredLeads(q, true)
+    const { data, error, count } = await filteredLeads(q, true, cutoff)
       .order(q.sort, { ascending: q.dir === 'asc' })
       .order('id', { ascending: true })
       .range(from, to);
@@ -190,6 +225,8 @@ export function toSearchParams(q: LeadsQuery): URLSearchParams {
   if (q.owner) p.set('owner', q.owner);
   if (q.foundFrom) p.set('from', q.foundFrom);
   if (q.foundTo) p.set('to', q.foundTo);
+  if (q.followup) p.set('followup', '1');
+  if (q.recent) p.set('recent', '1');
   if (q.sort !== DEFAULT_QUERY.sort) p.set('sort', q.sort);
   if (q.dir !== DEFAULT_QUERY.dir) p.set('dir', q.dir);
   if (q.page > 1) p.set('page', String(q.page));
@@ -232,6 +269,8 @@ export function fromSearchParams(p: URLSearchParams): LeadsQuery {
     owner: UUID_RE.test(owner) ? owner : '',
     foundFrom: DATE_RE.test(from) ? from : '',
     foundTo: DATE_RE.test(to) ? to : '',
+    followup: p.get('followup') === '1',
+    recent: p.get('recent') === '1',
     sort: oneOf(p.get('sort'), SORT_COLUMNS, DEFAULT_QUERY.sort),
     dir: oneOf(p.get('dir'), ['asc', 'desc'] as const, DEFAULT_QUERY.dir),
     page: Number.isFinite(num) && num > 0 ? num : 1,
@@ -241,7 +280,14 @@ export function fromSearchParams(p: URLSearchParams): LeadsQuery {
 // True when any filter/search is active (to tell "no matches" from "no leads").
 export function hasActiveFilters(q: LeadsQuery): boolean {
   return Boolean(
-    q.q || q.status || q.outcome || q.owner || q.foundFrom || q.foundTo,
+    q.q ||
+      q.status ||
+      q.outcome ||
+      q.owner ||
+      q.foundFrom ||
+      q.foundTo ||
+      q.followup ||
+      q.recent,
   );
 }
 
