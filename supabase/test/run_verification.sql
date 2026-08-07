@@ -170,3 +170,93 @@ reset role; reset app.current_user_id;
 select (select name from public.lead_contacts where lead_id=:'edit_lead_id') as contact,
        (select count(*) from public.lead_contacts where lead_id=:'edit_lead_id') as n_contacts,
        (select kind from public.lead_activities where lead_id=:'edit_lead_id' and kind='edited' limit 1) as logged;
+
+\echo ''
+\echo '════════ NORMALISATION invariants (090009) ════════'
+\echo '-- These are DB guarantees now, not client-side conventions. Every check'
+\echo '-- below writes the way a bulk CSV import would: straight at the table,'
+\echo '-- bypassing the form that used to be the only thing normalising values.'
+set app.current_user_id='11111111-1111-1111-1111-111111111111'; set role authenticated;
+
+\echo '#N1 handle with UPPERCASE ("CafeX")  → expect BLOCKED by leads_instagram_normalised'
+insert into public.leads (brand_name, instagram_username) values ('Case Probe','CafeX');
+\echo '#N2 handle pasted as a profile URL  → expect BLOCKED (contains / and :)'
+insert into public.leads (brand_name, instagram_username) values ('URL Probe','https://instagram.com/cafex');
+\echo '#N3 handle with a leading @  → expect BLOCKED'
+insert into public.leads (brand_name, instagram_username) values ('At Probe','@cafex');
+\echo '#N4 handle with whitespace  → expect BLOCKED'
+insert into public.leads (brand_name, instagram_username) values ('Space Probe','cafe x');
+\echo '#N5 already-normalised handle  → expect ALLOWED (1 row)'
+insert into public.leads (brand_name, instagram_username) values ('Norm Probe','cafex');
+\echo '#N6 the SAME handle again  → expect BLOCKED by leads_instagram_unique'
+insert into public.leads (brand_name, instagram_username) values ('Dupe Probe','cafex');
+
+\echo '#N7 phone "98765 43210" (not E.164)  → expect BLOCKED by lead_phones_e164'
+insert into public.lead_phones (lead_id, phone_e164)
+select id, '98765 43210' from public.leads where instagram_username='cafex';
+\echo '#N8 phone with a leading zero country code  → expect BLOCKED'
+insert into public.lead_phones (lead_id, phone_e164)
+select id, '+0919876543210' from public.leads where instagram_username='cafex';
+\echo '#N9 proper E.164  → expect ALLOWED (1 row)'
+insert into public.lead_phones (lead_id, phone_e164)
+select id, '+919876543210' from public.leads where instagram_username='cafex';
+reset role; reset app.current_user_id;
+
+\echo '-- only the two legitimate writes landed (expect probes=1, phones=1):'
+select (select count(*) from public.leads where brand_name like '% Probe') as probes,
+       (select count(*) from public.lead_phones p
+          join public.leads l on l.id=p.lead_id where l.instagram_username='cafex') as phones;
+
+\echo '-- the dedupe index is over lower() — uniqueness holds regardless of case'
+\echo '-- even though the CHECK above means a non-lowercase value can never be'
+\echo '-- stored to exercise it (expect over_lower = t):'
+select indexdef ~* 'lower\(' as over_lower
+from pg_indexes where schemaname='public' and indexname='leads_instagram_unique';
+
+\echo ''
+\echo '════════ ENQUIRY CONVERSION (090010) — one transaction, or none ════════'
+\echo '-- Seeded enquiry …0001 is an unconverted callback; …0003 is already'
+\echo '-- converted to the Lumen lead.'
+set app.current_user_id='11111111-1111-1111-1111-111111111111'; set role authenticated;
+
+\echo '#E1 convert an unconverted enquiry  → expect a new lead id'
+select public.create_lead_with_contacts($json$
+{"brand_name":"Converted Brand","instagram_username":"convertedbrand","source":"website_callback",
+ "enquiry_id":"e0000000-0000-4000-8000-000000000001"}$json$::jsonb) as converted_lead_id;
+
+\echo '#E2 convert the SAME enquiry again  → expect ERROR enquiry_already_converted'
+select public.create_lead_with_contacts($json$
+{"brand_name":"Double Convert","instagram_username":"doubleconvert",
+ "enquiry_id":"e0000000-0000-4000-8000-000000000001"}$json$::jsonb);
+
+\echo '#E3 convert an enquiry that does not exist  → expect the same ERROR'
+select public.create_lead_with_contacts($json$
+{"brand_name":"Ghost Convert","instagram_username":"ghostconvert",
+ "enquiry_id":"e0000000-0000-4000-8000-0000000000ff"}$json$::jsonb);
+
+\echo '#E4 no enquiry_id in the payload  → expect a lead, enquiries untouched'
+select public.create_lead_with_contacts($json$
+{"brand_name":"Plain Lead","instagram_username":"plainlead"}$json$::jsonb) as plain_lead_id;
+reset role; reset app.current_user_id;
+
+\echo '-- #E1 stamped the enquiry with the lead it created (expect stamped = t):'
+select e.converted_lead_id = l.id as stamped
+from public.inbound_enquiries e, public.leads l
+where e.id='e0000000-0000-4000-8000-000000000001' and l.brand_name='Converted Brand';
+
+\echo '-- THE atomicity proof: #E2/#E3 raised AFTER their lead row was inserted,'
+\echo '-- so if the rollback did not reach it we would be left with an orphan'
+\echo '-- lead and an enquiry still reading "unconverted" (expect both 0):'
+select (select count(*) from public.leads where brand_name='Double Convert') as orphan_double,
+       (select count(*) from public.leads where brand_name='Ghost Convert')  as orphan_ghost;
+
+\echo '-- #E4 committed and left every enquiry stamp alone (expect plain=1, converted=2):'
+select (select count(*) from public.leads where brand_name='Plain Lead') as plain,
+       (select count(*) from public.inbound_enquiries where converted_lead_id is not null) as converted;
+
+\echo '-- dashboard indexes from 090010 exist (expect all t):'
+select
+  bool_or(indexname='leads_followup_idx')               as followup_idx,
+  bool_or(indexname='leads_created_at_idx')             as created_at_idx,
+  bool_or(indexname='inbound_enquiries_unconverted_idx') as unconverted_idx
+from pg_indexes where schemaname='public';

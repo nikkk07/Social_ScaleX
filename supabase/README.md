@@ -70,8 +70,18 @@ Key invariants enforced in the DB (not the UI):
   in `allowed_emails`, then creates the profile with the allow-listed role.
 - One primary contact per lead; one primary phone per contact (partial unique
   indexes).
+- `instagram_username` is stored **already normalised** — lowercase, no `@`, no
+  `/`, no whitespace (`leads_instagram_normalised`) — and `leads_instagram_unique`
+  is built over `lower()`, so dedupe is case-insensitive. Previously both held
+  only for values typed into the form; a CSV import would have walked through.
+- `lead_phones.phone_e164` must be E.164 (`lead_phones_e164`). Phone matching is
+  the only guard against the same brand being added under two handles, and it
+  matches literally — a malformed number makes that lookup silently miss.
 - `create_lead_with_contacts(payload jsonb)` writes a lead + contacts + phones
-  in one transaction.
+  in one transaction. Pass `enquiry_id` in the payload and it also stamps
+  `inbound_enquiries.converted_lead_id` in that same transaction; converting an
+  enquiry that is missing or already converted **errors and rolls the lead back**
+  rather than leaving two leads for one enquiry.
 
 ## Add a team member
 
