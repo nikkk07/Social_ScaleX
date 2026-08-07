@@ -5,6 +5,7 @@ import { z } from "zod";
 import { toast, Toaster } from "sonner";
 import { GlassCard } from "../GlassCard";
 import { Reveal } from "../effects/Reveal";
+import { submitEnquiry, warmSupabase, type SubmitResult } from "./submitEnquiry";
 
 const inputClasses =
   "w-full liquid-glass-inset rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-[var(--color-violet-light)] transition-colors";
@@ -22,51 +23,103 @@ const callbackSchema = z.object({
     .trim()
     .refine((v) => indianPhone.test(v.replace(/[\s-]/g, "")), "Enter a valid Indian mobile number"),
   bestTime: z.string().trim().max(80).optional(),
-  company: z.string().max(0).optional(), // honeypot
+  // Honeypot. Deliberately NOT `.max(0)`: that made zod reject the whole form
+  // before onSubmit ever ran, and the error attached to a field that is
+  // off-screen and has no error slot — so a tripped honeypot produced a dead
+  // button and total silence. Anyone caught by a false positive (a password
+  // manager autofilling "Company") would be silently discarded, which is the
+  // exact bug this phase exists to close. Let the value through and handle it
+  // in onSubmit, where it can be reported.
+  company: z.string().optional(),
 });
 
 const querySchema = z.object({
   name: z.string().trim().min(2, "Please enter your name"),
   email: z.string().trim().email("Enter a valid email address"),
   message: z.string().trim().min(10, "Tell us a little more (10+ characters)"),
-  company: z.string().max(0).optional(), // honeypot
+  // Honeypot. Deliberately NOT `.max(0)`: that made zod reject the whole form
+  // before onSubmit ever ran, and the error attached to a field that is
+  // off-screen and has no error slot — so a tripped honeypot produced a dead
+  // button and total silence. Anyone caught by a false positive (a password
+  // manager autofilling "Company") would be silently discarded, which is the
+  // exact bug this phase exists to close. Let the value through and handle it
+  // in onSubmit, where it can be reported.
+  company: z.string().optional(),
 });
 
 type CallbackValues = z.infer<typeof callbackSchema>;
 type QueryValues = z.infer<typeof querySchema>;
 
+const DIRECT_CONTACT = "Call or WhatsApp +91 80777 27669 and we'll jump right on it.";
+
 /**
- * TODO(phase-8): replace with an insert into public.inbound_enquiries via
- * the Supabase anon client, then show a success toast + reset. Until then
- * this fails LOUDLY and never claims success — the previous version
- * silently discarded every enquiry, which is the bug being fixed.
+ * One place that turns a SubmitResult into what the visitor sees. The rule
+ * this exists to enforce: never claim success we didn't get, and never leave
+ * someone unsure whether their enquiry sent. Every branch below is either a
+ * confirmed send or an explicit failure with a way to reach us.
  */
-function reportUnwired(kind: "callback" | "query", payload: Record<string, unknown>) {
-  console.error(
-    `[contact] "${kind}" submission is not wired to Supabase yet (Phase 8). ` +
-      "Nothing was sent. Payload:",
-    payload,
-  );
-  toast.error("Our form isn't live yet — please reach us directly.", {
-    description: "Call or WhatsApp +91 80777 27669 and we'll jump right on it.",
-  });
+function reportResult(result: SubmitResult): boolean {
+  if (result.ok) {
+    toast.success("Thanks — we've got your details.", {
+      description: "We'll be in touch shortly, usually within a few hours.",
+    });
+    return true;
+  }
+  if (result.kind === "throttled") {
+    const mins = Math.ceil(result.retryAfterMs / 60_000);
+    toast.warning("You've just sent us something.", {
+      description:
+        mins <= 1
+          ? "Give it a moment before sending again — or call us on +91 80777 27669."
+          : `Please try again in about ${mins} minutes, or call +91 80777 27669.`,
+    });
+    return false;
+  }
+  toast.error("Something went wrong sending that.", { description: DIRECT_CONTACT });
+  return false;
+}
+
+/**
+ * A tripped honeypot is REPORTED, not silently dropped. A bot learns little
+ * either way, but a password manager that autofills the hidden "Company" field
+ * would otherwise put a real person into exactly the silent-discard hole this
+ * whole phase exists to close. They get a message and a phone number.
+ */
+function reportHoneypot() {
+  toast.error("We couldn't verify that submission.", { description: DIRECT_CONTACT });
 }
 
 function CallbackForm() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<CallbackValues>({ resolver: zodResolver(callbackSchema) });
 
   const onSubmit = async (data: CallbackValues) => {
-    if (data.company) return; // honeypot tripped — drop silently
+    if (data.company) return reportHoneypot();
     const { name, phone, bestTime } = data;
-    reportUnwired("callback", { name, phone, bestTime });
+    const result = await submitEnquiry({
+      kind: "callback",
+      name: name.trim(),
+      phone: phone.trim(),
+      best_time: bestTime?.trim() || null,
+    });
+    // Only clear the form on a confirmed write — otherwise a failed send would
+    // also destroy what they typed, and they'd have to type it all again.
+    if (reportResult(result)) reset();
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+    // Fetch the Supabase chunk when they first touch the form; see
+    // submitEnquiry.ts for why this is the trigger and not module scope or idle.
+    <form
+      className="space-y-6"
+      onSubmit={handleSubmit(onSubmit)}
+      onFocusCapture={warmSupabase}
+      noValidate
+    >
       <div className={honeypotClasses} aria-hidden>
         <label>
           Company
@@ -115,17 +168,29 @@ function QueryForm() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isSubmitting },
   } = useForm<QueryValues>({ resolver: zodResolver(querySchema) });
 
   const onSubmit = async (data: QueryValues) => {
-    if (data.company) return; // honeypot tripped — drop silently
+    if (data.company) return reportHoneypot();
     const { name, email, message } = data;
-    reportUnwired("query", { name, email, message });
+    const result = await submitEnquiry({
+      kind: "query",
+      name: name.trim(),
+      email: email.trim(),
+      message: message.trim(),
+    });
+    if (reportResult(result)) reset();
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form
+      className="space-y-6"
+      onSubmit={handleSubmit(onSubmit)}
+      onFocusCapture={warmSupabase}
+      noValidate
+    >
       <div className={honeypotClasses} aria-hidden>
         <label>
           Company

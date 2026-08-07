@@ -8,7 +8,7 @@
     "dev": "vite",
     "typecheck": "tsc --noEmit",
     "preview": "vite build && vite preview",
-    "test:unit": "esbuild src/app/crm/leads/leadsQuery.test.ts --bundle --format=esm --platform=node --define:import.meta.env.VITE_SUPABASE_URL='\"https://x.supabase.co\"' --define:import.meta.env.VITE_SUPABASE_ANON_KEY='\"anon\"' --outfile=node_modules/.cache/leads-test.mjs --log-level=error && node node_modules/.cache/leads-test.mjs"
+    "test:unit": "bash scripts/test-unit.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

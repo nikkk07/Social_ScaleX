@@ -270,3 +270,52 @@ from pg_constraint
 where contype = 'f'
   and conrelid = 'public.inbound_enquiries'::regclass
   and confrelid = 'public.leads'::regclass;
+
+\echo ''
+\echo '════════ ANON ENQUIRY WRITES (090011) — the one table strangers can write ════════'
+\echo '-- Every check below runs as ANON with no session, i.e. anyone holding the'
+\echo '-- public key. This is the real threat model for this table.'
+set role anon;
+
+\echo '#A1 anon INSERT a normal callback enquiry  → expect ALLOWED (INSERT 0 1)'
+insert into public.inbound_enquiries (kind, name, phone, best_time, user_agent)
+values ('callback', 'Anon Visitor', '+919812345678', 'Tomorrow afternoon', 'Mozilla/5.0 (probe)');
+
+\echo '#A2 anon INSERT a normal query enquiry  → expect ALLOWED (INSERT 0 1)'
+insert into public.inbound_enquiries (kind, name, email, message, user_agent)
+values ('query', 'Anon Asker', 'anon@example.test', 'I would like help with Reels.', 'Mozilla/5.0 (probe)');
+
+\echo '#A3 anon SELECT the table back  → expect BLOCKED (grant), NOT a row'
+select count(*) from public.inbound_enquiries;
+\echo '#A4 anon UPDATE  → expect BLOCKED'
+update public.inbound_enquiries set name = 'hijacked';
+\echo '#A5 anon DELETE  → expect BLOCKED'
+delete from public.inbound_enquiries;
+
+\echo '#A6 blank name  → expect BLOCKED (policy WITH CHECK fires first; the 090011'
+\echo '--    CHECK is the floor under it, binding writers the policy never sees)'
+insert into public.inbound_enquiries (kind, name, phone) values ('callback', '   ', '+919812345678');
+\echo '#A7 1 MB message  → expect BLOCKED (policy first, CHECK underneath it)'
+insert into public.inbound_enquiries (kind, name, email, message)
+values ('query', 'Flooder', 'f@e.test', repeat('x', 1048576));
+\echo '#A8 oversized user_agent  → expect BLOCKED by inbound_enquiries_bounds.'
+\echo '--    THIS is the field the policy never covered: attacker-controlled, uncapped.'
+insert into public.inbound_enquiries (kind, name, phone, user_agent)
+values ('callback', 'UA Flooder', '+919812345678', repeat('u', 401));
+\echo '#A9 no phone AND no email  → expect BLOCKED by inbound_enquiries_contactable'
+insert into public.inbound_enquiries (kind, name, message) values ('query', 'Ghost', 'unreachable');
+\echo '#A10 invalid kind  → expect BLOCKED by the policy WITH CHECK'
+insert into public.inbound_enquiries (kind, name, phone) values ('spam', 'Bad Kind', '+919812345678');
+
+\echo '#A11 anon calls the staff conversion RPC  → expect BLOCKED (execute not granted)'
+select public.create_lead_with_contacts('{"brand_name":"anon lead"}'::jsonb);
+reset role;
+
+\echo '-- Only the two legitimate anon inserts landed (expect probes = 2):'
+select count(*) as probes from public.inbound_enquiries where user_agent = 'Mozilla/5.0 (probe)';
+\echo '-- …with the kind and user_agent the client sent (expect one row each):'
+select kind, name, coalesce(phone, email) as contact, user_agent
+from public.inbound_enquiries where user_agent = 'Mozilla/5.0 (probe)' order by kind;
+\echo '-- …and nothing was hijacked or deleted (expect hijacked = 0, total >= 5):'
+select (select count(*) from public.inbound_enquiries where name = 'hijacked') as hijacked,
+       (select count(*) from public.inbound_enquiries) as total;
