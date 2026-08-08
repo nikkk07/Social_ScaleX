@@ -15,10 +15,19 @@
     <meta name="theme-color" content="#050508" />
 
     <!--
-      IMPORTANT: replace socialscalex.com with your real domain everywhere
-      (this file, public/robots.txt, public/sitemap.xml) before going live.
+      The canonical host is the Vercel deployment URL, NOT a custom domain —
+      no custom domain is registered yet. A canonical pointing at a host that
+      does not serve the site tells Google to index that host instead, which
+      means the site is indexed nowhere.
+
+      WHEN A REAL DOMAIN IS BOUGHT: replace social-scalex.vercel.app in this
+      file (canonical, og:url, og:image, twitter:image, and all five JSON-LD
+      @id/url/publisher fields), public/robots.txt and public/sitemap.xml —
+      13 references in total. Change them together; a canonical on one host
+      and JSON-LD @id on another splits the entity across two URIs.
+      See docs/MERGE_CHECKLIST.md §7.
     -->
-    <link rel="canonical" href="https://socialscalex.com/" />
+    <link rel="canonical" href="https://social-scalex.vercel.app/" />
 
     <!-- Open Graph (Facebook / WhatsApp / LinkedIn previews) -->
     <meta property="og:type" content="website" />
@@ -28,8 +37,8 @@
       property="og:description"
       content="Instagram, Facebook & YouTube growth for brands and creators. 9.3M+ monthly views, 496K+ followers managed. Real clients, verified results."
     />
-    <meta property="og:url" content="https://socialscalex.com/" />
-    <meta property="og:image" content="https://socialscalex.com/og-image.png" />
+    <meta property="og:url" content="https://social-scalex.vercel.app/" />
+    <meta property="og:image" content="https://social-scalex.vercel.app/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="en_IN" />
@@ -41,7 +50,7 @@
       name="twitter:description"
       content="Instagram, Facebook & YouTube growth for brands and creators. Real clients, verified results."
     />
-    <meta name="twitter:image" content="https://socialscalex.com/og-image.png" />
+    <meta name="twitter:image" content="https://social-scalex.vercel.app/og-image.png" />
 
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -57,10 +66,10 @@
       "@graph": [
         {
           "@type": "ProfessionalService",
-          "@id": "https://socialscalex.com/#organization",
+          "@id": "https://social-scalex.vercel.app/#organization",
           "name": "Social ScaleX",
           "description": "Social media marketing agency in Delhi NCR managing Instagram, Facebook and YouTube for brands and creators — content production, page management, paid advertising and analytics.",
-          "url": "https://socialscalex.com/",
+          "url": "https://social-scalex.vercel.app/",
           "telephone": "+91-80777-27669",
           "priceRange": "₹₹",
           "areaServed": [
@@ -84,10 +93,10 @@
         },
         {
           "@type": "WebSite",
-          "@id": "https://socialscalex.com/#website",
-          "url": "https://socialscalex.com/",
+          "@id": "https://social-scalex.vercel.app/#website",
+          "url": "https://social-scalex.vercel.app/",
           "name": "Social ScaleX",
-          "publisher": { "@id": "https://socialscalex.com/#organization" },
+          "publisher": { "@id": "https://social-scalex.vercel.app/#organization" },
           "inLanguage": "en-IN"
         }
       ]
