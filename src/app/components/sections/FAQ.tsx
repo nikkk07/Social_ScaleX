@@ -1,7 +1,11 @@
-import React, { useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import { Plus } from "lucide-react";
+import React from "react";
 import { Reveal } from "../effects/Reveal";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "../ui/accordion";
 
 export const faqs = [
   {
@@ -31,8 +35,6 @@ export const faqs = [
 ];
 
 export function FAQ() {
-  const [open, setOpen] = useState<number | null>(0);
-
   return (
     <section
       id="faq"
@@ -41,61 +43,38 @@ export function FAQ() {
     >
       <div className="max-w-3xl mx-auto px-6">
         <Reveal className="text-center mb-14">
-          <span className="text-[var(--color-cyan)] font-medium tracking-wider uppercase text-sm mb-4 block">
+          <span className="text-[var(--color-violet-light)] font-medium tracking-wider uppercase text-sm mb-4 block">
             Questions, answered
           </span>
-          <h2 id="faq-heading" className="text-4xl md:text-5xl font-display font-bold text-white mb-4">
+          <h2
+            id="faq-heading"
+            className="text-4xl md:text-5xl font-display font-bold text-white mb-4"
+          >
             Before you book the call.
           </h2>
-          <p className="text-white/60 text-lg leading-relaxed">
+          <p className="text-white/70 text-lg leading-relaxed">
             The things brands ask us most — answered straight, no sales script.
           </p>
         </Reveal>
 
-        <div className="space-y-3">
-          {faqs.map((item, i) => {
-            const isOpen = open === i;
-            return (
-              <Reveal key={item.q} delay={i * 0.05}>
-                <div className={`rounded-2xl transition-colors duration-300 ${isOpen ? "liquid-glass" : "liquid-glass-lite"}`}>
-                  <button
-                    onClick={() => setOpen(isOpen ? null : i)}
-                    aria-expanded={isOpen}
-                    aria-controls={`faq-answer-${i}`}
-                    className="w-full flex items-center justify-between gap-4 text-left px-6 py-5"
-                  >
-                    <h3 className="text-base md:text-lg font-display font-semibold text-white">
-                      {item.q}
-                    </h3>
-                    <motion.span
-                      animate={{ rotate: isOpen ? 45 : 0 }}
-                      transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                      className="shrink-0 text-white/60"
-                    >
-                      <Plus size={20} />
-                    </motion.span>
-                  </button>
-                  <AnimatePresence initial={false}>
-                    {isOpen && (
-                      <motion.div
-                        id={`faq-answer-${i}`}
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <p className="px-6 pb-6 text-white/65 leading-relaxed text-sm md:text-base">
-                          {item.a}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
+        <Reveal>
+          <Accordion type="single" collapsible defaultValue="item-0" className="space-y-3">
+            {faqs.map((item, i) => (
+              <AccordionItem
+                key={item.q}
+                value={`item-${i}`}
+                className="liquid-glass rounded-2xl border-b-0 px-6"
+              >
+                <AccordionTrigger className="text-base md:text-lg font-display font-semibold text-white hover:no-underline py-5">
+                  {item.q}
+                </AccordionTrigger>
+                <AccordionContent className="text-white/70 leading-relaxed text-sm md:text-base pb-6">
+                  {item.a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </Reveal>
       </div>
 
       {/* FAQPage structured data — mirrors the visible Q&A exactly */}

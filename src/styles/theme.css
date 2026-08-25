@@ -6,6 +6,11 @@
 
   --color-violet: #8B5CF6;
   --color-violet-light: #A78BFA;
+  /* Deeper violet for solid fills that carry WHITE text. #8B5CF6 only
+     hits 4.23:1 on white (fails WCAG AA); #7C3AED hits 5.70:1 (passes).
+     Use --color-violet for gradient text, borders and glows; use this
+     for any violet button/pill with white text. */
+  --color-violet-cta: #7C3AED;
   --color-emerald: #34D399;
   --color-emerald-dark: #059669;
   --color-amber: #FBBF24;
@@ -14,6 +19,13 @@
   --color-void-black: #050508;
   --color-void-deep: #08070E;
   --color-ink: #F4F3F8;
+}
+
+html {
+  /* Native smooth scroll for anchor links — replaces Lenis, which was
+     removed in the redesign (scroll hijacking is an a11y liability and
+     breaks modal scroll-locking). Disabled under reduced-motion below. */
+  scroll-behavior: smooth;
 }
 
 html, body {
@@ -84,13 +96,28 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ── Liquid glass surfaces ────────────────────────────── */
+/*
+ * TODO(glass-consolidation): the redesign brief wants TWO glass treatments
+ * (one panel + one inset). Four still exist — deferred deliberately because
+ * collapsing them blind risks the nav frost and chip legibility. Do this as
+ * a visual pass on the preview, not blind. Current classes + consumers:
+ *   .liquid-glass        — panels. GlassCard (Work/StatsBand/Contact), FAQ
+ *                          items, WhyUs cards, Services strip, Hero eyebrow,
+ *                          Work "Work with us" button.   [KEEP as the panel]
+ *   .liquid-glass-inset  — input wells. Contact inputClasses.  [KEEP as inset]
+ *   .liquid-glass-strong — nav capsule + mobile drawer (Navbar). Heavier
+ *                          frost; fold into .liquid-glass only if the floating
+ *                          capsule still reads well.
+ *   .liquid-glass-lite   — chips/badges/tags: Work platform badge, Services
+ *                          icon chips, Process tags, Footer social icons.
+ *                          Fold into .liquid-glass or a small pill variant.
+ */
 
 /*
- * Core liquid glass. NO backdrop-filter: the WebGL canvas underneath
- * updates every frame, and each backdrop-filtered panel would re-blur
- * its backdrop on every one of those frames. Frost is faked with a
- * translucent dark base + white gradient sheen — visually equivalent
- * over an already-soft dark background, at near-zero GPU cost.
+ * Core liquid glass. Real backdrop-filter is back: the live WebGL canvas
+ * that once forced a re-blur every frame is gone (minimal-glass redesign),
+ * so a genuine blur over the now-static background is affordable and reads
+ * far truer than the faked frost it replaces.
  */
 .liquid-glass {
   background:
@@ -101,6 +128,8 @@ h1, h2, h3, h4, h5, h6 {
       rgba(255, 255, 255, 0.05) 100%
     ),
     rgba(16, 14, 24, 0.42);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.25),
@@ -177,45 +206,6 @@ h1, h2, h3, h4, h5, h6 {
 }
 .skip-link:focus {
   top: 1rem;
-}
-
-/* ── Shine sweep (buttons, cards on hover) ────────────── */
-.shine-sweep {
-  position: relative;
-  overflow: hidden;
-}
-.shine-sweep::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    105deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.25) 48%,
-    rgba(255, 255, 255, 0.45) 50%,
-    rgba(255, 255, 255, 0.25) 52%,
-    transparent 70%
-  );
-  transform: translateX(-120%);
-  transition: transform 0s;
-  pointer-events: none;
-}
-.shine-sweep:hover::after {
-  transform: translateX(120%);
-  transition: transform 0.9s cubic-bezier(0.25, 0.6, 0.3, 1);
-}
-
-/* ── Marquee ──────────────────────────────────────────── */
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-.animate-marquee {
-  animation: marquee 32s linear infinite;
-}
-.marquee-mask {
-  mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
-  -webkit-mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent);
 }
 
 /* ── Ambient float for decorative orbs ────────────────── */

@@ -1,0 +1,3 @@
+# Dependencies for scripts/keep_alive.py. Standard library plus one HTTP client.
+# Pinned to a minor range so a scheduled job can't break on a surprise major.
+requests>=2.32,<3

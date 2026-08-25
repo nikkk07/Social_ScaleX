@@ -8,11 +8,23 @@ setup, the rest are habits.
 
 ## 🔴 Do these BEFORE going live
 
-1. **Replace the placeholder domain.** Search the project for
-   `socialscalex.com` and replace with your real domain in:
-   - `index.html` (canonical, Open Graph, JSON-LD)
-   - `public/robots.txt`
-   - `public/sitemap.xml`
+1. **Replace the deployment host with a real domain.** The unowned placeholder
+   `socialscalex.com` is gone — every reference now points at the Vercel
+   deployment URL, `social-scalex.vercel.app`, which actually serves the site.
+   That is correct and indexable as-is; a canonical pointing at a host nobody
+   serves is what gets a site indexed nowhere.
+
+   When a real domain is bought, `git grep -n 'social-scalex\.vercel\.app'`
+   finds all 13 references — replace them **in one commit**:
+   - `index.html` — canonical, `og:url`, `og:image`, `twitter:image`, and the
+     five JSON-LD `@id` / `url` / `publisher` fields (9)
+   - `public/robots.txt` — the `Sitemap:` line (1)
+   - `public/sitemap.xml` — every `<loc>` (3)
+
+   Splitting them leaves the JSON-LD entity `@id`s on a different host from the
+   canonical, which describes two entities instead of one. Supabase's Site URL
+   and redirect allow-list need the new host too, or password resets break.
+   Full procedure in `docs/MERGE_CHECKLIST.md` §7.
 2. **Add the social preview image.** Create a 1200×630 image (logo + tagline
    over the dark glass look) and save it as `public/og-image.png`. This is
    what shows when the site is shared on WhatsApp/LinkedIn/X.

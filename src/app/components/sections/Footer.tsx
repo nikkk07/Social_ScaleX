@@ -1,16 +1,17 @@
 import React from "react";
 import { Link } from "react-router";
-import { FaInstagram, FaLinkedin, FaYoutube, FaWhatsapp } from "react-icons/fa";
+import { Instagram, Linkedin, Youtube } from "lucide-react";
+import { WhatsappIcon } from "../icons/WhatsappIcon";
 
 /*
  * Set these to the agency's real profile URLs when ready — icons for
  * empty entries are hidden automatically, so nothing ever links to "#".
  */
 const SOCIAL_LINKS = [
-  { name: "WhatsApp", url: "https://wa.me/918077727669", icon: FaWhatsapp },
-  { name: "Instagram", url: "", icon: FaInstagram },
-  { name: "LinkedIn", url: "", icon: FaLinkedin },
-  { name: "YouTube", url: "", icon: FaYoutube },
+  { name: "WhatsApp", url: "https://wa.me/918077727669", icon: WhatsappIcon },
+  { name: "Instagram", url: "", icon: Instagram },
+  { name: "LinkedIn", url: "", icon: Linkedin },
+  { name: "YouTube", url: "", icon: Youtube },
 ];
 
 export function Footer() {
@@ -62,7 +63,7 @@ export function Footer() {
             <ul className="space-y-3 text-white/60 text-sm">
               <li><a href="/#why-us" className="hover:text-[var(--color-violet-light)] transition-colors">About Us</a></li>
               <li><a href="/#work" className="hover:text-[var(--color-violet-light)] transition-colors">Client Portfolio</a></li>
-              <li><a href="/#results" className="hover:text-[var(--color-violet-light)] transition-colors">Results</a></li>
+              <li><a href="/#work" className="hover:text-[var(--color-violet-light)] transition-colors">Results</a></li>
               <li><a href="/#process" className="hover:text-[var(--color-violet-light)] transition-colors">Our Process</a></li>
               <li><a href="/#faq" className="hover:text-[var(--color-violet-light)] transition-colors">FAQ</a></li>
               <li>
@@ -102,6 +103,8 @@ export function Footer() {
           <div className="flex items-center space-x-6">
             <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+            {/* Internal team entry point — deliberately understated (A4). */}
+            <Link to="/login" className="hover:text-white transition-colors">Team Login</Link>
           </div>
         </div>
 

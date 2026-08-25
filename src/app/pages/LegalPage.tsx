@@ -30,7 +30,7 @@ export function LegalPage({ title, updated, children }: LegalPageProps) {
         </Link>
 
         <h1 className="text-3xl md:text-5xl font-display font-bold text-white mb-3">{title}</h1>
-        <p className="text-white/40 text-sm mb-12">Last updated: {updated}</p>
+        <p className="text-white/60 text-sm mb-12">Last updated: {updated}</p>
 
         <div className="space-y-8 text-white/70 leading-relaxed [&_h2]:text-white [&_h2]:font-display [&_h2]:font-bold [&_h2]:text-xl [&_h2]:mb-3 [&_h2]:mt-2">
           {children}
