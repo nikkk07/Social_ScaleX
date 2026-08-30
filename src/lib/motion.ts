@@ -20,6 +20,38 @@ export interface MotionKit {
 
 let kit: Promise<MotionKit | null> | null = null;
 
+/**
+ * Features that have asked for the motion layer this page load.
+ *
+ * 55.5 kB gzipped is not worth one effect, so the layer stays unloaded until
+ * at least two independent features want it. This is a gate in code rather
+ * than a rule in a document, because a rule in a document is one refactor
+ * away from being forgotten.
+ */
+const requested = new Set<MotionFeature>();
+
+export type MotionFeature = 'split-text' | 'scrub' | 'parallax';
+
+/** How many distinct features must want the layer before it loads. */
+export const MOTION_THRESHOLD = 2;
+
+/**
+ * Register interest in the motion layer and report whether it is warranted.
+ *
+ * Callers must handle `false` by doing nothing — their CSS base layer is
+ * already carrying the effect, so "not loaded" degrades to "no enhancement",
+ * never to "broken section".
+ */
+export function requestMotion(feature: MotionFeature): boolean {
+  requested.add(feature);
+  return requested.size >= MOTION_THRESHOLD;
+}
+
+/** Features registered so far — exported for the provider and for tests. */
+export function motionRequests(): ReadonlySet<MotionFeature> {
+  return requested;
+}
+
 /** True when the visitor has asked the OS for less motion. */
 export function prefersReducedMotion(): boolean {
   if (typeof window === 'undefined') return true;
@@ -57,6 +89,10 @@ export function loadMotion(): Promise<MotionKit | null> {
 
   kit = (async () => {
     if (typeof window === 'undefined' || prefersReducedMotion()) return null;
+
+    // The threshold is checked here too, not only at the call site, so no
+    // caller can bypass it by importing loadMotion directly.
+    if (requested.size < MOTION_THRESHOLD) return null;
 
     const [{ gsap }, { ScrollTrigger }, { SplitText }] = await Promise.all([
       import('gsap'),

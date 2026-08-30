@@ -315,6 +315,44 @@ p {
   to   { transform: translate3d(0, 8%, 0); }
 }
 
+/* ── Case-study media parallax ────────────────────────── */
+/*
+ * The base layer, and the one that actually ships today.
+ *
+ * Same contract as .reveal: CSS carries the effect, the motion layer only
+ * ever refines it. GSAP ScrollTrigger would give this cross-browser scrub,
+ * but the layer will not load until a second feature also wants it
+ * (requestMotion, src/lib/motion.ts) — one effect does not justify 55.5 kB.
+ *
+ * The inner layer is over-scaled so the drift never exposes an edge, and
+ * only `transform` animates: moving a painted layer reuses its texture,
+ * while animating position or size re-rasterises it every frame.
+ */
+.parallax-frame {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.parallax-layer {
+  transform: scale(1.16);
+  will-change: transform;
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .parallax-layer {
+      animation: media-parallax linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+
+@keyframes media-parallax {
+  from { transform: translate3d(0, -7%, 0) scale(1.16); }
+  to   { transform: translate3d(0, 7%, 0) scale(1.16); }
+}
+
 /* ── Scroll progress ──────────────────────────────────── */
 .scroll-progress {
   position: fixed;

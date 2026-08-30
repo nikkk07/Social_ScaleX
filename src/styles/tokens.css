@@ -21,11 +21,13 @@
  *     addition, where "mount only when in viewport" can actually hold.
  *   - Never fabricate testimonials. The slot renders case-study metrics from
  *     content.ts until real, attributed quotes exist.
- *   - GSAP is permanently unwired from the hero. The motion layer's only
- *     sanctioned jobs are the animated counters (StatsBand / Results) and
- *     parallax on case-study media — nothing else, and never anything above
- *     the fold. Note the counters currently run on a plain rAF loop at 0 kB;
- *     moving them onto GSAP must justify the 28 kB, not assume it.
+ *   - GSAP is permanently unwired from the hero, and never runs anything
+ *     above the fold. The counters stay on a plain rAF loop permanently:
+ *     0 kB, no dependency.
+ *   - NO SINGLE FEATURE JUSTIFIES LOADING THE MOTION LAYER. 55.5 kB gz is
+ *     not worth one effect. Features register intent via requestMotion();
+ *     the layer boots only once at least two of them want it. This is
+ *     enforced in src/lib/motion.ts, not left to discipline.
  *   - Any "+" figure derived from a real number must FLOOR, never round.
  *     376.5K prints as "376K+", never "377K+": a "+" claim has to sit at or
  *     below the true value or it is simply false.

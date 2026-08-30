@@ -1,7 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { isPointerDevice, loadMotion, prefersReducedMotion } from '@/lib/motion';
+import {
+  MOTION_THRESHOLD,
+  isPointerDevice,
+  loadMotion,
+  motionRequests,
+  prefersReducedMotion,
+} from '@/lib/motion';
 
 /**
  * Boots the optional motion layer: Lenis smooth scroll on pointer devices,
@@ -40,6 +46,10 @@ export function MotionProvider() {
       : window.setTimeout(boot, 400);
 
     async function boot() {
+      // Nothing to enhance, or not enough asking. Either way, the CSS base
+      // layer has already rendered every section correctly.
+      if (motionRequests().size < MOTION_THRESHOLD) return;
+
       const kit = await loadMotion();
       if (!kit || cancelled) return;
       gsapRef = kit;

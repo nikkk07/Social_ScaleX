@@ -353,10 +353,11 @@ export const STATS: Metric[] = [
   { value: '4+', label: 'Brands actively managed' },
   { value: '9.3M+', label: 'Combined monthly views' },
   { value: '496K+', label: 'Combined followers & subscribers' },
-  // TODO(verify-metrics): CONTRADICTION — this claims 14 services while
-  // SERVICES above defines 8, and both render on the same page. An answer
-  // engine reading the site sees two different counts for the same fact.
-  // Either add the missing 6 to SERVICES or correct this to 8; do not
-  // resolve it by guessing which number is right.
-  { value: '14', label: 'Services offered, end to end' },
+  // TODO(verify-metrics): INTERIM VALUE, owner-authorized 2026-08-30.
+  // This read '14' while SERVICES defines 8, and both render on the same
+  // page — an answer engine saw two counts for one fact. Set to 8 so the
+  // site is at least self-consistent today. The owner's final answer may
+  // add services, or may reframe as "8 services, N deliverables"; for
+  // reference, SERVICES currently defines 44 deliverables in total.
+  { value: '8', label: 'Services offered, end to end' },
 ];
