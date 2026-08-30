@@ -13,26 +13,34 @@ differ on purpose so a browser variable can never be mistaken for a CI one.
 
 | Variable | Vercel | GitHub secrets | local `.env.local` | What it's for |
 |---|:--:|:--:|:--:|---|
-| `VITE_SUPABASE_URL` | ✅ | — | ✅ | Browser client. Project REST URL. |
-| `VITE_SUPABASE_ANON_KEY` | ✅ | — | ✅ | Browser client. Public anon key. |
+| `NEXT_PUBLIC_SUPABASE_URL` | ✅ | — | ✅ | Browser client. Project REST URL. |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ | — | ✅ | Browser client. Public anon key. |
 | `SUPABASE_URL` | — | ✅ | optional | `scripts/keep_alive.py`. |
 | `SUPABASE_ANON_KEY` | — | ✅ | optional | `scripts/keep_alive.py`. |
 | `RENDER_URL` | — | optional | optional | Only if a Render service ever exists. Absent = skipped. |
 
-**The `VITE_` prefix is load-bearing.** Vite only exposes variables with that
-prefix to the bundle. That is also the warning: *everything* with that prefix is
-publicly readable in the built JavaScript. Never invent a `VITE_`-prefixed
-secret.
+**The `NEXT_PUBLIC_` prefix is load-bearing.** Next.js only exposes variables
+with that prefix to the browser bundle, and it does it by literal text
+substitution at build time — so they must be read as full expressions
+(`process.env.NEXT_PUBLIC_SUPABASE_URL`), never destructured. That is also the
+warning: *everything* with that prefix is publicly readable in the built
+JavaScript. Never invent a `NEXT_PUBLIC_`-prefixed secret.
+
+There is one more optional browser variable, `NEXT_PUBLIC_SITE_URL`. It sets
+the canonical origin for every absolute URL the site emits — canonical tags, OG
+URLs, JSON-LD `@id`s, `sitemap.xml`, `robots.txt` and `llms.txt`. Leave it
+unset to fall back to the Vercel deployment URL. Setting it is the entire
+domain cutover; see §7.
 
 ### Setting them
 
-- **Vercel** — Project → Settings → Environment Variables. Add both `VITE_`
-  variables to Production, Preview, and Development. Vite reads env at **build**
+- **Vercel** — Project → Settings → Environment Variables. Add both `NEXT_PUBLIC_`
+  variables to Production, Preview, and Development. Next.js reads env at **build**
   time, so changing one requires a redeploy, not just a restart.
 - **GitHub** — Settings → Secrets and variables → Actions → New repository
   secret. Add `SUPABASE_URL` and `SUPABASE_ANON_KEY`. Add `RENDER_URL` only if
   such a service exists.
-- **Local** — `cp .env.example .env.local` and fill in the two `VITE_` values.
+- **Local** — `cp .env.example .env.local` and fill in the two `NEXT_PUBLIC_` values.
   `.env.local` is gitignored. Restart the dev server after editing it.
 
 ### The anon key, and the one that must never appear
@@ -44,7 +52,7 @@ is the actual gate: anon can `INSERT` into `inbound_enquiries` and `EXECUTE`
 `supabase/README.md` for the full grant table.
 
 The **`service_role` key bypasses RLS entirely.** It must never appear in this
-repository, in Vercel, in GitHub secrets, in a `VITE_` variable, or in a
+repository, in Vercel, in GitHub secrets, in a `NEXT_PUBLIC_` variable, or in a
 screenshot. There is no feature in this project that needs it. If you find one
 committed, rotate it in the Supabase dashboard immediately — treat it as
 compromised the moment it lands anywhere version-controlled.
@@ -53,7 +61,7 @@ Verify before every deploy:
 
 ```bash
 git grep -i service_role          # expect only the .env.example warning
-npm run build && grep -rEi 'service_role|eyJ[A-Za-z0-9_-]{20,}' dist/ | grep -v "$VITE_SUPABASE_ANON_KEY"
+npm run build && grep -rEi 'service_role|eyJ[A-Za-z0-9_-]{20,}' .next/static/ | grep -v "$NEXT_PUBLIC_SUPABASE_ANON_KEY"
 ```
 
 ---
@@ -218,7 +226,7 @@ Run it by hand any time from Actions → Supabase keepalive → Run workflow.
 Written down so they're decisions rather than surprises.
 
 - **The contact form's rate limiting is client-side only.** The honeypot and the
-  throttle in `src/app/components/sections/submitEnquiry.ts` live in the
+  throttle in `src/components/sections/submitEnquiry.ts` live in the
   browser, so anyone POSTing the REST endpoint directly walks past both. A
   Postgres `CHECK` cannot express "N per hour", and there is no edge function in
   this stack. What makes the gap survivable is migration 090011: every enquiry

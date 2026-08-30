@@ -1,0 +1,59 @@
+<!--
+  Social preview card, 1200x630.
+
+  This is the SOURCE. Facebook, WhatsApp, LinkedIn and X do not render SVG
+  previews, so it must be converted to public/og-image.png before it does
+  anything — see docs/DEPLOYMENT.md. Fonts are a generic sans-serif stack
+  rather than Space Grotesk so the conversion does not depend on a font the
+  rasterizer may not have.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-label="Social ScaleX — social media marketing agency in Delhi NCR">
+  <defs>
+    <radialGradient id="glowViolet" cx="14%" cy="0%" r="72%">
+      <stop offset="0%" stop-color="#8B5CF6" stop-opacity="0.42"/>
+      <stop offset="100%" stop-color="#8B5CF6" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowEmerald" cx="97%" cy="108%" r="65%">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0.26"/>
+      <stop offset="100%" stop-color="#34D399" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="wordmark" x1="0" y1="0" x2="1" y2="0.4">
+      <stop offset="0%" stop-color="#A78BFA"/>
+      <stop offset="38%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#34D399"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="#050508"/>
+  <rect width="1200" height="630" fill="url(#glowViolet)"/>
+  <rect width="1200" height="630" fill="url(#glowEmerald)"/>
+
+  <!-- Glass eyebrow pill -->
+  <g>
+    <rect x="80" y="96" width="392" height="50" rx="25" fill="#FFFFFF" fill-opacity="0.07" stroke="#FFFFFF" stroke-opacity="0.14"/>
+    <circle cx="110" cy="121" r="5" fill="#34D399"/>
+    <text x="130" y="128" font-family="Inter, Helvetica, Arial, sans-serif" font-size="19" font-weight="500" fill="#FFFFFF" fill-opacity="0.8">Real clients. Real growth. Verified results.</text>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="80" y="266" font-family="Inter, Helvetica, Arial, sans-serif" font-size="94" font-weight="700" letter-spacing="-3" fill="#FFFFFF">Social <tspan fill="url(#wordmark)">ScaleX</tspan></text>
+
+  <!-- Positioning line -->
+  <text x="80" y="330" font-family="Inter, Helvetica, Arial, sans-serif" font-size="31" font-weight="500" fill="#FFFFFF" fill-opacity="0.72">Social media marketing agency in Delhi NCR</text>
+  <text x="80" y="374" font-family="Inter, Helvetica, Arial, sans-serif" font-size="26" font-weight="400" fill="#FFFFFF" fill-opacity="0.52">Instagram · Facebook · YouTube growth for brands and creators</text>
+
+  <!-- Metric strip -->
+  <rect x="80" y="440" width="1040" height="116" rx="24" fill="#FFFFFF" fill-opacity="0.055" stroke="#FFFFFF" stroke-opacity="0.12"/>
+  <g font-family="Inter, Helvetica, Arial, sans-serif">
+    <text x="128" y="500" font-size="42" font-weight="700" fill="#FFFFFF">9.3M+</text>
+    <text x="128" y="530" font-size="17" font-weight="500" fill="#FFFFFF" fill-opacity="0.55">Combined monthly views</text>
+
+    <text x="452" y="500" font-size="42" font-weight="700" fill="#FFFFFF">496K+</text>
+    <text x="452" y="530" font-size="17" font-weight="500" fill="#FFFFFF" fill-opacity="0.55">Followers &amp; subscribers</text>
+
+    <text x="812" y="500" font-size="42" font-weight="700" fill="#FFFFFF">4.2M</text>
+    <text x="812" y="530" font-size="17" font-weight="500" fill="#FFFFFF" fill-opacity="0.55">Views / 30 days, top account</text>
+  </g>
+  <line x1="412" y1="466" x2="412" y2="530" stroke="#FFFFFF" stroke-opacity="0.12"/>
+  <line x1="772" y1="466" x2="772" y2="530" stroke="#FFFFFF" stroke-opacity="0.12"/>
+</svg>

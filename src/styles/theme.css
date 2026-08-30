@@ -1,8 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Space Grotesk", sans-serif;
-  --font-sans: "Inter", sans-serif;
+  /* Supplied by next/font/google (src/app/layout.tsx), which self-hosts both
+     families and sets these variables on <html>. The literal family names stay
+     as fallbacks so styles still resolve if the font CSS has not applied. */
+  --font-display: var(--font-space-grotesk), "Space Grotesk", sans-serif;
+  --font-sans: var(--font-inter), "Inter", sans-serif;
 
   --color-violet: #8B5CF6;
   --color-violet-light: #A78BFA;
@@ -238,6 +241,46 @@ textarea:focus-visible {
 
 a, button {
   cursor: pointer;
+}
+
+/* ── Entrance animations (no JavaScript) ──────────────── */
+/*
+ * The Vite build ran every entrance through Framer Motion. That meant each
+ * animated element was serialised with inline `opacity: 0` and only became
+ * visible once React hydrated — it put the hero, the LCP element, behind the
+ * whole JS bundle, and left the page blank for any client that does not run
+ * JavaScript (which includes GPTBot, ClaudeBot, PerplexityBot and CCBot).
+ *
+ * These do the same job in CSS. The compositor handles them on the first
+ * frame, transform + opacity only, and no JavaScript is involved.
+ */
+@keyframes rise-in {
+  from { opacity: 0; transform: translate3d(0, 16px, 0); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* On-load entrance. Stagger via inline animation-delay at the call site. */
+.rise-in {
+  animation: rise-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/*
+ * Scroll-triggered reveal. Where scroll-driven timelines exist (Chrome/Edge
+ * 115+) the element fades up as it enters the viewport. Everywhere else —
+ * Safari, Firefox — the @supports block never applies and the element is
+ * simply visible from the start. Visible-by-default is the important part:
+ * a reveal that fails must fail towards showing the content.
+ */
+.reveal { opacity: 1; }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: rise-in linear both;
+      animation-timeline: view();
+      animation-range: entry 8% cover 20%;
+    }
+  }
 }
 
 /* ── Reduced motion ───────────────────────────────────── */

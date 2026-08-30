@@ -1,85 +1,141 @@
-# Social ScaleX — SEO Playbook
+# Social ScaleX — SEO / GEO / AEO Playbook
 
-The code side of SEO is done (see "Already implemented" below). Ranking on
-Google now depends on the steps in this file — most of them are one-time
-setup, the rest are habits.
+The code side is done (see "Already implemented"). What's left is mostly
+one-time account setup and a few habits — plus two items that still need a
+human: the OG image conversion and the real social profile URLs.
+
+"GEO/AEO" here means visibility in answer engines — ChatGPT, Perplexity,
+Claude, Gemini and Google AI Overviews — as distinct from blue-link ranking.
+The two overlap more than the acronyms suggest, and nothing below trades one
+for the other.
 
 ---
 
 ## 🔴 Do these BEFORE going live
 
-1. **Replace the deployment host with a real domain.** The unowned placeholder
-   `socialscalex.com` is gone — every reference now points at the Vercel
-   deployment URL, `social-scalex.vercel.app`, which actually serves the site.
-   That is correct and indexable as-is; a canonical pointing at a host nobody
-   serves is what gets a site indexed nowhere.
+1. **Convert the social preview image.** `public/og-image.svg` is the designed
+   1200×630 card. `og:image` points at `/og-image.png`, which does not exist
+   yet, and WhatsApp/LinkedIn/X do not rasterize SVG — so every share still
+   renders a broken preview until this is done.
 
-   When a real domain is bought, `git grep -n 'social-scalex\.vercel\.app'`
-   finds all 13 references — replace them **in one commit**:
-   - `index.html` — canonical, `og:url`, `og:image`, `twitter:image`, and the
-     five JSON-LD `@id` / `url` / `publisher` fields (9)
-   - `public/robots.txt` — the `Sitemap:` line (1)
-   - `public/sitemap.xml` — every `<loc>` (3)
+   ```bash
+   # macOS, nothing to install
+   qlmanage -t -s 1200 -o public public/og-image.svg && \
+     mv public/og-image.svg.png public/og-image.png
+   ```
 
-   Splitting them leaves the JSON-LD entity `@id`s on a different host from the
-   canonical, which describes two entities instead of one. Supabase's Site URL
-   and redirect allow-list need the new host too, or password resets break.
-   Full procedure in `docs/MERGE_CHECKLIST.md` §7.
-2. **Add the social preview image.** Create a 1200×630 image (logo + tagline
-   over the dark glass look) and save it as `public/og-image.png`. This is
-   what shows when the site is shared on WhatsApp/LinkedIn/X.
-3. **Fill in real social profile URLs** in
-   `src/app/components/sections/Footer.tsx` (`SOCIAL_LINKS`) — icons stay
-   hidden until a URL is set. Then add the same URLs to the JSON-LD in
-   `index.html` as a `"sameAs": [...]` array on the ProfessionalService node.
-4. **Host on HTTPS** (Vercel/Netlify/Cloudflare Pages all do this free) and
-   make sure `www` and non-`www` redirect to one canonical version.
-5. **SPA caveat:** this is a client-rendered React site. Google renders JS
-   fine, but if you want maximum crawl reliability later, enable prerendering
-   on your host (Netlify prerendering, or `vite-plugin-ssr`/prerender plugin).
-   Not a blocker — the meta tags and structured data are already in the
-   static HTML, which is what matters most.
+   Or open the SVG in a browser at 1200×630 and screenshot it. Confirm the
+   output is exactly 1200×630, then commit it. No code change needed.
+
+2. **Fill in the real social profile URLs** in `src/lib/site.ts`
+   (`SOCIAL_PROFILES`). One edit does two things: the footer icons appear, and
+   the URLs join the `ProfessionalService` JSON-LD as `sameAs`. `sameAs` is how
+   an answer engine confirms that the Instagram account, the LinkedIn page and
+   this website are one business rather than three — it is the single highest-
+   value structured-data field still empty.
+
+3. **Verify the metrics.** `src/lib/content.ts` carries two
+   `TODO(verify-metrics)` markers. The figures are point-in-time snapshots
+   recorded in-repo before 2026-08-05 and their currency is unconfirmed. They
+   now appear in more places than before — homepage, `/case-studies`,
+   `/llms.txt` and the `CreativeWork` schema — so re-pull them from the client
+   dashboards before launch. Publishing a stale number is worse than
+   publishing a smaller true one.
+
+4. **Buy a real domain**, then set `NEXT_PUBLIC_SITE_URL` in Vercel and
+   redeploy. Everything absolute follows from it. Full procedure in
+   `docs/MERGE_CHECKLIST.md` §7.
+
+5. **Host on HTTPS** (Vercel does) and make sure `www` and non-`www` redirect
+   to one canonical version.
 
 ## 🟠 Week one after launch
 
-6. **Google Search Console** (search.google.com/search-console): verify the
-   domain, submit `sitemap.xml`, and request indexing of the homepage.
-7. **Bing Webmaster Tools**: import from GSC (2 clicks, free extra traffic).
-8. **Google Business Profile** (business.google.com): create a listing —
-   "Social ScaleX", category *Marketing Agency*, Delhi NCR service area, both
-   phone numbers, link to the site. This is the single highest-impact step
-   for ranking on "social media marketing agency near me / in Delhi" searches.
-9. **Consistent NAP** (Name, Address, Phone): use the exact same business
-   name and numbers everywhere — GBP, Instagram bio, LinkedIn, directories.
+6. **Google Search Console** — verify the domain, submit `sitemap.xml`, request
+   indexing of `/`, `/services` and `/case-studies`.
+7. **Bing Webmaster Tools** — import from GSC. Two clicks, and it feeds
+   Copilot.
+8. **Google Business Profile** — "Social ScaleX", category *Marketing Agency*,
+   Delhi NCR service area, both phone numbers, link to the site. Still the
+   single highest-impact step for "social media marketing agency near me".
+9. **Consistent NAP** (Name, Address, Phone) everywhere — GBP, Instagram bio,
+   LinkedIn, directories. Entity resolution depends on the strings matching.
 
 ## 🟡 Ongoing (off-page authority)
 
-10. **Backlinks from real places, not link farms:**
-    - Get listed on Indian agency directories: Clutch, GoodFirms, DesignRush,
-      Sortlist, JustDial, Sulekha.
-    - Ask clients (acdelhivlogs, prago.outdoors, etc.) to link to the site
-      from their link-in-bio pages — client links are natural and relevant.
-    - Publish case-study posts on LinkedIn linking back to `/#results`.
-11. **Social signals:** keep the agency's own Instagram/LinkedIn active and
-    link them to the site; Google cross-references entity mentions.
-12. **Reviews:** collect Google Business Profile reviews from real clients —
-    reviews + response activity move local rankings more than anything else.
-13. **Content flywheel (when ready):** add a `/blog` with genuinely useful
-    posts ("What 4.2M monthly views actually took", "Reels strategy that grew
-    a gear store"). One good post a month beats daily filler.
+10. **Backlinks from real places, not link farms.** Indian agency directories:
+    Clutch, GoodFirms, DesignRush, Sortlist, JustDial, Sulekha. Ask clients
+    (acdelhivlogs, prago.outdoors) to link from their link-in-bio pages —
+    client links are natural and relevant. Publish case-study posts on LinkedIn
+    linking to `/case-studies`.
+11. **Reviews** on the Google Business Profile from real clients. Reviews plus
+    response activity move local rankings more than anything else.
+
+    Note: there is deliberately **no `AggregateRating` schema** on this site.
+    Adding one without real reviews behind it is what earns a structured-data
+    manual action. Add it once GBP reviews exist, and only with the true count.
+12. **Content flywheel.** `/services` and `/case-studies` are the pillar pages;
+    a `/blog` is the obvious next surface. One genuinely useful post a month
+    ("What 4.2M monthly views actually took") beats daily filler.
+
+## 🔵 Measuring answer-engine visibility
+
+Traditional rank tracking will not show any of this. Check it directly:
+
+- Ask ChatGPT, Perplexity, Claude and Gemini a handful of high-intent prompts —
+  "social media marketing agency in Delhi NCR", "who manages Instagram for
+  brands in Delhi", "agency that does Reels production India" — and record
+  whether Social ScaleX is named and whether the details are right.
+- Re-run monthly. The metric is *accurate citations on high-intent prompts*,
+  not position.
+- In GSC, watch `/services` and `/case-studies` impressions separately from
+  `/` — fan-out coverage is the point of those pages existing.
 
 ## ✅ Already implemented in the code
 
-- `index, follow` robots meta (the site previously shipped with **noindex** —
-  it was invisible to Google by instruction)
-- Title tag + meta description tuned to "social media marketing agency in
-  Delhi NCR" intent, under length limits
-- Canonical URL, Open Graph, Twitter cards, `og:locale: en_IN`
-- JSON-LD structured data: `ProfessionalService` (with areaServed, phone,
-  knowsAbout) + `WebSite` + `FAQPage` (mirrors the visible FAQ section)
-- `robots.txt` + `sitemap.xml` (homepage, /privacy, /terms)
-- Semantic HTML: single `h1`, ordered `h2/h3`, `<nav>/<main>/<footer>/<address>`
-  landmarks, aria-labels, skip-to-content link
-- FAQ section written for featured-snippet queries; Privacy & Terms trust pages
-- SVG favicon; font preconnect; lazy-loaded 3D (fast LCP); Core-Web-Vitals-
-  friendly rendering (no layout shift, transform/opacity-only animations)
+**Rendering and crawler access** — the item that mattered most:
+
+- Every marketing page is **statically generated with its content in the HTML**.
+  The previous Vite SPA served an empty `<div id="root">`: `grep` for any body
+  text in the old `dist/index.html` returned nothing. GPTBot, ClaudeBot,
+  PerplexityBot and CCBot do not execute JavaScript, so the entire site was
+  invisible to them. It is now server-rendered.
+- Marketing pages ship almost no JavaScript. Entrance animations are CSS, so
+  nothing is `opacity: 0` waiting on hydration.
+- **All FAQ answers are in the DOM.** The old Radix accordion unmounted closed
+  panels, so five of six answers existed only after a click. It is `<details>`
+  now — collapsed, but present and quotable.
+- `robots.txt` explicitly allows GPTBot, OAI-SearchBot, ChatGPT-User,
+  ClaudeBot, Claude-Web, anthropic-ai, PerplexityBot, Perplexity-User,
+  Google-Extended, CCBot, Applebot-Extended, cohere-ai and meta-externalagent.
+- **`/llms.txt`** — a plain-Markdown brief of the business, generated from
+  `src/lib/content.ts` so it cannot drift from the pages.
+- A real **404** with a 404 status. The SPA served the homepage at every
+  unknown URL with a 200, which is a soft 404.
+
+**Structured data** — all of it server-rendered, all built from
+`src/lib/content.ts` so schema and visible text are the same sentences:
+
+- `ProfessionalService` + `WebSite` declared once at stable `@id`s in the root
+  layout; every page graph references those ids rather than restating them, so
+  the business is one entity instead of one per page.
+- `WebPage` + `BreadcrumbList` per page, with matching visible breadcrumbs.
+- `Service` × 8 on `/services`, each with an `OfferCatalog` of deliverables.
+- `CreativeWork` × 4 on `/case-studies`, metrics as named `PropertyValue`s.
+- `FAQPage` on `/`, `/services` and `/about`.
+- `ContactPoint` for both numbers.
+
+**Content architecture:**
+
+- Answer-first openings: each page leads with a self-contained 40–60 word
+  paragraph, and every `/services` section is a question-form H2 followed
+  immediately by a standalone answer.
+- Pages beyond the homepage: `/services`, `/case-studies`, `/about` — the
+  sitemap went from 3 URLs to 6, with internal links using descriptive anchors.
+- One brand definition (`SITE_TAGLINE`) reused verbatim in JSON-LD, `/llms.txt`
+  and `/about`.
+
+**Traditional SEO:** per-page titles and descriptions via the Next Metadata
+API, canonicals, Open Graph, Twitter cards, `en-IN` locale, generated
+`sitemap.xml`, semantic landmarks, one `h1` per page, skip link, self-hosted
+fonts, `/crm` and `/login` both `noindex` and `Disallow`ed.

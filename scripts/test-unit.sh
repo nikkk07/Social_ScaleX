@@ -5,7 +5,8 @@
 # exits non-zero if any check failed.
 #
 # Dummy Supabase env is injected so importing a module whose import chain
-# reaches src/lib/supabase.ts doesn't throw at load.
+# reaches src/lib/supabase.ts doesn't throw at load. Since the Next.js
+# migration those are process.env.NEXT_PUBLIC_* rather than import.meta.env.
 #
 # Add a new suite by listing its path in SUITES.
 # ─────────────────────────────────────────────────────────────────────
@@ -13,8 +14,8 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 
 SUITES=(
-  src/app/crm/leads/leadsQuery.test.ts
-  src/app/components/sections/enquiry.test.ts
+  src/crm/leads/leadsQuery.test.ts
+  src/components/sections/enquiry.test.ts
 )
 
 OUT=node_modules/.cache/ssx-tests
@@ -26,8 +27,9 @@ for suite in "${SUITES[@]}"; do
   echo "── $suite"
   npx esbuild "$suite" \
     --bundle --format=esm --platform=node \
-    --define:import.meta.env.VITE_SUPABASE_URL='"https://x.supabase.co"' \
-    --define:import.meta.env.VITE_SUPABASE_ANON_KEY='"anon"' \
+    --alias:@=./src \
+    --define:process.env.NEXT_PUBLIC_SUPABASE_URL='"https://x.supabase.co"' \
+    --define:process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY='"anon"' \
     --outfile="$OUT/$name.mjs" --log-level=error || { failed=1; continue; }
   node "$OUT/$name.mjs" || failed=1
   echo

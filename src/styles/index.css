@@ -1,4 +1,8 @@
-@import './fonts.css';
+/* Fonts are no longer imported here. `@import url(fonts.googleapis.com)` is
+   render-blocking and costs a DNS + TLS round trip before any text can paint;
+   next/font/google in src/app/layout.tsx self-hosts the same two families
+   from our own origin and exposes them as the CSS variables consumed by
+   theme.css. */
 @import './tailwind.css';
 @import './theme.css';
 @import './crm.css';

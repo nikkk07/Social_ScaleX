@@ -1,3 +1,40 @@
+# [SOCIAL-SCALEX — CURRENT STATE]
+
+> **Read this box before following anything below it.**
+>
+> This document was written as a forward-looking transformation brief. Parts of
+> it now describe a stack and a set of effects the codebase has deliberately
+> moved past. Where the two disagree, **the codebase wins** — the decisions
+> below were made on purpose and are documented at their call sites.
+>
+> **Stack (actual):** Next.js 14 App Router · React 18 · TypeScript strict ·
+> Tailwind v4 (`@tailwindcss/postcss`) · Radix/shadcn-ui · Lucide · Supabase ·
+> react-hook-form + zod · Recharts (CRM only) · deployed on Vercel.
+>
+> **Superseded by decisions already taken:**
+>
+> | Brief says | Reality | Why |
+> |---|---|---|
+> | Vite, `index.html`, `react-router`, `react-helmet-async` | Next.js App Router; metadata via the Metadata API | An SPA served an empty `<div id="root">` — invisible to every crawler that does not run JS |
+> | Framer Motion everywhere, 3D tilt cards, magnetic buttons, custom cursor, `layoutId` morphing | CSS-only entrances (`.reveal` / `.rise-in`); no motion library on marketing pages | Motion-rendered content is `opacity: 0` in the HTML until hydration, and it was ~56 kB gzipped on every page. The tilt/glare was removed in the minimal-glass redesign — see `GlassCard.tsx` |
+> | WebGL / R3F animated orb background; Lenis smooth scroll | Static painted background (`LiquidBackground.tsx`); native scroll | ~888 kB of JS repainting every frame, and scroll hijacking is an a11y liability |
+> | Zustand for global state | Not installed; no global UI state exists | Nothing needs it — adding it would be architecture for its own sake |
+> | `/pricing` page, `AggregateRating` schema | Neither exists | No real pricing or review data. Inventing either is a structured-data manual action waiting to happen |
+>
+> **Two rules that override anything below:**
+>
+> 1. **Content lives in `src/lib/content.ts`.** Page copy, every JSON-LD node
+>    and `/llms.txt` all render from it. Never write marketing copy into a
+>    component — schema that contradicts visible text gets discounted.
+> 2. **Never invent a metric, a price, a client name or a review.** Figures in
+>    this repo come from client dashboards and carry `TODO(verify-metrics)`
+>    markers where currency is unconfirmed.
+>
+> Architecture, commands and conventions: `README.md`. SEO/GEO/AEO status and
+> what is still outstanding: `SEO.md`.
+
+---
+
 ```markdown
 # [SYSTEM INSTRUCTION: SOCIAL-SCALEX ELITE TRANSFORMATION PROTOCOL v3.0]
 
