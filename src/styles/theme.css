@@ -255,13 +255,65 @@ p {
 
 /* ── Split-text headline ──────────────────────────────── */
 /*
- * GSAP SplitText writes the line wrappers; these style them. The mask is
- * the effect — lines rise out of an overflow-hidden box rather than just
- * fading — and it costs nothing when SplitText never loads, because
- * unsplit text simply has no .split-line children to clip.
+ * Split at BUILD time, not runtime.
+ *
+ * A split-text entrance needs its words to start hidden. Driving that from
+ * GSAP SplitText would put the LCP element behind an idle-deferred chunk and
+ * produce a visible flash-then-hide-then-animate on slow connections — the
+ * exact failure standing decision 01 exists to prevent. The words are
+ * server-rendered spans instead, and CSS masks and staggers them: identical
+ * effect, no JavaScript, and the headline text is in the HTML for crawlers
+ * either way.
+ *
+ * Each word is an overflow-hidden box; the inner span rises out of it.
  */
-.split-mask { overflow: hidden; }
-.split-line { will-change: transform; }
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  /* Descenders and the gradient fill both overrun the line box, so the mask
+     is grown and pulled back to avoid clipping glyph bottoms. */
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+
+.split-word > span {
+  display: inline-block;
+  animation: word-rise var(--dur-reveal) var(--ease-out-quint) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+@keyframes word-rise {
+  from { transform: translate3d(0, 110%, 0); }
+  to   { transform: none; }
+}
+
+/* ── Hero atmosphere ──────────────────────────────────── */
+/*
+ * Zero JS and zero 3D — standing decision 02. Layered gradients plus one
+ * inline SVG motif, painted once and composited thereafter.
+ *
+ * The drift is a scroll-driven timeline, so it costs no main-thread work and
+ * simply does not run where timelines are unsupported. Transform only: moving
+ * a blurred layer reuses its cached texture, whereas scaling or re-blurring
+ * it forces a re-raster every frame.
+ */
+.atmo-layer { will-change: transform; }
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .atmo-drift {
+      animation: atmo-drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+    }
+  }
+}
+
+@keyframes atmo-drift {
+  from { transform: translate3d(0, -4%, 0); }
+  to   { transform: translate3d(0, 8%, 0); }
+}
 
 /* ── Scroll progress ──────────────────────────────────── */
 .scroll-progress {

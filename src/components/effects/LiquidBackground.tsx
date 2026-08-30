@@ -8,9 +8,9 @@ import React from "react";
  * in the minimal-glass redesign: glass reads as premium only when the
  * surroundings are calm, and a canvas repainting every frame is the
  * opposite of calm (and hostile to CRM data tables). Painted once, then
- * composited — zero per-frame cost. Amber and cyan are retired from the
- * marketing palette here; violet is the single accent, emerald the
- * growth colour.
+ * composited — zero per-frame cost. The wash runs violet into cyan, matching the
+ * approved growth gradient; emerald is retained only as the semantic
+ * positive/up colour, not as ambient.
  */
 export function LiquidBackground() {
   return (
@@ -23,7 +23,7 @@ export function LiquidBackground() {
         style={{
           background: `
             radial-gradient(55vw 55vw at 12% -8%, rgba(139, 92, 246, 0.20), transparent 60%),
-            radial-gradient(50vw 50vw at 96% 108%, rgba(52, 211, 153, 0.10), transparent 62%)
+            radial-gradient(50vw 50vw at 96% 108%, rgba(34, 211, 238, 0.10), transparent 62%)
           `,
         }}
       />

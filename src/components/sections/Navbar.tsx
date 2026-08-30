@@ -35,6 +35,9 @@ const LINKS: NavItem[] = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  // Tracks whether the hero's own CTA has left the screen. See the CTA
+  // variant note below for why the nav needs to know.
+  const [pastHero, setPastHero] = useState(false);
   const session = useSession();
   const pathname = usePathname();
 
@@ -51,8 +54,12 @@ export function Navbar() {
       queued = false;
       const y = window.scrollY;
 
-      // Boolean state only — this flips twice per page, not every frame.
-      setScrolled((prev) => (prev !== y > 40 ? y > 40 : prev));
+      // Booleans only — these flip a couple of times per page, not every
+      // frame, so they are cheap to hold in state.
+      const isScrolled = y > 40;
+      const isPastHero = y > window.innerHeight * 0.7;
+      setScrolled((prev) => (prev !== isScrolled ? isScrolled : prev));
+      setPastHero((prev) => (prev !== isPastHero ? isPastHero : prev));
 
       const max = document.documentElement.scrollHeight - window.innerHeight;
       const ratio = max > 0 ? Math.min(y / max, 1) : 0;
@@ -132,6 +139,17 @@ export function Navbar() {
   const ctaHref = session ? '/crm' : '/#contact';
   const ctaLabel = session ? 'CRM' : 'Get a free call';
 
+  /*
+   * The nav CTA is ghost while the hero's own CTA is still on screen, and
+   * becomes the cyan accent only once the hero has scrolled away.
+   *
+   * Two cyan pills visible at once is two primary actions, which is none —
+   * the accent stops meaning "this is the thing to press" the moment it
+   * appears twice. This keeps exactly one accented action on screen at any
+   * scroll position, using state the scroll listener already tracks.
+   */
+  const ctaVariant = pastHero ? 'btn-cta' : 'btn-ghost';
+
   return (
     <>
       <div
@@ -169,7 +187,7 @@ export function Navbar() {
                 {link.name}
               </Link>
             ))}
-            <Link href={ctaHref} className="btn btn-sm btn-cta ml-2">
+            <Link href={ctaHref} className={`btn btn-sm ${ctaVariant} ml-2`}>
               {ctaLabel}
             </Link>
           </div>

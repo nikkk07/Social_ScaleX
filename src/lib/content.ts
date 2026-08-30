@@ -328,5 +328,10 @@ export const STATS: Metric[] = [
   { value: '4+', label: 'Brands actively managed' },
   { value: '9.3M+', label: 'Combined monthly views' },
   { value: '496K+', label: 'Combined followers & subscribers' },
+  // TODO(verify-metrics): CONTRADICTION — this claims 14 services while
+  // SERVICES above defines 8, and both render on the same page. An answer
+  // engine reading the site sees two different counts for the same fact.
+  // Either add the missing 6 to SERVICES or correct this to 8; do not
+  // resolve it by guessing which number is right.
   { value: '14', label: 'Services offered, end to end' },
 ];
