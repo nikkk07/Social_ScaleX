@@ -271,6 +271,33 @@ export const PORTFOLIO: PortfolioItem[] = [
   },
 ];
 
+export interface Testimonial {
+  /** The client's own words. Never paraphrased, never composed for them. */
+  quote: string;
+  /** Who said it. A quote without a name is not a testimonial. */
+  author: string;
+  /** Their role or handle — how they would want to be identified. */
+  role: string;
+  /** Must match a PORTFOLIO id so the quote and its numbers stay linked. */
+  clientId: string;
+}
+
+/**
+ * EMPTY ON PURPOSE. Do not populate this without real, attributed quotes
+ * that the client has agreed to publish.
+ *
+ * Writing plausible testimonials and attributing them to acdelhivlogs or
+ * prago.outdoors would be fabricating endorsements from real businesses. It
+ * is not a placeholder problem to be solved with better copy — the section
+ * renders verified results from PORTFOLIO instead, which is what the
+ * original brief specified for this slot anyway ("light, verified metrics
+ * grid, not testimonial quotes").
+ *
+ * When quotes arrive: add them here and the section switches automatically.
+ * No component change required.
+ */
+export const TESTIMONIALS: Testimonial[] = [];
+
 export interface Faq {
   q: string;
   a: string;

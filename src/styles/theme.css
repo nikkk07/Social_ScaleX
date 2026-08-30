@@ -65,6 +65,13 @@ p {
  * ONE gradient on the site, violet → cyan. As text only: cyan behind white
  * is 1.81:1, so this must never become a fill under light copy.
  */
+/*
+ * WARNING: .text-growth owns the element's `background`. Never combine it
+ * with a background-setting class (.liquid-glass*, bg-*) — the gradient is
+ * overwritten while -webkit-text-fill-color stays transparent, and the text
+ * disappears entirely. Put the gradient on an inner span instead, or use a
+ * solid token.
+ */
 .text-growth {
   background: linear-gradient(
     118deg,

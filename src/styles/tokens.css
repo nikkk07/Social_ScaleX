@@ -19,8 +19,19 @@
  *   - NO 3D on the LCP element, ever. The hero atmosphere is CSS/SVG, zero
  *     JS. A lazy R3F scene in a BELOW-FOLD section is open as a post-launch
  *     addition, where "mount only when in viewport" can actually hold.
- *   - Never fabricate testimonials. The slot renders case-study metrics from
- *     content.ts until real, attributed quotes exist.
+ *   - Never fabricate testimonials. The slot renders verified-results proof
+ *     from content.ts until real, attributed quotes exist.
+ *   - SOURCED COPY WINS OVER JUDGEMENT, ALWAYS. Never replace or delete
+ *     content on a content.ts search alone — search the whole repo first
+ *     (src/imports/ holds the original brief), and flag any "unsupported
+ *     content" finding for the owner rather than acting on it. This rule
+ *     exists because a partial search once produced a confident, wrong
+ *     edit to sourced project copy.
+ *   - Absolutely positioned elements NEVER live inside a transformed or
+ *     animated wrapper (.reveal, .rise-in, .parallax-layer). A transformed
+ *     ancestor becomes the containing block, so the child anchors to the
+ *     wrapper instead of the intended parent. Every such layout keeps a
+ *     rectangle-intersection assertion in its test pass.
  *   - GSAP is permanently unwired from the hero, and never runs anything
  *     above the fold. The counters stay on a plain rAF loop permanently:
  *     0 kB, no dependency.
