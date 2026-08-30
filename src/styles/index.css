@@ -1,8 +1,11 @@
-/* Fonts are no longer imported here. `@import url(fonts.googleapis.com)` is
-   render-blocking and costs a DNS + TLS round trip before any text can paint;
-   next/font/google in src/app/layout.tsx self-hosts the same two families
-   from our own origin and exposes them as the CSS variables consumed by
-   theme.css. */
+/* Fonts are not imported here. `@import url(fonts.googleapis.com)` is
+   render-blocking and costs a DNS + TLS round trip before any text can
+   paint; next/font/google in src/app/layout.tsx self-hosts both families
+   from our own origin and exposes them as the variables tokens.css reads.
+
+   Order matters: Tailwind first, then @theme tokens, then the styles that
+   consume them. */
 @import './tailwind.css';
+@import './tokens.css';
 @import './theme.css';
 @import './crm.css';

@@ -1,5 +1,6 @@
 import React from 'react';
 import { LiquidBackground } from './effects/LiquidBackground';
+import { MotionProvider } from './motion/MotionProvider';
 import { Navbar } from './sections/Navbar';
 import { Footer } from './sections/Footer';
 
@@ -15,6 +16,8 @@ export function MarketingShell({ children }: { children: React.ReactNode }) {
         Skip to main content
       </a>
       <LiquidBackground />
+      {/* Mounted here, not in the root layout, so the CRM never loads it. */}
+      <MotionProvider />
       <Navbar />
       <main id="main-content" className="relative z-10">
         {children}
