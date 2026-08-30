@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test:unit": "bash scripts/test-unit.sh"
+    "test:unit": "bash scripts/test-unit.sh",
+    "og": "node scripts/render-og.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

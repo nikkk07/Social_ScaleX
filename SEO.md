@@ -13,19 +13,20 @@ for the other.
 
 ## 🔴 Do these BEFORE going live
 
-1. **Convert the social preview image.** `public/og-image.svg` is the designed
-   1200×630 card. `og:image` points at `/og-image.png`, which does not exist
-   yet, and WhatsApp/LinkedIn/X do not rasterize SVG — so every share still
-   renders a broken preview until this is done.
+1. ~~**Convert the social preview image.**~~ **DONE** — `public/og-image.png`
+   exists at exactly 1200×630 (299 KB), rendered from `public/og-image.svg`.
+
+   To regenerate after editing the SVG, use `scripts/render-og.mjs`:
 
    ```bash
-   # macOS, nothing to install
-   qlmanage -t -s 1200 -o public public/og-image.svg && \
-     mv public/og-image.svg.png public/og-image.png
+   npm run og
    ```
 
-   Or open the SVG in a browser at 1200×630 and screenshot it. Confirm the
-   output is exactly 1200×630, then commit it. No code change needed.
+   **Do not use `qlmanage`** for this, despite it being the obvious macOS
+   one-liner. It pads thumbnails to a square and silently produces a
+   1200×1200 file, which fails the 1200×630 contract every OG consumer
+   expects. The script renders in headless Chromium at the SVG's real
+   viewBox and asserts the output dimensions.
 
 2. **Fill in the real social profile URLs** in `src/lib/site.ts`
    (`SOCIAL_PROFILES`). One edit does two things: the footer icons appear, and

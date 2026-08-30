@@ -1,155 +1,224 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Menu, X } from 'lucide-react';
 import { useSession } from '@/hooks/useSession';
 
-const links = [
-  { name: 'Services', href: '/services' },
-  { name: 'Case Studies', href: '/case-studies' },
-  { name: 'About', href: '/about' },
+interface NavItem {
+  name: string;
+  href: string;
+  /** Real routes get active marking; in-page anchors cannot. */
+  route?: boolean;
+}
+
+const LINKS: NavItem[] = [
+  { name: 'Services', href: '/services', route: true },
+  { name: 'Case Studies', href: '/case-studies', route: true },
+  { name: 'About', href: '/about', route: true },
   { name: 'Contact', href: '/#contact' },
 ];
 
 /**
- * Floating glass nav.
+ * Floating glass nav + scroll progress.
  *
- * The entrance and the mobile-menu fade were Framer Motion; they are CSS now
- * (`.rise-in`, and a transition on the overlay). Motion was the largest
- * dependency on every marketing page and this was the last thing on them
- * using it — removing it took roughly 56 kB of gzipped JavaScript off every
- * public route, for two animations CSS does natively.
+ * Motion budget: zero libraries. The capsule entrance is `.rise-in`, the
+ * mobile menu stagger is CSS `transition-delay` off a `--i` index, and the
+ * progress bar is a composited `scaleX`. GSAP stays reserved for split-text,
+ * scrub and parallax, so nothing here waits on a chunk to become usable.
+ *
+ * One passive scroll listener drives both the capsule shrink and the progress
+ * bar, writing to a CSS custom property rather than React state — a scroll
+ * position in state would re-render the tree on every frame of every scroll.
  */
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const session = useSession();
+  const pathname = usePathname();
 
+  const progressRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+
+  // ── Scroll: capsule shrink + progress bar, one listener, rAF-coalesced ──
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
+    let frame = 0;
+    let queued = false;
+
+    const measure = () => {
+      queued = false;
+      const y = window.scrollY;
+
+      // Boolean state only — this flips twice per page, not every frame.
+      setScrolled((prev) => (prev !== y > 40 ? y > 40 : prev));
+
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = max > 0 ? Math.min(y / max, 1) : 0;
+      progressRef.current?.style.setProperty('--scroll-progress', String(ratio));
+    };
+
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      frame = requestAnimationFrame(measure);
+    };
+
+    measure();
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener('scroll', onScroll);
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+    };
   }, []);
 
-  // Lock body scroll behind the mobile overlay.
+  const close = useCallback(() => setIsOpen(false), []);
+
+  // Close on route change — otherwise the overlay survives a client-side
+  // navigation and covers the page the visitor just asked for.
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
+  // ── Overlay: scroll lock, Escape, focus trap, focus restore ──
   useEffect(() => {
     if (!isOpen) return;
+
     const previous = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
-    return () => {
-      document.body.style.overflow = previous;
-    };
-  }, [isOpen]);
 
-  // Escape closes the overlay — expected of anything modal.
-  useEffect(() => {
-    if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false);
+      if (e.key === 'Escape') {
+        setIsOpen(false);
+        return;
+      }
+      if (e.key !== 'Tab') return;
+
+      // Trap: a full-screen overlay that lets focus walk onto the page
+      // behind it strands keyboard users on controls they cannot see.
+      const focusables = overlayRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled])',
+      );
+      if (!focusables || focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      if (!first || !last) return;
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
+
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = previous;
+      // Send focus back to the control that opened the overlay.
+      toggleRef.current?.focus();
+    };
   }, [isOpen]);
 
-  // Signed in -> CRM entry; signed out -> the marketing CTA. No standalone
-  // "Login" link in the nav (internal tool, not a customer portal).
-  const desktopCta = session ? (
-    <Link
-      href="/crm"
-      className="ml-2 bg-[var(--color-violet-cta)] text-white px-5 py-2.5 rounded-full text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
-    >
-      CRM
-    </Link>
-  ) : (
-    <Link
-      href="/#contact"
-      className="ml-2 bg-white text-[#0B0A10] px-5 py-2.5 rounded-full text-sm font-semibold transition-transform duration-200 hover:scale-[1.04] active:scale-95"
-    >
-      Start growing
-    </Link>
-  );
+  const isActive = (item: NavItem) => item.route === true && pathname === item.href;
+
+  // Signed in -> CRM entry; signed out -> the marketing CTA. There is no
+  // standalone "Login" link: the CRM is an internal tool, not a portal.
+  const ctaHref = session ? '/crm' : '/#contact';
+  const ctaLabel = session ? 'CRM' : 'Get a free call';
 
   return (
     <>
+      <div
+        ref={progressRef}
+        className="scroll-progress"
+        role="presentation"
+        aria-hidden
+      />
+
       <nav
         aria-label="Main"
         className="rise-in fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-5xl"
       >
         <div
-          className={`liquid-glass-strong rounded-full flex items-center justify-between pl-6 pr-2 transition-[height,box-shadow] duration-500 ${
-            scrolled ? 'h-14 shadow-2xl shadow-black/40' : 'h-16'
+          className={`liquid-glass-strong rounded-pill flex items-center justify-between pl-6 pr-2 transition-[height,box-shadow] duration-500 ease-out-quint ${
+            scrolled ? 'h-14' : 'h-16'
           }`}
         >
           <Link
             href="/"
             aria-label="Social ScaleX home"
-            className="flex-shrink-0 text-xl font-bold font-display tracking-tight text-white z-50 relative"
+            className="flex-shrink-0 text-xl font-bold font-display tracking-tight text-ink z-50 relative"
           >
-            Social <span className="text-gradient">ScaleX</span>
+            Social <span className="text-growth">ScaleX</span>
           </Link>
 
           <div className="hidden md:flex items-center gap-1">
-            {links.map((link) => (
+            {LINKS.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="px-4 py-2 rounded-full text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-colors duration-200"
+                className="nav-link"
+                aria-current={isActive(link) ? 'page' : undefined}
               >
                 {link.name}
               </Link>
             ))}
-            {desktopCta}
+            <Link href={ctaHref} className="btn btn-sm btn-cta ml-2">
+              {ctaLabel}
+            </Link>
           </div>
 
+          {/* 50px square — clears the 44px touch floor with the icon centred. */}
           <button
+            ref={toggleRef}
             type="button"
-            className="md:hidden p-3 text-white z-50 relative"
+            className="md:hidden p-3 text-ink z-50 relative"
             aria-label={isOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isOpen}
             aria-controls="mobile-menu"
-            onClick={() => setIsOpen(!isOpen)}
+            onClick={() => setIsOpen((v) => !v)}
           >
             {isOpen ? <X size={26} aria-hidden /> : <Menu size={26} aria-hidden />}
           </button>
         </div>
       </nav>
 
-      {/*
-        Kept mounted and toggled with opacity/visibility rather than unmounted,
-        so the fade in AND out are plain CSS transitions — the exit animation
-        was the only reason this needed AnimatePresence.
-      */}
       <div
         id="mobile-menu"
-        hidden={!isOpen}
-        className={`fixed inset-0 liquid-glass-strong flex flex-col justify-center items-center px-6 z-40 md:hidden transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-        }`}
+        ref={overlayRef}
+        data-open={isOpen}
+        // .nav-overlay carries its own opaque ground — see theme.css for why it
+        // must not reuse .liquid-glass-strong here.
+        className="nav-overlay fixed inset-0 flex flex-col justify-center items-center px-gutter z-40 md:hidden"
       >
-        <div className="flex flex-col space-y-6 items-center w-full">
-          {links.map((link) => (
+        <div className="flex flex-col gap-6 items-center w-full max-w-xs">
+          {LINKS.map((link, i) => (
             <Link
               key={link.name}
               href={link.href}
-              onClick={() => setIsOpen(false)}
-              className="text-3xl font-display font-bold text-white"
+              onClick={close}
+              aria-current={isActive(link) ? 'page' : undefined}
+              // --i drives the CSS stagger; no JS timeline involved.
+              style={{ '--i': i } as React.CSSProperties}
+              className="nav-stagger text-3xl font-display font-bold text-ink aria-[current=page]:text-cta"
             >
               {link.name}
             </Link>
           ))}
 
           <Link
-            href={session ? '/crm' : '/#contact'}
-            onClick={() => setIsOpen(false)}
-            className={`w-full max-w-xs text-center px-8 py-4 rounded-full font-semibold text-lg mt-6 ${
-              session
-                ? 'bg-[var(--color-violet-cta)] text-white'
-                : 'bg-white text-[#0B0A10]'
-            }`}
+            href={ctaHref}
+            onClick={close}
+            style={{ '--i': LINKS.length } as React.CSSProperties}
+            className="nav-stagger btn btn-cta w-full mt-2"
           >
-            {session ? 'CRM' : 'Start growing'}
+            {ctaLabel}
           </Link>
         </div>
       </div>

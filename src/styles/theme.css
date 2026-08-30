@@ -148,6 +148,14 @@ p {
 }
 .btn-action:hover { background: var(--color-action-hover); }
 
+/* Compact variant for the nav capsule. Desktop-only surface, so the 44px
+   touch floor does not apply — the mobile nav uses full-size buttons. */
+.btn-sm {
+  font-size: var(--text-sm);
+  padding: 0.5rem 1.125rem;
+  min-height: 2.25rem;
+}
+
 /* Tertiary — glass, no accent, no shadow. */
 .btn-ghost {
   background: rgba(255, 255, 255, 0.06);
@@ -261,9 +269,90 @@ p {
   inset: 0 0 auto 0;
   height: 2px;
   transform-origin: 0 50%;
-  transform: scaleX(0);
+  /* Written by the same passive scroll listener that drives the nav shrink,
+     so the page has one scroll handler rather than two. scaleX on a
+     composited layer — no layout, no paint. */
+  transform: scaleX(var(--scroll-progress, 0));
+  background: linear-gradient(90deg, var(--color-growth-2), var(--color-growth-3));
   z-index: 60;
   pointer-events: none;
+}
+
+/* ── Nav ──────────────────────────────────────────────── */
+.nav-link {
+  position: relative;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-ink-muted);
+  transition:
+    color var(--dur-fast) var(--ease-out-quint),
+    background-color var(--dur-fast) var(--ease-out-quint);
+}
+.nav-link:hover { color: var(--color-ink); background: rgba(255, 255, 255, 0.08); }
+.nav-link[aria-current='page'] { color: var(--color-ink); }
+/* The active marker is the accent, and it is the only thing in the nav
+   wearing it — the CTA aside. */
+.nav-link[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.15rem;
+  height: 1.5px;
+  border-radius: var(--radius-pill);
+  background: var(--color-cta);
+}
+
+/* Mobile overlay. Kept mounted and toggled through visibility so the exit
+   transition still runs; `visibility: hidden` also removes every child from
+   the tab order, which `opacity: 0` alone does not. */
+.nav-overlay {
+  /*
+   * Fully opaque, and no backdrop-filter.
+   *
+   * This used .liquid-glass-strong, which is tuned for the small nav capsule
+   * where partial transparency reads as depth. Stretched over the whole
+   * viewport it left the page content legible straight through the menu, and
+   * it degraded to unreadable wherever backdrop-filter is unavailable:
+   * Firefox until recently, iOS low-power mode, GPU-less rendering.
+   *
+   * Partial transparency buys nothing on a full-screen scrim, and a
+   * backdrop-filter spanning the entire viewport is the single most expensive
+   * place to put one. The glass character of this design lives in the nav
+   * capsule and the cards; here, a solid ground with a slight gradient is
+   * both cheaper and more legible.
+   */
+  background: linear-gradient(160deg, var(--color-base-700) 0%, var(--color-base-900) 100%);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--dur-base) var(--ease-out-quint),
+    visibility 0s linear var(--dur-base);
+}
+.nav-overlay[data-open='true'] {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--dur-base) var(--ease-out-quint),
+    visibility 0s linear 0s;
+}
+
+/* Staggered links, in CSS. GSAP is reserved for split-text, scrub and
+   parallax; a menu stagger needs none of it, and doing it here means the
+   mobile nav ships no JavaScript beyond its open/close state. */
+.nav-overlay .nav-stagger {
+  opacity: 0;
+  transform: translate3d(0, 12px, 0);
+  transition:
+    opacity var(--dur-base) var(--ease-out-quint),
+    transform var(--dur-base) var(--ease-out-quint);
+}
+.nav-overlay[data-open='true'] .nav-stagger {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i, 0) * var(--stagger));
 }
 
 /* ── Below-fold rendering skip ────────────────────────── */

@@ -268,23 +268,13 @@ Not blocking, but don't lose track of them:
   scheduled workflows after ~60 days of repo inactivity — silently, with one easy-to-
   miss email. The workflow in this repo cannot protect against its own repo going
   quiet.
-- **Convert the social preview image.** `public/og-image.svg` is the designed
-  1200×630 card; `og:image` and `twitter:image` point at `/og-image.png`, which does
-  not exist yet, so shares on WhatsApp, LinkedIn and X still render a broken preview.
-  Those platforms do not rasterize SVG, so the conversion is required. Any of:
+- ~~**Convert the social preview image.**~~ **DONE.** `public/og-image.png` is
+  committed at exactly 1200×630. Regenerate after editing the SVG with `npm run og`,
+  which renders in headless Chromium and asserts the dimensions.
 
-  ```bash
-  # macOS, no install
-  qlmanage -t -s 1200 -o public public/og-image.svg && \
-    mv public/og-image.svg.png public/og-image.png
-
-  # or, if you have rsvg-convert / ImageMagick
-  rsvg-convert -w 1200 -h 630 public/og-image.svg -o public/og-image.png
-  magick -background none -density 150 public/og-image.svg -resize 1200x630 public/og-image.png
-  ```
-
-  Or open the SVG in any browser at 1200×630 and screenshot it. Verify the result is
-  exactly 1200×630 and under 1 MB, then commit it. No code change is required.
+  Note for anyone tempted by the obvious macOS one-liner: `qlmanage -t` pads its
+  thumbnail to a square and emits 1200×1200 without warning. It was in this
+  checklist and it was wrong.
 - **When a real domain is bought, set one environment variable.** This used to be a
   13-reference find-and-replace across `index.html`, `robots.txt` and `sitemap.xml`,
   with a warning about doing them in one commit. It is now
