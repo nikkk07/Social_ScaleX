@@ -28,6 +28,15 @@
  *     not worth one effect. Features register intent via requestMotion();
  *     the layer boots only once at least two of them want it. This is
  *     enforced in src/lib/motion.ts, not left to discipline.
+ *   - If the motion gate never opens, that is a correct outcome. Never
+ *     manufacture a second consumer to justify loading the layer.
+ *   - Metrics render as <dl> label/value pairs, never divs — the pairing is
+ *     what lets an extractor read a number as belonging to its label.
+ *   - A card's headline metric is the FIRST in its data array. Never "the
+ *     largest" or "the most impressive": a rule that picks the flattering
+ *     number per client is spin with extra steps.
+ *   - No figure may render twice within one card. Every metrics-rendering
+ *     section carries a no-duplicate-figure assertion in its test pass.
  *   - Any "+" figure derived from a real number must FLOOR, never round.
  *     376.5K prints as "376K+", never "377K+": a "+" claim has to sit at or
  *     below the true value or it is simply false.
