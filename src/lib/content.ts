@@ -17,8 +17,17 @@ export interface Service {
   /** Numbering shown in the homepage grid. */
   id: string;
   title: string;
-  /** One-line summary — the homepage grid. */
+  /** One-line summary of what the service IS. */
   desc: string;
+  /**
+   * What the client GETS — the homepage cards lead with this.
+   *
+   * Services sell as outcomes, not feature lists, so this states the change
+   * in the client's situation. Deliberately carries no numbers and no
+   * guarantees: an outcome line is a description of the work, not a
+   * performance claim, and the moment it quotes a figure it becomes one.
+   */
+  outcome: string;
   /** Question-form H2 on /services, phrased the way people ask an assistant. */
   question: string;
   /** 40–60 word self-contained answer placed directly under the H2. This is
@@ -34,6 +43,8 @@ export const SERVICES: Service[] = [
     id: '01',
     title: 'Instagram Page Management',
     desc: 'Feed, Reels, Stories and Collabs — a full-stack presence engineered for the Explore algorithm.',
+    outcome:
+      'Your page runs without you. Posts go out on schedule, comments get answered, and you approve the direction once a month.',
     question: 'What does Instagram page management include?',
     answer:
       'Instagram page management means we run the account day to day: planning the feed, producing and posting Reels and Stories, writing captions, replying to comments and DMs, and setting up Collabs. You approve the direction each month. We handle posting cadence, hashtags and the reporting behind it.',
@@ -51,6 +62,8 @@ export const SERVICES: Service[] = [
     id: '02',
     title: 'Content Creation',
     desc: 'Reels, posts, explainer videos and Shorts — scroll-stopping creative produced and edited in-house.',
+    outcome:
+      'You stop filming on your phone between meetings. Finished Reels and posts arrive ready to publish.',
     question: 'Do you produce the content, or do we have to send it?',
     answer:
       'We produce it. Shooting, editing, motion graphics, sound design and copy all happen in-house, so you are not sourcing freelancers or filming on your phone between meetings. Send us product access or a shoot date and the finished Reels, Shorts and posts come back ready to publish.',
@@ -67,6 +80,8 @@ export const SERVICES: Service[] = [
     id: '03',
     title: 'Paid Ads Management',
     desc: 'Campaign architecture, targeting and creative testing across Meta and YouTube — built to convert.',
+    outcome:
+      'Your ad spend stops guessing. We test creative against creative until the cost per result stops falling.',
     question: 'How do you run paid ads on Meta and YouTube?',
     answer:
       'We build the campaign structure, write and produce the creative, set the targeting, then test variants against each other until the cost per result stops falling. Budgets stay in your own ad account under your billing. You see every campaign, every spend line and every result directly.',
@@ -84,6 +99,8 @@ export const SERVICES: Service[] = [
     id: '04',
     title: 'Profile Optimization',
     desc: 'Bio, link-in-bio, highlights and channel layout tuned so visitors convert into followers.',
+    outcome:
+      'Someone landing on your page works out what you sell in a few seconds, then follows.',
     question: 'What is social media profile optimization?',
     answer:
       'Profile optimization fixes the moment someone lands on your page and decides whether to follow. We rewrite the bio, restructure the link-in-bio, rebuild Story highlights and lay out the YouTube channel so a first-time visitor understands what you offer within a few seconds.',
@@ -100,6 +117,8 @@ export const SERVICES: Service[] = [
     id: '05',
     title: 'Analytics & Reporting',
     desc: 'Real dashboards from real accounts — views, watch time and subscriber velocity, reviewed weekly.',
+    outcome:
+      'You can check every number we report against your own dashboard. Nothing is taken on trust.',
     question: 'What reporting do you provide, and how often?',
     answer:
       'You get a weekly numbers review and a monthly deep-dive, both built from your own account analytics rather than screenshots we chose. Reports cover reach, views, watch time, follower and subscriber movement, engagement rate, and — where ads run — spend against cost per result.',
@@ -117,6 +136,8 @@ export const SERVICES: Service[] = [
     id: '06',
     title: 'Product & Event Shoots',
     desc: 'Product photoshoots, event coverage, teasers and on-location shoots — content captured, not stocked.',
+    outcome:
+      'Your product appears in real footage of itself, not stock imagery your competitors also bought.',
     question: 'Do you shoot product photos and cover events on location?',
     answer:
       'We shoot on location across Delhi, Noida and Gurugram: product photography, event coverage, teasers and on-location video. You get original footage of your actual product or venue rather than stock imagery that every competitor in your category is also using, and the full raw asset library comes to you.',
@@ -133,6 +154,8 @@ export const SERVICES: Service[] = [
     id: '07',
     title: 'Influencer Marketing & Media Planning',
     desc: 'Collab sourcing, outreach and media planning that reaches audiences who already trust someone.',
+    outcome:
+      'You reach people who already trust someone, at a rate we can tell you is fair.',
     question: 'How does influencer marketing work with an agency?',
     answer:
       'We shortlist creators whose audience overlaps yours, check their real engagement rather than follower count, handle outreach and rates, then brief and schedule the collaboration. Because we manage creator accounts ourselves, we know what a fair rate looks like and where the padded numbers hide.',
@@ -150,6 +173,8 @@ export const SERVICES: Service[] = [
     id: '08',
     title: 'Digital Strategy & Organic Growth',
     desc: 'Content strategy and organic growth planning that compounds — the system behind every number here.',
+    outcome:
+      'You get a plan that changes when the data does, not a document nobody opens again.',
     question: 'What does a social media growth strategy actually look like?',
     answer:
       'It starts with an audit of your account and your category, then defines content pillars, posting cadence and the formats worth testing. From there it becomes a 90-day roadmap with weekly review points. The plan changes as data arrives — a strategy nobody revises is just a document.',

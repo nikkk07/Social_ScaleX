@@ -12,13 +12,23 @@
  * #8B5CF6 behind white text is 4.23:1, which fails AA.
  *
  * STANDING DECISIONS (owner-approved 2026-08-30):
- *   - CSS owns entrance reveals; GSAP is only ever split-text, scrub and
- *     parallax. Never move reveals into JS — see .reveal in theme.css.
+ *   - CSS owns ALL entrance reveals, everywhere, with no exceptions. Never
+ *     move a reveal into JS — see .reveal and .rise-in in theme.css. An
+ *     element parked at opacity:0 waiting on a chunk is one that non-JS
+ *     crawlers never see.
  *   - NO 3D on the LCP element, ever. The hero atmosphere is CSS/SVG, zero
  *     JS. A lazy R3F scene in a BELOW-FOLD section is open as a post-launch
  *     addition, where "mount only when in viewport" can actually hold.
  *   - Never fabricate testimonials. The slot renders case-study metrics from
  *     content.ts until real, attributed quotes exist.
+ *   - GSAP is permanently unwired from the hero. The motion layer's only
+ *     sanctioned jobs are the animated counters (StatsBand / Results) and
+ *     parallax on case-study media — nothing else, and never anything above
+ *     the fold. Note the counters currently run on a plain rAF loop at 0 kB;
+ *     moving them onto GSAP must justify the 28 kB, not assume it.
+ *   - Any "+" figure derived from a real number must FLOOR, never round.
+ *     376.5K prints as "376K+", never "377K+": a "+" claim has to sit at or
+ *     below the true value or it is simply false.
  * ───────────────────────────────────────────────────────────────────── */
 
 /*
