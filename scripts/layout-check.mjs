@@ -290,14 +290,39 @@ async function checkFooter(page, ctx) {
   ok(!hrefs.some((h) => h === '#' || h === ''), 'no footer link points at a placeholder', ctx);
 }
 
-const SECTIONS = [{
-  path: '/',
-  run: async (page, ctx) => {
-    await checkFaq(page, ctx);
-    await checkContact(page, ctx);
-    await checkFooter(page, ctx);
+/* ── Legal shell ──────────────────────────────────────────────────────
+ * /privacy and /terms share one component, so one of them proves both. The
+ * assertions are colour-resolution rather than class presence: the whole
+ * point of migrating this shell was that its ink was raw white alphas.
+ */
+async function checkLegal(page, ctx) {
+  const h2 = page.locator('h2').first();
+  if (!(await h2.count())) return;
+
+  ok((await h2.evaluate((el) => getComputedStyle(el).color)).includes('244, 243, 248'),
+     'legal headings resolve to the ink ramp', ctx);
+  const prose = await page.locator('section p').first().evaluate((el) => getComputedStyle(el).color);
+  ok(prose.includes('244, 243, 248'), `legal prose resolves to the ink ramp (${prose})`, ctx);
+  const tel = await page.locator('a[href^="tel:"]').first().evaluate((el) => getComputedStyle(el).color);
+  ok(tel === 'rgb(34, 211, 238)', `the legal contact link is the CTA accent (${tel})`, ctx);
+
+  // The escaped apostrophes must still render as apostrophes, not entities.
+  const text = await page.locator('body').innerText();
+  ok(!text.includes('&apos;') && !text.includes('&#x27;'), 'no raw HTML entity leaks into the rendered text', ctx);
+}
+
+const SECTIONS = [
+  {
+    path: '/',
+    run: async (page, ctx) => {
+      await checkFaq(page, ctx);
+      await checkContact(page, ctx);
+      await checkFooter(page, ctx);
+    },
   },
-}];
+  { path: '/privacy', run: checkLegal },
+  { path: '/terms', run: checkLegal },
+];
 
 const browser = await chromium.launch();
 try {
