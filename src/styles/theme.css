@@ -223,6 +223,28 @@ p {
     inset 0 1px 0 rgba(0, 0, 0, 0.2);
 }
 
+/*
+ * State lives HERE, not in a Tailwind variant at the call site.
+ *
+ * `.liquid-glass-inset` sets the `border` shorthand, and this file is plain
+ * CSS imported after Tailwind — so it is not in the utilities layer and wins
+ * against every `focus:border-*` / `aria-[invalid=true]:border-*` utility
+ * regardless of source order. The contact inputs carried both, and neither
+ * had any effect: an invalid field looked identical to an untouched one.
+ * Same trap as `.text-growth` owning `background`; same rule follows from it
+ * — if a class here owns a property, its states belong here too.
+ *
+ * Invalid is declared after focus so an invalid field still reads as invalid
+ * while focused. The keyboard focus ring is a separate `outline`, so both
+ * signals show at once rather than one masking the other.
+ */
+.liquid-glass-inset:focus-visible {
+  border-color: var(--color-cta);
+}
+.liquid-glass-inset[aria-invalid='true'] {
+  border-color: var(--color-critical);
+}
+
 /* Chips, badges, icon tiles — every backdrop-filter is a separate
    compositing pass, and these are too small to be worth one. */
 .liquid-glass-lite {

@@ -7,10 +7,18 @@ import { z } from "zod";
 import { toast, Toaster } from "sonner";
 import { GlassCard } from "../GlassCard";
 import { submitEnquiry, warmSupabase, type SubmitResult } from "./submitEnquiry";
+import { CONTACT_OFFER } from "@/lib/content";
+import { CONTACTS } from "@/lib/site";
 
 const inputClasses =
-  "w-full liquid-glass-inset rounded-xl px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:border-[var(--color-violet-light)] transition-colors";
-const errorClasses = "text-[#F87171] text-xs mt-1.5";
+  "w-full liquid-glass-inset rounded-lg px-4 py-3 text-ink placeholder:text-ink-subtle transition-colors";
+const labelClasses = "block text-sm font-medium text-ink-muted mb-2";
+const errorClasses = "text-critical text-xs mt-1.5";
+// No `focus:outline-none` on the inputs: the global `input:focus-visible`
+// ring in theme.css is the keyboard indicator, and suppressing it here would
+// repeat the FAQ's Phase 8 bug in the one place on the site where losing your
+// place mid-form actually costs a lead.
+//
 // Off-screen honeypot: real users never see or fill it; bots do.
 const honeypotClasses = "absolute left-[-9999px] w-px h-px overflow-hidden";
 
@@ -51,7 +59,48 @@ const querySchema = z.object({
 type CallbackValues = z.infer<typeof callbackSchema>;
 type QueryValues = z.infer<typeof querySchema>;
 
-const DIRECT_CONTACT = "Call or WhatsApp +91 80777 27669 and we'll jump right on it.";
+// Built from site.ts and content.ts rather than retyped. The literal
+// "+91 80777 27669" appeared three times in this file; a number that is
+// wrong in one of three places is worse than one that is absent.
+const PRIMARY_PHONE = CONTACTS[0].display;
+const DIRECT_CONTACT = `Call or WhatsApp ${PRIMARY_PHONE} and we'll jump right on it.`;
+
+/** The outcome of a submit, in the words shown on screen and announced. */
+interface Status {
+  ok: boolean;
+  text: string;
+}
+
+/**
+ * The submit outcome, on screen and to a screen reader.
+ *
+ * The toasts alone were not enough. sonner renders bottom-centre, auto-
+ * dismisses, and is the first thing gone if the tab is backgrounded mid-send
+ * — so the only confirmation that an enquiry reached us could disappear
+ * before it was read. This region is inline, next to the button that was
+ * pressed, and it persists until the next submit.
+ *
+ * It is rendered ALWAYS, empty when idle. A live region has to be in the DOM
+ * before its content changes; one that mounts together with its message is
+ * routinely missed by screen readers.
+ */
+function SubmitStatus({ status }: { status: Status | null }) {
+  return (
+    <div role="status" aria-live="polite" aria-atomic="true">
+      {status ? (
+        <p
+          className={`text-sm rounded-lg px-4 py-3 ${
+            status.ok
+              ? "text-positive liquid-glass-inset"
+              : "text-critical liquid-glass-inset"
+          }`}
+        >
+          {status.text}
+        </p>
+      ) : null}
+    </div>
+  );
+}
 
 /**
  * One place that turns a SubmitResult into what the visitor sees. The rule
@@ -59,25 +108,23 @@ const DIRECT_CONTACT = "Call or WhatsApp +91 80777 27669 and we'll jump right on
  * someone unsure whether their enquiry sent. Every branch below is either a
  * confirmed send or an explicit failure with a way to reach us.
  */
-function reportResult(result: SubmitResult): boolean {
+function reportResult(result: SubmitResult): Status {
   if (result.ok) {
-    toast.success("Thanks — we've got your details.", {
-      description: "We'll be in touch shortly, usually within a few hours.",
-    });
-    return true;
+    const description = "We'll be in touch shortly, usually within a few hours.";
+    toast.success("Thanks — we've got your details.", { description });
+    return { ok: true, text: `Thanks — we've got your details. ${description}` };
   }
   if (result.kind === "throttled") {
     const mins = Math.ceil(result.retryAfterMs / 60_000);
-    toast.warning("You've just sent us something.", {
-      description:
-        mins <= 1
-          ? "Give it a moment before sending again — or call us on +91 80777 27669."
-          : `Please try again in about ${mins} minutes, or call +91 80777 27669.`,
-    });
-    return false;
+    const description =
+      mins <= 1
+        ? `Give it a moment before sending again — or call us on ${PRIMARY_PHONE}.`
+        : `Please try again in about ${mins} minutes, or call ${PRIMARY_PHONE}.`;
+    toast.warning("You've just sent us something.", { description });
+    return { ok: false, text: `You've just sent us something. ${description}` };
   }
   toast.error("Something went wrong sending that.", { description: DIRECT_CONTACT });
-  return false;
+  return { ok: false, text: `Something went wrong sending that. ${DIRECT_CONTACT}` };
 }
 
 /**
@@ -86,8 +133,9 @@ function reportResult(result: SubmitResult): boolean {
  * would otherwise put a real person into exactly the silent-discard hole this
  * whole phase exists to close. They get a message and a phone number.
  */
-function reportHoneypot() {
+function reportHoneypot(): Status {
   toast.error("We couldn't verify that submission.", { description: DIRECT_CONTACT });
+  return { ok: false, text: `We couldn't verify that submission. ${DIRECT_CONTACT}` };
 }
 
 function CallbackForm() {
@@ -97,9 +145,11 @@ function CallbackForm() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<CallbackValues>({ resolver: zodResolver(callbackSchema) });
+  const [status, setStatus] = useState<Status | null>(null);
 
   const onSubmit = async (data: CallbackValues) => {
-    if (data.company) return reportHoneypot();
+    setStatus(null);
+    if (data.company) return setStatus(reportHoneypot());
     const { name, phone, bestTime } = data;
     const result = await submitEnquiry({
       kind: "callback",
@@ -107,9 +157,11 @@ function CallbackForm() {
       phone: phone.trim(),
       best_time: bestTime?.trim() || null,
     });
+    const outcome = reportResult(result);
+    setStatus(outcome);
     // Only clear the form on a confirmed write — otherwise a failed send would
     // also destroy what they typed, and they'd have to type it all again.
-    if (reportResult(result)) reset();
+    if (outcome.ok) reset();
   };
 
   return (
@@ -129,37 +181,68 @@ function CallbackForm() {
       </div>
 
       <div>
-        <label htmlFor="cb-name" className="block text-sm font-medium text-white/75 mb-2">
+        <label htmlFor="cb-name" className={labelClasses}>
           Your name
         </label>
-        <input id="cb-name" type="text" autoComplete="name" className={inputClasses} placeholder="Your Name" {...register("name")} />
-        {errors.name && <p className={errorClasses}>{errors.name.message}</p>}
+        {/* aria-invalid drives both the announcement and the red border, so
+            the state cannot be visually wrong while being correct to a
+            screen reader. aria-describedby points at the message itself. */}
+        <input
+          id="cb-name"
+          type="text"
+          autoComplete="name"
+          className={inputClasses}
+          placeholder="Your Name"
+          aria-invalid={errors.name ? true : undefined}
+          aria-describedby={errors.name ? "cb-name-error" : undefined}
+          {...register("name")}
+        />
+        {errors.name && (
+          <p id="cb-name-error" role="alert" className={errorClasses}>
+            {errors.name.message}
+          </p>
+        )}
       </div>
 
       <div>
-        <label htmlFor="cb-phone" className="block text-sm font-medium text-white/75 mb-2">
+        <label htmlFor="cb-phone" className={labelClasses}>
           Phone number
         </label>
-        <input id="cb-phone" type="tel" autoComplete="tel" className={inputClasses} placeholder="+91 XXXXX XXXXX" {...register("phone")} />
-        {errors.phone && <p className={errorClasses}>{errors.phone.message}</p>}
+        <input
+          id="cb-phone"
+          type="tel"
+          autoComplete="tel"
+          className={inputClasses}
+          placeholder="+91 XXXXX XXXXX"
+          aria-invalid={errors.phone ? true : undefined}
+          aria-describedby={errors.phone ? "cb-phone-error" : undefined}
+          {...register("phone")}
+        />
+        {errors.phone && (
+          <p id="cb-phone-error" role="alert" className={errorClasses}>
+            {errors.phone.message}
+          </p>
+        )}
       </div>
 
       <div>
-        <label htmlFor="cb-time" className="block text-sm font-medium text-white/75 mb-2">
+        <label htmlFor="cb-time" className={labelClasses}>
           Best time to call (optional)
         </label>
         <input id="cb-time" type="text" className={inputClasses} placeholder="e.g. Tomorrow afternoon" {...register("bestTime")} />
       </div>
 
+      <SubmitStatus status={status} />
+
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-white text-[#0B0A10] font-bold py-4 rounded-xl hover:bg-white/90 transition-all hover:scale-[1.01] active:scale-[0.98] shadow-xl disabled:opacity-60 disabled:hover:scale-100"
+        className="btn btn-cta w-full disabled:opacity-60 disabled:hover:scale-100"
       >
         {isSubmitting ? "Sending…" : "Request a callback"}
       </button>
-      <p className="text-xs text-white/50 text-center">
-        We usually call back within a few hours, during business hours.
+      <p className="text-2xs text-ink-subtle text-center">
+        {CONTACT_OFFER.callbackNote}
       </p>
     </form>
   );
@@ -172,9 +255,11 @@ function QueryForm() {
     reset,
     formState: { errors, isSubmitting },
   } = useForm<QueryValues>({ resolver: zodResolver(querySchema) });
+  const [status, setStatus] = useState<Status | null>(null);
 
   const onSubmit = async (data: QueryValues) => {
-    if (data.company) return reportHoneypot();
+    setStatus(null);
+    if (data.company) return setStatus(reportHoneypot());
     const { name, email, message } = data;
     const result = await submitEnquiry({
       kind: "query",
@@ -182,7 +267,9 @@ function QueryForm() {
       email: email.trim(),
       message: message.trim(),
     });
-    if (reportResult(result)) reset();
+    const outcome = reportResult(result);
+    setStatus(outcome);
+    if (outcome.ok) reset();
   };
 
   return (
@@ -200,33 +287,77 @@ function QueryForm() {
       </div>
 
       <div>
-        <label htmlFor="q-name" className="block text-sm font-medium text-white/75 mb-2">
+        <label htmlFor="q-name" className={labelClasses}>
           Your name
         </label>
-        <input id="q-name" type="text" autoComplete="name" className={inputClasses} placeholder="Your Name" {...register("name")} />
-        {errors.name && <p className={errorClasses}>{errors.name.message}</p>}
+        <input
+          id="q-name"
+          type="text"
+          autoComplete="name"
+          className={inputClasses}
+          placeholder="Your Name"
+          aria-invalid={errors.name ? true : undefined}
+          aria-describedby={errors.name ? "q-name-error" : undefined}
+          {...register("name")}
+        />
+        {errors.name && (
+          <p id="q-name-error" role="alert" className={errorClasses}>
+            {errors.name.message}
+          </p>
+        )}
       </div>
 
       <div>
-        <label htmlFor="q-email" className="block text-sm font-medium text-white/75 mb-2">
+        <label htmlFor="q-email" className={labelClasses}>
           Email
         </label>
-        <input id="q-email" type="email" autoComplete="email" className={inputClasses} placeholder="your_email@gmail.com" {...register("email")} />
-        {errors.email && <p className={errorClasses}>{errors.email.message}</p>}
+        <input
+          id="q-email"
+          type="email"
+          autoComplete="email"
+          className={inputClasses}
+          placeholder="your_email@gmail.com"
+          aria-invalid={errors.email ? true : undefined}
+          aria-describedby={errors.email ? "q-email-error" : undefined}
+          {...register("email")}
+        />
+        {errors.email && (
+          <p id="q-email-error" role="alert" className={errorClasses}>
+            {errors.email.message}
+          </p>
+        )}
       </div>
 
       <div>
-        <label htmlFor="q-message" className="block text-sm font-medium text-white/75 mb-2">
+        <label htmlFor="q-message" className={labelClasses}>
           What do you need help with?
         </label>
-        <textarea id="q-message" rows={3} className={`${inputClasses} resize-none`} placeholder="Tell us about your brand..." {...register("message")} />
-        {errors.message && <p className={errorClasses}>{errors.message.message}</p>}
+        <textarea
+          id="q-message"
+          rows={3}
+          className={`${inputClasses} resize-none`}
+          placeholder="Tell us about your brand..."
+          aria-invalid={errors.message ? true : undefined}
+          aria-describedby={errors.message ? "q-message-error" : undefined}
+          {...register("message")}
+        />
+        {errors.message && (
+          <p id="q-message-error" role="alert" className={errorClasses}>
+            {errors.message.message}
+          </p>
+        )}
       </div>
 
+      <SubmitStatus status={status} />
+
+      {/* The one primary action in this section, in the one accent colour.
+          It replaced a white button here and a violet one on the other tab:
+          two different treatments for the same act, neither of them the
+          site's CTA colour. */}
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-[var(--color-violet-cta)] text-white font-bold py-4 rounded-xl transition-transform hover:scale-[1.01] active:scale-[0.98] shadow-xl shadow-[var(--color-violet)]/25 border border-white/20 disabled:opacity-60 disabled:hover:scale-100"
+        className="btn btn-cta w-full disabled:opacity-60 disabled:hover:scale-100"
       >
         {isSubmitting ? "Sending…" : "Send query"}
       </button>
@@ -248,31 +379,31 @@ export default function ContactForms() {
     <GlassCard className="p-2">
       <div className="rounded-3xl overflow-hidden">
         {/* Tabs */}
-        <div className="flex border-b border-white/10 relative">
+        <div className="flex border-b border-stroke relative">
           <button
             type="button"
             onClick={() => setActiveTab("callback")}
             aria-pressed={activeTab === "callback"}
             className={`flex-1 py-4 text-center font-medium transition-colors relative ${
-              activeTab === "callback" ? "text-white" : "text-white/60 hover:text-white/90"
+              activeTab === "callback" ? "text-ink" : "text-ink-subtle hover:text-ink"
             }`}
           >
             Request a callback
             {activeTab === "callback" && (
-              <span className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-gradient-to-r from-[var(--color-violet)] to-[var(--color-emerald)] rounded-full" />
+              <span className="rule-growth absolute bottom-0 left-1/4 right-1/4 h-[2px] rounded-pill" />
             )}
           </button>
           <button
             type="button"
             onClick={() => setActiveTab("query")}
             aria-pressed={activeTab === "query"}
-            className={`flex-1 py-4 text-center font-medium transition-colors border-l border-white/10 relative ${
-              activeTab === "query" ? "text-white" : "text-white/60 hover:text-white/90"
+            className={`flex-1 py-4 text-center font-medium transition-colors border-l border-stroke relative ${
+              activeTab === "query" ? "text-ink" : "text-ink-subtle hover:text-ink"
             }`}
           >
             Send a query
             {activeTab === "query" && (
-              <span className="absolute bottom-0 left-1/4 right-1/4 h-[2px] bg-gradient-to-r from-[var(--color-violet)] to-[var(--color-emerald)] rounded-full" />
+              <span className="rule-growth absolute bottom-0 left-1/4 right-1/4 h-[2px] rounded-pill" />
             )}
           </button>
         </div>

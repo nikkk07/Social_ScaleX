@@ -136,7 +136,83 @@ async function checkPage(page, ctx, width) {
   ok(scrollWidth <= width + 1, `no horizontal overflow (scrollWidth ${scrollWidth} ≤ ${width})`, ctx);
 }
 
-const SECTIONS = [{ path: '/', run: checkFaq }];
+/* ── Contact ──────────────────────────────────────────────────────────
+ * Geometry plus the invariants that make the form safe to ship: one primary
+ * action, a keyboard-visible focus ring, and validation errors that are
+ * announced rather than merely coloured.
+ */
+async function checkContact(page, ctx) {
+  const section = page.locator('#contact');
+  if (!(await section.count())) return;
+
+  await section.scrollIntoViewIfNeeded();
+  // The form arrives in a next/dynamic chunk; before it lands the panel shows
+  // the phone/WhatsApp fallback, which is a valid state but not the one under
+  // test here.
+  await section.locator('form').first().waitFor({ state: 'visible', timeout: 15000 });
+  await page.waitForTimeout(200);
+
+  const sectionBox = await section.boundingBox();
+  const panel = section.locator('form').first();
+  ok(contains(sectionBox, await panel.boundingBox(), 2), 'the form sits inside #contact', ctx);
+
+  // Exactly one primary action per tab. Two different treatments for the same
+  // act is what this phase removed.
+  const submits = section.locator('button[type="submit"]');
+  ok(await submits.count() === 1, `exactly one submit button per tab (${await submits.count()})`, ctx);
+  const cta = await submits.first().evaluate((el) => getComputedStyle(el).backgroundColor);
+  ok(cta === 'rgb(34, 211, 238)', `the submit button wears the CTA accent (${cta})`, ctx);
+
+  // Submitting empty must produce announced, associated errors.
+  await submits.first().click();
+  await page.waitForTimeout(400);
+  const alerts = section.locator('[role="alert"]');
+  ok(await alerts.count() >= 2, `validation errors are announced via role=alert (${await alerts.count()})`, ctx);
+
+  const firstInput = section.locator('input#cb-name');
+  ok(await firstInput.getAttribute('aria-invalid') === 'true', 'an invalid field is marked aria-invalid', ctx);
+  const describedBy = await firstInput.getAttribute('aria-describedby');
+  ok(!!describedBy, 'an invalid field points at its message via aria-describedby', ctx);
+  if (describedBy) {
+    const msg = section.locator(`#${describedBy}`);
+    ok(await msg.count() === 1, 'aria-describedby resolves to exactly one element', ctx);
+    ok(((await msg.innerText()).trim().length > 0), 'the referenced message is not empty', ctx);
+  }
+
+  // The invalid border must actually paint. `.liquid-glass-inset` owns the
+  // `border` shorthand from theme.css, which is outside Tailwind's utilities
+  // layer — so a `aria-[invalid=true]:border-*` utility at the call site is
+  // silently dead, and an invalid field looks identical to an untouched one.
+  const invalidBorder = await firstInput.evaluate((el) => getComputedStyle(el).borderColor);
+  const cleanBorder = await section.locator('input#cb-time').evaluate((el) => getComputedStyle(el).borderColor);
+  ok(invalidBorder === 'rgb(248, 113, 113)', `an invalid field paints the critical border (${invalidBorder})`, ctx);
+  ok(invalidBorder !== cleanBorder, 'an invalid field is visually distinct from an untouched one', ctx);
+
+  // The live region must be present BEFORE it has anything to say, or its
+  // first message goes unannounced.
+  const live = section.locator('[role="status"][aria-live="polite"]');
+  ok(await live.count() >= 1, 'a persistent live region exists for submit outcomes', ctx);
+
+  // Inputs keep the global focus ring; no `focus:outline-none` survives here.
+  await firstInput.focus();
+  await page.keyboard.press('Shift+Tab');
+  await page.keyboard.press('Tab');
+  const ring = await firstInput.evaluate((el) => {
+    const s = getComputedStyle(el);
+    return { fv: el.matches(':focus-visible'), style: s.outlineStyle, width: parseFloat(s.outlineWidth) };
+  });
+  ok(ring.fv && ring.style === 'solid' && ring.width >= 2, 'a focused input shows the keyboard ring', ctx);
+
+  // The honeypot is off-screen, not display:none — a bot that skips hidden
+  // fields should still fill it.
+  const pot = section.locator('input[name="company"]');
+  ok(await pot.count() === 1, 'exactly one honeypot field is present', ctx);
+  const potBox = await pot.boundingBox();
+  ok(potBox === null || potBox.x < -1000, 'the honeypot is positioned off-screen', ctx);
+  ok(await pot.evaluate((el) => el.tabIndex) === -1, 'the honeypot is out of the tab order', ctx);
+}
+
+const SECTIONS = [{ path: '/', run: async (page, ctx) => { await checkFaq(page, ctx); await checkContact(page, ctx); } }];
 
 const browser = await chromium.launch();
 try {

@@ -388,3 +388,37 @@ export const STATS: Metric[] = [
   // reference, SERVICES currently defines 44 deliverables in total.
   { value: '8', label: 'Services offered, end to end' },
 ];
+
+export interface ContactOffer {
+  eyebrow: string;
+  heading: string;
+  /** The offer itself. One promise, stated plainly. */
+  intro: string;
+  /** What happens after they submit — a response commitment, not a deadline
+   *  imposed on the visitor. */
+  callbackNote: string;
+  /** Shown when a send fails, so nobody is left without a route to us. */
+  fallbackNote: string;
+}
+
+/**
+ * The contact offer.
+ *
+ * MOVED here in Phase 9, not written here: every string below already
+ * existed verbatim in Contact.tsx and ContactForms.tsx. This is the
+ * content.ts rule being applied to the last section that ignored it, not new
+ * marketing copy — the offer, the response time and the reassurance are the
+ * owner's own words and are unchanged character for character.
+ *
+ * There is deliberately no countdown, no "limited slots" and no discount.
+ * The only claim made is one the agency controls and already makes in the
+ * FAQ: the first strategy call is free.
+ */
+export const CONTACT_OFFER: ContactOffer = {
+  eyebrow: 'Ready to scale?',
+  heading: "Let's build something your audience can't ignore.",
+  intro:
+    'Your first strategy call is free. No pitch decks, no pressure — just an honest conversation about what growth looks like for your brand.',
+  callbackNote: 'We usually call back within a few hours, during business hours.',
+  fallbackNote: "Call or WhatsApp us and we'll jump right on it.",
+};

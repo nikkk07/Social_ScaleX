@@ -18,7 +18,7 @@ import { CONTACTS, WHATSAPP_URL } from '@/lib/site';
 function ContactFallback() {
   return (
     <GlassCard className="p-8">
-      <p className="text-white/75 leading-relaxed mb-6">
+      <p className="text-ink-muted mb-6">
         Prefer to talk now? Call either of us directly, or message us on
         WhatsApp — the callback form loads just below.
       </p>
@@ -27,18 +27,18 @@ function ContactFallback() {
           <a
             key={c.phone}
             href={`tel:${c.phone}`}
-            className="liquid-glass-inset flex items-center gap-3 rounded-xl px-4 py-3.5 text-white transition-colors hover:bg-white/[0.08]"
+            className="liquid-glass-inset flex items-center gap-3 rounded-lg px-4 py-3.5 text-ink transition-colors hover:bg-white/[0.08]"
           >
-            <Phone size={17} aria-hidden className="text-[var(--color-violet-light)]" />
+            <Phone size={17} aria-hidden className="text-cta" />
             <span className="font-medium">{c.display}</span>
-            <span className="text-white/50 text-sm ml-auto">{c.name}</span>
+            <span className="text-ink-subtle text-sm ml-auto">{c.name}</span>
           </a>
         ))}
         <a
           href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="liquid-glass-inset flex items-center gap-3 rounded-xl px-4 py-3.5 text-white transition-colors hover:bg-white/[0.08]"
+          className="liquid-glass-inset flex items-center gap-3 rounded-lg px-4 py-3.5 text-ink transition-colors hover:bg-white/[0.08]"
         >
           <WhatsappIcon size={17} aria-hidden />
           <span className="font-medium">Message us on WhatsApp</span>
