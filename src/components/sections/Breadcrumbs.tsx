@@ -11,18 +11,18 @@ import type { Crumb } from '@/lib/schema';
 export function Breadcrumbs({ crumbs }: { crumbs: Crumb[] }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-8">
-      <ol className="flex flex-wrap items-center gap-1.5 text-sm text-white/50">
+      <ol className="flex flex-wrap items-center gap-1.5 text-sm text-ink-subtle">
         {crumbs.map((c, i) => {
           const isLast = i === crumbs.length - 1;
           return (
             <li key={c.path} className="flex items-center gap-1.5">
-              {i > 0 && <ChevronRight size={14} aria-hidden className="text-white/25" />}
+              {i > 0 && <ChevronRight size={14} aria-hidden className="text-ink-decor" />}
               {isLast ? (
-                <span aria-current="page" className="text-white/75">
+                <span aria-current="page" className="text-ink-muted">
                   {c.name}
                 </span>
               ) : (
-                <Link href={c.path} className="hover:text-white transition-colors">
+                <Link href={c.path} className="hover:text-ink transition-colors">
                   {c.name}
                 </Link>
               )}

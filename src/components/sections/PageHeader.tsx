@@ -17,15 +17,15 @@ interface PageHeaderProps {
 export function PageHeader({ crumbs, eyebrow, title, intro }: PageHeaderProps) {
   return (
     <header className="pt-36 pb-14 md:pt-44 md:pb-20 relative">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="max-w-4xl mx-auto px-gutter">
         <Breadcrumbs crumbs={crumbs} />
-        <span className="text-[var(--color-violet-light)] font-medium tracking-wider uppercase text-sm mb-4 block">
+        <span className="text-cta font-medium tracking-caps uppercase text-2xs mb-4 block">
           {eyebrow}
         </span>
-        <h1 className="text-4xl md:text-6xl font-display font-bold tracking-tight text-white mb-6 leading-[1.05]">
+        <h1 className="text-6xl font-display font-bold tracking-display text-ink mb-6">
           {title}
         </h1>
-        <p className="text-lg md:text-xl text-white/70 leading-relaxed max-w-3xl">
+        <p className="text-lg text-ink-muted max-w-3xl">
           {intro}
         </p>
       </div>

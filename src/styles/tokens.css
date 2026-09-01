@@ -175,6 +175,17 @@
   --color-ink-muted: rgba(244, 243, 248, 0.72); /*  9.48:1 */
   --color-ink-subtle: rgba(244, 243, 248, 0.55);/*  5.77:1 — AA floor */
 
+  /*
+   * DECORATIVE ONLY. 0.25 alpha measures 2.35:1 and fails AA outright, which
+   * is why it is named for its job rather than sitting on the ink ramp: it is
+   * legal on aria-hidden ornament — a breadcrumb chevron, a divider glyph —
+   * and on nothing a reader is ever expected to read. The ink floor is
+   * unchanged and stays `ink-subtle`; if text needs this colour, the text is
+   * wrong, not the token. Existing to stop the raw `text-white/25` that this
+   * replaced from being copied around as if it were a considered value.
+   */
+  --color-ink-decor: rgba(244, 243, 248, 0.25); /* 2.35:1 — never readable text */
+
   /* ══ Colour — semantic ═══════════════════════════════════════════════ */
   --color-positive: #34D399;   /* 10.59:1 on base — growth, "up" states */
   --color-critical: #F87171;   /* form errors */
