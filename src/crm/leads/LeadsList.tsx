@@ -109,9 +109,14 @@ export function LeadsList() {
 
   // Local, optimistically-editable copy of the current page.
   const [rows, setRows] = useState<LeadRow[]>([]);
+  // Extracted rather than inlined into the dep array so the dependency is
+  // statically checkable. Behaviour is unchanged and the narrowness is the
+  // point: re-syncing on every status transition would throw away optimistic
+  // edits each time the list refetched.
+  const readyLeads = leadsResult.status === 'ready' ? leadsResult.leads : null;
   useEffect(() => {
-    if (leadsResult.status === 'ready') setRows(leadsResult.leads);
-  }, [leadsResult.status === 'ready' ? leadsResult.leads : null]);
+    if (readyLeads) setRows(readyLeads);
+  }, [readyLeads]);
 
   const total = leadsResult.status === 'ready' ? leadsResult.total : 0;
 

@@ -31,10 +31,26 @@ To get a database to point at, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 | `npm run dev` | Dev server |
 | `npm run build` | Production build into `.next/` (typechecks as it goes) |
 | `npm run typecheck` | Types only |
+| `npm run lint` | ESLint at `--max-warnings 0`; non-interactive, and a release gate |
 | `npm run test:unit` | Pure-function checks (esbuild + node; no test runner) |
 | `npm run test:layout` | Browser geometry assertions against a running server (`BASE_URL` to point elsewhere, `VERBOSE=1` to list every check) |
 | `npm run start` | Serve the production build locally |
 | `bash supabase/test/verify_local.sh` | Apply every migration to a throwaway Postgres and run the SQL check suite |
+
+### The four gates
+
+Nothing ships unless all four pass. `lint` is one of them: it runs at
+`--max-warnings 0`, so a warning is a failure, and it never prompts.
+
+```
+npm run build && npm run typecheck && npm run lint && npm run test:unit
+npm run start &          # test:layout drives a real browser
+npm run test:layout
+```
+
+Vendored code (`src/components/ui/`, `src/components/figma/`, `src/imports/`)
+is ignored by ESLint rather than rewritten; those are exports we do not own.
+
 
 ## Architecture
 

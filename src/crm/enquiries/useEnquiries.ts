@@ -38,6 +38,9 @@ export function useEnquiries(
   useEffect(() => {
     void load();
     return () => {
+      // Mutating the live ref IS the invalidation; a copied value would let
+      // a stale in-flight response through, which is the bug this guards.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       reqIdRef.current++; // ignore any in-flight result after unmount/refetch
     };
   }, [load]);

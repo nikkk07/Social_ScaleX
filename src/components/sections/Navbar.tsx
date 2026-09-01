@@ -128,6 +128,9 @@ export function Navbar() {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = previous;
       // Send focus back to the control that opened the overlay.
+      // The CURRENT toggle is what must receive focus; a value copied at
+      // effect setup could point at a node that has since been replaced.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       toggleRef.current?.focus();
     };
   }, [isOpen]);

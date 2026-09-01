@@ -51,6 +51,27 @@
  *   - Any "+" figure derived from a real number must FLOOR, never round.
  *     376.5K prints as "376K+", never "377K+": a "+" claim has to sit at or
  *     below the true value or it is simply false.
+ *   - CSS OWNERSHIP. A component class here or in theme.css is plain CSS
+ *     imported after Tailwind, so it sits OUTSIDE the utilities layer and
+ *     beats every utility for the properties it sets — silently, with no
+ *     warning and no visible failure at the call site. Therefore:
+ *       · a class that sets a property OWNS that property, and its state
+ *         variants (:focus-visible, [aria-invalid], :active, [data-*]) are
+ *         declared in the SAME stylesheet, immediately after it;
+ *       · a class whose property is meant to be overridable at the call
+ *         site uses LONGHANDS, never the shorthand — `border` kills
+ *         `border-color` utilities, `background` kills `bg-*`;
+ *       · never "fix" this by reaching for `!important` at the call site.
+ *     Learned twice: `.text-growth` owning `background` blanks any text it
+ *     is combined with, and `.liquid-glass-inset` owning `border` made
+ *     `aria-[invalid=true]:border-critical` on the contact inputs a no-op,
+ *     so an invalid field looked exactly like an untouched one.
+ *   - CLASS PRESENCE IS NOT VISUAL STATE. Never assert that a state renders
+ *     by checking for a class name or a utility string — that is the exact
+ *     check that passed while the border above was dead. State indicators
+ *     are asserted through getComputedStyle on the property that carries
+ *     the meaning (border-color, background-color, outline-style, rotate),
+ *     against the token's resolved value. See scripts/layout-check.mjs.
  * ───────────────────────────────────────────────────────────────────── */
 
 /*

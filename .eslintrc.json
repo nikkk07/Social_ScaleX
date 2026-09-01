@@ -1,0 +1,21 @@
+{
+  "root": true,
+  "extends": [
+    "next/core-web-vitals"
+  ],
+  "ignorePatterns": [
+    ".next/",
+    "node_modules/",
+    "src/components/ui/",
+    "src/components/figma/",
+    "src/imports/",
+    "scripts/keep_alive.py"
+  ],
+  "rules": {
+    "@next/next/no-html-link-for-pages": "error",
+    "@next/next/no-img-element": "error"
+  },
+  "plugins": [
+    "@typescript-eslint"
+  ]
+}

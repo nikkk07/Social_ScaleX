@@ -212,7 +212,77 @@ async function checkContact(page, ctx) {
   ok(await pot.evaluate((el) => el.tabIndex) === -1, 'the honeypot is out of the tab order', ctx);
 }
 
-const SECTIONS = [{ path: '/', run: async (page, ctx) => { await checkFaq(page, ctx); await checkContact(page, ctx); } }];
+/* ── Footer ───────────────────────────────────────────────────────────
+ * Every assertion here reads a COMPUTED PROPERTY, never a class name. The
+ * standing rule exists because a class-presence check passes happily while
+ * the property it implies is being overridden by a component class that owns
+ * it — which is exactly how the contact form shipped a dead invalid border.
+ */
+async function checkFooter(page, ctx) {
+  const footer = page.locator('footer');
+  if (!(await footer.count())) return;
+
+  await footer.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+
+  const footerBox = await footer.boundingBox();
+
+  // The gradient wordmark must actually paint. `.text-growth` sets
+  // `-webkit-text-fill-color: transparent` and clips a background to the
+  // glyphs; if anything else wins the `background` the text renders invisible
+  // rather than wrong, and nothing else on the page would show it.
+  const mark = footer.locator('.text-growth').first();
+  if (await mark.count()) {
+    const paint = await mark.evaluate((el) => {
+      const s = getComputedStyle(el);
+      return {
+        clip: s.webkitBackgroundClip || s.backgroundClip,
+        fill: s.webkitTextFillColor,
+        image: s.backgroundImage,
+      };
+    });
+    ok(paint.clip === 'text', `the wordmark clips its background to the text (${paint.clip})`, ctx);
+    ok(paint.image.includes('gradient'), 'the wordmark still has a gradient to clip', ctx);
+    ok(paint.fill === 'rgba(0, 0, 0, 0)', `the wordmark fill is transparent (${paint.fill})`, ctx);
+    const markBox = await mark.boundingBox();
+    ok(markBox.width > 0 && markBox.height > 0, 'the wordmark occupies real space', ctx);
+  }
+
+  // Footer text must be on the ink ramp, not raw white alphas.
+  const tagline = footer.locator('p').first();
+  const taglineColor = await tagline.evaluate((el) => getComputedStyle(el).color);
+  ok(taglineColor.includes('244, 243, 248'), `footer copy uses the ink ramp (${taglineColor})`, ctx);
+
+  // Hover state resolves to the one interactive accent — asserted by reading
+  // the colour after a real hover, not by looking for `hover:text-cta`.
+  const link = footer.locator('nav a').first();
+  const before = await link.evaluate((el) => getComputedStyle(el).color);
+  await link.hover();
+  await page.waitForTimeout(250);
+  const after = await link.evaluate((el) => getComputedStyle(el).color);
+  ok(after === 'rgb(34, 211, 238)', `a footer link hovers to the CTA accent (${after})`, ctx);
+  ok(before !== after, 'the hover colour actually differs from the resting colour', ctx);
+
+  // Every published phone renders as a real tel: link inside the footer.
+  const tels = footer.locator('a[href^="tel:"]');
+  ok(await tels.count() >= 1, `footer publishes tel: links (${await tels.count()})`, ctx);
+  for (let i = 0; i < await tels.count(); i++) {
+    ok(contains(footerBox, await tels.nth(i).boundingBox(), 2), `tel link ${i + 1} sits inside the footer`, ctx);
+  }
+
+  // No link may point at a placeholder.
+  const hrefs = await footer.locator('a[href]').evaluateAll((els) => els.map((e) => e.getAttribute('href')));
+  ok(!hrefs.some((h) => h === '#' || h === ''), 'no footer link points at a placeholder', ctx);
+}
+
+const SECTIONS = [{
+  path: '/',
+  run: async (page, ctx) => {
+    await checkFaq(page, ctx);
+    await checkContact(page, ctx);
+    await checkFooter(page, ctx);
+  },
+}];
 
 const browser = await chromium.launch();
 try {

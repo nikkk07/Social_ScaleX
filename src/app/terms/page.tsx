@@ -56,7 +56,7 @@ export default function Page() {
           Every metric shown on this website comes from real client dashboards, shared with
           permission. Past performance is exactly that — past. Social platforms change their
           algorithms without notice, and we never guarantee specific follower counts, view
-          numbers, or revenue outcomes. What we do guarantee is honest reporting of what's
+          numbers, or revenue outcomes. What we do guarantee is honest reporting of what&apos;s
           actually happening.
         </p>
       </section>
@@ -64,14 +64,14 @@ export default function Page() {
         <h2>Content ownership</h2>
         <p>
           Content we create for your brand belongs to your brand. Accounts, credentials, and
-          audiences remain the client's property at all times, during and after our
+          audiences remain the client&apos;s property at all times, during and after our
           engagement.
         </p>
       </section>
       <section>
         <h2>Liability</h2>
         <p>
-          We work carefully and in line with each platform's published policies. We're not
+          We work carefully and in line with each platform&apos;s published policies. We&apos;re not
           liable for actions taken by the platforms themselves — algorithm changes, feature
           removals, or account restrictions arising from factors outside our control.
         </p>
