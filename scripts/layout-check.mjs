@@ -49,6 +49,27 @@ const overlaps = (a, b) =>
   a.x < b.x + b.width && b.x < a.x + a.width &&
   a.y < b.y + b.height && b.y < a.y + a.height;
 
+/**
+ * Measure a property before and after a real hover.
+ *
+ * The pointer is parked off-element first, and that is not defensive noise:
+ * checks run in sequence on one page, so the mouse is wherever the previous
+ * check left it, and after an intervening scroll it can be sitting on the very
+ * element about to be measured. The "resting" read then comes back already
+ * hovered and the assertion silently becomes a tautology — which is exactly
+ * how a passing suite reported a footer link hover that it had not tested.
+ */
+async function hoverDelta(page, locator, prop) {
+  await locator.scrollIntoViewIfNeeded();
+  await page.mouse.move(0, 0);
+  await page.waitForTimeout(350);
+  const rest = await locator.evaluate((el, p) => getComputedStyle(el)[p], prop);
+  await locator.hover();
+  await page.waitForTimeout(350);
+  const hovered = await locator.evaluate((el, p) => getComputedStyle(el)[p], prop);
+  return { rest, hovered };
+}
+
 /** Is `inner` fully within `outer`, allowing a pixel of rounding slack? */
 const contains = (outer, inner, slack = 1) =>
   inner.x >= outer.x - slack &&
@@ -140,13 +161,8 @@ async function checkPage(page, ctx, width) {
   // the class was present, so any class-presence check would have passed.
   const card = page.locator('.glass-hover').first();
   if (await card.count()) {
-    await card.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(200);
-    const rest = await card.evaluate((el) => getComputedStyle(el).borderColor);
-    await card.hover();
-    await page.waitForTimeout(350);
-    const hovered = await card.evaluate((el) => getComputedStyle(el).borderColor);
-    ok(hovered !== rest, `interactive glass brightens on hover (${rest} → ${hovered})`, ctx);
+    const { rest, hovered } = await hoverDelta(page, card, 'borderColor');
+    ok(hovered !== rest, `interactive glass brightens on hover (rest ${rest} → hover ${hovered})`, ctx);
     ok(hovered === 'rgba(255, 255, 255, 0.18)', `hover resolves to --color-stroke-strong (${hovered})`, ctx);
   }
 }
@@ -271,12 +287,9 @@ async function checkFooter(page, ctx) {
   // Hover state resolves to the one interactive accent — asserted by reading
   // the colour after a real hover, not by looking for `hover:text-cta`.
   const link = footer.locator('nav a').first();
-  const before = await link.evaluate((el) => getComputedStyle(el).color);
-  await link.hover();
-  await page.waitForTimeout(250);
-  const after = await link.evaluate((el) => getComputedStyle(el).color);
+  const { rest: before, hovered: after } = await hoverDelta(page, link, 'color');
   ok(after === 'rgb(34, 211, 238)', `a footer link hovers to the CTA accent (${after})`, ctx);
-  ok(before !== after, 'the hover colour actually differs from the resting colour', ctx);
+  ok(before !== after, `the hover colour differs from resting (${before} → ${after})`, ctx);
 
   // Every published phone renders as a real tel: link inside the footer.
   const tels = footer.locator('a[href^="tel:"]');
@@ -311,12 +324,62 @@ async function checkLegal(page, ctx) {
   ok(!text.includes('&apos;') && !text.includes('&#x27;'), 'no raw HTML entity leaks into the rendered text', ctx);
 }
 
+/* ── Why us ───────────────────────────────────────────────────────────
+ * The claim cards are the second consumer of .glass-hover, adopted here
+ * after the utility form was found inert. Asserted by resolved colour.
+ */
+async function checkWhyUs(page, ctx) {
+  const section = page.locator('#why-us');
+  if (!(await section.count())) return;
+
+  await section.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(300);
+
+  const sectionBox = await section.boundingBox();
+  const cards = section.locator('li .liquid-glass');
+  const count = await cards.count();
+  ok(count === 4, `four claim cards render (${count})`, ctx);
+
+  const boxes = [];
+  for (let i = 0; i < count; i++) {
+    const card = cards.nth(i);
+    const box = await card.boundingBox();
+    boxes.push(box);
+    ok(contains(sectionBox, box, 2), `claim ${i + 1} sits inside #why-us`, ctx);
+    const heading = await card.locator('h3').boundingBox();
+    const mark = await card.locator('svg').boundingBox();
+    ok(contains(box, heading, 2), `claim ${i + 1} heading stays inside its card`, ctx);
+    ok(!overlaps(heading, mark), `claim ${i + 1} heading and mark do not overlap`, ctx);
+  }
+  for (let i = 1; i < boxes.length; i++) {
+    ok(boxes[i].y >= boxes[i - 1].y + boxes[i - 1].height - 1,
+       `claim ${i + 1} stacks below claim ${i}`, ctx);
+  }
+
+  // The hover affordance must resolve, not merely be classed.
+  const { rest, hovered } = await hoverDelta(page, cards.first(), 'borderColor');
+  ok(hovered === 'rgba(255, 255, 255, 0.18)', `claim cards brighten on hover (${rest} → ${hovered})`, ctx);
+  ok(rest !== hovered, `the claim-card hover differs from resting (${rest} → ${hovered})`, ctx);
+
+  // The secondary CTA tier, resolved.
+  const cta = section.locator('a.btn');
+  ok(await cta.count() === 1, `one CTA in this section (${await cta.count()})`, ctx);
+  const bg = await cta.evaluate((el) => getComputedStyle(el).backgroundColor);
+  ok(bg === 'rgb(124, 58, 237)', `the CTA is the secondary action token (${bg})`, ctx);
+  ok(await cta.getAttribute('href') === '/#contact', 'the CTA points at the contact section', ctx);
+
+  // Numerals are gone; nothing in this section should read as ordered.
+  const text = await section.innerText();
+  ok(!/\b0[1-4]\b/.test(text), 'no decorative numbering survives in this section', ctx);
+}
+
 const SECTIONS = [
   {
     path: '/',
     run: async (page, ctx) => {
       await checkFaq(page, ctx);
       await checkContact(page, ctx);
+      await checkWhyUs(page, ctx);
       await checkFooter(page, ctx);
     },
   },

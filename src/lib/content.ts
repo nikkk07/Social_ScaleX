@@ -422,3 +422,39 @@ export const CONTACT_OFFER: ContactOffer = {
   callbackNote: 'We usually call back within a few hours, during business hours.',
   fallbackNote: "Call or WhatsApp us and we'll jump right on it.",
 };
+
+export interface Differentiator {
+  title: string;
+  desc: string;
+}
+
+/**
+ * Why this agency rather than another.
+ *
+ * MOVED here in Phase 12, not written here: all four pairs existed verbatim
+ * inside WhyUs.tsx, which was the last marketing section holding its own
+ * copy. Character for character unchanged.
+ *
+ * The "01"–"04" numerals that sat beside these did NOT move, because they
+ * were never content: these are four independent reasons, not a sequence, so
+ * the numbering encoded nothing. Same call as the services grid in Phase 4,
+ * and the opposite of PROCESS above, where the numbers are the whole point.
+ */
+export const DIFFERENTIATORS: Differentiator[] = [
+  {
+    title: 'Strategy before everything',
+    desc: "Every post has a defined goal, tested format, and measured outcome. We never create content to 'fill the calendar.'",
+  },
+  {
+    title: 'Algorithm-first thinking',
+    desc: 'Our team monitors every platform update in real time. Your content always rides the algorithm — never fights it.',
+  },
+  {
+    title: 'Revenue tied to social',
+    desc: 'We track followers but optimize for customers. Every metric connects back to business outcomes: leads, sales, retention.',
+  },
+  {
+    title: 'Radical transparency',
+    desc: "Real-time dashboards, weekly calls, honest reporting. We show you what's working and what isn't — always.",
+  },
+];
