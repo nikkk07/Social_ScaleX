@@ -134,6 +134,21 @@ async function checkFaq(page, ctx) {
 async function checkPage(page, ctx, width) {
   const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
   ok(scrollWidth <= width + 1, `no horizontal overflow (scrollWidth ${scrollWidth} ≤ ${width})`, ctx);
+
+  // Interactive glass must actually brighten. This is the assertion that was
+  // missing while `hover:border-white/20` sat on every card doing nothing:
+  // the class was present, so any class-presence check would have passed.
+  const card = page.locator('.glass-hover').first();
+  if (await card.count()) {
+    await card.scrollIntoViewIfNeeded();
+    await page.waitForTimeout(200);
+    const rest = await card.evaluate((el) => getComputedStyle(el).borderColor);
+    await card.hover();
+    await page.waitForTimeout(350);
+    const hovered = await card.evaluate((el) => getComputedStyle(el).borderColor);
+    ok(hovered !== rest, `interactive glass brightens on hover (${rest} → ${hovered})`, ctx);
+    ok(hovered === 'rgba(255, 255, 255, 0.18)', `hover resolves to --color-stroke-strong (${hovered})`, ctx);
+  }
 }
 
 /* ── Contact ──────────────────────────────────────────────────────────

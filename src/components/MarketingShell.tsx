@@ -11,7 +11,7 @@ import { Footer } from './sections/Footer';
  */
 export function MarketingShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative font-sans antialiased text-[var(--color-ink)] bg-[var(--color-void-black)]">
+    <div className="relative font-sans antialiased text-ink bg-base-950">
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>

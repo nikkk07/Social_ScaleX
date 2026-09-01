@@ -188,13 +188,41 @@ p {
     var(--color-glass);
   backdrop-filter: blur(var(--blur-glass)) saturate(1.4);
   -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(1.4);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  /*
+   * Longhands rather than the `border` shorthand, so a utility that sets only
+   * border-width or border-style at a call site still lands.
+   *
+   * It does NOT make border-color overridable, and it is worth being exact
+   * about why: this file is UNLAYERED CSS imported after Tailwind, and an
+   * unlayered declaration beats any declaration in `@layer utilities` for the
+   * same property — specificity and shorthand-vs-longhand never enter into
+   * it. GlassCard's `hover:border-white/20` was therefore inert on every card
+   * on the site, and swapping the shorthand for longhands did not revive it.
+   * The hover state is declared below instead, which is the only fix that
+   * works from this side of the layer boundary.
+   */
+  border-width: 1px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.12);
   box-shadow:
     var(--shadow-card),
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
     inset 0 -1px 0 rgba(0, 0, 0, 0.35),
     inset 1px 0 0 rgba(255, 255, 255, 0.06),
     inset -1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+/*
+ * Interactive glass. Opt-in, because most glass on the site is not clickable:
+ * a blanket `.liquid-glass:hover` would make the hero badge and the services
+ * panel react to a cursor that can do nothing with them.
+ *
+ * This lives here, not at the call site, for the reason spelled out above —
+ * an unlayered `border-color` cannot be overridden by a utility, so the state
+ * has to be declared beside the class that owns it.
+ */
+.liquid-glass.glass-hover:hover {
+  border-color: var(--color-stroke-strong);
 }
 
 /* Heavier frost for nav and overlays — small area, true blur reads there. */

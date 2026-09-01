@@ -15,9 +15,9 @@ export function GlassCard({ children, className }: GlassCardProps) {
   return (
     <div
       className={cn(
-        'relative rounded-3xl overflow-hidden liquid-glass',
+        'relative rounded-3xl overflow-hidden liquid-glass glass-hover',
         'transition-[transform,border-color] duration-300 ease-out',
-        'hover:-translate-y-0.5 hover:border-white/20',
+        'hover:-translate-y-0.5',
         className,
       )}
     >

@@ -15,7 +15,7 @@ import React from "react";
 export function LiquidBackground() {
   return (
     <div
-      className="fixed inset-0 z-0 pointer-events-none bg-[var(--color-void-black)]"
+      className="fixed inset-0 z-0 pointer-events-none bg-base-950"
       aria-hidden
     >
       <div
