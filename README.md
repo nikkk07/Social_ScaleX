@@ -32,6 +32,7 @@ To get a database to point at, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 | `npm run build` | Production build into `.next/` (typechecks as it goes) |
 | `npm run typecheck` | Types only |
 | `npm run test:unit` | Pure-function checks (esbuild + node; no test runner) |
+| `npm run test:layout` | Browser geometry assertions against a running server (`BASE_URL` to point elsewhere, `VERBOSE=1` to list every check) |
 | `npm run start` | Serve the production build locally |
 | `bash supabase/test/verify_local.sh` | Apply every migration to a throwaway Postgres and run the SQL check suite |
 

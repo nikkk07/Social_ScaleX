@@ -10,7 +10,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "test:unit": "bash scripts/test-unit.sh",
-    "og": "node scripts/render-og.mjs"
+    "og": "node scripts/render-og.mjs",
+    "test:layout": "node scripts/layout-check.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
