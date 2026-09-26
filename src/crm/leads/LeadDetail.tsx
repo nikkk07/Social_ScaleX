@@ -166,7 +166,7 @@ function Loaded({
   const changeStatus = async (change: StatusChange) => {
     const { error } = await supabase
       .from('leads')
-      .update({ status: change.status, outcome: change.outcome })
+      .update({ status: change.status })
       .eq('id', lead.id);
     if (error) toast.error(error.message || 'Could not update status.');
     else reload();
@@ -174,7 +174,7 @@ function Loaded({
 
   const doArchive = async () => {
     setConfirmArchive(false);
-    const patch = archived ? { deleted_at: null } : { deleted_at: new Date().toISOString() };
+    const patch = { is_deleted: !archived };
     const { error } = await supabase.from('leads').update(patch).eq('id', lead.id);
     if (error) {
       toast.error(error.message || 'Action failed.'); // surfaces the trigger message
@@ -424,7 +424,7 @@ function PhoneList({ phones }: { phones: DetailPhone[] }) {
             {p.label ? <span className="ml-2 text-xs text-white/40">{p.label}</span> : null}
             {p.is_primary ? <span className="ml-2 text-xs text-[var(--color-violet-light)]">primary</span> : null}
           </span>
-          <PhoneActions phone={p} />
+          <PhoneActions phone={p.phone_e164} />
         </li>
       ))}
     </ul>

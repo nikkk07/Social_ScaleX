@@ -15,7 +15,7 @@ import { supabase } from '@/lib/supabase';
 
 type Mode = 'signin' | 'reset';
 
-const GENERIC_SIGNIN_ERROR = 'Incorrect email or password.';
+const GENERIC_SIGNIN_ERROR = 'Incorrect email/phone or password.';
 const RATE_LIMIT_ERROR = 'Too many attempts. Please wait a moment and try again.';
 const UNEXPECTED_ERROR = 'Something went wrong. Please try again.';
 // Same copy whether or not the address exists — never reveal which.
@@ -24,6 +24,20 @@ const RESET_CONFIRMATION =
 
 function isEmail(value: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
+}
+
+function isPhone(value: string): boolean {
+  // Match 10-digit phone number (with or without +91 prefix)
+  const cleaned = value.trim().replace(/\s+/g, '');
+  return /^(?:\+91)?[6-9]\d{9}$/.test(cleaned);
+}
+
+function normalizePhone(value: string): string {
+  // Convert to +91XXXXXXXXXX format
+  const cleaned = value.trim().replace(/\s+/g, '');
+  if (cleaned.startsWith('+91')) return cleaned;
+  if (cleaned.length === 10) return `+91${cleaned}`;
+  return cleaned;
 }
 
 export default function LoginPage() {
@@ -36,7 +50,7 @@ export default function LoginPage() {
   const feedbackId = useId();
 
   const [mode, setMode] = useState<Mode>('signin');
-  const [email, setEmail] = useState('');
+  const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,19 +73,29 @@ export default function LoginPage() {
     setError(null);
     setInfo(null);
 
-    if (!isEmail(email)) {
-      setError('Enter a valid email address.');
+    const trimmedInput = emailOrPhone.trim();
+    const isEmailInput = isEmail(trimmedInput);
+    const isPhoneInput = isPhone(trimmedInput);
+
+    if (!isEmailInput && !isPhoneInput) {
+      setError('Enter a valid email address or phone number (10 digits).');
       return;
     }
 
     if (mode === 'reset') {
+      // Password reset only works with email
+      if (!isEmailInput) {
+        setError('Password reset requires an email address.');
+        return;
+      }
+      
       setSubmitting(true);
       try {
         // Fire-and-confirm: we show the same message regardless of the result
         // (except rate-limiting) so the response can't be used to probe which
         // emails are registered.
         const { error: resetErr } = await supabase.auth.resetPasswordForEmail(
-          email.trim(),
+          trimmedInput,
           { redirectTo: `${window.location.origin}/login` },
         );
         if (resetErr && (resetErr as { status?: number }).status === 429) {
@@ -93,20 +117,47 @@ export default function LoginPage() {
       setError(GENERIC_SIGNIN_ERROR);
       return;
     }
+    
     setSubmitting(true);
-    const result = await signIn(email, password);
-    setSubmitting(false);
-    if (result.ok) {
-      router.replace(from); // provisioning is enforced by RequireAuth
-      return;
+    
+    // Sign in with phone or email
+    if (isPhoneInput) {
+      const normalizedPhone = normalizePhone(trimmedInput);
+      const { error } = await supabase.auth.signInWithPassword({
+        phone: normalizedPhone,
+        password,
+      });
+      setSubmitting(false);
+      
+      if (!error) {
+        router.replace(from); // provisioning is enforced by RequireAuth
+        return;
+      }
+      
+      const httpStatus = (error as { status?: number }).status;
+      setError(
+        httpStatus === 429
+          ? RATE_LIMIT_ERROR
+          : httpStatus === 400
+            ? GENERIC_SIGNIN_ERROR
+            : UNEXPECTED_ERROR,
+      );
+    } else {
+      // Email login
+      const result = await signIn(trimmedInput, password);
+      setSubmitting(false);
+      if (result.ok) {
+        router.replace(from); // provisioning is enforced by RequireAuth
+        return;
+      }
+      setError(
+        result.kind === 'rate_limited'
+          ? RATE_LIMIT_ERROR
+          : result.kind === 'unexpected'
+            ? UNEXPECTED_ERROR
+            : GENERIC_SIGNIN_ERROR,
+      );
     }
-    setError(
-      result.kind === 'rate_limited'
-        ? RATE_LIMIT_ERROR
-        : result.kind === 'unexpected'
-          ? UNEXPECTED_ERROR
-          : GENERIC_SIGNIN_ERROR,
-    );
   }
 
   const inputClass =
@@ -124,7 +175,7 @@ export default function LoginPage() {
           </h1>
           <p className="mt-1 text-sm text-white/50">
             {mode === 'signin'
-              ? 'Access is invite-only. There is no public sign-up.'
+              ? 'Sign in with email or phone number. Access is invite-only.'
               : 'Enter your email and we’ll send a reset link.'}
           </p>
         </div>
@@ -132,19 +183,19 @@ export default function LoginPage() {
         <form onSubmit={onSubmit} noValidate className="space-y-4">
           <div>
             <label htmlFor={emailId} className="mb-1.5 block text-sm font-medium text-white/80">
-              Email
+              Email or Phone
             </label>
             <input
               id={emailId}
-              type="email"
-              inputMode="email"
+              type="text"
+              inputMode="text"
               autoComplete="username"
               autoFocus
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={emailOrPhone}
+              onChange={(e) => setEmailOrPhone(e.target.value)}
               className={inputClass}
-              placeholder="you@company.com"
+              placeholder="you@company.com or 9876543210"
             />
           </div>
 

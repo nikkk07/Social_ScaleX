@@ -39,28 +39,22 @@ export function useDuplicateCheck(excludeId?: string): DuplicateCheck {
 
   const findHandle = useCallback(
     async (h: string): Promise<DupLead | null> => {
-      const { data } = await supabase
-        .from('leads')
-        .select('id, brand_name')
-        .eq('instagram_username', h)
-        .is('deleted_at', null)
-        .limit(2);
-      return (data ?? []).find((l) => l.id !== excludeId) ?? null;
+      // Instagram username field doesn't exist in simplified schema
+      return null;
     },
     [excludeId],
   );
 
   const findPhone = useCallback(
     async (v: string): Promise<DupLead | null> => {
+      // Check phone directly on leads table (simplified schema)
       const { data } = await supabase
-        .from('lead_phones')
-        .select('lead_id, leads(id, brand_name, deleted_at)')
-        .eq('phone_e164', v)
-        .limit(20);
-      const hit = (data ?? [])
-        .map((r) => r.leads as unknown as { id: string; brand_name: string; deleted_at: string | null } | null)
-        .find((l) => l && !l.deleted_at && l.id !== excludeId);
-      return hit ? { id: hit.id, brand_name: hit.brand_name } : null;
+        .from('leads')
+        .select('id, brand_name')
+        .eq('phone', v)
+        .eq('is_deleted', false)
+        .limit(2);
+      return (data ?? []).find((l) => l.id !== excludeId) ?? null;
     },
     [excludeId],
   );

@@ -7,6 +7,7 @@
 // filter changes: several fetches can be in flight; only the newest may write.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchLeadsPage, type LeadRow, type LeadsQuery } from './leadsQuery';
+import type { LeadAccessInfo } from './leadAccessControl';
 
 export type { LeadRow };
 
@@ -15,22 +16,31 @@ export type LeadsState =
   | { status: 'ready'; leads: LeadRow[]; total: number }
   | { status: 'error' };
 
-export function useLeads(query: LeadsQuery): LeadsState & { refetch: () => void } {
+export function useLeads(
+  query: LeadsQuery, 
+  accessInfo: LeadAccessInfo | null
+): LeadsState & { refetch: () => void } {
   const [state, setState] = useState<LeadsState>({ status: 'loading' });
   const reqIdRef = useRef(0);
 
   const load = useCallback(async () => {
+    // Wait for access info to be loaded
+    if (!accessInfo) {
+      setState({ status: 'loading' });
+      return;
+    }
+
     const reqId = ++reqIdRef.current;
     setState({ status: 'loading' });
     try {
-      const { rows, total } = await fetchLeadsPage(query);
+      const { rows, total } = await fetchLeadsPage(query, accessInfo);
       if (reqId !== reqIdRef.current) return; // superseded by a newer load
       setState({ status: 'ready', leads: rows, total });
     } catch {
       if (reqId !== reqIdRef.current) return;
       setState({ status: 'error' });
     }
-  }, [query]);
+  }, [query, accessInfo]);
 
   useEffect(() => {
     void load();

@@ -42,6 +42,7 @@ export function CrmHeader() {
           <nav aria-label="CRM sections" className="flex items-center gap-1">
             <SectionLink href="/crm">Leads</SectionLink>
             <SectionLink href="/crm/enquiries">Enquiries</SectionLink>
+            <SectionLink href="/crm/team">Team</SectionLink>
           </nav>
         </div>
         <div className="flex items-center gap-4">

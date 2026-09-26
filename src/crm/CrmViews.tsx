@@ -21,6 +21,7 @@ import { AuthProvider } from './auth/AuthProvider';
 import LoginPage from './auth/LoginPage';
 import DashboardRoute from './DashboardRoute';
 import EnquiriesRoute from './EnquiriesRoute';
+import TeamRoute from './TeamRoute';
 import LeadFormRoute from './LeadFormRoute';
 import LeadDetailRoute from './LeadDetailRoute';
 
@@ -28,6 +29,7 @@ export type CrmViewProps =
   | { view: 'login' }
   | { view: 'dashboard' }
   | { view: 'enquiries' }
+  | { view: 'team' }
   | { view: 'lead-new' }
   | { view: 'lead-detail'; id: string }
   | { view: 'lead-edit'; id: string };
@@ -40,6 +42,8 @@ function View(props: CrmViewProps) {
       return <DashboardRoute />;
     case 'enquiries':
       return <EnquiriesRoute />;
+    case 'team':
+      return <TeamRoute />;
     case 'lead-new':
       return <LeadFormRoute />;
     case 'lead-edit':

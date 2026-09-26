@@ -16,8 +16,8 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export type AppRole = 'owner' | 'admin' | 'member';
-export type LeadStatus = 'pending' | 'contacted';
+export type AppRole = 'owner' | 'admin' | 'member' | 'super_admin';
+export type LeadStatus = 'pending' | 'contacted' | 'interested' | 'not_interested' | 'callback' | 'meeting';
 export type LeadOutcome = 'interested' | 'not_interested';
 export type LeadSource = 'manual' | 'website_callback' | 'website_query' | 'import';
 
@@ -28,25 +28,83 @@ export interface Database {
         Row: {
           id: string;
           email: string;
+          phone: string | null;
           full_name: string | null;
           role: AppRole;
+          daily_lead_quota: number | null;
           created_at: string;
         };
         Insert: {
           id: string;
-          email: string;
-          full_name?: string | null;
+          full_name: string;
+          email?: string;
+          phone?: string | null;
           role?: AppRole;
+          daily_lead_quota?: number | null;
           created_at?: string;
         };
         Update: {
           id?: string;
           email?: string;
+          phone?: string | null;
           full_name?: string | null;
           role?: AppRole;
+          daily_lead_quota?: number | null;
           created_at?: string;
         };
         Relationships: [];
+      };
+      lead_assignments: {
+        Row: {
+          id: string;
+          lead_id: string;
+          member_id: string;
+          assigned_at: string;
+          contacted: boolean;
+          contacted_at: string | null;
+          assigned_by: string | null;
+          notes: string | null;
+        };
+        Insert: {
+          id?: string;
+          lead_id: string;
+          member_id: string;
+          assigned_at?: string;
+          contacted?: boolean;
+          contacted_at?: string | null;
+          assigned_by?: string | null;
+          notes?: string | null;
+        };
+        Update: {
+          id?: string;
+          lead_id?: string;
+          member_id?: string;
+          assigned_at?: string;
+          contacted?: boolean;
+          contacted_at?: string | null;
+          assigned_by?: string | null;
+          notes?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "lead_assignments_lead_id_fkey";
+            columns: ["lead_id"];
+            referencedRelation: "leads";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "lead_assignments_member_id_fkey";
+            columns: ["member_id"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "lead_assignments_assigned_by_fkey";
+            columns: ["assigned_by"];
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          }
+        ];
       };
       allowed_emails: {
         Row: {
@@ -73,53 +131,68 @@ export interface Database {
         Row: {
           id: string;
           brand_name: string;
-          instagram_username: string | null;
+          phone: string | null;
+          email: string | null;
           address: string | null;
-          lead_found_on: string;
-          status: LeadStatus;
-          outcome: LeadOutcome | null;
-          source: LeadSource;
+          source: string | null;
+          status: string | null;
+          callback_at: string | null;
+          meeting_at: string | null;
+          project_start_date: string | null;
+          expected_delivery_date: string | null;
+          project_end_date: string | null;
+          costing: number | null;
           notes: string | null;
-          owner_id: string | null;
+          assigned_to: string | null;
           created_by: string | null;
-          contacted_at: string | null;
+          updated_by: string | null;
+          is_deleted: boolean;
           created_at: string;
           updated_at: string;
-          deleted_at: string | null;
         };
         Insert: {
           id?: string;
           brand_name: string;
-          instagram_username?: string | null;
+          phone?: string | null;
+          email?: string | null;
           address?: string | null;
-          lead_found_on?: string;
-          status?: LeadStatus;
-          outcome?: LeadOutcome | null;
-          source?: LeadSource;
+          source?: string | null;
+          status?: string | null;
+          callback_at?: string | null;
+          meeting_at?: string | null;
+          project_start_date?: string | null;
+          expected_delivery_date?: string | null;
+          project_end_date?: string | null;
+          costing?: number | null;
           notes?: string | null;
-          owner_id?: string | null;
+          assigned_to?: string | null;
           created_by?: string | null;
-          contacted_at?: string | null;
+          updated_by?: string | null;
+          is_deleted?: boolean;
           created_at?: string;
           updated_at?: string;
-          deleted_at?: string | null;
         };
         Update: {
           id?: string;
           brand_name?: string;
-          instagram_username?: string | null;
+          phone?: string | null;
+          email?: string | null;
           address?: string | null;
-          lead_found_on?: string;
-          status?: LeadStatus;
-          outcome?: LeadOutcome | null;
-          source?: LeadSource;
+          source?: string | null;
+          status?: string | null;
+          callback_at?: string | null;
+          meeting_at?: string | null;
+          project_start_date?: string | null;
+          expected_delivery_date?: string | null;
+          project_end_date?: string | null;
+          costing?: number | null;
           notes?: string | null;
-          owner_id?: string | null;
+          assigned_to?: string | null;
           created_by?: string | null;
-          contacted_at?: string | null;
+          updated_by?: string | null;
+          is_deleted?: boolean;
           created_at?: string;
           updated_at?: string;
-          deleted_at?: string | null;
         };
         Relationships: [];
       };

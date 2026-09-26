@@ -130,10 +130,10 @@ function EditLoader({ id }: { id: string }) {
     supabase
       .from('leads')
       .select(
-        'brand_name, instagram_username, address, lead_found_on, status, outcome, source, notes, owner_id',
+        'brand_name, address, status, source, notes, assigned_to',
       )
       .eq('id', id)
-      .is('deleted_at', null)
+      .eq('is_deleted', false)
       .maybeSingle()
       .then(({ data, error }) => {
         if (!active) return;
@@ -145,18 +145,20 @@ function EditLoader({ id }: { id: string }) {
           setState({ kind: 'notfound' });
           return;
         }
+        // Map simplified schema to the form's expected structure
+        const today = new Date().toISOString().slice(0, 10);
         setState({
           kind: 'ready',
           values: {
             brand_name: data.brand_name,
-            instagram_username: data.instagram_username ?? '',
+            instagram_username: '', // Not in simplified schema
             address: data.address ?? '',
-            lead_found_on: data.lead_found_on,
-            status: data.status,
-            outcome: data.outcome ?? '',
-            source: data.source,
+            lead_found_on: today, // Not in simplified schema, use today
+            status: data.status === 'contacted' ? 'contacted' : 'pending',
+            outcome: '', // Not in simplified schema
+            source: data.source as any || 'manual',
             notes: data.notes ?? '',
-            owner_id: data.owner_id ?? '',
+            owner_id: data.assigned_to ?? '',
             contacts: [],
             lead_phones: [],
           },

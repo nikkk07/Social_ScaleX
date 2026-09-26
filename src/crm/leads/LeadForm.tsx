@@ -118,7 +118,16 @@ export function LeadForm({
         if (error) throw error;
         toast.success(enquiry ? 'Enquiry converted to a lead.' : 'Lead created.');
       } else {
-        const { error } = await supabase.from('leads').update(toUpdatePayload(values)).eq('id', leadId!);
+        // Simplified update for actual schema (only existing fields)
+        const updateData = {
+          brand_name: values.brand_name.trim(),
+          address: values.address?.trim() || null,
+          status: values.status,
+          source: values.source,
+          notes: values.notes?.trim() || null,
+          assigned_to: values.owner_id || null,
+        };
+        const { error } = await supabase.from('leads').update(updateData).eq('id', leadId!);
         if (error) throw error;
         toast.success('Lead updated.');
       }

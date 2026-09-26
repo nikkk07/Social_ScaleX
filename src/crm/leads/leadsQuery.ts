@@ -8,16 +8,16 @@ import type {
   LeadStatus,
   LeadOutcome,
 } from '@/lib/database.types';
+import type { LeadAccessInfo } from './leadAccessControl';
 
 export const PAGE_SIZE = 25;
 export const EXPORT_PAGE_SIZE = 1000; // PostgREST's default hard cap
 
 // Nested select: contacts + their phones in one round trip (no N+1).
 export const LEAD_SELECT =
-  'id, brand_name, instagram_username, status, outcome, source, lead_found_on, created_at, owner_id, ' +
-  'lead_contacts(name, is_primary, sort_order, lead_phones(phone_e164, label, is_primary, sort_order))';
+  'id, brand_name, phone, email, status, source, address, created_at, assigned_to, notes';
 
-export type SortColumn = 'lead_found_on' | 'brand_name' | 'status' | 'created_at';
+export type SortColumn = 'created_at' | 'brand_name' | 'status';
 
 // Both dashboard tiles use a 7-day window. Single source of truth: the tile's
 // COUNT and the list it links to must never disagree, or the tile reads "4" and
@@ -30,19 +30,11 @@ export function daysAgoISO(days: number): string {
 
 export interface LeadsQuery {
   q: string;
-  status: LeadStatus | '';
-  outcome: LeadOutcome | '';
-  owner: string; // owner_id, or '' for any
+  status: string;
+  owner: string; // assigned_to, or '' for any
   foundFrom: string; // 'YYYY-MM-DD' or ''
   foundTo: string; // 'YYYY-MM-DD' or ''
-  // "Needs follow-up": contacted, still no outcome, and last contacted more
-  // than RECENT_DAYS ago. Implies status/outcome, so it overrides both (see
-  // filteredLeads) rather than ANDing into a contradiction like
-  // status=pending + followup, which would always return zero rows.
   followup: boolean;
-  // "Added this week" — on created_at (when WE recorded it), deliberately not
-  // lead_found_on (when the lead was spotted, which is user-entered and can be
-  // backdated).
   recent: boolean;
   sort: SortColumn;
   dir: 'asc' | 'desc';
@@ -52,41 +44,29 @@ export interface LeadsQuery {
 export const DEFAULT_QUERY: LeadsQuery = {
   q: '',
   status: '',
-  outcome: '',
   owner: '',
   foundFrom: '',
   foundTo: '',
   followup: false,
   recent: false,
-  sort: 'lead_found_on', // has leads_found_on_idx; created_at does not
+  sort: 'created_at',
   dir: 'desc',
   page: 1,
 };
 
-export interface LeadPhoneRow {
-  phone_e164: string;
-  label: string | null;
-  is_primary: boolean;
-  sort_order: number;
-}
-export interface LeadContactRow {
-  name: string;
-  is_primary: boolean;
-  sort_order: number;
-  lead_phones: LeadPhoneRow[];
-}
 export type LeadRow = Pick<
   Database['public']['Tables']['leads']['Row'],
   | 'id'
   | 'brand_name'
-  | 'instagram_username'
+  | 'phone'
+  | 'email'
   | 'status'
-  | 'outcome'
   | 'source'
-  | 'lead_found_on'
+  | 'address'
   | 'created_at'
-  | 'owner_id'
-> & { lead_contacts: LeadContactRow[] };
+  | 'assigned_to'
+  | 'notes'
+>;
 
 // Strip only what's STRUCTURAL in PostgREST's or()/filter grammar (commas,
 // parens), the `%` wildcard, and the escape char `\`, so a user typing `%` or
@@ -117,23 +97,16 @@ function filteredLeads(q: LeadsQuery, withCount: boolean, cutoff: string) {
   let b = withCount
     ? supabase.from('leads').select(LEAD_SELECT, { count: 'exact' })
     : supabase.from('leads').select(LEAD_SELECT);
-  b = b.is('deleted_at', null);
-  if (q.followup) {
-    // Matches leads_followup_idx's predicate exactly (090010), so the index
-    // holds only rows that can be in the answer.
-    b = b.eq('status', 'contacted').is('outcome', null).lte('contacted_at', cutoff);
-  } else {
-    if (q.status) b = b.eq('status', q.status);
-    if (q.outcome) b = b.eq('outcome', q.outcome);
-  }
+  b = b.eq('is_deleted', false);
+  
+  if (q.status) b = b.eq('status', q.status);
   if (q.recent) b = b.gte('created_at', cutoff);
-  if (q.owner) b = b.eq('owner_id', q.owner);
-  if (q.foundFrom) b = b.gte('lead_found_on', q.foundFrom);
-  if (q.foundTo) b = b.lte('lead_found_on', q.foundTo);
+  if (q.owner) b = b.eq('assigned_to', q.owner);
+  
   const s = sanitizeSearch(q.q);
   if (s) {
-    // Uses the pg_trgm gin indexes on brand_name + instagram_username.
-    b = b.or(`brand_name.ilike.%${s}%,instagram_username.ilike.%${s}%`);
+    // Search brand_name, email, or phone
+    b = b.or(`brand_name.ilike.%${s}%,email.ilike.%${s}%,phone.ilike.%${s}%`);
   }
   return b;
 }
@@ -144,10 +117,26 @@ export interface LeadsPage {
 }
 
 // One page for the table.
-export async function fetchLeadsPage(q: LeadsQuery): Promise<LeadsPage> {
+export async function fetchLeadsPage(
+  q: LeadsQuery,
+  accessInfo?: LeadAccessInfo | null
+): Promise<LeadsPage> {
   const from = (q.page - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
-  const { data, error, count } = await filteredLeads(q, true, daysAgoISO(RECENT_DAYS))
+  
+  let query = filteredLeads(q, true, daysAgoISO(RECENT_DAYS));
+  
+  // Apply access control filter for members
+  if (accessInfo && !accessInfo.canAccessAllLeads) {
+    if (accessInfo.assignedLeadIds && accessInfo.assignedLeadIds.length > 0) {
+      query = query.in('id', accessInfo.assignedLeadIds);
+    } else {
+      // No accessible leads - return empty
+      return { rows: [], total: 0 };
+    }
+  }
+  
+  const { data, error, count } = await query
     .order(q.sort, { ascending: q.dir === 'asc' })
     .order('id', { ascending: true }) // stable tiebreaker → deterministic paging
     .range(from, to);
@@ -193,26 +182,19 @@ export async function fetchAllLeads(q: LeadsQuery): Promise<LeadRow[]> {
 }
 
 // ── Primary resolution ────────────────────────────────────────────────
-// Prefer the row flagged is_primary; else the lowest sort_order.
-function byPrimaryThenOrder<T extends { is_primary: boolean; sort_order: number }>(
-  a: T,
-  b: T,
-): number {
-  return Number(b.is_primary) - Number(a.is_primary) || a.sort_order - b.sort_order;
+// For your simplified schema, phone and email are directly on the lead
+
+export function primaryContact(lead: LeadRow): { name: string } | null {
+  return lead.brand_name ? { name: lead.brand_name } : null;
 }
 
-export function primaryContact(lead: LeadRow): LeadContactRow | null {
-  if (!lead.lead_contacts?.length) return null;
-  return [...lead.lead_contacts].sort(byPrimaryThenOrder)[0] ?? null;
-}
-
-export function primaryPhone(contact: LeadContactRow | null): LeadPhoneRow | null {
-  if (!contact?.lead_phones?.length) return null;
-  return [...contact.lead_phones].sort(byPrimaryThenOrder)[0] ?? null;
+export function primaryPhone(lead: LeadRow): { phone_e164: string } | null {
+  return lead.phone ? { phone_e164: lead.phone } : null;
 }
 
 // wa.me wants digits only (no '+'); tel: keeps the E.164 form.
 export function waNumber(e164: string): string {
+  if (!e164) return '';
   return e164.replace(/\D/g, '');
 }
 
@@ -221,7 +203,6 @@ export function toSearchParams(q: LeadsQuery): URLSearchParams {
   const p = new URLSearchParams();
   if (q.q) p.set('q', q.q);
   if (q.status) p.set('status', q.status);
-  if (q.outcome) p.set('outcome', q.outcome);
   if (q.owner) p.set('owner', q.owner);
   if (q.foundFrom) p.set('from', q.foundFrom);
   if (q.foundTo) p.set('to', q.foundTo);
@@ -237,13 +218,11 @@ export function toSearchParams(q: LeadsQuery): URLSearchParams {
 // PostgREST filter (which would 400 and blank the screen). Anything unknown
 // falls back to a safe default rather than being cast through with `as`.
 const SORT_COLUMNS: readonly SortColumn[] = [
-  'lead_found_on',
+  'created_at',
   'brand_name',
   'status',
-  'created_at',
 ];
-const STATUSES: readonly LeadStatus[] = ['pending', 'contacted'];
-const OUTCOMES: readonly LeadOutcome[] = ['interested', 'not_interested'];
+const STATUSES = ['pending', 'contacted', 'interested', 'not_interested', 'callback', 'meeting'] as const;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -264,8 +243,7 @@ export function fromSearchParams(p: URLSearchParams): LeadsQuery {
   const to = p.get('to') ?? '';
   return {
     q: p.get('q') ?? '',
-    status: oneOf(p.get('status'), STATUSES, ''),
-    outcome: oneOf(p.get('outcome'), OUTCOMES, ''),
+    status: p.get('status') ?? '',
     owner: UUID_RE.test(owner) ? owner : '',
     foundFrom: DATE_RE.test(from) ? from : '',
     foundTo: DATE_RE.test(to) ? to : '',
@@ -282,7 +260,6 @@ export function hasActiveFilters(q: LeadsQuery): boolean {
   return Boolean(
     q.q ||
       q.status ||
-      q.outcome ||
       q.owner ||
       q.foundFrom ||
       q.foundTo ||
@@ -307,28 +284,24 @@ function csvCell(value: string): string {
 export function leadsToCsv(rows: LeadRow[]): string {
   const header = [
     'Brand',
-    'Instagram',
+    'Phone',
+    'Email',
+    'Address',
     'Status',
-    'Outcome',
     'Source',
-    'Found',
-    'Primary Contact',
-    'Primary Phone',
+    'Created',
   ];
   const lines = [header.join(',')];
   for (const l of rows) {
-    const contact = primaryContact(l);
-    const phone = primaryPhone(contact);
     lines.push(
       [
         l.brand_name,
-        l.instagram_username ?? '',
-        l.status,
-        l.outcome ?? '',
-        l.source,
-        l.lead_found_on,
-        contact?.name ?? '',
-        phone?.phone_e164 ?? '',
+        l.phone ?? '',
+        l.email ?? '',
+        l.address ?? '',
+        l.status ?? '',
+        l.source ?? '',
+        l.created_at,
       ]
         .map(csvCell)
         .join(','),

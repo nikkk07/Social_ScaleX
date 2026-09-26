@@ -16,6 +16,7 @@ import {
   MoreHorizontal,
   Plus,
   Search,
+  Upload,
   X,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -37,8 +38,11 @@ import {
 } from '@/components/ui/table';
 import { useLeads } from './useLeads';
 import { useProfiles } from './useProfiles';
+import { useAuth } from '../auth/AuthProvider';
+import { getLeadAccessInfo, type LeadAccessInfo } from './leadAccessControl';
 import { LeadStatusControl, type StatusChange } from './LeadStatusControl';
 import { PhoneActions } from './PhoneActions';
+import { LeadImportDialog } from './LeadImportDialog';
 import {
   DEFAULT_QUERY,
   PAGE_SIZE,
@@ -56,7 +60,7 @@ import {
   type SortColumn,
 } from './leadsQuery';
 
-const SOURCE_LABEL: Record<LeadRow['source'], string> = {
+const SOURCE_LABEL: Record<NonNullable<LeadRow['source']>, string> = {
   manual: 'Manual',
   website_callback: 'Callback',
   website_query: 'Query',
@@ -65,22 +69,6 @@ const SOURCE_LABEL: Record<LeadRow['source'], string> = {
 
 const inputClass =
   'rounded-lg border border-[var(--border)] bg-[var(--input-background)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder:text-white/30 outline-none transition focus-visible:border-[var(--color-violet-light)] focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]';
-
-function OutcomeBadge({ outcome }: { outcome: LeadRow['outcome'] }) {
-  if (outcome === 'interested')
-    return (
-      <Badge className="border-transparent bg-[color-mix(in_oklab,var(--color-emerald)_18%,transparent)] text-[var(--color-emerald)]">
-        Interested
-      </Badge>
-    );
-  if (outcome === 'not_interested')
-    return (
-      <Badge className="border-transparent bg-[color-mix(in_oklab,var(--destructive)_16%,transparent)] text-[var(--destructive)]">
-        Not interested
-      </Badge>
-    );
-  return <span className="text-white/25">—</span>;
-}
 
 function InstagramLink({ handle }: { handle: string | null }) {
   if (!handle) return <span className="text-white/25">—</span>;
@@ -97,6 +85,7 @@ function InstagramLink({ handle }: { handle: string | null }) {
 }
 
 export function LeadsList() {
+  const { user, role } = useAuth();
   const [sp, setSp] = useSearchParams();
   const spString = sp.toString();
   const query = useMemo<LeadsQuery>(
@@ -104,11 +93,22 @@ export function LeadsList() {
     [spString],
   );
 
-  const leadsResult = useLeads(query);
+  const [accessInfo, setAccessInfo] = useState<LeadAccessInfo | null>(null);
+  const leadsResult = useLeads(query, accessInfo);
   const profiles = useProfiles();
+
+  // Import dialog state
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
 
   // Local, optimistically-editable copy of the current page.
   const [rows, setRows] = useState<LeadRow[]>([]);
+
+  // Load access info on mount
+  useEffect(() => {
+    if (user?.id && role) {
+      getLeadAccessInfo(user.id, role).then(setAccessInfo);
+    }
+  }, [user?.id, role]);
   // Extracted rather than inlined into the dep array so the dependency is
   // statically checkable. Behaviour is unchanged and the narrowness is the
   // point: re-syncing on every status transition would throw away optimistic
@@ -157,13 +157,13 @@ export function LeadsList() {
       setRows((rs) =>
         rs.map((r) =>
           r.id === lead.id
-            ? { ...r, status: change.status, outcome: change.outcome }
+            ? { ...r, status: change.status }
             : r,
         ),
       );
       const { error } = await supabase
         .from('leads')
-        .update({ status: change.status, outcome: change.outcome })
+        .update({ status: change.status })
         .eq('id', lead.id);
       if (error) {
         setRows(snapshot); // rollback
@@ -179,7 +179,7 @@ export function LeadsList() {
       setRows((rs) => rs.filter((r) => r.id !== lead.id));
       const { error } = await supabase
         .from('leads')
-        .update({ deleted_at: new Date().toISOString() })
+        .update({ is_deleted: true })
         .eq('id', lead.id);
       if (error) {
         setRows(snapshot); // rollback
@@ -232,6 +232,12 @@ export function LeadsList() {
                   ? 'Loading…'
                   : '—'}
             </p>
+            {/* Quota info for members */}
+            {accessInfo && !accessInfo.canAccessAllLeads && (
+              <p className="text-xs text-[var(--color-violet-light)] mt-1">
+                Your quota: {accessInfo.accessibleCount} / {accessInfo.dailyQuota || 0} leads accessible today
+              </p>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -242,6 +248,14 @@ export function LeadsList() {
             >
               <Download size={15} />
               {exporting ? 'Exporting…' : 'Export CSV'}
+            </button>
+            <button
+              type="button"
+              onClick={() => setImportDialogOpen(true)}
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] px-3 py-2 text-sm text-white/80 transition-colors hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
+            >
+              <Upload size={15} />
+              Import CSV
             </button>
             <Link href="/crm/leads/new"
               className="inline-flex items-center gap-2 rounded-lg bg-[var(--color-violet-cta)] px-3 py-2 text-sm font-semibold text-white transition-transform hover:scale-[1.03] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
@@ -268,37 +282,21 @@ export function LeadsList() {
             />
           </div>
 
-          {/* Disabled (not hidden) while "needs follow-up" is on: that view
-              already pins status=contacted + no outcome, so leaving these live
-              would let you pick a combination the query quietly ignores. */}
           <select
             aria-label="Filter by status"
-            value={query.followup ? 'contacted' : query.status}
-            disabled={query.followup}
-            title={query.followup ? 'Set by the follow-up view' : undefined}
+            value={query.status}
             onChange={(e) =>
               setFilters({ status: e.target.value as LeadsQuery['status'] })
             }
-            className={`${inputClass} disabled:opacity-50`}
+            className={`${inputClass}`}
           >
             <option value="">Any status</option>
             <option value="pending">Pending</option>
             <option value="contacted">Contacted</option>
-          </select>
-
-          <select
-            aria-label="Filter by outcome"
-            value={query.followup ? '' : query.outcome}
-            disabled={query.followup}
-            title={query.followup ? 'Set by the follow-up view' : undefined}
-            onChange={(e) =>
-              setFilters({ outcome: e.target.value as LeadsQuery['outcome'] })
-            }
-            className={`${inputClass} disabled:opacity-50`}
-          >
-            <option value="">Any outcome</option>
             <option value="interested">Interested</option>
-            <option value="not_interested">Not interested</option>
+            <option value="not_interested">Not Interested</option>
+            <option value="callback">Callback</option>
+            <option value="meeting">Meeting</option>
           </select>
 
           <select
@@ -393,6 +391,15 @@ export function LeadsList() {
           />
         </>
       )}
+
+      <LeadImportDialog
+        open={importDialogOpen}
+        onClose={() => setImportDialogOpen(false)}
+        onSuccess={() => {
+          setImportDialogOpen(false);
+          leadsResult.refetch();
+        }}
+      />
     </div>
   );
 }
@@ -507,18 +514,16 @@ function DesktopTable({
         <TableHeader>
           <TableRow className="border-[var(--border)] hover:bg-transparent">
             <SortHeader label="Brand" col="brand_name" sort={sort} dir={dir} onSort={onSort} className="pl-4" />
-            <TableHead className="text-white/50">Instagram</TableHead>
-            <SortHeader label="Status / Outcome" col="status" sort={sort} dir={dir} onSort={onSort} />
-            <TableHead className="text-white/50">Primary Contact</TableHead>
-            <TableHead className="text-white/50">Primary Phone</TableHead>
-            <SortHeader label="Found" col="lead_found_on" sort={sort} dir={dir} onSort={onSort} />
+            <TableHead className="text-white/50">Contact</TableHead>
+            <SortHeader label="Status" col="status" sort={sort} dir={dir} onSort={onSort} />
+            <TableHead className="text-white/50">Phone</TableHead>
+            <TableHead className="text-white/50">Email</TableHead>
+            <SortHeader label="Created" col="created_at" sort={sort} dir={dir} onSort={onSort} />
             <TableHead className="pr-4 text-right text-white/50">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {rows.map((lead) => {
-            const contact = primaryContact(lead);
-            const phone = primaryPhone(contact);
             return (
               <TableRow key={lead.id} className="border-[var(--border)]">
                 <TableCell className="pl-4 font-medium text-white/90">
@@ -526,28 +531,32 @@ function DesktopTable({
                     {lead.brand_name}
                   </Link>
                 </TableCell>
-                <TableCell className="text-white/60">
-                  <InstagramLink handle={lead.instagram_username} />
-                </TableCell>
-                <TableCell>
-                  <LeadStatusControl
-                    status={lead.status}
-                    outcome={lead.outcome}
-                    onChange={(c) => onStatus(lead, c)}
-                  />
-                </TableCell>
                 <TableCell className="text-white/70">
-                  {contact ? contact.name : <span className="text-white/25">No contact</span>}
+                  <span>{lead.brand_name}</span>
                 </TableCell>
                 <TableCell>
-                  {phone ? (
-                    <PhoneActions phone={phone} />
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-white/80">{lead.status || 'pending'}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  {lead.phone ? (
+                    <PhoneActions phone={lead.phone} />
                   ) : (
                     <span className="text-white/25">—</span>
                   )}
                 </TableCell>
                 <TableCell className="text-white/60">
-                  {format(new Date(lead.lead_found_on), 'd MMM yyyy')}
+                  {lead.email ? (
+                    <a href={`mailto:${lead.email}`} className="hover:text-[var(--color-violet-light)] hover:underline">
+                      {lead.email}
+                    </a>
+                  ) : (
+                    <span className="text-white/25">—</span>
+                  )}
+                </TableCell>
+                <TableCell className="text-white/60">
+                  {format(new Date(lead.created_at), 'd MMM yyyy')}
                 </TableCell>
                 <TableCell className="pr-4 text-right">
                   <RowActions lead={lead} onArchive={onArchive} />
@@ -574,7 +583,7 @@ function MobileCards({
     <div className="space-y-3 md:hidden">
       {rows.map((lead) => {
         const contact = primaryContact(lead);
-        const phone = primaryPhone(contact);
+        const phone = primaryPhone(lead);
         return (
           <div
             key={lead.id}
@@ -585,19 +594,17 @@ function MobileCards({
                 <Link href={`/crm/leads/${lead.id}`} className="font-medium text-white/90 hover:text-[var(--color-violet-light)]">
                   {lead.brand_name}
                 </Link>
-                <div className="text-sm">
-                  <InstagramLink handle={lead.instagram_username} />
-                </div>
+                {lead.email && (
+                  <div className="text-sm text-white/60">{lead.email}</div>
+                )}
               </div>
               <RowActions lead={lead} onArchive={onArchive} />
             </div>
 
             <div className="mb-3">
-              <LeadStatusControl
-                status={lead.status}
-                outcome={lead.outcome}
-                onChange={(c) => onStatus(lead, c)}
-              />
+              <span className="inline-block rounded-full bg-[var(--accent)] px-2 py-1 text-xs text-white/80">
+                {lead.status || 'pending'}
+              </span>
             </div>
 
             <div className="flex items-center justify-between gap-3">
@@ -609,15 +616,15 @@ function MobileCards({
                 )}
               </div>
               {phone ? (
-                <PhoneActions phone={phone} />
+                <PhoneActions phone={phone.phone_e164} />
               ) : (
                 <span className="text-sm text-white/25">No phone</span>
               )}
             </div>
 
             <div className="mt-3 border-t border-[var(--border)] pt-2 text-xs text-white/40">
-              Found {format(new Date(lead.lead_found_on), 'd MMM yyyy')} ·{' '}
-              {SOURCE_LABEL[lead.source]}
+              Created {format(new Date(lead.created_at), 'd MMM yyyy')} ·{' '}
+              {(lead.source && SOURCE_LABEL[lead.source]) || lead.source || 'Unknown'}
             </div>
           </div>
         );
