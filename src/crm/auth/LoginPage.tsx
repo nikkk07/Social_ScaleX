@@ -1,269 +1,141 @@
-// Invite-only staff login. No signup anywhere. Two things carry security
-// weight here and are deliberate, not incidental:
-//   1. Non-enumeration: a wrong password and an unknown email must produce the
-//      SAME message and comparable timing. We never branch on which failed —
-//      Supabase itself returns an identical 400 for both — and the reset flow
-//      always shows the same generic confirmation.
-//   2. The reset redirect must point at an allow-listed URL (this origin).
 'use client';
-
 import React, { useEffect, useId, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { Eye, EyeOff, Loader2, Lock } from 'lucide-react';
 import { useAuth } from './AuthProvider';
-import { supabase } from '@/lib/supabase';
-
-type Mode = 'signin' | 'reset';
-
-const GENERIC_SIGNIN_ERROR = 'Incorrect email/phone or password.';
-const RATE_LIMIT_ERROR = 'Too many attempts. Please wait a moment and try again.';
-const UNEXPECTED_ERROR = 'Something went wrong. Please try again.';
-// Same copy whether or not the address exists — never reveal which.
-const RESET_CONFIRMATION =
-  'If an account exists for that email, a password reset link is on its way.';
-
-function isEmail(value: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-}
-
-function isPhone(value: string): boolean {
-  // Match 10-digit phone number (with or without +91 prefix)
-  const cleaned = value.trim().replace(/\s+/g, '');
-  return /^(?:\+91)?[6-9]\d{9}$/.test(cleaned);
-}
-
-function normalizePhone(value: string): string {
-  // Convert to +91XXXXXXXXXX format
-  const cleaned = value.trim().replace(/\s+/g, '');
-  if (cleaned.startsWith('+91')) return cleaned;
-  if (cleaned.length === 10) return `+91${cleaned}`;
-  return cleaned;
-}
+import { isEmail, normalizePhone } from '@/lib/crm/normalize';
+import { inputClass } from '../ui/kit';
+import { CrmBoot } from '../CrmBoot';
 
 export default function LoginPage() {
-  const { status, signIn } = useAuth();
+  const { status, signIn, signedOutReason } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
+  const params = useSearchParams();
+  const idId = useId();
+  const pwId = useId();
+  const msgId = useId();
 
-  const emailId = useId();
-  const passwordId = useId();
-  const feedbackId = useId();
-
-  const [mode, setMode] = useState<Mode>('signin');
-  const [emailOrPhone, setEmailOrPhone] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [submitting, setSubmitting] = useState(false);
+  const [show, setShow] = useState(false);
+  const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(null);
 
-  // Where to land after signing in. Only same-site absolute paths are
-  // honoured: `?next=https://evil.example` would otherwise turn the login
-  // page into an open redirect.
-  const requested = searchParams?.get('next') ?? '';
-  const from =
-    requested.startsWith('/') && !requested.startsWith('//') ? requested : '/crm';
+  const requested = params?.get('next') ?? '';
+  const next = requested.startsWith('/crm') && !requested.startsWith('//') ? requested : '/crm';
 
-  // Already signed in and provisioned? Skip the form.
   useEffect(() => {
-    if (status === 'signed_in_provisioned') router.replace(from);
-  }, [status, from, router]);
+    if (status === 'signed_in') router.replace(next);
+  }, [status, next, router]);
+
+  if (status === 'initialising') return <CrmBoot label="Checking your session…" />;
+  if (status === 'signed_in') return <CrmBoot label="Opening the CRM…" />;
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    setInfo(null);
-
-    const trimmedInput = emailOrPhone.trim();
-    const isEmailInput = isEmail(trimmedInput);
-    const isPhoneInput = isPhone(trimmedInput);
-
-    if (!isEmailInput && !isPhoneInput) {
-      setError('Enter a valid email address or phone number (10 digits).');
+    const id = identifier.trim();
+    if (!isEmail(id) && !normalizePhone(id)) {
+      setError('Enter your email address or 10-digit mobile number.');
       return;
     }
-
-    if (mode === 'reset') {
-      // Password reset only works with email
-      if (!isEmailInput) {
-        setError('Password reset requires an email address.');
-        return;
-      }
-      
-      setSubmitting(true);
-      try {
-        // Fire-and-confirm: we show the same message regardless of the result
-        // (except rate-limiting) so the response can't be used to probe which
-        // emails are registered.
-        const { error: resetErr } = await supabase.auth.resetPasswordForEmail(
-          trimmedInput,
-          { redirectTo: `${window.location.origin}/login` },
-        );
-        if (resetErr && (resetErr as { status?: number }).status === 429) {
-          setError(RATE_LIMIT_ERROR);
-        } else {
-          setInfo(RESET_CONFIRMATION);
-        }
-      } catch {
-        // Even a thrown error must not leak existence — show the generic note.
-        setInfo(RESET_CONFIRMATION);
-      } finally {
-        setSubmitting(false);
-      }
-      return;
-    }
-
-    // mode === 'signin'
     if (!password) {
-      setError(GENERIC_SIGNIN_ERROR);
+      setError('Enter your password.');
       return;
     }
-    
-    setSubmitting(true);
-    
-    // Sign in with phone or email
-    if (isPhoneInput) {
-      const normalizedPhone = normalizePhone(trimmedInput);
-      const { error } = await supabase.auth.signInWithPassword({
-        phone: normalizedPhone,
-        password,
-      });
-      setSubmitting(false);
-      
-      if (!error) {
-        router.replace(from); // provisioning is enforced by RequireAuth
-        return;
-      }
-      
-      const httpStatus = (error as { status?: number }).status;
-      setError(
-        httpStatus === 429
-          ? RATE_LIMIT_ERROR
-          : httpStatus === 400
-            ? GENERIC_SIGNIN_ERROR
-            : UNEXPECTED_ERROR,
-      );
-    } else {
-      // Email login
-      const result = await signIn(trimmedInput, password);
-      setSubmitting(false);
-      if (result.ok) {
-        router.replace(from); // provisioning is enforced by RequireAuth
-        return;
-      }
-      setError(
-        result.kind === 'rate_limited'
-          ? RATE_LIMIT_ERROR
-          : result.kind === 'unexpected'
-            ? UNEXPECTED_ERROR
-            : GENERIC_SIGNIN_ERROR,
-      );
+    setBusy(true);
+    const res = await signIn(id, password);
+    setBusy(false);
+    if (!res.ok) {
+      setError(res.message);
+      setPassword('');
     }
+    // On success the effect above navigates once the profile is loaded.
   }
 
-  const inputClass =
-    'w-full rounded-lg border border-[var(--border)] bg-[var(--input-background)] px-3.5 py-2.5 text-sm text-[var(--color-ink)] placeholder:text-white/30 outline-none transition focus-visible:border-[var(--color-violet-light)] focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]';
+  const notice =
+    signedOutReason === 'idle'
+      ? 'You were signed out after a period of inactivity.'
+      : signedOutReason === 'inactive'
+        ? 'Your account was deactivated. Ask an owner or admin if this is a mistake.'
+        : null;
 
   return (
-    <div className="crm-root dark min-h-screen bg-[var(--color-void-black)] text-[var(--color-ink)] flex items-center justify-center px-6 py-16">
+    <main className="flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="text-xl font-bold tracking-tight">
-            Social <span className="text-[var(--color-violet-light)]">ScaleX</span>
+          <div className="mx-auto mb-4 flex size-11 items-center justify-center rounded-xl bg-primary text-primary-foreground">
+            <Lock className="size-5" aria-hidden="true" />
           </div>
-          <h1 className="mt-6 text-lg font-semibold">
-            {mode === 'signin' ? 'Team sign in' : 'Reset your password'}
-          </h1>
-          <p className="mt-1 text-sm text-white/50">
-            {mode === 'signin'
-              ? 'Sign in with email or phone number. Access is invite-only.'
-              : 'Enter your email and we’ll send a reset link.'}
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">Social ScaleX CRM</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Team sign in. Access is by invitation only.</p>
         </div>
 
-        <form onSubmit={onSubmit} noValidate className="space-y-4">
-          <div>
-            <label htmlFor={emailId} className="mb-1.5 block text-sm font-medium text-white/80">
-              Email or Phone
-            </label>
+        <form onSubmit={onSubmit} noValidate className="space-y-4 rounded-2xl border border-border bg-card p-6 shadow-sm" aria-describedby={msgId}>
+          {notice ? <p className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">{notice}</p> : null}
+          <div className="space-y-1.5">
+            <label htmlFor={idId} className="block text-sm font-medium">Email or mobile number</label>
             <input
-              id={emailId}
+              id={idId}
               type="text"
-              inputMode="text"
+              inputMode="email"
               autoComplete="username"
+              autoCapitalize="none"
+              spellCheck={false}
               autoFocus
-              required
-              value={emailOrPhone}
-              onChange={(e) => setEmailOrPhone(e.target.value)}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              placeholder="you@company.com or 98765 43210"
               className={inputClass}
-              placeholder="you@company.com or 9876543210"
+              aria-invalid={!!error || undefined}
             />
           </div>
-
-          {mode === 'signin' && (
-            <div>
-              <div className="mb-1.5 flex items-center justify-between">
-                <label htmlFor={passwordId} className="block text-sm font-medium text-white/80">
-                  Password
-                </label>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMode('reset');
-                    setError(null);
-                    setInfo(null);
-                  }}
-                  className="text-xs text-[var(--color-violet-light)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)] rounded"
-                >
-                  Forgot password?
-                </button>
-              </div>
+          <div className="space-y-1.5">
+            <label htmlFor={pwId} className="block text-sm font-medium">Password</label>
+            <div className="relative">
               <input
-                id={passwordId}
-                type="password"
+                id={pwId}
+                type={show ? 'text' : 'password'}
                 autoComplete="current-password"
-                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={inputClass}
-                placeholder="••••••••"
+                className={`${inputClass} pr-10`}
+                aria-invalid={!!error || undefined}
               />
+              <button
+                type="button"
+                onClick={() => setShow((s) => !s)}
+                className="absolute inset-y-0 right-0 flex w-10 items-center justify-center rounded-r-lg text-muted-foreground hover:text-foreground"
+                aria-label={show ? 'Hide password' : 'Show password'}
+                aria-pressed={show}
+              >
+                {show ? <EyeOff className="size-4" aria-hidden="true" /> : <Eye className="size-4" aria-hidden="true" />}
+              </button>
             </div>
-          )}
+          </div>
 
-          {/* Single live region for both errors and confirmations. */}
-          <div id={feedbackId} aria-live="assertive" role="status" className="min-h-[1.25rem]">
-            {error && <p className="text-sm text-[var(--destructive)]">{error}</p>}
-            {info && <p className="text-sm text-[var(--color-emerald)]">{info}</p>}
+          <div id={msgId} role="alert" aria-live="assertive" className="min-h-5 text-sm font-medium text-destructive">
+            {error}
           </div>
 
           <button
             type="submit"
-            disabled={submitting}
-            aria-describedby={feedbackId}
-            className="w-full rounded-lg bg-[var(--color-violet-cta)] px-4 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.02] active:scale-95 disabled:opacity-60 disabled:hover:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-void-black)]"
+            disabled={busy}
+            className="flex h-10 w-full items-center justify-center gap-2 rounded-lg bg-primary text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
           >
-            {submitting
-              ? 'Please wait…'
-              : mode === 'signin'
-                ? 'Sign in'
-                : 'Send reset link'}
+            {busy ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
+            {busy ? 'Signing in…' : 'Sign in'}
           </button>
-
-          {mode === 'reset' && (
-            <button
-              type="button"
-              onClick={() => {
-                setMode('signin');
-                setError(null);
-                setInfo(null);
-              }}
-              className="w-full text-center text-sm text-white/50 hover:text-white/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)] rounded"
-            >
-              Back to sign in
-            </button>
-          )}
+          <p className="text-center text-xs text-muted-foreground">
+            Forgot your password? Ask an owner or admin to reset it from Team.
+          </p>
         </form>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          <Link href="/" className="underline-offset-4 hover:underline">Back to the Social ScaleX website</Link>
+        </p>
       </div>
-    </div>
+    </main>
   );
 }

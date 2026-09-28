@@ -7,9 +7,11 @@ behind it.
 - **Marketing site** — statically generated pages at `/`, `/services`,
   `/case-studies`, `/about`, `/privacy` and `/terms`. The contact form writes
   enquiries straight into the database.
-- **CRM** — staff-only, at `/crm`. Leads list with server-side search, paging and
-  filters; lead detail with an activity log; a website-enquiry queue that
-  converts an enquiry into a lead in one transaction.
+- **CRM** — staff-only, at `/crm`. Today view, Follow-ups (call-backs,
+  meetings, retries), Leads (list + pipeline board), lead timeline, the
+  call/WhatsApp **outcome pop-up** that drives the whole pipeline, quotations,
+  website enquiries, Insights, Team and Settings. Sign-in is email **or** phone
+  + password (no OTP); owners/admins create accounts and reset passwords.
 
 ## Getting started
 
@@ -35,7 +37,7 @@ To get a database to point at, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 | `npm run test:unit` | Pure-function checks (esbuild + node; no test runner) |
 | `npm run test:layout` | Browser geometry assertions against a running server (`BASE_URL` to point elsewhere, `VERBOSE=1` to list every check) |
 | `npm run start` | Serve the production build locally |
-| `bash supabase/test/verify_local.sh` | Apply every migration to a throwaway Postgres and run the SQL check suite |
+| `npm run test:db` | 71 end-to-end checks of the database layer (RLS, workflow RPCs) against a **local** Supabase (`npx supabase start`) |
 
 ### The four gates
 
@@ -66,18 +68,22 @@ src/
 ├─ components/
 │  ├─ sections/                 Hero, Services, Work, FAQ, Contact, …
 │  ├─ seo/JsonLd.tsx            Server-rendered structured data
-│  ├─ crm/CrmPage.tsx           The one ssr:false boundary
+│  ├─ crm/CrmRoot.tsx           The one ssr:false boundary (mounted by (crm)/layout.tsx)
 │  └─ ui/                       shadcn/ui primitives (CRM only)
-├─ crm/                         CRM feature code: auth, leads, enquiries
+├─ crm/                         CRM app: auth, outcome pop-up, today, follow-ups, leads,
+│                               enquiries, team, insights, settings (CrmApp.tsx routes)
 ├─ lib/
 │  ├─ site.ts                   THE host + contact details. One place.
 │  ├─ content.ts                THE marketing copy. Pages AND schema read it.
 │  ├─ schema.ts                 JSON-LD builders
 │  ├─ router.tsx                react-router → App Router compatibility layer
-│  └─ supabase.ts               THE browser client — see the bundle note
+│  ├─ supabase.ts               THE browser client — see the bundle note
+│  ├─ crm/normalize.ts          Phone / Instagram / password rules (mirrors SQL)
+│  └─ server/crmServer.ts       Service-role client + caller auth for /api routes
 └─ styles/                      Tailwind v4; crm.css scopes shadcn tokens
-supabase/migrations/            Schema record of truth, applied in order
-supabase/test/                  Local proof harness (never point at production)
+supabase/migrations/            Schema record of truth (090012–090014 = CRM v2)
+supabase/migrations_archive/    The pre-v2 migrations, kept for history only
+supabase/test/                  crm_v2.e2e.mjs (local Supabase only)
 scripts/                        Keepalive + unit-test runner
 ```
 
@@ -123,27 +129,23 @@ Full grant table, invariants and the rationale for each: **[supabase/README.md](
 Deployment, environment variables, team invites, keepalive and disaster
 recovery: **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**.
 
-### Running the SQL harness
+### Testing the database layer
 
 ```bash
-bash supabase/test/verify_local.sh
+npx supabase start          # local stack in Docker
+npx supabase db reset       # applies supabase/migrations + seed.sql
+SUPABASE_ANON_KEY=… SUPABASE_SERVICE_ROLE_KEY=… npm run test:db
 ```
 
-No Docker and no Supabase CLI needed — it spins up a throwaway Postgres with
-`initdb`, replicates the Supabase-provided bits (`anon`/`authenticated` roles,
-`auth.uid()`), applies every migration plus `seed.sql`, and runs the checks.
-
-**Expect a lot of `ERROR:` lines.** They are the "expect BLOCKED" assertions:
-the script runs with `ON_ERROR_STOP=0` so a blocked operation prints its real
-error and the run continues. Read it by checking each reported row count against
-the `expect …` note printed above it. Never run it against a real project.
+The script refuses to run against anything but `127.0.0.1`/`localhost`.
 
 ## Deployment
 
 Vercel, from `main`, detected as a Next.js project — `vercel.json` only
 declares the framework; routing is Next's own. The marketing pages are
-prerendered at build time; `/crm/leads/[id]` and its `/edit` sibling are the
-only server-rendered routes, and both render a client-only shell.
+prerendered at build time; the CRM is one client-only app mounted by
+`src/app/(crm)/layout.tsx`, and the `/api` routes run on the Node runtime.
+The CRM needs `SUPABASE_SERVICE_ROLE_KEY` set in Vercel (server-only).
 `.github/workflows/keepalive.yml` pings the database every
 3 days so the free-tier Supabase project doesn't pause — including a warning
 about how that can die silently.

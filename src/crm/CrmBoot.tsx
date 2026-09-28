@@ -1,22 +1,16 @@
-// Neutral, non-decisive loading state for the CRM shell. Shown while the CRM
-// chunk loads and while auth status === 'initialising'. Crucially it does NOT
-// redirect and does NOT render CRM chrome, so a hard refresh never flashes
-// /login before the session is restored.
+// Neutral loading screen: shown while the CRM chunk loads and while the
+// session is restored. It never redirects, so a refresh never flashes /login.
 import React from 'react';
 
 export function CrmBoot({ label = 'Loading…' }: { label?: string }) {
   return (
-    <div className="crm-root dark min-h-screen bg-[var(--color-void-black)] text-[var(--color-ink)] flex items-center justify-center">
-      <div
-        className="flex flex-col items-center gap-4"
-        role="status"
-        aria-live="polite"
-      >
+    <div className="crm-root fixed inset-0 z-50 flex min-h-screen items-center justify-center">
+      <div className="flex flex-col items-center gap-3" role="status" aria-live="polite">
         <span
-          className="h-8 w-8 rounded-full border-2 border-white/20 border-t-[var(--color-violet-light)] animate-spin"
           aria-hidden="true"
+          className="h-7 w-7 animate-spin rounded-full border-2 border-[var(--border)] border-t-[var(--primary)]"
         />
-        <span className="text-sm text-white/50">{label}</span>
+        <span className="text-sm text-[var(--muted-foreground)]">{label}</span>
       </div>
     </div>
   );

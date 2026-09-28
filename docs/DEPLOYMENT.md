@@ -18,6 +18,7 @@ differ on purpose so a browser variable can never be mistaken for a CI one.
 | `SUPABASE_URL` | — | ✅ | optional | `scripts/keep_alive.py`. |
 | `SUPABASE_ANON_KEY` | — | ✅ | optional | `scripts/keep_alive.py`. |
 | `RENDER_URL` | — | optional | optional | Only if a Render service ever exists. Absent = skipped. |
+| `SUPABASE_SERVICE_ROLE_KEY` | ✅ (server-only) | — | ✅ | `/api/auth/sign-in` and `/api/crm/*`: staff accounts, passwords, sign-in by phone. |
 
 **The `NEXT_PUBLIC_` prefix is load-bearing.** Next.js only exposes variables
 with that prefix to the browser bundle, and it does it by literal text
@@ -43,102 +44,52 @@ domain cutover; see §7.
 - **Local** — `cp .env.example .env.local` and fill in the two `NEXT_PUBLIC_` values.
   `.env.local` is gitignored. Restart the dev server after editing it.
 
-### The anon key, and the one that must never appear
+### The anon key, and the service-role key
 
 The **anon key is public by design.** It ships in the JavaScript bundle, and
 anyone can read it out of the page. That is safe here because Row Level Security
-is the actual gate: anon can `INSERT` into `inbound_enquiries` and `EXECUTE`
-`ping_keepalive()`, and has no other rights on anything. See
-`supabase/README.md` for the full grant table.
+is the actual gate — see `supabase/README.md` for the full model.
 
-The **`service_role` key bypasses RLS entirely.** It must never appear in this
-repository, in Vercel, in GitHub secrets, in a `NEXT_PUBLIC_` variable, or in a
-screenshot. There is no feature in this project that needs it. If you find one
-committed, rotate it in the Supabase dashboard immediately — treat it as
-compromised the moment it lands anywhere version-controlled.
+The **`service_role` key bypasses RLS.** Since CRM v2 it is needed, **server-side
+only**, by the `/api` routes that create staff accounts, reset passwords and
+resolve phone sign-in — each of which first verifies the caller's session and
+role. Put it in Vercel as `SUPABASE_SERVICE_ROLE_KEY` (never `NEXT_PUBLIC_`),
+never in GitHub secrets, never in the repo or a screenshot. If it leaks, rotate
+it in the Supabase dashboard immediately.
 
-Verify before every deploy:
+Verify before every deploy (the bundle must not contain it):
 
 ```bash
-git grep -i service_role          # expect only the .env.example warning
-npm run build && grep -rEi 'service_role|eyJ[A-Za-z0-9_-]{20,}' .next/static/ | grep -v "$NEXT_PUBLIC_SUPABASE_ANON_KEY"
+git grep -n "eyJ" -- ':!*.md' ':!supabase/test'     # expect nothing
+npm run build && grep -rEl 'service_role' .next/static/ # expect nothing
 ```
 
 ---
 
 ## 2. Applying migrations
 
-`supabase/migrations/` is the record of truth. Apply **in ascending filename
-order** — later files depend on earlier ones.
+See **[supabase/README.md](../supabase/README.md)** — `supabase/migrations/`
+holds 090012 (schema), 090013 (functions) and 090014 (security). The one-time
+upgrade of the live database, the backup step and the rollback copy
+(`crm_backup` schema) are described there. The pre-v2 files live in
+`supabase/migrations_archive/` for history only.
 
-| File | What it does |
-|---|---|
-| `…090001_enums_and_tables.sql` | Enums, tables, base CHECKs |
-| `…090002_indexes.sql` | Indexes incl. the trigram search indexes |
-| `…090003_functions_and_triggers.sql` | Role helpers, gated signup, status triggers |
-| `…090004_rls_policies.sql` | RLS + explicit grants |
-| `…090005_create_lead_with_contacts.sql` | Atomic lead-creation RPC |
-| `…090006_rls_hardening.sql` | Default-privilege lockdown, keepalive RPC |
-| `…090007_keepalive_volume_bound.sql` | Volume-bounds the heartbeat table |
-| `…090008_update_lead_with_contacts.sql` | Replace-children update RPC |
-| `…090009_normalisation_invariants.sql` | Handle/phone normalisation as DB guarantees |
-| `…090010_enquiry_conversion.sql` | Atomic enquiry→lead conversion, dashboard indexes |
-| `…090011_enquiry_input_bounds.sql` | Caps what an anonymous visitor can write |
-
-**Option A — SQL editor (what we use).** Open each file in order and run it.
-Several carry pre-flight blocks that abort with a readable message if existing
-rows would violate a new constraint; read the message rather than forcing past it.
-
-**Option B — Supabase CLI.**
-
-```bash
-supabase link --project-ref <ref>
-supabase db push
-```
-
-### `seed.sql` is DEV-ONLY
-
-`supabase/seed.sql` inserts ten fictional leads, contacts, phones, and
-enquiries. **Never run it against production.** It is for a local harness run or
-a scratch project only. Nothing in it is real, and the fixed UUIDs would collide
-confusingly with real data.
-
-### Proving migrations without a cloud project
-
-```bash
-bash supabase/test/verify_local.sh
-```
-
-Spins up a throwaway local Postgres via `initdb` (no Docker, no Supabase CLI),
-applies every migration plus the seed, and runs the check suite. **Expect many
-`ERROR:` lines** — they are the "expect BLOCKED" assertions, and the script runs
-with `ON_ERROR_STOP=0` so a blocked operation prints and continues. Judge it by
-whether the reported row counts match the `expect …` note above each one. Never
-point this at a real project.
+`supabase/seed.sql` is **dev-only** fictional data — never run it against
+production.
 
 ---
 
 ## 3. Adding a team member
 
-Signup is gated in the database: `handle_new_user()` raises unless the email is
-already allow-listed, so an unlisted person cannot get in even if public signups
-were somehow enabled.
+In the CRM: **Team → Add member** (owners can add any role, admins add
+members). Enter name, email and/or mobile number, role, daily lead quota and a
+password (or press Generate), then share the password with them privately. They
+sign in with their email **or** mobile number — no OTP, no email needed.
 
-1. **Allow-list the email** (owner/admin), in the SQL editor:
-
-   ```sql
-   insert into public.allowed_emails (email, role)
-   values ('newhire@socialscalex.com', 'member');
-   ```
-
-   Roles: `owner`, `admin`, `member`. Only owner/admin may archive leads or
-   change roles.
-
-2. **Invite them** — Authentication → Users → *Invite user*. On first sign-in the
-   trigger creates their `profiles` row with the allow-listed role.
-
-To remove someone: delete their `auth.users` row and their `allowed_emails` row.
-Their leads stay (`owner_id` is `on delete set null`), showing as unassigned.
+- Forgotten password: an owner/admin opens **Team → ⋯ → Edit / reset password**.
+- Someone leaves: **Deactivate** (instant; keeps history; their open leads go
+  back to the pool). Owners can also **Delete permanently**.
+- People can change their own password under **My account**.
 
 ---
 
@@ -147,15 +98,14 @@ Their leads stay (`owner_id` is `on delete set null`), showing as unassigned.
 These are not in migrations and are lost if the project is recreated. Do all of
 them once, and re-check after any restore.
 
-- **Authentication → Providers/Settings: disable public sign-ups.** The trigger
-  is the real gate; this is defence in depth.
+- **Authentication → Sign In / Providers: turn off "Allow new users to sign up".**
+  Keep the Email provider enabled — staff sign in with it. A self-signup would
+  get no profile and therefore no data, so this is defence in depth.
 - **Authentication → URL Configuration:**
   - Site URL → the production domain.
   - Redirect allow-list → production domain, the Vercel preview pattern
-    (`https://*-<team>.vercel.app`), and `http://localhost:5173`. Password
-    resets and magic links break without these.
-- **Authentication → Email:** configure SMTP, or invites and resets never send.
-- Seed the first `owner` into `allowed_emails`, then invite yourself.
+    (`https://*-<team>.vercel.app`), and `http://localhost:3000`.
+- No SMTP is required: accounts and passwords are managed inside the CRM.
 
 ---
 
@@ -212,8 +162,10 @@ Run it by hand any time from Actions → Supabase keepalive → Run workflow.
 
 3. If the project had to be **recreated** rather than restored, the data is
    gone. Re-apply all migrations in order (§2), redo every manual dashboard
-   setting (§4), re-seed `allowed_emails` with the first owner, and re-invite
-   the team. The anon key and project URL will be **new** — update them in
+   setting (§4), and create the first owner: Authentication → Users → Add
+   user (email + password, auto-confirm), then in the SQL editor
+   `update auth.users set raw_app_meta_data = raw_app_meta_data || '{"crm_role":"owner","full_name":"Your Name"}' where email = 'you@…';`
+   — that creates their CRM profile. Add everyone else from Team in the CRM. The anon key and project URL will be **new** — update them in
    Vercel and in GitHub secrets, then redeploy so the bundle picks them up.
 4. Confirm the keepalive works again: Actions → Supabase keepalive → Run
    workflow, and check `select count(*) from public.keepalive;` increased.

@@ -1,216 +1,163 @@
-// Reusable contacts + office-phones editor (add lead form AND the detail
-// view's contact editor). RHF control/register are typed loosely (`any`) on
-// purpose: this presentational component is shared across two different form
-// value types that both carry `contacts` and `lead_phones`, and threading RHF's
-// invariant generics through would add noise without real safety — the shapes
-// are pinned by leadFormSchema + covered by tests.
+'use client';
+// Contacts (people) and their phones, plus office lines. Controlled state;
+// validation lives in validateContacts so the form and the editor agree.
 import React from 'react';
-import { useFieldArray } from 'react-hook-form';
-import { ArrowDown, ArrowUp, Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
+import { normalizePhone, isEmail } from '@/lib/crm/normalize';
+import { inputClass } from '../ui/kit';
+import { cn } from '@/components/ui/utils';
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// Deliberately loose: this presentational editor is shared across two RHF form
-// value types (LeadFormValues and ContactsEditValues). RHF's register/control
-// are contravariant on the form's field-path union, so a concrete register
-// isn't assignable to UseFormRegister<any>; plain permissive signatures sidestep
-// that. The value shapes are still pinned by leadFormSchema + covered by tests.
-type AnyControl = any;
-type AnyRegister = (name: any, options?: any) => any;
-type AnyGet = (name?: any) => any;
-type AnySet = (name: any, value: any) => void;
+export interface PhoneDraft { phone: string; label: string; is_primary: boolean }
+export interface ContactDraft { name: string; designation: string; email: string; is_primary: boolean; phones: PhoneDraft[] }
+export interface ContactsDraft { contacts: ContactDraft[]; office: PhoneDraft[] }
 
-const inputClass =
-  'w-full rounded-lg border border-[var(--border)] bg-[var(--input-background)] px-3 py-2 text-sm text-[var(--color-ink)] placeholder:text-white/30 outline-none transition focus-visible:border-[var(--color-violet-light)] focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]';
-const labelClass = 'mb-1.5 block text-sm font-medium text-white/80';
-const errClass = 'mt-1 text-xs text-[var(--destructive)]';
-const iconBtn = 'text-white/40 hover:text-white/80 disabled:opacity-30 disabled:hover:text-white/40';
+export const emptyContact = (primary = false): ContactDraft => ({
+  name: '', designation: '', email: '', is_primary: primary, phones: [{ phone: '', label: 'Mobile', is_primary: true }],
+});
 
-export interface ContactsFieldsProps {
-  control: AnyControl;
-  register: AnyRegister;
-  getValues: AnyGet;
-  setValue: AnySet;
-  errors: any;
-  /** Called on phone blur with the raw value (for duplicate detection). */
-  onPhoneBlur?: (value: string) => void;
+export type ContactErrors = Record<string, string>;
+
+export function validateContacts(d: ContactsDraft): ContactErrors {
+  const e: ContactErrors = {};
+  const seen = new Set<string>();
+  d.contacts.forEach((c, i) => {
+    const hasAny = c.name.trim() || c.email.trim() || c.phones.some((p) => p.phone.trim());
+    if (hasAny && !c.name.trim()) e[`c${i}.name`] = 'Name is required.';
+    if (c.name.length > 120) e[`c${i}.name`] = 'Keep it under 120 characters.';
+    if (c.email.trim() && !isEmail(c.email)) e[`c${i}.email`] = 'Enter a valid email.';
+    c.phones.forEach((p, j) => {
+      if (!p.phone.trim()) return;
+      const n = normalizePhone(p.phone);
+      if (!n) e[`c${i}.p${j}`] = 'Use a 10-digit mobile or +country code.';
+      else if (seen.has(n)) e[`c${i}.p${j}`] = 'This number is already listed.';
+      else seen.add(n);
+    });
+  });
+  d.office.forEach((p, j) => {
+    if (!p.phone.trim()) return;
+    const n = normalizePhone(p.phone);
+    if (!n) e[`o${j}`] = 'Use a 10-digit number or +country code.';
+    else if (seen.has(n)) e[`o${j}`] = 'This number is already listed.';
+    else seen.add(n);
+  });
+  return e;
 }
 
-export function ContactsFields({
-  control,
-  register,
-  getValues,
-  setValue,
-  errors,
-  onPhoneBlur,
-}: ContactsFieldsProps) {
-  const contacts = useFieldArray({ control, name: 'contacts' });
-  const office = useFieldArray({ control, name: 'lead_phones' });
+/** Payload shape expected by create_/update_lead_with_contacts. */
+export function contactsPayload(d: ContactsDraft) {
+  const contacts = d.contacts
+    .filter((c) => c.name.trim())
+    .map((c, i, arr) => {
+      const phones = c.phones.filter((p) => p.phone.trim());
+      const primaryIdx = Math.max(0, phones.findIndex((p) => p.is_primary));
+      return {
+        name: c.name.trim(),
+        designation: c.designation.trim() || null,
+        email: c.email.trim().toLowerCase() || null,
+        is_primary: arr.some((x) => x.is_primary) ? c.is_primary : i === 0,
+        sort_order: i,
+        phones: phones.map((p, j) => ({
+          phone_e164: normalizePhone(p.phone), label: p.label.trim() || null, is_primary: j === primaryIdx, sort_order: j,
+        })),
+      };
+    });
+  // exactly one primary contact
+  let seenPrimary = false;
+  for (const c of contacts) { if (c.is_primary && !seenPrimary) seenPrimary = true; else c.is_primary = false; }
+  if (!seenPrimary && contacts[0]) contacts[0].is_primary = true;
+  const office = d.office.filter((p) => p.phone.trim());
+  return {
+    contacts,
+    lead_phones: office.map((p, j) => ({ phone_e164: normalizePhone(p.phone), label: p.label.trim() || 'Office', is_primary: j === 0, sort_order: j })),
+  };
+}
 
-  const setPrimaryContact = (idx: number, checked: boolean) =>
-    (getValues('contacts') as unknown[]).forEach((_, i) =>
-      setValue(`contacts.${i}.is_primary`, checked && i === idx),
-    );
-  const setPrimaryOffice = (idx: number, checked: boolean) =>
-    (getValues('lead_phones') as unknown[]).forEach((_, i) =>
-      setValue(`lead_phones.${i}.is_primary`, checked && i === idx),
-    );
-
-  const blur = (e: React.FocusEvent<HTMLInputElement>) =>
-    onPhoneBlur?.(e.target.value);
+export function ContactsFields({ value, onChange, errors, onPhoneBlur }: {
+  value: ContactsDraft; onChange: (d: ContactsDraft) => void; errors: ContactErrors; onPhoneBlur?: (raw: string) => void;
+}) {
+  const setContact = (i: number, patch: Partial<ContactDraft>) =>
+    onChange({ ...value, contacts: value.contacts.map((c, k) => (k === i ? { ...c, ...patch } : patch.is_primary ? { ...c, is_primary: false } : c)) });
+  const setPhone = (i: number, j: number, patch: Partial<PhoneDraft>) =>
+    setContact(i, { phones: (value.contacts[i] as ContactDraft).phones.map((p, k) => (k === j ? { ...p, ...patch } : patch.is_primary ? { ...p, is_primary: false } : p)) });
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-white/80">Contacts</h2>
-        <button
-          type="button"
-          onClick={() =>
-            contacts.append({
-              name: '',
-              designation: '',
-              email: '',
-              is_primary: contacts.fields.length === 0,
-              phones: [],
-            })
-          }
-          className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm text-white/80 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
-        >
-          <Plus size={14} /> Add contact
-        </button>
-      </div>
-      {typeof errors?.contacts?.message === 'string' && (
-        <p className={errClass}>{errors.contacts.message}</p>
-      )}
-
-      {contacts.fields.map((f, i) => (
-        <div key={f.id} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
-          <div className="mb-2 flex items-center justify-end gap-1">
-            <button type="button" aria-label="Move up" disabled={i === 0} onClick={() => contacts.move(i, i - 1)} className={iconBtn}>
-              <ArrowUp size={15} />
-            </button>
-            <button type="button" aria-label="Move down" disabled={i === contacts.fields.length - 1} onClick={() => contacts.move(i, i + 1)} className={iconBtn}>
-              <ArrowDown size={15} />
-            </button>
-            <button type="button" aria-label="Remove contact" onClick={() => contacts.remove(i)} className="ml-1 text-white/40 hover:text-[var(--destructive)]">
-              <Trash2 size={16} />
-            </button>
+      {value.contacts.map((c, i) => (
+        <fieldset key={i} className="rounded-xl border border-border p-3">
+          <legend className="px-1 text-xs font-medium text-muted-foreground">Contact {i + 1}</legend>
+          <div className="grid gap-3 sm:grid-cols-3">
+            <TextInput label="Name" value={c.name} onChange={(v) => setContact(i, { name: v })} error={errors[`c${i}.name`]} maxLength={120} />
+            <TextInput label="Role" value={c.designation} onChange={(v) => setContact(i, { designation: v })} placeholder="Owner, Marketing…" maxLength={120} />
+            <TextInput label="Email" type="email" value={c.email} onChange={(v) => setContact(i, { email: v })} error={errors[`c${i}.email`]} maxLength={200} />
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div>
-              <label className={labelClass}>Name <span className="text-[var(--destructive)]">*</span></label>
-              <input className={inputClass} {...register(`contacts.${i}.name`)} />
-              {errors?.contacts?.[i]?.name && <p className={errClass}>{errors.contacts[i].name.message}</p>}
-            </div>
-            <div>
-              <label className={labelClass}>Designation</label>
-              <input className={inputClass} {...register(`contacts.${i}.designation`)} />
-            </div>
-            <div>
-              <label className={labelClass}>Email</label>
-              <input className={inputClass} {...register(`contacts.${i}.email`)} />
-              {errors?.contacts?.[i]?.email && <p className={errClass}>{errors.contacts[i].email.message}</p>}
-            </div>
-            <div className="flex items-end">
-              <label className="flex items-center gap-1.5 text-sm text-white/70">
-                <input type="checkbox" {...register(`contacts.${i}.is_primary`)} onChange={(e) => setPrimaryContact(i, e.target.checked)} />
-                Primary contact
-              </label>
-            </div>
+          <div className="mt-3 space-y-2">
+            {c.phones.map((p, j) => (
+              <div key={j} className="flex flex-wrap items-end gap-2">
+                <TextInput className="min-w-40 flex-1" label={j === 0 ? 'Phone' : `Phone ${j + 1}`} type="tel" value={p.phone}
+                  onChange={(v) => setPhone(i, j, { phone: v })} onBlur={() => onPhoneBlur?.(p.phone)} error={errors[`c${i}.p${j}`]} placeholder="98765 43210" />
+                <TextInput className="w-28" label="Label" value={p.label} onChange={(v) => setPhone(i, j, { label: v })} maxLength={30} />
+                {c.phones.length > 1 ? (
+                  <button type="button" onClick={() => setContact(i, { phones: c.phones.filter((_, k) => k !== j) })}
+                    className="mb-0.5 inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted" aria-label={`Remove phone ${j + 1}`}>
+                    <Trash2 className="size-4" aria-hidden="true" />
+                  </button>
+                ) : null}
+              </div>
+            ))}
           </div>
-
-          <ContactPhones
-            control={control}
-            register={register}
-            contactIndex={i}
-            errors={errors}
-            onPhoneBlur={onPhoneBlur}
-          />
-        </div>
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+            <button type="button" onClick={() => setContact(i, { phones: [...c.phones, { phone: '', label: 'Mobile', is_primary: false }] })}
+              className="inline-flex items-center gap-1 text-primary hover:underline"><Plus className="size-3.5" aria-hidden="true" /> Add phone</button>
+            <label className="inline-flex items-center gap-1.5">
+              <input type="radio" name="primary-contact" checked={c.is_primary} onChange={() => setContact(i, { is_primary: true })} className="accent-[var(--primary)]" />
+              Main contact
+            </label>
+            {value.contacts.length > 1 ? (
+              <button type="button" onClick={() => onChange({ ...value, contacts: value.contacts.filter((_, k) => k !== i) })}
+                className="ml-auto inline-flex items-center gap-1 text-destructive hover:underline"><Trash2 className="size-3.5" aria-hidden="true" /> Remove contact</button>
+            ) : null}
+          </div>
+        </fieldset>
       ))}
+      <button type="button" onClick={() => onChange({ ...value, contacts: [...value.contacts, emptyContact(value.contacts.length === 0)] })}
+        className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"><Plus className="size-4" aria-hidden="true" /> Add another contact</button>
 
-      <div className="flex items-center justify-between pt-2">
-        <h2 className="text-sm font-semibold text-white/80">Office phones</h2>
-        <button
-          type="button"
-          onClick={() => office.append({ phone_e164: '', label: '', is_primary: office.fields.length === 0 })}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--border)] px-3 py-1.5 text-sm text-white/80 hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)]"
-        >
-          <Plus size={14} /> Add office phone
-        </button>
-      </div>
-      {typeof errors?.lead_phones?.message === 'string' && (
-        <p className={errClass}>{errors.lead_phones.message}</p>
-      )}
-      {office.fields.map((f, i) => (
-        <div key={f.id} className="flex flex-wrap items-center gap-2 rounded-lg border border-[var(--border)] p-3">
-          <input placeholder="+91…" className={`${inputClass} flex-1`} onBlurCapture={blur} {...register(`lead_phones.${i}.phone_e164`)} />
-          <input placeholder="Label" className={`${inputClass} w-32`} {...register(`lead_phones.${i}.label`)} />
-          <label className="flex items-center gap-1.5 text-xs text-white/60">
-            <input type="checkbox" {...register(`lead_phones.${i}.is_primary`)} onChange={(e) => setPrimaryOffice(i, e.target.checked)} />
-            Primary
-          </label>
-          <button type="button" onClick={() => office.remove(i)} aria-label="Remove phone" className="text-white/40 hover:text-[var(--destructive)]">
-            <Trash2 size={15} />
-          </button>
-          {errors?.lead_phones?.[i]?.phone_e164 && <p className={`${errClass} w-full`}>{errors.lead_phones[i].phone_e164.message}</p>}
+      <fieldset className="rounded-xl border border-border p-3">
+        <legend className="px-1 text-xs font-medium text-muted-foreground">Office / landline numbers</legend>
+        <div className="space-y-2">
+          {value.office.map((p, j) => (
+            <div key={j} className="flex flex-wrap items-end gap-2">
+              <TextInput className="min-w-40 flex-1" label="Number" type="tel" value={p.phone} error={errors[`o${j}`]}
+                onChange={(v) => onChange({ ...value, office: value.office.map((x, k) => (k === j ? { ...x, phone: v } : x)) })}
+                onBlur={() => onPhoneBlur?.(p.phone)} />
+              <TextInput className="w-28" label="Label" value={p.label} maxLength={30}
+                onChange={(v) => onChange({ ...value, office: value.office.map((x, k) => (k === j ? { ...x, label: v } : x)) })} />
+              <button type="button" onClick={() => onChange({ ...value, office: value.office.filter((_, k) => k !== j) })}
+                className="mb-0.5 inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted" aria-label={`Remove office number ${j + 1}`}>
+                <Trash2 className="size-4" aria-hidden="true" />
+              </button>
+            </div>
+          ))}
+          <button type="button" onClick={() => onChange({ ...value, office: [...value.office, { phone: '', label: 'Office', is_primary: false }] })}
+            className="inline-flex items-center gap-1 text-sm text-primary hover:underline"><Plus className="size-3.5" aria-hidden="true" /> Add office number</button>
         </div>
-      ))}
+      </fieldset>
     </div>
   );
 }
 
-function ContactPhones({
-  control,
-  register,
-  contactIndex,
-  errors,
-  onPhoneBlur,
-}: {
-  control: AnyControl;
-  register: AnyRegister;
-  contactIndex: number;
-  errors: any;
-  onPhoneBlur?: (value: string) => void;
+export function TextInput({ label, value, onChange, error, className, type = 'text', placeholder, maxLength, onBlur, required }: {
+  label: string; value: string; onChange: (v: string) => void; error?: string; className?: string; type?: string;
+  placeholder?: string; maxLength?: number; onBlur?: () => void; required?: boolean;
 }) {
-  const phones = useFieldArray({ control, name: `contacts.${contactIndex}.phones` });
+  const id = React.useId();
   return (
-    <div className="mt-3 border-t border-[var(--border)] pt-3">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-xs font-medium text-white/60">Phones</span>
-        <button
-          type="button"
-          onClick={() => phones.append({ phone_e164: '', label: '', is_primary: phones.fields.length === 0 })}
-          className="inline-flex items-center gap-1 text-xs text-[var(--color-violet-light)] hover:underline"
-        >
-          <Plus size={12} /> Add phone
-        </button>
-      </div>
-      {typeof errors?.contacts?.[contactIndex]?.phones?.message === 'string' && (
-        <p className={errClass}>{errors.contacts[contactIndex].phones.message}</p>
-      )}
-      <div className="space-y-2">
-        {phones.fields.map((pf, j) => (
-          <div key={pf.id} className="flex flex-wrap items-center gap-2">
-            <input
-              placeholder="+91…"
-              className={`${inputClass} flex-1`}
-              onBlurCapture={(e) => onPhoneBlur?.(e.target.value)}
-              {...register(`contacts.${contactIndex}.phones.${j}.phone_e164`)}
-            />
-            <input placeholder="Label" className={`${inputClass} w-28`} {...register(`contacts.${contactIndex}.phones.${j}.label`)} />
-            <label className="flex items-center gap-1 text-xs text-white/60">
-              <input type="checkbox" {...register(`contacts.${contactIndex}.phones.${j}.is_primary`)} />
-              Primary
-            </label>
-            <button type="button" onClick={() => phones.remove(j)} aria-label="Remove phone" className="text-white/40 hover:text-[var(--destructive)]">
-              <Trash2 size={14} />
-            </button>
-            {errors?.contacts?.[contactIndex]?.phones?.[j]?.phone_e164 && (
-              <p className={`${errClass} w-full`}>{errors.contacts[contactIndex].phones[j].phone_e164.message}</p>
-            )}
-          </div>
-        ))}
-      </div>
+    <div className={cn('space-y-1', className)}>
+      <label htmlFor={id} className="block text-xs font-medium">{label}{required ? <span className="text-destructive" aria-hidden="true"> *</span> : null}</label>
+      <input id={id} type={type} value={value} onChange={(e) => onChange(e.target.value)} onBlur={onBlur} placeholder={placeholder}
+        maxLength={maxLength} aria-invalid={!!error || undefined} aria-describedby={error ? `${id}-e` : undefined} className={inputClass}
+        inputMode={type === 'tel' ? 'tel' : undefined} autoComplete="off" />
+      {error ? <p id={`${id}-e`} className="text-xs font-medium text-destructive">{error}</p> : null}
     </div>
   );
 }

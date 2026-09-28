@@ -1,63 +1,70 @@
-// Route guard for the CRM. The critical detail: session restore is ASYNC, so
-// while status === 'initialising' we render a neutral loader and DO NOT
-// redirect — otherwise every hard refresh bounces a signed-in user to /login.
 'use client';
-
 import React, { useEffect } from 'react';
+import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { ShieldAlert } from 'lucide-react';
 import { useAuth } from './AuthProvider';
 import { CrmBoot } from '../CrmBoot';
-import { Unprovisioned } from '../Unprovisioned';
 
-export function RequireAuth({ children }: { children: React.ReactNode }) {
-  const { status, retry } = useAuth();
+export function RequireAuth({ children, adminOnly = false }: { children: React.ReactNode; adminOnly?: boolean }) {
+  const { status, retry, signOut, isAdmin } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
 
-  // React Router carried the attempted URL in location state. The App Router
-  // has no location state, so it rides in a ?next= query parameter instead —
-  // which also survives a refresh on the login page, unlike the old approach.
   useEffect(() => {
-    if (status !== 'signed_out') return;
-    router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+    if (status === 'signed_out') router.replace(`/login?next=${encodeURIComponent(pathname ?? '/crm')}`);
   }, [status, pathname, router]);
 
-  if (status === 'initialising') {
-    return <CrmBoot label="Restoring your session…" />;
-  }
+  if (status === 'initialising') return <CrmBoot label="Restoring your session…" />;
+  if (status === 'signed_out') return <CrmBoot label="Redirecting to sign in…" />;
 
   if (status === 'error') {
     return (
-      <div className="crm-root dark min-h-screen bg-[var(--color-void-black)] text-[var(--color-ink)] flex items-center justify-center px-6">
-        <div className="w-full max-w-md text-center" role="alert">
-          <h1 className="text-xl font-semibold mb-3">Couldn’t load your account</h1>
-          <p className="text-sm text-white/60 mb-8">
-            Something went wrong reaching the server. Check your connection and
-            try again.
-          </p>
-          <button
-            type="button"
-            onClick={retry}
-            className="inline-flex items-center justify-center rounded-lg bg-[var(--color-violet-cta)] px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-[1.03] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-violet-light)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-void-black)]"
-          >
-            Try again
-          </button>
-        </div>
+      <Centered>
+        <h1 className="text-lg font-semibold">Couldn’t load your account</h1>
+        <p className="mt-2 text-sm text-muted-foreground">The server didn’t respond. Check your connection and try again.</p>
+        <button type="button" onClick={retry} className="mt-6 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground">
+          Try again
+        </button>
+      </Centered>
+    );
+  }
+
+  if (status === 'unprovisioned') {
+    return (
+      <Centered>
+        <ShieldAlert className="mx-auto mb-3 size-8 text-muted-foreground" aria-hidden="true" />
+        <h1 className="text-lg font-semibold">No CRM access</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          This account isn’t an active team member. Ask an owner or admin to add or reactivate you.
+        </p>
+        <button type="button" onClick={() => void signOut()} className="mt-6 rounded-lg border border-border px-4 py-2 text-sm">
+          Sign out
+        </button>
+      </Centered>
+    );
+  }
+
+  if (adminOnly && !isAdmin) {
+    return (
+      <div className="mx-auto max-w-md py-16 text-center">
+        <ShieldAlert className="mx-auto mb-3 size-8 text-muted-foreground" aria-hidden="true" />
+        <h1 className="text-lg font-semibold">Admins only</h1>
+        <p className="mt-2 text-sm text-muted-foreground">This section is available to owners and admins.</p>
+        <Link href="/crm" className="mt-6 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline">
+          Back to Today
+        </Link>
       </div>
     );
   }
 
-  if (status === 'signed_out') {
-    // The redirect above is in flight; render the loader rather than a flash
-    // of CRM chrome the person is not entitled to see.
-    return <CrmBoot label="Redirecting to sign in…" />;
-  }
-
-  if (status === 'signed_in_unprovisioned') {
-    // Never show empty CRM chrome to a profile-less user.
-    return <Unprovisioned />;
-  }
-
-  // status === 'signed_in_provisioned'
   return <>{children}</>;
+}
+
+function Centered({ children }: { children: React.ReactNode }) {
+  return (
+    <main className="flex min-h-screen items-center justify-center px-6">
+      <div className="w-full max-w-sm text-center" role="alert">{children}</div>
+    </main>
+  );
 }

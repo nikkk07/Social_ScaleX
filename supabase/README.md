@@ -1,107 +1,90 @@
-# Social ScaleX CRM — Supabase
+# Social ScaleX CRM — database
 
-Schema, constraints, triggers and Row Level Security for the internal CRM.
-These migration files are the record of truth.
+Postgres on Supabase (project `hendwoizaxjhpwyaumsh`). `migrations/` is the
+record of truth: **090012 schema → 090013 functions → 090014 security**.
+`migrations_archive/` holds the pre-v2 files for history only — never apply them.
 
-## Apply the migrations
+## Upgrading the live database (one time)
 
-Region: **Mumbai (ap-south-1)**. Two ways to apply:
+The live database was on an older, simplified schema. 090012 converts it in
+place and keeps every row: each old table is first copied to the private
+schema `crm_backup` (`*_pre_v2`), then mapped:
 
-**A. SQL editor (what we use).** Open each file in `migrations/` in ascending
-timestamp order and run it. Then optionally run `seed.sql` for dummy data.
+| Before | After |
+|---|---|
+| `leads.status`: new · called · interested · not_interested · not_reachable · callback · meeting_scheduled · converted · lost | `leads.stage`: new · connected · interested · lost · attempting · callback · meeting · won · lost |
+| `leads.phone`, `leads.email` | a "Primary contact" in `lead_contacts` + an E.164 number in `lead_phones` (unparseable values go to the lead's notes) |
+| `leads.assigned_to`, `lead_assignments` | `leads.owner_id` |
+| `leads.is_deleted` | `leads.deleted_at` |
+| `leads.callback_at` / `meeting_at` | open tasks in `lead_tasks` |
+| `leads.costing` | `leads.deal_value_inr` |
+| `lead_notes`, `lead_status_history` | the unified timeline `lead_activities` |
+| `audit_logs`, `uploads` | `audit_log` |
+| `profiles.role` `super_admin` | `owner` |
 
-**B. Supabase CLI.**
+It was rehearsed against a copy of the live schema (from `supabase db dump`)
+with legacy data, then the full 71-check suite was run on the result.
+
+Steps:
+
+1. **Back up** (Supabase → Database → Backups, or `npx supabase db dump --data-only -f backup.sql`).
+2. Apply the three migrations — either
+   - `npx supabase db push` (the repo is linked; it applies only 090012–090014), or
+   - paste each file into the SQL Editor **in order** and run it. Each file is
+     one transaction: it either applies completely or not at all.
+3. Supabase → Authentication → Sign In / Providers: turn **off** "Allow new
+   users to sign up". Keep the Email provider **on** (staff sign in with it).
+4. Vercel → Environment Variables: add `SUPABASE_SERVICE_ROLE_KEY` (server-only).
+5. Deploy. Sign in as an owner and check Team, Leads and Today.
+
+When everything looks right, the backup copies can be dropped later with
+`drop schema crm_backup cascade;` (only after you are sure).
+
+## Security model
+
+A hostile caller holding the public anon key is assumed.
+
+| Who | Can |
+|---|---|
+| anon | insert website enquiries (size-bounded), call `ping_keepalive()` — nothing else |
+| member | read/edit **only leads they own** (+ their contacts, phones, tasks, calls, quotes, timeline); read all enquiries; no direct writes to stage, owner, counters, tasks, calls or quotes |
+| admin | everything on leads; manage members |
+| owner | everything; manage admins and owners (the last active owner can't be removed) |
+| deactivated staff | nothing, immediately (every policy checks `profiles.is_active`) |
+
+- Pipeline state changes only through `SECURITY DEFINER` functions
+  (`log_outcome`, `complete_meeting`, `create_quotation`, `decide_quotation`,
+  `set_lead_stage`, `schedule_task`, …). A trigger rejects any direct client
+  change to protected columns.
+- Accounts are created by the server (`/api/crm/users`, service role) with
+  `app_metadata.crm_role`; a self-signup gets no profile and therefore no data.
+- Sign-in goes through `/api/auth/sign-in`: email or phone + password, generic
+  errors, and a 15-minute lock after 5 failures per identifier (`login_throttle`).
+- Every function starts with no `EXECUTE` grant; only the listed RPCs are
+  granted to `authenticated`, and `ping_keepalive` to `anon`.
+- `audit_log` records sign-ins, account changes, imports, exports,
+  reassignments and manual stage changes (admins can read it in Settings).
+
+## Automation
+
+Retry timings, nurture thresholds, re-engage delay, quote follow-up delay,
+default quota and idle sign-out live in `crm_settings` (editable in the CRM's
+Settings page). Members get their daily top-up of fresh leads when they first
+open the CRM each day (IST); where `pg_cron` is available the migration also
+schedules it for 09:00 IST.
+
+## Local development
+
 ```bash
-supabase link --project-ref <ref>
-supabase db push          # applies migrations/
-psql "$DATABASE_URL" -f supabase/seed.sql   # optional dev data
+npx supabase start
+npx supabase db reset              # migrations + seed.sql
+npm run test:db                    # with SUPABASE_ANON_KEY / SUPABASE_SERVICE_ROLE_KEY from `supabase status`
 ```
 
-Order matters: `090001` (tables) → `090002` (indexes) → `090003` (functions/
-triggers) → `090004` (RLS/grants) → `090005` (RPC) → `090006` (RLS hardening:
-default-privilege lockdown, keepalive RPC, profiles read gated to staff).
-
-## Prove it locally (no cloud project needed)
+After changing the schema, regenerate the types:
 
 ```bash
-bash supabase/test/verify_local.sh
+npx supabase gen types typescript --linked --schema public > src/lib/database.types.ts
 ```
-Spins up a throwaway local Postgres, replicates the Supabase-provided bits
-(`anon`/`authenticated` roles, `auth.uid()`) via `test/00_compat.sql`, applies
-every migration + seed, and runs the RLS/constraint checks. Checks 1–8 are
-grant-level; checks 9–14 (plus the keepalive `K1–K3` set) reach the policy /
-`WITH CHECK` / trigger layer and report **row counts** — because "0 rows" (the
-policy ran and filtered) and "error" (the grant blocked first) are different
-proofs. `test/` is a test harness only — **never** run it against real Supabase.
 
-## What the policies do
-
-Security assumes a hostile caller holding the (public) anon key. RLS is the
-gate; grants are managed explicitly as a second layer.
-
-| Table | anon | authenticated (staff, has a profile) |
-|-------|------|--------------------------------------|
-| `profiles` | none | **staff** read all; update only own row; **cannot change own role** (trigger) |
-| `allowed_emails` | none | owner/admin only, full CRUD |
-| `leads` | none | select/insert/update; **no delete** (archive via `deleted_at`, owner/admin only) |
-| `lead_contacts`, `lead_phones` | none | select/insert/update; no delete |
-| `lead_activities` | none | select/insert; no update/delete (audit log) |
-| `inbound_enquiries` | **insert only** | select/update/delete |
-| `keepalive` | none — heartbeat via `ping_keepalive()` RPC only | select |
-
-`profiles` read is gated on `is_staff()`, so a valid session with **no
-`profiles` row** sees zero team members (not the roster). The `keepalive`
-heartbeat is a `SECURITY DEFINER` RPC, `public.ping_keepalive()` (execute
-granted to anon only): it inserts one row and prunes rows older than 14 days,
-so the anon key can neither flood nor wipe the table. New tables inherit **no**
-anon/authenticated grant — `090006` locks Supabase's default privileges with
-`ALTER DEFAULT PRIVILEGES FOR ROLE postgres … REVOKE ALL` (pinned to
-`postgres`, the role that owns every public object in Supabase).
-
-Role checks use `public.current_app_role()` / `is_staff()` / `is_admin()` —
-`SECURITY DEFINER` helpers that read `profiles` without tripping a `profiles`
-policy (which would recurse). **Named `current_app_role`, not `current_role`:**
-`CURRENT_ROLE` is a reserved SQL keyword and can't be a function name.
-
-Key invariants enforced in the DB (not the UI):
-- `outcome_requires_contacted` CHECK — an outcome can't exist while `pending`.
-- `lead_found_not_future` CHECK.
-- Gated signup — `handle_new_user()` on `auth.users` raises unless the email is
-  in `allowed_emails`, then creates the profile with the allow-listed role.
-- One primary contact per lead; one primary phone per contact (partial unique
-  indexes).
-- `instagram_username` is stored **already normalised** — lowercase, no `@`, no
-  `/`, no whitespace (`leads_instagram_normalised`) — and `leads_instagram_unique`
-  is built over `lower()`, so dedupe is case-insensitive. Previously both held
-  only for values typed into the form; a CSV import would have walked through.
-- `lead_phones.phone_e164` must be E.164 (`lead_phones_e164`). Phone matching is
-  the only guard against the same brand being added under two handles, and it
-  matches literally — a malformed number makes that lookup silently miss.
-- `create_lead_with_contacts(payload jsonb)` writes a lead + contacts + phones
-  in one transaction. Pass `enquiry_id` in the payload and it also stamps
-  `inbound_enquiries.converted_lead_id` in that same transaction; converting an
-  enquiry that is missing or already converted **errors and rolls the lead back**
-  rather than leaving two leads for one enquiry.
-
-## Add a team member
-
-1. **Allowlist the email** (owner/admin), e.g. in the SQL editor:
-   ```sql
-   insert into public.allowed_emails (email, role) values ('newhire@…', 'member');
-   ```
-   Roles: `owner`, `admin`, `member`.
-2. **Invite from the dashboard:** Authentication → Users → *Invite user* (or send
-   a magic link). On their first sign-in the trigger creates their `profiles`
-   row with the allow-listed role. An email that isn't allow-listed is rejected
-   at signup even if public signups are somehow enabled.
-
-## Manual dashboard steps (do these once)
-
-- **Authentication → Providers/Settings: disable public sign-ups.** The trigger
-  is the real gate, but turn this off too (defense in depth).
-- **Authentication → URL Configuration:** set Site URL to the production domain
-  and add the Vercel preview + `http://localhost:5173` to the redirect allow-list
-  (needed for password-reset links in Phase 3).
-- **Authentication → Email:** configure SMTP (or use the built-in sender) so
-  invites and password resets actually send.
-- Seed the first `owner` into `allowed_emails`, then invite yourself.
+(then re-append the alias block at the bottom of that file).

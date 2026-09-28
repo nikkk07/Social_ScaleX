@@ -1,12 +1,9 @@
-import React from 'react';
 import type { Metadata } from 'next';
-import { CrmPage } from '@/components/crm/CrmPage';
 
-export const metadata: Metadata = {
-  title: 'Team',
-  robots: { index: false, follow: false },
-};
+// The CRM renders client-side from (crm)/layout.tsx; this file only
+// registers the route and its metadata.
+export const metadata: Metadata = { title: 'Team', robots: { index: false, follow: false } };
 
 export default function Page() {
-  return <CrmPage view="team" />;
+  return null;
 }

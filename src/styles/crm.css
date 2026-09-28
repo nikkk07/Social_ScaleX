@@ -66,49 +66,167 @@
    Tailwind v4 defaults to prefers-color-scheme. */
 @custom-variant dark (&:is(.dark *));
 
-/* Scoped VALUES: brand-mapped, CRM-only. Applied to the CRM/login layout
-   wrapper, which carries BOTH `crm-root` and `dark`. Every value derives
-   from theme.css tokens where one exists; the only two new hexes are
-   --popover (#0E0C16, a near-black raised surface for menus/dialogs) and
-   --destructive (#F43F5E, rose — theme.css has no danger colour). */
+/* Scoped VALUES, CRM-only. A calm light workspace by default; `.dark` on
+   the same wrapper switches to the dark set (toggle in the CRM header,
+   remembered per browser, defaults to the OS setting). Text/background
+   pairs below were chosen for WCAG AA: body text ≥ 7:1, muted text ≥ 4.5:1,
+   primary buttons ≥ 4.5:1 with white text. */
 .crm-root {
-  --background:             var(--color-void-black);
-  --foreground:             var(--color-ink);
-  --card:                   rgba(255, 255, 255, 0.04);
-  --card-foreground:        var(--color-ink);
-  --popover:                #0E0C16;
-  --popover-foreground:     var(--color-ink);
-  --primary:                var(--color-violet);
+  color-scheme: light;
+  --background:             #F6F6F9;
+  --foreground:             #17151F;
+  --card:                   #FFFFFF;
+  --card-foreground:        #17151F;
+  --popover:                #FFFFFF;
+  --popover-foreground:     #17151F;
+  --primary:                #6D28D9;
   --primary-foreground:     #FFFFFF;
-  --secondary:              rgba(255, 255, 255, 0.07);
-  --secondary-foreground:   var(--color-ink);
-  --muted:                  rgba(255, 255, 255, 0.05);
-  --muted-foreground:       rgba(244, 243, 248, 0.55);
-  --accent:                 rgba(139, 92, 246, 0.14);
-  --accent-foreground:      var(--color-violet-light);
-  --destructive:            #F43F5E;
+  --secondary:              #EEEDF3;
+  --secondary-foreground:   #17151F;
+  --muted:                  #F0EFF4;
+  --muted-foreground:       #5B5869;
+  --accent:                 #F1ECFE;
+  --accent-foreground:      #5B21B6;
+  --destructive:            #C81E1E;
   --destructive-foreground: #FFFFFF;
-  --border:                 rgba(255, 255, 255, 0.10);
-  --input:                  rgba(255, 255, 255, 0.055);
-  --input-background:       rgba(255, 255, 255, 0.055);
-  --switch-background:      rgba(255, 255, 255, 0.18);
-  --ring:                   var(--color-violet-light);
+  --border:                 #E4E3EA;
+  --input:                  #D9D7E1;
+  --input-background:       #FFFFFF;
+  --switch-background:      #CBC9D4;
+  --ring:                   #7C3AED;
 
-  --sidebar:                     var(--color-void-deep);
-  --sidebar-foreground:          var(--color-ink);
-  --sidebar-primary:             var(--color-violet);
+  --sidebar:                     #FFFFFF;
+  --sidebar-foreground:          #17151F;
+  --sidebar-primary:             #6D28D9;
   --sidebar-primary-foreground:  #FFFFFF;
-  --sidebar-accent:              rgba(139, 92, 246, 0.14);
-  --sidebar-accent-foreground:   var(--color-violet-light);
-  --sidebar-border:              rgba(255, 255, 255, 0.08);
-  --sidebar-ring:                var(--color-violet-light);
+  --sidebar-accent:              #F1ECFE;
+  --sidebar-accent-foreground:   #5B21B6;
+  --sidebar-border:              #E4E3EA;
+  --sidebar-ring:                #7C3AED;
 
-  --chart-1: var(--color-violet);
-  --chart-2: var(--color-emerald);
-  --chart-3: var(--color-cyan);
-  --chart-4: var(--color-amber);
-  --chart-5: var(--color-violet-light);
+  --chart-1: #6D28D9;
+  --chart-2: #0E9F6E;
+  --chart-3: #0891B2;
+  --chart-4: #D97706;
+  --chart-5: #DB2777;
 
-  /* Tighter than marketing's 0.625rem — this is a data tool. */
-  --radius: 0.5rem;
+  --radius: 0.625rem;
+
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+.crm-root.dark,
+.dark .crm-root {
+  color-scheme: dark;
+  --background:             #0C0B11;
+  --foreground:             #F2F1F6;
+  --card:                   #15141C;
+  --card-foreground:        #F2F1F6;
+  --popover:                #1A1922;
+  --popover-foreground:     #F2F1F6;
+  --primary:                #7C3AED;
+  --primary-foreground:     #FFFFFF;
+  --secondary:              #221F2C;
+  --secondary-foreground:   #F2F1F6;
+  --muted:                  #1C1A24;
+  --muted-foreground:       #A9A6B8;
+  --accent:                 #261D3F;
+  --accent-foreground:      #CDBDFD;
+  --destructive:            #F87171;
+  --destructive-foreground: #1B0B0B;
+  --border:                 #2A2834;
+  --input:                  #36343F;
+  --input-background:       #121118;
+  --switch-background:      #3A3845;
+  --ring:                   #A78BFA;
+
+  --sidebar:                     #111017;
+  --sidebar-foreground:          #F2F1F6;
+  --sidebar-primary:             #7C3AED;
+  --sidebar-primary-foreground:  #FFFFFF;
+  --sidebar-accent:              #261D3F;
+  --sidebar-accent-foreground:   #CDBDFD;
+  --sidebar-border:              #24222D;
+  --sidebar-ring:                #A78BFA;
+
+  --chart-1: #A78BFA;
+  --chart-2: #34D399;
+  --chart-3: #22D3EE;
+  --chart-4: #FBBF24;
+  --chart-5: #F472B6;
+}
+
+/* Before the CRM mounts (and picks the saved theme), follow the OS. The app
+   then sets `.dark` or `.light` explicitly on the same wrapper. */
+@media (prefers-color-scheme: dark) {
+  .crm-root:not(.light):not(.light *) {
+    color-scheme: dark;
+    --background:             #0C0B11;
+    --foreground:             #F2F1F6;
+    --card:                   #15141C;
+    --card-foreground:        #F2F1F6;
+    --popover:                #1A1922;
+    --popover-foreground:     #F2F1F6;
+    --primary:                #7C3AED;
+    --primary-foreground:     #FFFFFF;
+    --secondary:              #221F2C;
+    --secondary-foreground:   #F2F1F6;
+    --muted:                  #1C1A24;
+    --muted-foreground:       #A9A6B8;
+    --accent:                 #261D3F;
+    --accent-foreground:      #CDBDFD;
+    --destructive:            #F87171;
+    --destructive-foreground: #1B0B0B;
+    --border:                 #2A2834;
+    --input:                  #36343F;
+    --input-background:       #121118;
+    --switch-background:      #3A3845;
+    --ring:                   #A78BFA;
+  
+    --sidebar:                     #111017;
+    --sidebar-foreground:          #F2F1F6;
+    --sidebar-primary:             #7C3AED;
+    --sidebar-primary-foreground:  #FFFFFF;
+    --sidebar-accent:              #261D3F;
+    --sidebar-accent-foreground:   #CDBDFD;
+    --sidebar-border:              #24222D;
+    --sidebar-ring:                #A78BFA;
+  
+    --chart-1: #A78BFA;
+    --chart-2: #34D399;
+    --chart-3: #22D3EE;
+    --chart-4: #FBBF24;
+    --chart-5: #F472B6;
+  }
+}
+
+/* The marketing theme styles headings with the display face; the CRM is a
+   data tool, so it uses one family throughout. */
+.crm-root h1, .crm-root h2, .crm-root h3, .crm-root h4 {
+  font-family: var(--font-sans);
+  letter-spacing: -0.01em;
+}
+
+/* Text links in the brand colour need a lighter violet on dark surfaces to
+   keep AA contrast; filled primary buttons keep the deeper violet. */
+.crm-root.dark .text-primary,
+.dark .crm-root .text-primary { color: #C4B1FD; }
+
+/* Visible, consistent keyboard focus everywhere in the CRM. */
+.crm-root :focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.crm-root .tabular { font-variant-numeric: tabular-nums; }
+
+@media (prefers-reduced-motion: reduce) {
+  .crm-root *, .crm-root *::before, .crm-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

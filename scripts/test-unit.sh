@@ -14,7 +14,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 
 SUITES=(
-  src/crm/leads/leadsQuery.test.ts
+  src/crm/crm.test.ts
   src/components/sections/enquiry.test.ts
 )
 
