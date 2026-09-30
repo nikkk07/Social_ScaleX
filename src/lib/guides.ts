@@ -6,6 +6,8 @@
 // tiny: **bold** and [text](url). See src/components/site/Rich.tsx.
 // ─────────────────────────────────────────────────────────────────────
 
+import type { Faq } from './content';
+
 export type Block =
   | { t: 'h2'; text: string }
   | { t: 'p'; text: string }
@@ -33,6 +35,10 @@ export interface Guide {
   updated: string;
   author: string;
   blocks: Block[];
+  /** Question-and-answer pairs shown at the end (and as FAQPage schema). */
+  faqs?: Faq[];
+  /** Step list mirrored as HowTo schema for answer engines. */
+  howTo?: { name: string; steps: { name: string; text: string }[] };
   sources: Source[];
   services: string[];
 }
@@ -86,33 +92,38 @@ const S = {
 export const GUIDES: Guide[] = [
   {
     slug: 'free-instagram-comment-to-dm-automation',
-    title: 'How to set up Instagram comment-to-DM automation for free',
-    metaTitle: 'Free Instagram Comment to DM Automation Guide',
+    title: 'Instagram comment to DM automation: free setup guide (2026)',
+    metaTitle: 'Instagram Comment to DM Automation: Free Guide',
     description:
-      'Set up Instagram comment-to-DM automation free with Meta Business Suite: step-by-step setup, keyword tips, Meta’s rules and free-tool limits. Updated 2026.',
+      'Set up Instagram comment to DM automation free with Meta Business Suite. 4 steps, best keywords, Meta’s auto-DM rules and fixes. Updated for 2026.',
     summary:
-      'You can automate Instagram comment-to-DM for free with Meta Business Suite’s “Comment to message” automation on a computer. Switch to a professional account, connect Instagram to Meta Business Suite, open Inbox, click Automations, create “Comment to message”, add your keywords and write the DM. Meta allows one private reply per comment, within 7 days.',
+      'Yes, Instagram comment to DM automation is free. Meta Business Suite has a built-in “Comment to message” automation on desktop. Switch to a professional account, connect Instagram to Meta Business Suite, go to Inbox → Automations → Create automation → Comment to message, add your keyword and write the DM. Meta allows one automatic DM per comment, within 7 days.',
     published: '2026-09-30',
     updated: '2026-09-30',
     author: 'Social ScaleX team',
     blocks: [
-      { t: 'h2', text: 'What comment-to-DM automation does' },
+      { t: 'h2', text: 'What is Instagram comment to DM automation?' },
       {
         t: 'p',
-        text: 'You post a Reel and write “Comment PRICE and I’ll DM you the list”. Everyone who comments the keyword gets a direct message automatically, with your link inside. The comment boosts the post, and the DM starts a private conversation where people actually buy.',
+        text: 'Comment to DM automation sends a direct message to everyone who comments a chosen keyword on your Instagram post or Reel. You write “Comment PRICE for the price list”, and each person who comments PRICE gets your DM with the link, automatically.',
       },
       {
         t: 'p',
-        text: 'Meta builds this into Meta Business Suite for free. It calls it **Comment to message**: “Send a message reply to comments on your posts that contain specific keywords or phrases.” [Meta Business Help](https://www.facebook.com/business/help/318238182723007)',
+        text: 'It works for two reasons. Comments tell Instagram people care about the post, and the DM moves the buyer into a private chat where they can ask, book or pay.',
+      },
+      { t: 'h2', text: 'Is comment to DM automation free on Instagram?' },
+      {
+        t: 'p',
+        text: 'Yes. Meta Business Suite includes it at no cost. Meta calls it **Comment to message**: “Send a message reply to comments on your posts that contain specific keywords or phrases.” It is available on the desktop version of Meta Business Suite. [Meta Business Help](https://www.facebook.com/business/help/318238182723007)',
       },
       { t: 'h2', text: 'What you need before you start' },
       {
         t: 'ul',
         items: [
-          '**An Instagram professional account** (business or creator). Meta Business Suite only manages professional accounts.',
-          '**A computer.** Meta says keyword automations are only available in Meta Business Suite on desktop.',
-          '**Access to Meta Business Suite**, with the right business portfolio selected in the top-left menu.',
-          '**One keyword and one link**: what people comment, and where the DM sends them.',
+          '**An Instagram professional account** (Business or Creator).',
+          '**A laptop or desktop.** Meta says keyword automations are only available in Meta Business Suite on desktop.',
+          '**Meta Business Suite access**, with the right business portfolio selected in the top-left menu.',
+          '**One keyword and one link**: what people comment, and where your DM sends them.',
         ],
       },
       { t: 'h2', text: 'Step 1: Switch to a professional Instagram account' },
@@ -128,16 +139,16 @@ export const GUIDES: Guide[] = [
       },
       {
         t: 'p',
-        text: 'Note: if your account is private, switching makes it public, and pending follow requests are accepted. [Meta Business Help](https://www.facebook.com/business/help/502981923235522)',
+        text: 'Heads-up: a private account becomes public when you switch, and pending follow requests are accepted. [Meta Business Help](https://www.facebook.com/business/help/502981923235522)',
       },
       { t: 'h2', text: 'Step 2: Connect Instagram to Meta Business Suite' },
       {
         t: 'ol',
         items: [
-          'On a computer, go to Meta Business Suite.',
-          'Log in with your **Instagram** username and password. You don’t need a Facebook Page for this.',
-          'If it asks you to link a Facebook Page and you don’t want to, sign out of Facebook or use a private browser window, then log in with Instagram again.',
-          'Already have a Facebook Page? Connect Instagram to the Page, or add both to the same business portfolio.',
+          'On a computer, open Meta Business Suite.',
+          'Log in with your **Instagram** username and password. No Facebook Page is needed.',
+          'Asked to link a Facebook Page and don’t want to? Sign out of Facebook or use a private window, then log in with Instagram again.',
+          'Have a Facebook Page? Connect Instagram to it, or add both to the same business portfolio.',
         ],
       },
       { t: 'p', text: 'Source: [Connect your Instagram account to Meta Business Suite](https://www.facebook.com/business/help/428687951269163)' },
@@ -147,75 +158,115 @@ export const GUIDES: Guide[] = [
         items: [
           'In Meta Business Suite, open **Inbox**.',
           'Click **Automations**.',
-          'Click **Create automation** in the top right.',
+          'Click **Create automation** (top right).',
           'Choose **Comment to message**, then click **Create automation**.',
-          'Follow the on-screen steps: add your keywords and write the message Meta will send.',
-          'Save. The automation can take a few minutes to appear; refresh if you don’t see it.',
-          'Use the toggle under **Status** to turn it on or off. Click **Edit** to change it later.',
+          'Follow the on-screen steps: add your keywords and write the DM.',
+          'Save. It can take a few minutes to appear; refresh if you don’t see it.',
+          'Use the **Status** toggle to turn it on or off. Click **Edit** to change it.',
         ],
       },
       { t: 'p', text: 'Source: [Set up Inbox automations in Meta Business Suite on desktop](https://www.facebook.com/business/help/318238182723007)' },
-      { t: 'h2', text: 'Step 4: Test it before you post' },
+      { t: 'h2', text: 'Step 4: Test your auto DM before you post' },
       {
         t: 'ol',
         items: [
-          'Ask a friend, or use a second account, to comment your keyword on the post.',
-          'Check that the DM arrives and the link opens on a phone.',
-          'Comment a word that is not your keyword and check nothing is sent.',
-          'Only then announce the keyword in your Reel and caption.',
+          'From a second account, comment your keyword on the post.',
+          'Check the DM arrives and the link opens on a phone.',
+          'Comment a different word and check nothing is sent.',
+          'Now announce the keyword in your Reel and caption.',
         ],
       },
       { t: 'offer', variant: 'mid' },
-      { t: 'h2', text: 'Keywords that get comments' },
+      { t: 'h2', text: 'Best keywords for comment to DM' },
       {
         t: 'ul',
         items: [
-          '**One short word**: PRICE, LINK, MENU, GUIDE. Easy to type on a phone.',
+          '**One short word**: PRICE, LINK, MENU, GUIDE, BOOK. Easy to type on a phone.',
           '**Say it three times**: on screen, out loud in the Reel, and in the caption.',
           '**Avoid everyday words** like “nice” or “wow”, or every comment triggers a DM.',
-          '**Add spellings.** For keyword automations Meta says keywords are case-sensitive and must match exactly, so add PRICE, Price and price.',
-          '**One keyword, one job.** Meta says the same keyword can only be used in one keyword automated response.',
+          '**Add spellings.** Meta says keyword automations are case-sensitive and match exactly, so add PRICE, Price and price.',
+          '**One keyword, one job.** Meta allows each keyword in only one keyword automation.',
         ],
       },
-      { t: 'h2', text: 'Write a DM that gets clicked' },
+      { t: 'h2', text: 'How to write an auto DM that gets clicked' },
       {
         t: 'ul',
         items: [
-          'Open with thanks and their reason for commenting: “Here’s the price list you asked for.”',
+          'Start with what they asked for: “Here’s the price list you wanted.”',
           'Put the link in the first two lines.',
-          'Say it is automated. Meta’s messaging policy says automated chats must disclose that a person is interacting with an automated service. [Meta policy](https://developers.facebook.com/documentation/business-messaging/messenger-platform/policy)',
-          'End with one next step: “Reply here if you want us to call you.”',
+          'Say it’s automated. Meta’s messaging policy requires automated chats to disclose that a person is talking to an automated service. [Meta policy](https://developers.facebook.com/documentation/business-messaging/messenger-platform/policy)',
+          'End with one next step: “Reply here and we’ll call you.”',
         ],
       },
-      { t: 'h2', text: 'Meta’s rules you must follow' },
+      { t: 'h2', text: 'Instagram’s rules for automated DMs' },
       {
         t: 'ul',
         items: [
-          '**One private reply per comment.** Only one message can be sent to the commenter. [Meta for Developers](https://developers.facebook.com/docs/instagram-platform/private-replies/)',
-          '**Within 7 days.** The message must be sent within 7 days of the comment.',
-          '**Follow-ups only if they reply**, and within 24 hours of their response.',
-          '**Never share your password** with a tool or agency. Instagram tells people not to use apps that ask for their login, and its terms forbid collecting other people’s login details. [Instagram Help](https://help.instagram.com/263751177667145)',
+          '**One DM per comment.** Only one private reply can be sent to each commenter. [Meta for Developers](https://developers.facebook.com/docs/instagram-platform/private-replies/)',
+          '**Within 7 days** of the comment.',
+          '**Follow-ups only if they reply**, within 24 hours of their reply.',
+          '**Never share your password.** Instagram warns against apps that ask for your login, and its terms forbid collecting other people’s login details. [Instagram Help](https://help.instagram.com/263751177667145)',
         ],
       },
-      { t: 'h2', text: 'Free third-party tools: what they really include' },
-      {
-        t: 'p',
-        text: 'Tools such as ManyChat add extras like buttons and lead forms. Check the limits first: ManyChat’s Free plan covers 25 active contacts a month and up to 4 active automations, and its Essential plan is $14 a month for 250 active contacts. [ManyChat pricing](https://manychat.com/pricing) For most small businesses, Meta Business Suite’s free automation is the better start.',
-      },
-      { t: 'h2', text: 'Common problems and fixes' },
+      { t: 'h2', text: 'Free comment to DM tools compared' },
       {
         t: 'ul',
         items: [
-          '**The automation doesn’t appear:** wait a few minutes and refresh the page.',
-          '**You can’t find Automations:** check the right business portfolio is selected in the top-left menu, and that you’re on a computer, not the app.',
-          '**Automations stopped:** if you turned on Meta Business Agent, Meta pauses existing automations such as instant replies and away messages.',
-          '**No DM for an old comment:** private replies only work within 7 days of the comment.',
+          '**Meta Business Suite (free):** built in, official, desktop only. Best place to start.',
+          '**ManyChat Free:** 25 active contacts a month and up to 4 active automations. Essential costs $14 a month for 250 active contacts. [ManyChat pricing](https://manychat.com/pricing)',
+          '**Any tool you use** should connect through Meta’s official login, never by asking for your Instagram password.',
+        ],
+      },
+      { t: 'h2', text: 'Comment to DM not working? Quick fixes' },
+      {
+        t: 'ul',
+        items: [
+          '**Automation not showing:** wait a few minutes, then refresh.',
+          '**Can’t find Automations:** select the right business portfolio (top-left) and use a computer, not the app.',
+          '**Automations stopped:** turning on Meta Business Agent pauses existing automations.',
+          '**No DM for an old comment:** replies only work within 7 days of the comment.',
+          '**Keyword ignored:** check the spelling and capital letters match exactly.',
         ],
       },
       { t: 'h2', text: 'Do it yourself, or let us do it?' },
       { t: 'compare' },
       { t: 'offer', variant: 'end' },
     ],
+    faqs: [
+      {
+        q: 'Is Instagram comment to DM automation free?',
+        a: 'Yes. Meta Business Suite’s Comment to message automation is free and built in. You need an Instagram professional account and a computer, because keyword automations are desktop-only.',
+      },
+      {
+        q: 'How do I auto DM people who comment on my Instagram post?',
+        a: 'Connect Instagram to Meta Business Suite, open Inbox, click Automations, then Create automation and choose Comment to message. Add your keyword, write the DM and turn it on. Test it from a second account first.',
+      },
+      {
+        q: 'Does Instagram allow comment to DM automation?',
+        a: 'Yes, through Meta’s official tools. Meta allows one private reply per comment within 7 days, follow-ups only if the person replies within 24 hours, and requires automated chats to say they are automated.',
+      },
+      {
+        q: 'Can I use comment to DM on Reels?',
+        a: 'Yes. Meta’s private-reply rules cover comments on posts and Reels. Say the keyword in the Reel and in the caption, and test it from a second account before you post.',
+      },
+      {
+        q: 'Why is my Instagram comment to DM automation not working?',
+        a: 'The most common causes: the wrong business portfolio is selected, the keyword’s spelling or capitals don’t match, the comment is older than 7 days, or Meta Business Agent is on, which pauses other automations.',
+      },
+      {
+        q: 'Can someone set up comment to DM for me?',
+        a: 'Yes. Social ScaleX sets up, tests and manages Instagram comment to DM automation for ₹99 a month: one account, unlimited posts and keywords, and you pay after it works.',
+      },
+    ],
+    howTo: {
+      name: 'How to set up Instagram comment to DM automation for free',
+      steps: [
+        { name: 'Switch to a professional Instagram account', text: 'In Instagram, go to Settings and activity, then Account type and tools, and switch to a Business or Creator account.' },
+        { name: 'Connect Instagram to Meta Business Suite', text: 'On a computer, open Meta Business Suite and log in with your Instagram account.' },
+        { name: 'Create the Comment to message automation', text: 'Go to Inbox, Automations, Create automation, choose Comment to message, add your keywords and write the DM, then turn it on.' },
+        { name: 'Test before you post', text: 'Comment the keyword from a second account and check the DM and link arrive.' },
+      ],
+    },
     sources: [S.mbsSetup, S.mbsAbout, S.mbsConnectIg, S.igProfessional, S.privateReplies, S.msgPolicy, S.igApps, S.igTerms, S.manychat],
     services: [],
   },
@@ -282,6 +333,24 @@ export const GUIDES: Guide[] = [
       {
         t: 'p',
         text: 'the_subh_journey reached 1.6M views in 30 days with 15.9K followers, and prago.outdoors reached 3.1M views in 30 days with 14K followers: reach well beyond the following, driven by Reels. See the details in our [client results](/case-studies).',
+      },
+    ],
+    faqs: [
+      {
+        q: 'How can I increase my Instagram followers for free?',
+        a: 'Post original Reels with a strong opening, make content people send to friends, test new formats with Trial Reels, collaborate with related accounts, and keep your account eligible for recommendations. All of it is free.',
+      },
+      {
+        q: 'Is it safe to buy Instagram followers or likes?',
+        a: 'No. Instagram may remove engagement from apps that sell likes or followers and can limit the account. Repeatedly buying likes can also make an account ineligible for recommendations to non-followers.',
+      },
+      {
+        q: 'What matters most for Instagram reach in 2026?',
+        a: 'Watch time, likes per reach and sends per reach, according to Instagram head Adam Mosseri. Sends matter most for reaching people who don’t follow you yet.',
+      },
+      {
+        q: 'How do I get more comments on Instagram?',
+        a: 'Give people a reason to comment: a keyword that gets them something by DM, a choice between two options, or a question only your audience can answer. Reply to the first comments quickly.',
       },
     ],
     sources: [S.igApps, S.recGuidelines, S.rankingExplained, S.mosseri2025, S.originality2026, S.watchSeconds, S.trialReels, S.indexing, S.accountStatus, S.igProfessional],

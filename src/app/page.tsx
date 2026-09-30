@@ -14,6 +14,7 @@ import { FAQS, PAINS, PORTFOLIO, PORTFOLIO_NOTE, PRINCIPLES, PROCESS, SERVICES, 
 import { GUIDES } from '@/lib/guides';
 import { AUTOMATIONS } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
+import { CITIES } from '@/lib/areas';
 import { AutomationCard } from '@/components/site/AutomationCard';
 import { PriceCard } from '@/components/site/Offer';
 import { AREAS_SERVED, whatsappLink } from '@/lib/site';
@@ -223,11 +224,19 @@ export default function HomePage() {
               title="A social media agency near you in Delhi NCR"
               intro={`Based in Delhi NCR, we shoot on location across ${AREAS_SERVED.join(', ')}. Page management, ads, automation and reporting run remotely, so brands anywhere in India work with us the same way.`}
             />
-            <ul className="flex flex-wrap gap-3">
-              {[...AREAS_SERVED, 'Rest of India (remote)'].map((a) => (
-                <li key={a} className="rounded-full border border-line-strong bg-surface px-5 py-2.5 font-display text-xl text-ink">{a}</li>
-              ))}
-            </ul>
+            <div>
+              <ul className="flex flex-wrap gap-3">
+                {CITIES.map((c) => (
+                  <li key={c.slug}>
+                    <Link href={`/areas/${c.slug}`} className="inline-block rounded-full border border-line-strong bg-surface px-5 py-2.5 font-display text-xl text-ink hover:border-ink">{c.name}</Link>
+                  </li>
+                ))}
+                <li className="rounded-full border border-dashed border-line-strong px-5 py-2.5 font-display text-xl text-ink-2">Rest of India (remote)</li>
+              </ul>
+              <p className="mt-6">
+                <Link href="/areas" className="link">Check your area or pin code <ArrowRight className="inline size-4" aria-hidden="true" /></Link>
+              </p>
+            </div>
           </div>
         </section>
 

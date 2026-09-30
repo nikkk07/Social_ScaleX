@@ -85,7 +85,7 @@ export const SERVICES: Service[] = [
     faqs: [
       {
         q: 'Is there an Instagram marketing agency near me?',
-        a: 'If you are in Delhi, Noida or Gurugram, yes: we are based in Delhi NCR and shoot on location across all three. Page management, ads and reporting run remotely, so we also work with brands anywhere in India.',
+        a: 'If you are in Delhi, Noida, Gurugram, Ghaziabad or Faridabad, yes: we are based in Delhi NCR and shoot on location across all five, and you can check your area or pin code on our areas page. Page management, ads and reporting run remotely, so we also work with brands anywhere in India.',
       },
       {
         q: 'Will you need my Instagram password?',
@@ -138,7 +138,7 @@ export const SERVICES: Service[] = [
     ],
     steps: [
       { title: 'Brief', desc: 'We agree the message, write the hooks and plan a shot list, so the shoot day has no guesswork.' },
-      { title: 'Shoot', desc: 'On location in Delhi, Noida or Gurugram, at your store, your venue or outdoors.' },
+      { title: 'Shoot', desc: 'On location across Delhi NCR, at your store, your venue or outdoors.' },
       { title: 'Edit', desc: 'Cuts, captions, sound and graphics. You see the edit before it posts.' },
       { title: 'Learn', desc: 'We check watch time and shares on every Reel and feed what worked into the next shoot.' },
     ],
@@ -389,7 +389,7 @@ export const SERVICES: Service[] = [
       'Product photoshoots, event coverage and on-location Reels shoots across Delhi, Noida and Gurugram. Photos and video from one shoot, raw files included.',
     h1: 'Product photoshoots and event shoots in Delhi NCR',
     lede:
-      'We shoot on location across Delhi, Noida and Gurugram: product photography, event coverage, teasers and on-location video. You get original footage of your actual product or venue instead of stock images your competitors also use, and the full raw library comes to you.',
+      'We shoot on location across Delhi NCR, from Delhi and Noida to Gurugram, Ghaziabad and Faridabad: product photography, event coverage, teasers and on-location video. You get original footage of your actual product or venue instead of stock images your competitors also use, and the full raw library comes to you.',
     outcome:
       'Your product appears in real footage of itself, not stock imagery your competitors also bought.',
     deliverables: [
@@ -416,7 +416,7 @@ export const SERVICES: Service[] = [
     faqs: [
       {
         q: 'Where do you shoot?',
-        a: 'Across Delhi, Noida and Gurugram, at your store, your venue or outdoors. For somewhere further away, ask on the call.',
+        a: 'Across Delhi, Noida, Gurugram, Ghaziabad and Faridabad, at your store, your venue or outdoors. For somewhere further away, ask on the call.',
       },
       {
         q: 'Do we get photos and videos from the same shoot?',

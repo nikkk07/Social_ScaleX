@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Check, ArrowRight } from 'lucide-react';
+import { Check, ArrowRight, Zap, MessageCircle, Send } from 'lucide-react';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
 import { DIY_VS_DFY, PLAN_99 } from '@/lib/automation';
 import { whatsappLink } from '@/lib/site';
@@ -34,18 +34,43 @@ export function PriceCard({ headingLevel = 3 }: { headingLevel?: 2 | 3 }) {
   );
 }
 
-/** Offer box placed inside the free guide. */
+const TRUST = ['Official Meta tools', 'No password needed', 'Pay after it works'];
+
+/** Offer boxes placed inside the free guide: short, visual, one action. */
 export function OfferBox({ variant }: { variant: 'mid' | 'end' }) {
   if (variant === 'mid') {
     return (
-      <aside aria-label="Done-for-you option" className="not-prose my-10 rounded-card bg-night p-6 text-on-night sm:p-8">
-        <p className="font-display text-2xl leading-snug">Four steps done. Now repeat them for every post, keyword and new link.</p>
-        <p className="mt-3 text-on-night-2">
-          This is where it gets repetitive. If you’d rather post the Reel and let the DMs run, we set it up, test it and keep it updated for ₹{PLAN_99.price} a month.
-        </p>
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <Link href={PAGE} className="btn btn-night">See the ₹{PLAN_99.price} plan</Link>
-          <a href={WA} target="_blank" rel="noopener noreferrer" className="btn btn-night-ghost"><WhatsappIcon size={18} /> Ask on WhatsApp</a>
+      <aside aria-label="Shortcut: done-for-you setup" className="not-prose my-10 overflow-hidden rounded-card border border-coral/30 bg-coral-tint">
+        <div className="grid gap-6 p-6 sm:grid-cols-[1fr_auto] sm:items-center sm:p-7">
+          <div>
+            <p className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.14em] text-coral-text">
+              <Zap className="size-3.5 fill-current" aria-hidden="true" /> Shortcut
+            </p>
+            <p className="mt-2 font-display text-3xl leading-tight text-ink">Skip steps 1–4.</p>
+            <p className="mt-1 text-lg text-ink-2">
+              We set up comment-to-DM for you. <strong className="text-ink">₹{PLAN_99.price}/month.</strong>
+            </p>
+          </div>
+          <div className="flex flex-col items-stretch gap-3 sm:items-end">
+            <div aria-hidden="true" className="hidden items-center gap-2 text-sm sm:flex">
+              <span className="inline-flex items-center gap-1.5 rounded-2xl rounded-bl-sm bg-surface px-3 py-2 font-semibold text-ink ring-1 ring-line"><MessageCircle className="size-4" /> PRICE</span>
+              <ArrowRight className="size-4 text-coral-text" />
+              <span className="inline-flex items-center gap-1.5 rounded-2xl rounded-br-sm bg-ink px-3 py-2 font-semibold text-on-night"><Send className="size-4" /> DM sent</span>
+            </div>
+            <Link href={`${PAGE}#get-started`} className="btn btn-primary btn-lg">
+              Do it for me <ArrowRight className="size-4" aria-hidden="true" />
+            </Link>
+            <a href={WA} target="_blank" rel="noopener noreferrer" className="text-center text-sm font-semibold text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink sm:text-right">
+              or ask on WhatsApp
+            </a>
+          </div>
+          <ul className="flex flex-wrap gap-2 text-sm sm:col-span-2">
+            {TRUST.map((t) => (
+              <li key={t} className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3 py-1 text-ink-2 ring-1 ring-line">
+                <Check className="size-3.5 text-positive" aria-hidden="true" /> {t}
+              </li>
+            ))}
+          </ul>
         </div>
       </aside>
     );
@@ -53,10 +78,13 @@ export function OfferBox({ variant }: { variant: 'mid' | 'end' }) {
   return (
     <aside aria-label="Done-for-you option" className="not-prose my-12 grid gap-8 rounded-card border border-line bg-paper-2 p-6 sm:p-8 lg:grid-cols-[1.1fr_1fr] lg:items-center">
       <div>
-        <p className="font-display text-3xl leading-tight text-ink">Skip the setup. Keep the sales.</p>
-        <p className="mt-4 text-ink-2">
-          You now know exactly how it works. The question is whether your evenings go into testing keywords and fixing links, or into running your business. For ₹99 a month, less than ₹4 a day, we handle the automation and you handle the customers.
-        </p>
+        <p className="font-display text-3xl leading-tight text-ink">Rather post, not set up?</p>
+        <p className="mt-3 text-lg text-ink-2">We build it, test it and keep every keyword working. You reply to buyers.</p>
+        <ul className="mt-5 space-y-2 text-ink-2">
+          {TRUST.map((t) => (
+            <li key={t} className="flex items-center gap-2"><Check className="size-4 text-positive" aria-hidden="true" /> {t}</li>
+          ))}
+        </ul>
       </div>
       <PriceCard />
     </aside>

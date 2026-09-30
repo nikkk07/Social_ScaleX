@@ -3,6 +3,7 @@ import { SERVICES } from '@/lib/content';
 import { GUIDES } from '@/lib/guides';
 import { AUTOMATIONS } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
+import { CITIES } from '@/lib/areas';
 import { abs } from '@/lib/site';
 
 /** Public pages only. /crm and /login are disallowed in robots.ts and must never appear here. */
@@ -15,6 +16,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: abs('/automation'), lastModified: site, changeFrequency: 'monthly', priority: 0.9 },
     ...AUTOMATIONS.map((a) => ({ url: abs(`/automation/${a.slug}`), lastModified: site, changeFrequency: 'monthly' as const, priority: a.priced ? 0.9 : 0.8 })),
     ...GOALS.map((g) => ({ url: abs(`/solutions/${g.slug}`), lastModified: site, changeFrequency: 'monthly' as const, priority: 0.8 })),
+    { url: abs('/areas'), lastModified: site, changeFrequency: 'monthly', priority: 0.8 },
+    ...CITIES.map((c) => ({ url: abs(`/areas/${c.slug}`), lastModified: site, changeFrequency: 'monthly' as const, priority: 0.8 })),
     { url: abs('/case-studies'), lastModified: site, changeFrequency: 'monthly', priority: 0.8 },
     { url: abs('/about'), lastModified: site, changeFrequency: 'monthly', priority: 0.6 },
     { url: abs('/contact'), lastModified: site, changeFrequency: 'yearly', priority: 0.7 },

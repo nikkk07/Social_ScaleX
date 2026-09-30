@@ -2,6 +2,7 @@ import { FAQS, PORTFOLIO, PORTFOLIO_NOTE, SERVICES } from '@/lib/content';
 import { GUIDES } from '@/lib/guides';
 import { AUTOMATIONS, PLAN_99 } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
+import { CITIES, cityStats } from '@/lib/areas';
 import { AREAS_SERVED, CONTACTS, FOUNDING_YEAR, SITE_NAME, SITE_TAGLINE, abs, sameAs } from '@/lib/site';
 
 /**
@@ -25,6 +26,10 @@ function build(): string {
     (a) => `- [${a.name}](${abs(`/automation/${a.slug}`)})${a.priced ? ` (₹${PLAN_99.price}/month)` : ''}: ${a.lede}`,
   ).join('\n');
   const goals = GOALS.map((g) => `- [${g.name}](${abs(`/solutions/${g.slug}`)}): ${g.lede}`).join('\n');
+  const areas = CITIES.map((c) => {
+    const s = cityStats(c.key);
+    return `- [${c.longName}](${abs(`/areas/${c.slug}`)}): ${s.places} localities, ${s.pins} pin codes (${s.first}–${s.last}). ${c.lede}`;
+  }).join('\n');
   const guides = GUIDES.map((g) => `- [${g.title}](${abs(`/guides/${g.slug}`)}): ${g.summary}`).join('\n');
   const faqs = FAQS.map((f) => `### ${f.q}\n\n${f.a}`).join('\n\n');
   const phones = CONTACTS.map((c) => `- ${c.name} (${c.role}): ${c.display}`).join('\n');
@@ -53,6 +58,13 @@ The ${PLAN_99.name} plan costs ₹${PLAN_99.price} a month and includes: ${PLAN_
 
 ${goals}
 
+## Areas served
+
+Every locality and pin code covered is listed on the city pages, from official
+lists. Check any area at ${abs('/areas')}.
+
+${areas}
+
 ## Clients and results
 
 ${PORTFOLIO_NOTE} They are not projections.
@@ -72,6 +84,7 @@ ${faqs}
 - [Home](${abs('/')})
 - [Services](${abs('/services')})
 - [Automation](${abs('/automation')})
+- [Areas we serve](${abs('/areas')})
 - [Client results](${abs('/case-studies')})
 - [About](${abs('/about')})
 - [Contact](${abs('/contact')})

@@ -24,6 +24,7 @@ import type { Faq, PortfolioItem, Service } from './content';
 import type { Guide } from './guides';
 import type { Automation } from './automation';
 import { PLAN_99 } from './automation';
+import type { City } from './areas';
 
 export type SchemaNode = Record<string, unknown>;
 
@@ -191,6 +192,24 @@ export function automationNode(a: Automation): SchemaNode {
   };
 }
 
+/** Our service in one city. Visible on the city page; no invented address. */
+export function areaServiceNode(c: City): SchemaNode {
+  const path = `/areas/${c.slug}`;
+  return {
+    '@type': 'Service',
+    '@id': `${abs(path)}#service`,
+    name: `Social media marketing in ${c.longName}`,
+    serviceType: 'Social media marketing',
+    url: abs(path),
+    provider: { '@id': ORG_ID },
+    areaServed: {
+      '@type': 'City',
+      name: c.name,
+      containedInPlace: { '@type': 'State', name: c.state },
+    },
+  };
+}
+
 export function faqNode(faqs: Faq[], pagePath: string): SchemaNode {
   return {
     '@type': 'FAQPage',
@@ -237,6 +256,23 @@ export function articleNode(g: Guide, wordCount: number): SchemaNode {
     inLanguage: 'en-IN',
     wordCount,
     citation: g.sources.map((s) => s.url),
+  };
+}
+
+export function howToNode(g: Guide): SchemaNode | null {
+  if (!g.howTo) return null;
+  const path = `/guides/${g.slug}`;
+  return {
+    '@type': 'HowTo',
+    '@id': `${abs(path)}#howto`,
+    name: g.howTo.name,
+    tool: [{ '@type': 'HowToTool', name: 'Meta Business Suite (desktop)' }],
+    step: g.howTo.steps.map((st, i) => ({
+      '@type': 'HowToStep',
+      position: i + 1,
+      name: st.name,
+      text: st.text,
+    })),
   };
 }
 

@@ -9,6 +9,7 @@ const COMPANY = [
   { href: '/about', label: 'About us' },
   { href: '/case-studies', label: 'Client results' },
   { href: '/services', label: 'All services' },
+  { href: '/areas', label: 'Areas we serve' },
   { href: '/guides', label: 'Guides' },
   { href: '/contact', label: 'Contact' },
 ];
@@ -39,7 +40,7 @@ export function Footer() {
             <p>
               <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-ink hover:text-coral-text">WhatsApp us</a>
             </p>
-            <p className="text-ink-3">Shoots across {AREAS_SERVED.join(', ')}. Remote work across India.</p>
+            <p className="text-ink-3">Shoots across {AREAS_SERVED.join(', ')}. Remote work across India. <Link href="/areas" className="underline underline-offset-2 hover:text-ink">Check your area</Link></p>
           </address>
           {socials.length ? (
             <ul className="mt-5 flex gap-4 text-sm">

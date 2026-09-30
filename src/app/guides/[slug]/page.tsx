@@ -7,11 +7,13 @@ import { Breadcrumbs } from '@/components/site/Breadcrumbs';
 import { ServiceCard } from '@/components/site/Cards';
 import { LeadSection } from '@/components/site/LeadSection';
 import { Rich } from '@/components/site/Rich';
+import { TocSpy, type TocItem } from '@/components/site/TocSpy';
+import { FaqList } from '@/components/site/FaqList';
 import { CompareTable, OfferBox } from '@/components/site/Offer';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { GUIDES, getGuide, guideWordCount, type Block } from '@/lib/guides';
 import { getService } from '@/lib/content';
-import { articleNode, breadcrumbNode, graph, webPageNode } from '@/lib/schema';
+import { articleNode, breadcrumbNode, faqNode, graph, howToNode, webPageNode, type SchemaNode } from '@/lib/schema';
 
 export const dynamicParams = false;
 
@@ -70,7 +72,12 @@ export default async function GuidePage({ params }: Props) {
     { name: g.metaTitle, path },
   ];
   const words = guideWordCount(g);
-  const toc = g.blocks.filter((b): b is Extract<Block, { t: 'h2' }> => b.t === 'h2');
+  const toc: TocItem[] = [
+    ...g.blocks.filter((b): b is Extract<Block, { t: 'h2' }> => b.t === 'h2').map((b) => ({ id: anchor(b.text), text: b.text })),
+    ...(g.faqs?.length ? [{ id: 'faq', text: 'FAQ' }] : []),
+    { id: 'sources', text: 'Sources' },
+  ];
+  const howTo = howToNode(g);
   const services = g.services.map(getService).filter((x): x is NonNullable<typeof x> => Boolean(x));
   const others = GUIDES.filter((o) => o.slug !== g.slug);
 
@@ -81,7 +88,9 @@ export default async function GuidePage({ params }: Props) {
           webPageNode({ path, name: g.metaTitle, description: g.description, hasBreadcrumb: true }),
           breadcrumbNode(crumbs, path),
           articleNode(g, words),
-        ])}
+          ...(g.faqs?.length ? [faqNode(g.faqs, path)] : []),
+          ...(howTo ? [howTo] : []),
+        ] as SchemaNode[])}
       />
       <SiteShell>
         <article>
@@ -106,15 +115,28 @@ export default async function GuidePage({ params }: Props) {
             <nav aria-label="On this page" className="hidden lg:block">
               <div className="sticky top-24">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">On this page</p>
-                <ol className="mt-4 space-y-2.5 text-sm">
-                  {toc.map((h) => (
-                    <li key={h.text}><a href={`#${anchor(h.text)}`} className="text-ink-2 hover:text-ink">{h.text}</a></li>
-                  ))}
-                </ol>
+                <div className="relative mt-4 max-h-[calc(100vh-10rem)] overflow-y-auto overscroll-contain pr-1">
+                  <TocSpy items={toc} />
+                </div>
               </div>
             </nav>
+            <details className="rounded-card border border-line bg-surface px-5 py-4 lg:hidden">
+              <summary className="cursor-pointer text-sm font-semibold text-ink">On this page</summary>
+              <ol className="mt-3 space-y-2 text-sm">
+                {toc.map((h) => (
+                  <li key={h.id}><a href={`#${h.id}`} className="text-ink-2 hover:text-ink">{h.text}</a></li>
+                ))}
+              </ol>
+            </details>
             <div className="prose-site">
               {g.blocks.map((b, i) => <BlockView key={i} b={b} />)}
+
+              {g.faqs?.length ? (
+                <>
+                  <h2 id="faq">Frequently asked questions</h2>
+                  <div className="not-prose text-base"><FaqList faqs={g.faqs} /></div>
+                </>
+              ) : null}
 
               <h2 id="sources">Sources</h2>
               <ol className="text-base">

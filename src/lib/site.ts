@@ -32,7 +32,7 @@ export const SITE_TAGLINE =
   'Social media marketing agency in Delhi NCR managing Instagram, Facebook and YouTube for brands and creators: Reels production, page management, Meta and Google Ads, and reporting from your own analytics.';
 
 /** Where shoots happen in person. Everything else runs remotely across India. */
-export const AREAS_SERVED = ['Delhi', 'Noida', 'Gurugram'] as const;
+export const AREAS_SERVED = ['Delhi', 'Noida', 'Gurugram', 'Ghaziabad', 'Faridabad'] as const;
 export const FOUNDING_YEAR = '2025';
 
 export const CONTACTS = [
