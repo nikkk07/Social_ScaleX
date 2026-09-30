@@ -37,7 +37,8 @@ async function otherActiveOwners(excludeId: string): Promise<number> {
   return count ?? 0;
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const params = await ctx.params;
   try {
     const caller = await requireCaller(req);
     if (!UUID.test(params.id)) throw new HttpError(404, 'not_found', 'User not found.');
@@ -172,7 +173,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }> }) {
+  const params = await ctx.params;
   try {
     const caller = await requireCaller(req);
     if (caller.role !== 'owner') throw new HttpError(403, 'not_authorized', 'Only an owner can delete accounts.');

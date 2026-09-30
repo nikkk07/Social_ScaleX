@@ -22,8 +22,10 @@ export function generateStaticParams() {
   return SERVICES.map((s) => ({ slug: s.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const s = getService(params.slug);
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const s = getService((await params).slug);
   if (!s) return {};
   const path = `/services/${s.slug}`;
   return {
@@ -34,8 +36,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function ServicePage({ params }: { params: { slug: string } }) {
-  const s = getService(params.slug);
+export default async function ServicePage({ params }: Props) {
+  const s = getService((await params).slug);
   if (!s) notFound();
   const path = `/services/${s.slug}`;
   const crumbs = [

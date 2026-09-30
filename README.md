@@ -1,7 +1,7 @@
 # Social ScaleX
 
 Marketing site and internal CRM for Social ScaleX, a social media marketing
-agency in Delhi NCR. Next.js 14 (App Router) frontend, Supabase (Postgres)
+agency in Delhi NCR. Next.js 16 (App Router) frontend, Supabase (Postgres)
 behind it.
 
 - **Marketing site**: statically generated, light editorial design (ivory,

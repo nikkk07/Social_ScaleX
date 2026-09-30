@@ -5,8 +5,10 @@
  * so the equivalent plugin is @tailwindcss/postcss. It pulls in everything
  * Tailwind needs — do not add `tailwindcss` or `autoprefixer` alongside it.
  */
-export default {
+const config = {
   plugins: {
     '@tailwindcss/postcss': {},
   },
 };
+
+export default config;

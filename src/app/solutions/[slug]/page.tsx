@@ -22,8 +22,10 @@ export function generateStaticParams() {
   return GOALS.map((g) => ({ slug: g.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const g = getGoal(params.slug);
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const g = getGoal((await params).slug);
   if (!g) return {};
   const path = `/solutions/${g.slug}`;
   return {
@@ -34,8 +36,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function GoalPage({ params }: { params: { slug: string } }) {
-  const g = getGoal(params.slug);
+export default async function GoalPage({ params }: Props) {
+  const g = getGoal((await params).slug);
   if (!g) notFound();
   const path = `/solutions/${g.slug}`;
   const crumbs = [

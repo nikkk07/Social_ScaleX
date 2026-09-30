@@ -24,8 +24,10 @@ export function generateStaticParams() {
   return AUTOMATIONS.map((a) => ({ slug: a.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const a = getAutomation(params.slug);
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const a = getAutomation((await params).slug);
   if (!a) return {};
   const path = `/automation/${a.slug}`;
   return {
@@ -36,8 +38,8 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-export default function AutomationPage({ params }: { params: { slug: string } }) {
-  const a = getAutomation(params.slug);
+export default async function AutomationPage({ params }: Props) {
+  const a = getAutomation((await params).slug);
   if (!a) notFound();
   const path = `/automation/${a.slug}`;
   const crumbs = [

@@ -7,7 +7,7 @@
 > moved past. Where the two disagree, **the codebase wins** — the decisions
 > below were made on purpose and are documented at their call sites.
 >
-> **Stack (actual):** Next.js 14 App Router · React 18 · TypeScript strict ·
+> **Stack (actual):** Next.js 16 App Router (Turbopack) · React 18 · TypeScript strict ·
 > Tailwind v4 (`@tailwindcss/postcss`) · Radix/shadcn-ui · Lucide · Supabase ·
 > react-hook-form + zod · Recharts (CRM only) · deployed on Vercel.
 >

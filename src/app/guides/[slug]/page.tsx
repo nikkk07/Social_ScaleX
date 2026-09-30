@@ -19,8 +19,10 @@ export function generateStaticParams() {
   return GUIDES.map((g) => ({ slug: g.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
-  const g = getGuide(params.slug);
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const g = getGuide((await params).slug);
   if (!g) return {};
   const path = `/guides/${g.slug}`;
   return {
@@ -58,8 +60,8 @@ function BlockView({ b }: { b: Block }) {
   }
 }
 
-export default function GuidePage({ params }: { params: { slug: string } }) {
-  const g = getGuide(params.slug);
+export default async function GuidePage({ params }: Props) {
+  const g = getGuide((await params).slug);
   if (!g) notFound();
   const path = `/guides/${g.slug}`;
   const crumbs = [
