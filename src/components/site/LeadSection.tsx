@@ -4,6 +4,7 @@ import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
 import { CONTACT_OFFER, NEXT_STEPS, SERVICES } from '@/lib/content';
 import { CONTACTS, PRIMARY_PHONE, WHATSAPP_URL, whatsappLink } from '@/lib/site';
 import { LeadForm } from './LeadForm';
+import { AUTOMATIONS } from '@/lib/automation';
 
 export function LeadSection({
   id = 'get-started',
@@ -58,7 +59,7 @@ export function LeadSection({
         </div>
         <div className="card min-w-0 p-5 sm:p-8">
           <LeadForm
-            services={SERVICES.map((s) => s.name)}
+            services={[...SERVICES.map((s) => s.name), ...AUTOMATIONS.map((a) => a.name)]}
             phoneLabel={PRIMARY_PHONE.display}
             whatsappHref={whatsappLink('Hi Social ScaleX, I just sent the form on your website.')}
             defaultService={defaultService}

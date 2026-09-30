@@ -7,6 +7,7 @@ import { Breadcrumbs } from '@/components/site/Breadcrumbs';
 import { ServiceCard } from '@/components/site/Cards';
 import { LeadSection } from '@/components/site/LeadSection';
 import { Rich } from '@/components/site/Rich';
+import { CompareTable, OfferBox } from '@/components/site/Offer';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { GUIDES, getGuide, guideWordCount, type Block } from '@/lib/guides';
 import { getService } from '@/lib/content';
@@ -43,6 +44,10 @@ function BlockView({ b }: { b: Block }) {
       return <ul>{b.items.map((it) => <li key={it}><Rich text={it} /></li>)}</ul>;
     case 'ol':
       return <ol>{b.items.map((it) => <li key={it}><Rich text={it} /></li>)}</ol>;
+    case 'offer':
+      return <OfferBox variant={b.variant} />;
+    case 'compare':
+      return <CompareTable />;
     case 'quote':
       return (
         <figure>
@@ -79,7 +84,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
       <SiteShell>
         <article>
           <header className="border-b border-line">
-            <div className="wrap grid max-w-content pb-12 pt-8 lg:max-w-wide lg:grid-cols-[14rem_minmax(0,42rem)] lg:justify-center lg:gap-16">
+            <div className="wrap grid max-w-content grid-cols-1 pb-12 pt-8 lg:max-w-wide lg:grid-cols-[14rem_minmax(0,42rem)] lg:justify-center lg:gap-16">
               <div className="lg:col-start-2">
               <Breadcrumbs crumbs={crumbs} />
               <p className="eyebrow mt-10">Guide</p>
@@ -95,7 +100,7 @@ export default function GuidePage({ params }: { params: { slug: string } }) {
             </div>
           </header>
 
-          <div className="wrap grid max-w-content gap-10 py-12 lg:max-w-wide lg:grid-cols-[14rem_minmax(0,42rem)] lg:justify-center lg:gap-16">
+          <div className="wrap grid max-w-content grid-cols-1 gap-10 py-12 lg:max-w-wide lg:grid-cols-[14rem_minmax(0,42rem)] lg:justify-center lg:gap-16">
             <nav aria-label="On this page" className="hidden lg:block">
               <div className="sticky top-24">
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">On this page</p>

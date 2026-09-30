@@ -11,7 +11,11 @@ export type Block =
   | { t: 'p'; text: string }
   | { t: 'ul'; items: string[] }
   | { t: 'ol'; items: string[] }
-  | { t: 'quote'; text: string; cite: string };
+  | { t: 'quote'; text: string; cite: string }
+  /** Done-for-you offer box (₹99 comment-to-DM plan). */
+  | { t: 'offer'; variant: 'mid' | 'end' }
+  /** The do-it-yourself vs done-for-you table from automation.ts. */
+  | { t: 'compare' };
 
 export interface Source {
   label: string;
@@ -70,9 +74,219 @@ const S = {
   asci: { label: 'ASCI: Guidelines for influencer advertising in digital media', url: 'https://www.ascionline.in/wp-content/uploads/2023/08/GUIDELINES-FOR-INFLUENCER-ADVERTISING-IN-DIGITAL-MEDIA.pdf' },
   asciReport: { label: 'ASCI: Influencer disclosure report (6 Feb 2025)', url: 'https://www.ascionline.in/wp-content/uploads/2025/02/Press-Release-Influencer-Disclosure-Guidelines-ASCI-Report.pdf' },
   doca: { label: 'PIB: Department of Consumer Affairs, Endorsements Know-hows! (20 Jan 2023)', url: 'https://www.pib.gov.in/PressReleasePage.aspx?PRID=1892527' },
+  mbsSetup: { label: 'Meta Business Help: Set up Inbox automations in Meta Business Suite on desktop', url: 'https://www.facebook.com/business/help/318238182723007' },
+  mbsAbout: { label: 'Meta Business Help: About Inbox automations in Meta Business Suite', url: 'https://www.facebook.com/business/help/395965998733706' },
+  mbsConnectIg: { label: 'Meta Business Help: Connect your Instagram account to Meta Business Suite', url: 'https://www.facebook.com/business/help/428687951269163' },
+  igProfessional: { label: 'Meta Business Help: Set up a professional Instagram account', url: 'https://www.facebook.com/business/help/502981923235522' },
+  privateReplies: { label: 'Meta for Developers: Instagram Platform, Private Replies', url: 'https://developers.facebook.com/docs/instagram-platform/private-replies/' },
+  msgPolicy: { label: 'Meta for Developers: Messenger Platform and IG Messaging API policy', url: 'https://developers.facebook.com/documentation/business-messaging/messenger-platform/policy' },
+  manychat: { label: 'ManyChat: Pricing', url: 'https://manychat.com/pricing' },
 } satisfies Record<string, Source>;
 
 export const GUIDES: Guide[] = [
+  {
+    slug: 'free-instagram-comment-to-dm-automation',
+    title: 'How to set up Instagram comment-to-DM automation for free',
+    metaTitle: 'Free Instagram Comment to DM Automation Guide',
+    description:
+      'Set up Instagram comment-to-DM automation free with Meta Business Suite: step-by-step setup, keyword tips, Meta’s rules and free-tool limits. Updated 2026.',
+    summary:
+      'You can automate Instagram comment-to-DM for free with Meta Business Suite’s “Comment to message” automation on a computer. Switch to a professional account, connect Instagram to Meta Business Suite, open Inbox, click Automations, create “Comment to message”, add your keywords and write the DM. Meta allows one private reply per comment, within 7 days.',
+    published: '2026-09-30',
+    updated: '2026-09-30',
+    author: 'Social ScaleX team',
+    blocks: [
+      { t: 'h2', text: 'What comment-to-DM automation does' },
+      {
+        t: 'p',
+        text: 'You post a Reel and write “Comment PRICE and I’ll DM you the list”. Everyone who comments the keyword gets a direct message automatically, with your link inside. The comment boosts the post, and the DM starts a private conversation where people actually buy.',
+      },
+      {
+        t: 'p',
+        text: 'Meta builds this into Meta Business Suite for free. It calls it **Comment to message**: “Send a message reply to comments on your posts that contain specific keywords or phrases.” [Meta Business Help](https://www.facebook.com/business/help/318238182723007)',
+      },
+      { t: 'h2', text: 'What you need before you start' },
+      {
+        t: 'ul',
+        items: [
+          '**An Instagram professional account** (business or creator). Meta Business Suite only manages professional accounts.',
+          '**A computer.** Meta says keyword automations are only available in Meta Business Suite on desktop.',
+          '**Access to Meta Business Suite**, with the right business portfolio selected in the top-left menu.',
+          '**One keyword and one link**: what people comment, and where the DM sends them.',
+        ],
+      },
+      { t: 'h2', text: 'Step 1: Switch to a professional Instagram account' },
+      {
+        t: 'ol',
+        items: [
+          'Open Instagram and go to your profile.',
+          'Tap **More** (the menu) to open Settings and activity.',
+          'Under **For professionals**, tap **Account type and tools**.',
+          'Tap **Switch to professional account**, pick a category, then choose **Business** or **Creator**.',
+          'Add contact details, or skip. Connecting a Facebook Page is optional.',
+        ],
+      },
+      {
+        t: 'p',
+        text: 'Note: if your account is private, switching makes it public, and pending follow requests are accepted. [Meta Business Help](https://www.facebook.com/business/help/502981923235522)',
+      },
+      { t: 'h2', text: 'Step 2: Connect Instagram to Meta Business Suite' },
+      {
+        t: 'ol',
+        items: [
+          'On a computer, go to Meta Business Suite.',
+          'Log in with your **Instagram** username and password. You don’t need a Facebook Page for this.',
+          'If it asks you to link a Facebook Page and you don’t want to, sign out of Facebook or use a private browser window, then log in with Instagram again.',
+          'Already have a Facebook Page? Connect Instagram to the Page, or add both to the same business portfolio.',
+        ],
+      },
+      { t: 'p', text: 'Source: [Connect your Instagram account to Meta Business Suite](https://www.facebook.com/business/help/428687951269163)' },
+      { t: 'h2', text: 'Step 3: Create the Comment to message automation' },
+      {
+        t: 'ol',
+        items: [
+          'In Meta Business Suite, open **Inbox**.',
+          'Click **Automations**.',
+          'Click **Create automation** in the top right.',
+          'Choose **Comment to message**, then click **Create automation**.',
+          'Follow the on-screen steps: add your keywords and write the message Meta will send.',
+          'Save. The automation can take a few minutes to appear; refresh if you don’t see it.',
+          'Use the toggle under **Status** to turn it on or off. Click **Edit** to change it later.',
+        ],
+      },
+      { t: 'p', text: 'Source: [Set up Inbox automations in Meta Business Suite on desktop](https://www.facebook.com/business/help/318238182723007)' },
+      { t: 'h2', text: 'Step 4: Test it before you post' },
+      {
+        t: 'ol',
+        items: [
+          'Ask a friend, or use a second account, to comment your keyword on the post.',
+          'Check that the DM arrives and the link opens on a phone.',
+          'Comment a word that is not your keyword and check nothing is sent.',
+          'Only then announce the keyword in your Reel and caption.',
+        ],
+      },
+      { t: 'offer', variant: 'mid' },
+      { t: 'h2', text: 'Keywords that get comments' },
+      {
+        t: 'ul',
+        items: [
+          '**One short word**: PRICE, LINK, MENU, GUIDE. Easy to type on a phone.',
+          '**Say it three times**: on screen, out loud in the Reel, and in the caption.',
+          '**Avoid everyday words** like “nice” or “wow”, or every comment triggers a DM.',
+          '**Add spellings.** For keyword automations Meta says keywords are case-sensitive and must match exactly, so add PRICE, Price and price.',
+          '**One keyword, one job.** Meta says the same keyword can only be used in one keyword automated response.',
+        ],
+      },
+      { t: 'h2', text: 'Write a DM that gets clicked' },
+      {
+        t: 'ul',
+        items: [
+          'Open with thanks and their reason for commenting: “Here’s the price list you asked for.”',
+          'Put the link in the first two lines.',
+          'Say it is automated. Meta’s messaging policy says automated chats must disclose that a person is interacting with an automated service. [Meta policy](https://developers.facebook.com/documentation/business-messaging/messenger-platform/policy)',
+          'End with one next step: “Reply here if you want us to call you.”',
+        ],
+      },
+      { t: 'h2', text: 'Meta’s rules you must follow' },
+      {
+        t: 'ul',
+        items: [
+          '**One private reply per comment.** Only one message can be sent to the commenter. [Meta for Developers](https://developers.facebook.com/docs/instagram-platform/private-replies/)',
+          '**Within 7 days.** The message must be sent within 7 days of the comment.',
+          '**Follow-ups only if they reply**, and within 24 hours of their response.',
+          '**Never share your password** with a tool or agency. Instagram tells people not to use apps that ask for their login, and its terms forbid collecting other people’s login details. [Instagram Help](https://help.instagram.com/263751177667145)',
+        ],
+      },
+      { t: 'h2', text: 'Free third-party tools: what they really include' },
+      {
+        t: 'p',
+        text: 'Tools such as ManyChat add extras like buttons and lead forms. Check the limits first: ManyChat’s Free plan covers 25 active contacts a month and up to 4 active automations, and its Essential plan is $14 a month for 250 active contacts. [ManyChat pricing](https://manychat.com/pricing) For most small businesses, Meta Business Suite’s free automation is the better start.',
+      },
+      { t: 'h2', text: 'Common problems and fixes' },
+      {
+        t: 'ul',
+        items: [
+          '**The automation doesn’t appear:** wait a few minutes and refresh the page.',
+          '**You can’t find Automations:** check the right business portfolio is selected in the top-left menu, and that you’re on a computer, not the app.',
+          '**Automations stopped:** if you turned on Meta Business Agent, Meta pauses existing automations such as instant replies and away messages.',
+          '**No DM for an old comment:** private replies only work within 7 days of the comment.',
+        ],
+      },
+      { t: 'h2', text: 'Do it yourself, or let us do it?' },
+      { t: 'compare' },
+      { t: 'offer', variant: 'end' },
+    ],
+    sources: [S.mbsSetup, S.mbsAbout, S.mbsConnectIg, S.igProfessional, S.privateReplies, S.msgPolicy, S.igApps, S.igTerms, S.manychat],
+    services: [],
+  },
+  {
+    slug: 'increase-instagram-followers',
+    title: 'How to increase Instagram followers, likes and views without buying them',
+    metaTitle: 'How to Increase Instagram Followers Organically',
+    description:
+      'Grow Instagram followers, likes, views and comments the way Instagram rewards: original Reels, sends and watch time, Trial Reels. Why bought followers backfire.',
+    summary:
+      'Instagram grows accounts whose Reels people watch, share and like. Post original Reels with a strong opening, make content people send to friends, test new formats with Trial Reels, and keep your account eligible for recommendations. Bought followers, likes and comments can be removed by Instagram and can stop it recommending your account at all.',
+    published: '2026-09-30',
+    updated: '2026-09-30',
+    author: 'Social ScaleX team',
+    blocks: [
+      { t: 'h2', text: 'Why buying followers, likes or views backfires' },
+      {
+        t: 'p',
+        text: 'Instagram warns that apps selling likes or followers can get complete access to your account, that it may remove the engagement they create, and that it can limit your account. [Instagram Help](https://help.instagram.com/263751177667145) Repeatedly buying likes can also make an account ineligible for recommendations, which means none of its content is shown to non-followers. [Recommendations guidelines](https://help.instagram.com/313829416281232/)',
+      },
+      { t: 'p', text: 'Bought numbers also don’t buy anything from you. Real growth comes from people who choose to follow.' },
+      { t: 'h2', text: 'What Instagram actually rewards' },
+      {
+        t: 'quote',
+        text: 'The most important predictions we make are how likely you are to reshare a reel, watch a reel all the way through, like it, and go to the audio page.',
+        cite: 'Instagram, “Instagram ranking explained”, 31 May 2023',
+      },
+      {
+        t: 'p',
+        text: 'In 2025 Adam Mosseri named watch time, likes per reach and sends per reach as the top signals. Likes matter more with followers; sends matter more for reaching new people. [Social Media Today](https://www.socialmediatoday.com/news/instagram-shares-algorithm-insights-2025/738034/) Our [Reels reach guide](/guides/instagram-reels-reach) explains each signal.',
+      },
+      { t: 'h2', text: '10 ways to increase Instagram followers' },
+      {
+        t: 'ol',
+        items: [
+          '**Switch to a professional account** so you can see Insights and use business tools. It’s free. [Meta Business Help](https://www.facebook.com/business/help/502981923235522)',
+          '**Win the first seconds.** Show the result, the question or the product straight away.',
+          '**Make it worth sending.** Useful, local and specific content gets shared; sends reach people who don’t follow you yet.',
+          '**Post original content.** Instagram recommends the original when it finds identical posts, and stops recommending accounts that mostly repost. [Instagram for Creators](https://creators.instagram.com/blog/rewarding-original-creators-on-instagram)',
+          '**Export clean files.** Instagram shows watermarked, low-resolution or bordered Reels to fewer people. [Instagram](https://about.instagram.com/blog/announcements/instagram-ranking-explained)',
+          '**Test with Trial Reels.** They go to non-followers first, so you can test a new format without your followers seeing a miss. [Trial Reels](https://creators.instagram.com/blog/instagram-trial-reels)',
+          '**Collaborate.** A collab post with a creator or partner brand puts you in front of their audience.',
+          '**Turn comments into conversations.** A “comment PRICE” call to action with an automatic DM gets you comments and leads. See our [free comment-to-DM guide](/guides/free-instagram-comment-to-dm-automation).',
+          '**Write searchable captions.** Public professional content can be indexed by search engines, so say plainly what the post is and where it was shot. [Instagram Help](https://help.instagram.com/147542625391305)',
+          '**Check Account Status** in settings. If you are not eligible for recommendations, fix that first. [Account Status](https://help.instagram.com/653964212890722)',
+        ],
+      },
+      { t: 'h2', text: 'How to get more likes on Instagram' },
+      {
+        t: 'p',
+        text: 'Likes come mostly from people who already follow you. Post what your followers came for, reply to comments so they come back, and ask a simple question they can answer by liking or commenting. Track likes per reach, not total likes.',
+      },
+      { t: 'h2', text: 'How to get more views on Reels' },
+      {
+        t: 'p',
+        text: 'Views from non-followers depend on sends and watch time. Instagram measures both the share of a video watched and the seconds watched, so longer Reels are not penalised if people keep watching. [Social Media Today](https://www.socialmediatoday.com/news/instagram-longer-video-watch-time-versus-completion-rate/740916/)',
+      },
+      { t: 'h2', text: 'How to get more comments' },
+      {
+        t: 'p',
+        text: 'Give people a reason to comment: a keyword that gets them something (a price list, a guide, a discount), a choice between two options, or a question only your audience can answer. Reply to the first comments quickly to start the thread.',
+      },
+      { t: 'h2', text: 'Real numbers from accounts we manage' },
+      {
+        t: 'p',
+        text: 'the_subh_journey reached 1.6M views in 30 days with 15.9K followers, and prago.outdoors reached 3.1M views in 30 days with 14K followers: reach well beyond the following, driven by Reels. See the details in our [client results](/case-studies).',
+      },
+    ],
+    sources: [S.igApps, S.recGuidelines, S.rankingExplained, S.mosseri2025, S.originality2026, S.watchSeconds, S.trialReels, S.indexing, S.accountStatus, S.igProfessional],
+    services: ['instagram-marketing', 'reels-production'],
+  },
   {
     slug: 'instagram-reels-reach',
     title: 'How Instagram decides who sees your Reels',
@@ -353,6 +567,6 @@ export function getGuide(slug: string): Guide | undefined {
 
 /** Plain text of a guide's blocks, for word counts and schema. */
 export function guideWordCount(g: Guide): number {
-  const text = [g.summary, ...g.blocks.map((b) => ('text' in b ? b.text : b.items.join(' ')))].join(' ');
+  const text = [g.summary, ...g.blocks.map((b) => ('text' in b ? b.text : 'items' in b ? b.items.join(' ') : ''))].join(' ');
   return text.split(/\s+/).filter(Boolean).length;
 }

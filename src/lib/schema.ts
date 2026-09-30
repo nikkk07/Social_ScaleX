@@ -22,6 +22,8 @@ import {
 } from './site';
 import type { Faq, PortfolioItem, Service } from './content';
 import type { Guide } from './guides';
+import type { Automation } from './automation';
+import { PLAN_99 } from './automation';
 
 export type SchemaNode = Record<string, unknown>;
 
@@ -152,6 +154,40 @@ export function serviceNode(s: Service): SchemaNode {
         itemOffered: { '@type': 'Service', name: d },
       })),
     },
+  };
+}
+
+export function automationNode(a: Automation): SchemaNode {
+  const path = `/automation/${a.slug}`;
+  return {
+    '@type': 'Service',
+    '@id': `${abs(path)}#service`,
+    name: a.name,
+    serviceType: a.h1,
+    description: a.lede,
+    url: abs(path),
+    provider: { '@id': ORG_ID },
+    areaServed: { '@type': 'Country', name: 'India' },
+    ...(a.priced
+      ? {
+          offers: {
+            '@type': 'Offer',
+            name: PLAN_99.name,
+            price: String(PLAN_99.price),
+            priceCurrency: PLAN_99.currency,
+            priceSpecification: {
+              '@type': 'UnitPriceSpecification',
+              price: String(PLAN_99.price),
+              priceCurrency: PLAN_99.currency,
+              unitCode: 'MON',
+              referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' },
+            },
+            availability: 'https://schema.org/InStock',
+            url: abs(path),
+            seller: { '@id': ORG_ID },
+          },
+        }
+      : {}),
   };
 }
 

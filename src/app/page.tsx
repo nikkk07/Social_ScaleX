@@ -12,6 +12,10 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
 import { FAQS, PAINS, PORTFOLIO, PORTFOLIO_NOTE, PRINCIPLES, PROCESS, SERVICES, STATS } from '@/lib/content';
 import { GUIDES } from '@/lib/guides';
+import { AUTOMATIONS } from '@/lib/automation';
+import { GOALS } from '@/lib/goals';
+import { AutomationCard } from '@/components/site/AutomationCard';
+import { PriceCard } from '@/components/site/Offer';
 import { AREAS_SERVED, whatsappLink } from '@/lib/site';
 import { faqNode, graph, itemListNode, webPageNode } from '@/lib/schema';
 
@@ -113,6 +117,50 @@ export default function HomePage() {
           </div>
         </section>
 
+        {/* Automation */}
+        <section aria-labelledby="automation-title" className="py-section">
+          <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1.5fr_1fr]">
+            <div>
+              <SectionHead
+                id="automation-title"
+                eyebrow="Automation"
+                title="Auto-reply to every comment and DM"
+                intro="Instagram comment-to-DM, DM auto-reply, WhatsApp and Facebook automation on Meta’s official tools. Comment-to-DM starts at ₹99 a month."
+              />
+              <ul className="mt-10 grid gap-5 sm:grid-cols-2">
+                {AUTOMATIONS.slice(0, 4).map((a) => <li key={a.slug}><AutomationCard a={a} /></li>)}
+              </ul>
+              <p className="mt-6 text-ink-2">
+                Rather do it yourself? <Link className="link" href="/guides/free-instagram-comment-to-dm-automation">Read the free comment-to-DM guide</Link>.
+              </p>
+            </div>
+            <div className="lg:pt-24"><PriceCard /></div>
+          </div>
+        </section>
+
+        {/* Goals */}
+        <section aria-labelledby="goals-title" className="border-t border-line bg-surface py-section">
+          <div className="wrap">
+            <SectionHead id="goals-title" eyebrow="By goal" title="What do you want to grow?" />
+            <ul className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+              {GOALS.map((g) => (
+                <li key={g.slug}>
+                  <Link href={`/solutions/${g.slug}`} className="card card-link flex h-full flex-col p-6">
+                    <span className="font-display text-2xl text-ink">{g.name}</span>
+                    <span className="mt-2 line-clamp-3 text-ink-2">{g.metaDescription}</span>
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link href="/guides/increase-instagram-followers" className="card card-link flex h-full flex-col p-6">
+                  <span className="font-display text-2xl text-ink">More followers, likes and views</span>
+                  <span className="mt-2 line-clamp-3 text-ink-2">How to grow on Instagram the way Instagram rewards, without buying followers.</span>
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </section>
+
         {/* Results */}
         <section aria-labelledby="results-title" className="py-section">
           <div className="wrap">
@@ -172,8 +220,8 @@ export default function HomePage() {
             <SectionHead
               id="areas-title"
               eyebrow="Where we work"
-              title="Based in Delhi NCR. Working across India."
-              intro={`Shoots happen on location across ${AREAS_SERVED.join(', ')}. Page management, ads and reporting run remotely, so brands anywhere in India work with us the same way.`}
+              title="A social media agency near you in Delhi NCR"
+              intro={`Based in Delhi NCR, we shoot on location across ${AREAS_SERVED.join(', ')}. Page management, ads, automation and reporting run remotely, so brands anywhere in India work with us the same way.`}
             />
             <ul className="flex flex-wrap gap-3">
               {[...AREAS_SERVED, 'Rest of India (remote)'].map((a) => (
@@ -204,7 +252,7 @@ export default function HomePage() {
               <Link href="/guides" className="btn btn-secondary self-start md:self-auto">All guides</Link>
             </div>
             <ul className="mt-12 grid gap-5 md:grid-cols-3">
-              {GUIDES.map((g) => (
+              {GUIDES.slice(0, 3).map((g) => (
                 <li key={g.slug}>
                   <Link href={`/guides/${g.slug}`} className="card card-link flex h-full flex-col p-6">
                     <span className="font-display text-2xl leading-snug text-ink">{g.title}</span>

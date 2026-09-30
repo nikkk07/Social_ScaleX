@@ -84,6 +84,10 @@ export const SERVICES: Service[] = [
     ],
     faqs: [
       {
+        q: 'Is there an Instagram marketing agency near me?',
+        a: 'If you are in Delhi, Noida or Gurugram, yes: we are based in Delhi NCR and shoot on location across all three. Page management, ads and reporting run remotely, so we also work with brands anywhere in India.',
+      },
+      {
         q: 'Will you need my Instagram password?',
         a: 'No. You add us as a partner in your Meta business portfolio, so the account stays yours and you can remove our access at any time. Instagram’s own terms tell people not to share or collect login details, and we don’t ask for them.',
       },
@@ -139,6 +143,10 @@ export const SERVICES: Service[] = [
       { title: 'Learn', desc: 'We check watch time and shares on every Reel and feed what worked into the next shoot.' },
     ],
     faqs: [
+      {
+        q: 'Can we hire a content creator for our brand?',
+        a: 'Yes. Our in-house team works as your content creator: we plan, shoot, edit and caption Reels, Shorts and posts for your brand. If you want creators with their own following to post about you, that is influencer marketing.',
+      },
       {
         q: 'What makes a Reel reach more people?',
         a: 'Instagram says its most important Reels predictions are how likely someone is to share it, watch it to the end, like it and open its audio page. Adam Mosseri has named watch time, likes per reach and sends per reach as the top signals. So we edit for the first seconds and for rewatches, not for the thumbnail.',
@@ -353,6 +361,10 @@ export const SERVICES: Service[] = [
       { title: 'Report', desc: 'Reach, views and clicks per creator, so the next campaign books the ones that worked.' },
     ],
     faqs: [
+      {
+        q: 'How do I find Instagram influencers in Delhi for my brand?',
+        a: 'Start with creators your customers already follow, then check each one’s Insights: audience city and age, reach to non-followers and past sponsored posts. We shortlist Instagram influencers and content creators across Delhi NCR this way and handle outreach and rates.',
+      },
       {
         q: 'How do you check an influencer’s audience is real?',
         a: 'We ask for the creator’s own Insights, not just the public follower count: reach, audience cities and age, and how much of their reach comes from non-followers. Instagram says buying likes or using coordinated comment networks can make an account ineligible for recommendations, which is why padded accounts often show many followers and little reach.',
@@ -686,7 +698,7 @@ export const FAQS: Faq[] = [
   },
   {
     q: 'How much does social media marketing cost?',
-    a: 'It depends on the scope: how many platforms, how much original shooting, and whether ads run alongside organic content. We price it on the free strategy call instead of publishing a rate card, because a creator who needs Reels and a store that needs shoots plus ads are different jobs. Ad budgets are always separate and paid by you directly.',
+    a: 'It depends on the scope: how many platforms, how much original shooting, and whether ads run alongside organic content. We price it on the free strategy call instead of publishing a rate card, because a creator who needs Reels and a store that needs shoots plus ads are different jobs. Ad budgets are always separate and paid by you directly. The one fixed price is Instagram comment-to-DM automation at ₹99 a month.',
   },
   {
     q: 'What makes Social ScaleX different from other agencies?',
@@ -724,7 +736,7 @@ export const NEXT_STEPS: Step[] = [
   { title: 'We call you back', desc: 'Usually within a few hours, during business hours.' },
 ];
 
-const PROPER = /^(Instagram|Meta|Google|YouTube|Reels|Facebook)\b/;
+const PROPER = /^(Instagram|Meta|Google|YouTube|Reels|Facebook|WhatsApp)\b|^[A-Z]{2}/;
 
 /** A service name as it reads mid-sentence: “influencer marketing”, but “Google Ads”. */
 export function inSentence(name: string): string {

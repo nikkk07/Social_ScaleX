@@ -19,12 +19,12 @@
 > | "Apple Liquid Glass", dark theme, Framer Motion, 3D tilt, magnetic buttons | Light editorial design (Sep 2026): ivory `#FAF8F4`, ink `#16140F`, one coral accent, Fraunces + Inter; tokens in `src/styles/tokens.css`. No motion library, no reveal-on-scroll | The owner asked for a light, premium, human-looking site. Motion-rendered content is invisible until hydration and costs JS on every page |
 > | WebGL / R3F background; Lenis smooth scroll; GSAP | None. gsap and lenis are uninstalled | JS weight and scroll hijacking hurt Core Web Vitals and accessibility |
 > | Zustand for global state | Not installed; no global UI state exists | Nothing needs it — adding it would be architecture for its own sake |
-> | `/pricing` page, `AggregateRating` schema | Neither exists | Owner decided: no public pricing (Sep 2026). No self-served review markup |
+> | `/pricing` page, `AggregateRating` schema | Neither exists | Owner decided (Sep 2026): the only public price is Instagram comment-to-DM at ₹99/month (`PLAN_99` in `src/lib/automation.ts`); everything else is quoted on a call. No self-served review markup |
 > | City landing pages | None; one page per service | Google's doorway-page spam policy. Add a city page only with real local work to show |
 >
 > **Two rules that override anything below:**
 >
-> 1. **Content lives in `src/lib/content.ts`.** Page copy, every JSON-LD node
+> 1. **Content lives in `src/lib/` (`content.ts`, `automation.ts`, `goals.ts`, `guides.ts`).** Page copy, every JSON-LD node
 >    and `/llms.txt` all render from it. Never write marketing copy into a
 >    component — schema that contradicts visible text gets discounted.
 > 2. **Never invent a metric, a price, a client name or a review.** Figures in

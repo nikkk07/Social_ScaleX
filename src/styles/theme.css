@@ -243,19 +243,20 @@
   .faq[open] > summary::after { transform: rotate(45deg); }
   .faq > div { padding: 0 3rem 1.5rem 0; color: var(--color-ink-2); }
 
-  /* ── Long-form reading (guides, legal) ── */
+  /* ── Long-form reading (guides, legal). Anything inside .not-prose
+     (offer boxes, tables, cards) keeps its own styling. ── */
   .prose-site { color: var(--color-ink-2); font-size: var(--text-lg); line-height: 1.7; }
   .prose-site > * + * { margin-top: 1.25em; }
-  .prose-site h2 { color: var(--color-ink); font-size: var(--text-3xl); line-height: 1.2; margin-top: 2.2em; }
-  .prose-site h3 { color: var(--color-ink); font-size: var(--text-xl); line-height: 1.3; margin-top: 1.8em; }
-  .prose-site h2 + *, .prose-site h3 + * { margin-top: 0.75em; }
-  .prose-site ul, .prose-site ol { padding-left: 1.25em; }
-  .prose-site ul { list-style: disc; }
-  .prose-site ol { list-style: decimal; }
-  .prose-site li + li { margin-top: 0.5em; }
-  .prose-site li::marker { color: var(--color-coral); }
-  .prose-site strong { color: var(--color-ink); font-weight: 600; }
-  .prose-site a { color: var(--color-coral-text); text-decoration: underline; text-underline-offset: 0.2em; }
+  .prose-site :is(h2):not(.not-prose *) { color: var(--color-ink); font-size: var(--text-3xl); line-height: 1.2; margin-top: 2.2em; }
+  .prose-site :is(h3):not(.not-prose *) { color: var(--color-ink); font-size: var(--text-xl); line-height: 1.3; margin-top: 1.8em; }
+  .prose-site :is(h2, h3):not(.not-prose *) + * { margin-top: 0.75em; }
+  .prose-site :is(ul, ol):not(.not-prose *) { padding-left: 1.25em; }
+  .prose-site ul:not(.not-prose *) { list-style: disc; }
+  .prose-site ol:not(.not-prose *) { list-style: decimal; }
+  .prose-site li:not(.not-prose *) + li { margin-top: 0.5em; }
+  .prose-site li:not(.not-prose *)::marker { color: var(--color-coral); }
+  .prose-site strong:not(.not-prose *) { color: var(--color-ink); font-weight: 600; }
+  .prose-site a:not(.not-prose *) { color: var(--color-coral-text); text-decoration: underline; text-underline-offset: 0.2em; }
   .prose-site blockquote {
     border-left: 3px solid var(--color-coral);
     padding-left: 1.25rem;

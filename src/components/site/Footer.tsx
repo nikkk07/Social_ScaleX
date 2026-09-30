@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Logo } from './Logo';
-import { SERVICE_LINKS } from './nav';
+import { AUTOMATION_LINKS, GOAL_LINKS, SERVICE_LINKS } from './nav';
 import { GUIDES } from '@/lib/guides';
 import { AREAS_SERVED, CONTACTS, SITE_NAME, WHATSAPP_URL, SOCIAL_PROFILES } from '@/lib/site';
 
@@ -23,7 +23,7 @@ export function Footer() {
   const socials = (Object.keys(SOCIAL_PROFILES) as (keyof typeof SOCIAL_PROFILES)[]).filter((k) => SOCIAL_PROFILES[k]);
   return (
     <footer className="border-t border-line bg-paper-2 pb-28 md:pb-0">
-      <div className="wrap grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div className="wrap grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
         <div className="max-w-sm">
           <Logo />
           <p className="mt-4 text-sm text-ink-2">
@@ -49,7 +49,8 @@ export function Footer() {
             </ul>
           ) : null}
         </div>
-        <FooterCol title="Services" links={SERVICE_LINKS.map((s) => ({ href: s.href, label: s.label }))} />
+        <FooterCol title="Services" links={[...SERVICE_LINKS.map((s) => ({ href: s.href, label: s.label })), ...GOAL_LINKS]} />
+        <FooterCol title="Automation" links={AUTOMATION_LINKS.map((s) => ({ href: s.href, label: s.label }))} />
         <FooterCol title="Company" links={COMPANY} />
         <FooterCol title="Guides" links={GUIDES.map((g) => ({ href: `/guides/${g.slug}`, label: g.metaTitle }))} />
       </div>

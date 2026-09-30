@@ -42,6 +42,22 @@ Get listed on all five: that is how you appear for the head term early.
 | Meta ads vs Google Ads | /guides/meta-ads-vs-google-ads | Yes |
 | How to choose a social media agency | /guides/choose-social-media-agency | Yes |
 | Social media marketing agency Delhi NCR | / (homepage) + directories | Slow |
+| Comment to DM, Instagram auto DM, comment DM automation | /automation/instagram-comment-to-dm (₹99) | Yes |
+| Free comment to DM automation, how to set up auto DM | /guides/free-instagram-comment-to-dm-automation | Yes |
+| Instagram DM auto reply, auto replier, keyword reply | /automation/instagram-dm-auto-reply | Yes |
+| WhatsApp auto reply, WhatsApp Business automation | /automation/whatsapp-automation | Medium |
+| Facebook comment auto reply, Messenger automation | /automation/facebook-auto-reply | Yes |
+| YouTube comment management / spam | /automation/youtube-comment-management | Medium |
+| Increase Instagram followers / likes / views / comments | /guides/increase-instagram-followers | Medium (big term) |
+| Increase sales, lead generation, sales from social | /solutions/increase-sales | Medium |
+| Brand awareness, brand growth | /solutions/brand-awareness | Medium |
+| Product launch, product promotion / boost | /solutions/product-launch | Medium |
+| Instagram marketing near me, social media agency near me | Homepage + Google Business Profile | Only via GBP |
+
+"Near me" searches are ranked mainly from the Google Business Profile
+(distance, relevance, reviews), not from pages that repeat "near me". The site
+supports it with clear Delhi, Noida and Gurugram signals; the profile does the
+ranking.
 
 ## Rules that keep the site safe (Google spam policies)
 

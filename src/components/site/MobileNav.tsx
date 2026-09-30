@@ -6,7 +6,7 @@ import { Menu, X } from 'lucide-react';
 
 type L = { href: string; label: string };
 
-export function MobileNav({ services, nav, phone, phoneLabel, whatsapp }: { services: L[]; nav: L[]; phone: string; phoneLabel: string; whatsapp: string }) {
+export function MobileNav({ services, automations, nav, phone, phoneLabel, whatsapp }: { services: L[]; automations: L[]; nav: L[]; phone: string; phoneLabel: string; whatsapp: string }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const id = useId();
@@ -53,6 +53,14 @@ export function MobileNav({ services, nav, phone, phoneLabel, whatsapp }: { serv
           <p className="eyebrow">Services</p>
           <ul className="mt-3 grid gap-1 sm:grid-cols-2">
             {services.map((s) => (
+              <li key={s.href}>
+                <Link href={s.href} className="block rounded-xl px-3 py-3 text-base font-medium text-ink hover:bg-paper-2">{s.label}</Link>
+              </li>
+            ))}
+          </ul>
+          <p className="eyebrow mt-6">Automation</p>
+          <ul className="mt-3 grid gap-1 sm:grid-cols-2">
+            {automations.map((s) => (
               <li key={s.href}>
                 <Link href={s.href} className="block rounded-xl px-3 py-3 text-base font-medium text-ink hover:bg-paper-2">{s.label}</Link>
               </li>

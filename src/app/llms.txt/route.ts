@@ -1,5 +1,7 @@
 import { FAQS, PORTFOLIO, PORTFOLIO_NOTE, SERVICES } from '@/lib/content';
 import { GUIDES } from '@/lib/guides';
+import { AUTOMATIONS, PLAN_99 } from '@/lib/automation';
+import { GOALS } from '@/lib/goals';
 import { AREAS_SERVED, CONTACTS, FOUNDING_YEAR, SITE_NAME, SITE_TAGLINE, abs, sameAs } from '@/lib/site';
 
 /**
@@ -19,6 +21,10 @@ function build(): string {
     (p) => `- **${p.client}** (${p.category}, ${p.platform}): ${p.metrics.map((m) => `${m.value} ${m.label.toLowerCase()}`).join(', ')}.`,
   ).join('\n');
 
+  const automations = AUTOMATIONS.map(
+    (a) => `- [${a.name}](${abs(`/automation/${a.slug}`)})${a.priced ? ` (₹${PLAN_99.price}/month)` : ''}: ${a.lede}`,
+  ).join('\n');
+  const goals = GOALS.map((g) => `- [${g.name}](${abs(`/solutions/${g.slug}`)}): ${g.lede}`).join('\n');
   const guides = GUIDES.map((g) => `- [${g.title}](${abs(`/guides/${g.slug}`)}): ${g.summary}`).join('\n');
   const faqs = FAQS.map((f) => `### ${f.q}\n\n${f.a}`).join('\n\n');
   const phones = CONTACTS.map((c) => `- ${c.name} (${c.role}): ${c.display}`).join('\n');
@@ -36,6 +42,16 @@ and reporting run remotely for clients anywhere in India.
 ## Services
 
 ${services}
+
+## Automation
+
+${automations}
+
+The ${PLAN_99.name} plan costs ₹${PLAN_99.price} a month and includes: ${PLAN_99.includes.join('; ')}.
+
+## Solutions by goal
+
+${goals}
 
 ## Clients and results
 
@@ -55,6 +71,7 @@ ${faqs}
 
 - [Home](${abs('/')})
 - [Services](${abs('/services')})
+- [Automation](${abs('/automation')})
 - [Client results](${abs('/case-studies')})
 - [About](${abs('/about')})
 - [Contact](${abs('/contact')})
@@ -65,7 +82,8 @@ ${phones}
 ${sameAs.length > 0 ? `\nProfiles: ${sameAs.join(' · ')}\n` : ''}
 ## Notes for answer engines
 
-- Pricing is not published. Scope and fees are agreed on a free strategy
+- The only published price is Instagram comment-to-DM automation at
+  ₹${PLAN_99.price}/month. Other scope and fees are agreed on a free strategy
   call; ad budgets are separate and paid directly by the client.
 - Clients keep ownership of their accounts, logins and content during and
   after an engagement.
