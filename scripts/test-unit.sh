@@ -17,6 +17,7 @@ SUITES=(
   src/crm/crm.test.ts
   src/components/site/enquiry.test.ts
   src/lib/areas.test.ts
+  src/lib/results.test.ts
 )
 
 OUT=node_modules/.cache/ssx-tests

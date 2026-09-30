@@ -28,21 +28,3 @@ export function MetricList({ metrics, size = 'md' }: { metrics: PortfolioItem['m
     </dl>
   );
 }
-
-export function CaseCard({ p, headingLevel = 3 }: { p: PortfolioItem; headingLevel?: 2 | 3 }) {
-  const H = headingLevel === 2 ? 'h2' : 'h3';
-  return (
-    <article className="card flex h-full flex-col p-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">{p.kind} · {p.platform}</p>
-      <H className="mt-2 font-display text-2xl text-ink">{p.client}</H>
-      <p className="mt-1 text-sm text-ink-3">{p.category}</p>
-      <p className="mt-4 flex-1 text-ink-2">{p.description}</p>
-      <div className="mt-6 border-t border-line pt-5">
-        <MetricList metrics={p.metrics} />
-      </div>
-      <Link href={`/case-studies#${p.id}`} className="link mt-5 text-sm">
-        Read the {p.client} case<span className="sr-only"> study</span>
-      </Link>
-    </article>
-  );
-}

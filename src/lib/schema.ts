@@ -20,7 +20,7 @@ import {
   abs,
   sameAs,
 } from './site';
-import type { Faq, PortfolioItem, Service } from './content';
+import { RESULTS_AS_OF, type Faq, type PortfolioItem, type Service } from './content';
 import type { Guide } from './guides';
 import type { Automation } from './automation';
 import { PLAN_99 } from './automation';
@@ -229,13 +229,18 @@ export function caseStudyNode(item: PortfolioItem): SchemaNode {
     '@id': `${abs('/case-studies')}#${item.id}`,
     name: `${item.client}: ${item.category}`,
     description: item.detail,
-    about: item.category,
+    url: `${abs('/case-studies')}#${item.id}`,
+    about: {
+      '@type': item.kind === 'Creator' ? 'Person' : 'Organization',
+      name: item.client,
+      sameAs: item.profiles.map((p) => p.url),
+    },
     creator: { '@id': ORG_ID },
-    additionalProperty: item.metrics.map((m) => ({
-      '@type': 'PropertyValue',
-      name: m.label,
-      value: m.value,
-    })),
+    dateModified: RESULTS_AS_OF,
+    additionalProperty: [
+      ...item.metrics.map((m) => ({ '@type': 'PropertyValue', name: m.label, value: m.value })),
+      ...item.growth.map((g) => ({ '@type': 'PropertyValue', name: `${g.label} (${g.period})`, value: `${g.fromText} to ${g.toText}` })),
+    ],
   };
 }
 

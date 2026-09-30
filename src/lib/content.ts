@@ -104,7 +104,7 @@ export const SERVICES: Service[] = [
         a: 'Yes. Your Facebook Page is posted from the same monthly calendar, with formats adjusted for Facebook. If you also run ads, both accounts sit in one Meta business portfolio that you own.',
       },
     ],
-    caseIds: ['acdelhivlogs', 'subh', 'prago'],
+    caseIds: ['prago', 'saini-telecom', 'big-discount-mart'],
     related: ['reels-production', 'meta-ads', 'social-media-strategy'],
   },
   {
@@ -164,7 +164,7 @@ export const SERVICES: Service[] = [
         a: 'Most of our shoots happen across Delhi, Noida and Gurugram. If you are elsewhere in India, ask on the call. Editing footage you send us works from anywhere.',
       },
     ],
-    caseIds: ['acdelhivlogs', 'journey', 'subh'],
+    caseIds: ['prago', 'acdelhivlogs', 'subh'],
     related: ['instagram-marketing', 'product-shoots', 'youtube-management'],
   },
   {
@@ -282,10 +282,10 @@ export const SERVICES: Service[] = [
     name: 'YouTube channel management',
     metaTitle: 'YouTube Channel Management Services',
     metaDescription:
-      'YouTube channel management for brands and creators: titles, thumbnails, Shorts, playlists and monthly Studio reviews. One channel we run has 96.6K subscribers.',
+      'YouTube channel management for brands and creators: titles, thumbnails, Shorts, playlists and Studio reviews. One channel we run has passed 100K subscribers.',
     h1: 'YouTube channel management for brands and creators',
     lede:
-      'We run the channel around your videos: titles, descriptions and thumbnails, Shorts cut from long-form, playlists and channel layout, the upload schedule, and a monthly review of watch time and subscribers from YouTube Studio. One channel we manage today has 96.6K subscribers.',
+      'We run the channel around your videos: titles, descriptions and thumbnails, Shorts cut from long-form, playlists and channel layout, the upload schedule, and a monthly review of watch time and subscribers from YouTube Studio. One channel we work on today has 101K subscribers.',
     outcome:
       'Your videos go out packaged properly, on schedule, and you know which ones are bringing subscribers.',
     deliverables: [
@@ -378,7 +378,7 @@ export const SERVICES: Service[] = [
         a: 'It depends on the goal. Smaller creators with a tight local audience usually suit footfall and product trial; bigger ones suit launch awareness. We shortlist both and compare them on audience match and past reach, not follower count.',
       },
     ],
-    caseIds: [],
+    caseIds: ['wanna-party'],
     related: ['reels-production', 'instagram-marketing', 'meta-ads'],
   },
   {
@@ -427,7 +427,7 @@ export const SERVICES: Service[] = [
         a: 'Event coverage is edited the same week, including short teaser cuts you can post while people are still talking about the event.',
       },
     ],
-    caseIds: ['prago'],
+    caseIds: ['prago', 'saini-telecom'],
     related: ['reels-production', 'instagram-marketing', 'meta-ads'],
   },
   {
@@ -478,7 +478,7 @@ export const SERVICES: Service[] = [
         a: 'The ones tied to the business: enquiries, sales, bookings. On the platform side, reach to non-followers, watch time and shares tell you whether content is travelling. Follower count on its own tells you very little.',
       },
     ],
-    caseIds: ['acdelhivlogs', 'journey', 'subh', 'prago'],
+    caseIds: ['acdelhivlogs', 'subh', 'journey'],
     related: ['instagram-marketing', 'meta-ads', 'google-ads'],
   },
 ];
@@ -496,104 +496,260 @@ export interface Metric {
 
 export interface PortfolioItem {
   id: string;
+  /** Display name. */
   client: string;
+  /** Instagram username without the @. */
+  handle: string;
+  /** Profile photo from the client’s own Instagram, saved in /public/clients. */
+  avatar: string;
+  profiles: { label: 'Instagram' | 'YouTube'; url: string }[];
   category: string;
   platform: 'Instagram' | 'Instagram + YouTube' | 'YouTube';
   kind: 'Creator' | 'Business';
+  goal: ResultGoal;
+  status: 'Active' | 'Past';
   description: string;
   detail: string;
+  /** Headline figures, current at `asOf` (or at hand-over for past clients). */
   metrics: Metric[];
+  /** Before → after, from our own earlier published snapshot or hand-over records. */
+  growth: Growth[];
   services: string[];
 }
 
+export type ResultGoal = 'sales' | 'awareness' | 'creator';
+
+export const GOAL_LABEL: Record<ResultGoal, string> = {
+  sales: 'Sales growth',
+  awareness: 'Brand awareness',
+  creator: 'Creator growth',
+};
+
+export interface Growth {
+  label: string;
+  from: number;
+  to: number;
+  fromText: string;
+  toText: string;
+  period: string;
+}
+
+/** "2.5×" when the result at least doubled, otherwise "+62%". Always rounded down. */
+export function growthChange(g: Growth): string {
+  const r = g.to / g.from;
+  if (r >= 2) return `${Math.floor(r * 10) / 10}×`;
+  return `+${Math.floor((r - 1) * 100)}%`;
+}
+
+/** Date the current figures were recorded (client dashboards + public counts). */
+export const RESULTS_AS_OF = '2026-09-30';
+/** Date our earlier snapshot was first published on this site. */
+const JUL = 'Jul → Sep 2026';
+
 /**
- * Point-in-time snapshots from each client's own Instagram or YouTube
- * dashboard, published with permission. TODO(verify-metrics): re-pull before
- * relying on them as current. To add a client, append an entry: the homepage,
- * /case-studies, the service pages, the schema and /llms.txt all follow.
+ * Client results, published with permission. Current figures: each client's
+ * Instagram professional dashboard or YouTube Studio, recorded 30 Sep 2026;
+ * follower and subscriber counts cross-checked against the public profiles
+ * the same day. "Before" figures: the snapshot this site first published on
+ * 1 Jul 2026, or the follower count when we took the account over.
+ * To add a client, append an entry: /case-studies, the homepage, service
+ * pages, schema and /llms.txt all follow.
  */
 export const PORTFOLIO: PortfolioItem[] = [
   {
-    id: 'acdelhivlogs',
-    client: 'acdelhivlogs',
-    category: 'Travel & lifestyle vlogging',
-    platform: 'Instagram + YouTube',
-    kind: 'Creator',
-    description:
-      'Digital creator covering events, places, travel and adventure across Delhi NCR. Full Instagram and YouTube management.',
-    detail:
-      'The largest account we manage, run on Instagram and YouTube at once. The work covers the full cycle: shooting on location around Delhi NCR, editing for vertical Reels and long-form YouTube, scheduling and community management. The two platforms feed each other: Reels bring the reach, the channel holds the watch time.',
-    metrics: [
-      { value: '336K', label: 'Instagram followers' },
-      { value: '4.2M', label: 'Views in 30 days' },
-      { value: '96.6K', label: 'YouTube subscribers' },
-    ],
-    services: ['instagram-marketing', 'reels-production', 'youtube-management'],
-  },
-  {
-    id: 'journey',
-    client: 'Journey Without Visa',
-    category: 'Travel content',
-    platform: 'Instagram + YouTube',
-    kind: 'Creator',
-    description:
-      'Reel creator covering new places, events, travel, lifestyle and food, built from a standing start into a real audience.',
-    detail:
-      'Built from a standing start rather than an account that was already working. Reels on travel, food and events for Instagram, with the same footage cut for YouTube. The subscriber figure is a 28-day movement, not a lifetime total: it shows the channel is still adding audience, which is the number that matters on a young channel.',
-    metrics: [
-      { value: '10.6K', label: 'Instagram followers' },
-      { value: '22.1K', label: 'YouTube subscribers' },
-      { value: '+514', label: 'Subscribers in 28 days' },
-    ],
-    services: ['reels-production', 'youtube-management', 'instagram-marketing'],
-  },
-  {
-    id: 'subh',
-    client: 'the_subh_journey',
-    category: 'Travel & stories',
+    id: 'saini-telecom',
+    client: 'Saini Telecom',
+    handle: 'saini_telecom__',
+    avatar: '/clients/saini-telecom.webp',
+    profiles: [{ label: 'Instagram', url: 'https://www.instagram.com/saini_telecom__/' }],
+    category: 'Mobile phone and electronics store, Delhi',
     platform: 'Instagram',
-    kind: 'Creator',
+    kind: 'Business',
+    goal: 'sales',
+    status: 'Active',
     description:
-      'Reel creator covering travel, stories, events and Delhi NCR.',
+      'Delhi mobile, electronics and LED TV store. From 400 to 12K Instagram followers since June 2026.',
     detail:
-      'Instagram only, and our clearest example of reach outrunning follower count. 1.6M views in 30 days against a following of 15.9K means Reels are travelling well beyond the existing audience. Interactions are tracked alongside views, because reach without engagement does not compound.',
+      'A local store, so the job is enquiries and footfall. We took the account over at 400 followers at the start of June 2026. We run the page, shoot the phones and electronics in the store, and edit them into Reels. Four months later it has 12K followers and passed 4M views in the last 30 days.',
     metrics: [
-      { value: '15.9K', label: 'Instagram followers' },
-      { value: '1.6M', label: 'Views in 30 days' },
-      { value: '109.6K', label: 'Interactions' },
+      { value: '4M+', label: 'Views in the last 30 days' },
+      { value: '12K', label: 'Instagram followers' },
     ],
+    growth: [{ label: 'Followers', from: 400, to: 12_000, fromText: '400', toText: '12K', period: 'Jun → Sep 2026' }],
+    services: ['instagram-marketing', 'reels-production', 'product-shoots'],
+  },
+  {
+    id: 'big-discount-mart',
+    client: 'Big Discount Mart',
+    handle: 'bigdiscountmartofficial',
+    avatar: '/clients/big-discount-mart.webp',
+    profiles: [{ label: 'Instagram', url: 'https://www.instagram.com/bigdiscountmartofficial/' }],
+    category: 'Discount and gift store, Nangloi, Delhi',
+    platform: 'Instagram',
+    kind: 'Business',
+    goal: 'sales',
+    status: 'Past',
+    description:
+      'Discount store for gifts and everyday brands in Nangloi, Delhi. Taken from 800 to 10.8K followers in two months.',
+    detail:
+      'We picked the account up at 800 followers and handed it back at 10.8K two months later. We ran the page and shot and edited Reels of the store and its deals, so local followers knew what was on offer before they visited.',
+    metrics: [
+      { value: '10.8K+', label: 'Followers at hand-over' },
+    ],
+    growth: [{ label: 'Followers', from: 800, to: 10_800, fromText: '800', toText: '10.8K', period: 'In 2 months' }],
     services: ['instagram-marketing', 'reels-production'],
   },
   {
     id: 'prago',
-    client: 'prago.outdoors',
-    category: 'E-commerce, outdoor gear',
+    client: 'PraGo Outdoors',
+    handle: 'prago.outdoors',
+    avatar: '/clients/prago.webp',
+    profiles: [{ label: 'Instagram', url: 'https://www.instagram.com/prago.outdoors/' }],
+    category: 'Camping, trekking and riding gear store',
     platform: 'Instagram',
     kind: 'Business',
+    goal: 'sales',
+    status: 'Active',
     description:
-      'Camping, trekking, hiking and riding gear store. An Instagram presence built to sell products directly.',
+      'Camping, trekking, hiking and riding gear. Instagram built to sell products, not to collect likes.',
     detail:
-      'A business account, so the brief is different: Instagram exists to move product. Camping, trekking, hiking and riding gear is shot in use rather than on white backgrounds. 3.1M views in 30 days against a following of 14K, with the page built to send people to the store rather than to collect followers.',
+      'The brief is sales, so gear is shot in use rather than on white backgrounds, and the page is built to send people to the store rather than to collect followers. Product shoots and Reels come from the same shoot days. Since July the account has gone from 14K to 35.3K followers and from 3.1M to over 6M views a month.',
     metrics: [
-      { value: '14K', label: 'Followers' },
-      { value: '3.1M', label: 'Views in 30 days' },
+      { value: '6M+', label: 'Views in the last 30 days' },
+      { value: '35.3K', label: 'Instagram followers' },
+    ],
+    growth: [
+      { label: 'Followers', from: 14_000, to: 35_300, fromText: '14K', toText: '35.3K', period: JUL },
+      { label: 'Views in 30 days', from: 3_100_000, to: 6_000_000, fromText: '3.1M', toText: '6M+', period: JUL },
     ],
     services: ['instagram-marketing', 'reels-production', 'product-shoots'],
+  },
+  {
+    id: 'acdelhivlogs',
+    client: 'AC Delhi Vlogs',
+    handle: 'acdelhivlogs',
+    avatar: '/clients/acdelhivlogs.webp',
+    profiles: [
+      { label: 'Instagram', url: 'https://www.instagram.com/acdelhivlogs/' },
+      { label: 'YouTube', url: 'https://www.youtube.com/@acdelhivlogs' },
+    ],
+    category: 'Events, places and travel in Delhi NCR',
+    platform: 'Instagram + YouTube',
+    kind: 'Creator',
+    goal: 'creator',
+    status: 'Active',
+    description:
+      'Creator covering events, places, travel and adventure across Delhi NCR. The largest account we work on.',
+    detail:
+      'Content strategy, shooting and editing for Instagram and YouTube at once. Reels bring the reach and the channel holds the watch time, so each shoot is planned for both. Since July the account has added 22K Instagram followers and crossed 100K YouTube subscribers.',
+    metrics: [
+      { value: '358K', label: 'Instagram followers' },
+      { value: '101K', label: 'YouTube subscribers' },
+    ],
+    growth: [
+      { label: 'Instagram followers', from: 336_000, to: 358_000, fromText: '336K', toText: '358K', period: JUL },
+      { label: 'YouTube subscribers', from: 96_600, to: 101_000, fromText: '96.6K', toText: '101K', period: JUL },
+    ],
+    services: ['social-media-strategy', 'reels-production', 'youtube-management'],
+  },
+  {
+    id: 'subh',
+    client: 'Subh Journey',
+    handle: 'the_subh_journey',
+    avatar: '/clients/subh.webp',
+    profiles: [{ label: 'Instagram', url: 'https://www.instagram.com/the_subh_journey/' }],
+    category: 'Travel, stories and events in Delhi NCR',
+    platform: 'Instagram',
+    kind: 'Creator',
+    goal: 'creator',
+    status: 'Active',
+    description: 'Reel creator covering travel, stories, events and Delhi NCR.',
+    detail:
+      'Content strategy plus shooting and editing for Instagram Reels. The focus is Reels that travel beyond the existing audience, and it shows in the follower count: 15.9K in July, 25.7K now.',
+    metrics: [{ value: '25.7K', label: 'Instagram followers' }],
+    growth: [{ label: 'Instagram followers', from: 15_900, to: 25_700, fromText: '15.9K', toText: '25.7K', period: JUL }],
+    services: ['social-media-strategy', 'reels-production', 'instagram-marketing'],
+  },
+  {
+    id: 'journey',
+    client: 'Journey Without Visa',
+    handle: 'journey_without_visa',
+    avatar: '/clients/journey.webp',
+    profiles: [
+      { label: 'Instagram', url: 'https://www.instagram.com/journey_without_visa/' },
+      { label: 'YouTube', url: 'https://www.youtube.com/@journeywithoutvisa' },
+    ],
+    category: 'Travel, places, events and food',
+    platform: 'Instagram + YouTube',
+    kind: 'Creator',
+    goal: 'creator',
+    status: 'Active',
+    description: 'Creator covering new places, events, travel, lifestyle and food on Instagram and YouTube.',
+    detail:
+      'Content strategy, shooting and editing, with the same footage cut as Reels for Instagram and as longer videos for YouTube. The channel is where the growth is: 22.1K subscribers in July, 26K now.',
+    metrics: [
+      { value: '26K', label: 'YouTube subscribers' },
+      { value: '12K', label: 'Instagram followers' },
+    ],
+    growth: [
+      { label: 'YouTube subscribers', from: 22_100, to: 26_000, fromText: '22.1K', toText: '26K', period: JUL },
+      { label: 'Instagram followers', from: 10_600, to: 12_000, fromText: '10.6K', toText: '12K', period: JUL },
+    ],
+    services: ['social-media-strategy', 'reels-production', 'youtube-management'],
+  },
+  {
+    id: 'wanna-party',
+    client: 'Wanna Party',
+    handle: 'wannaparty.in',
+    avatar: '/clients/wanna-party.webp',
+    profiles: [{ label: 'Instagram', url: 'https://www.instagram.com/wannaparty.in/' }],
+    category: 'Party supplies brand, online since 2011',
+    platform: 'Instagram',
+    kind: 'Business',
+    goal: 'awareness',
+    status: 'Past',
+    description: 'Online party-products brand. A brand-awareness brief: more people knowing the name.',
+    detail:
+      'The goal was awareness, not direct sales. We ran the page, shot and edited Reels around the products, and brought in creators to put the brand in front of their audiences.',
+    metrics: [],
+    growth: [],
+    services: ['instagram-marketing', 'reels-production', 'influencer-marketing'],
   },
 ];
 
 export const PORTFOLIO_NOTE =
-  'Snapshots from each client’s own Instagram or YouTube analytics, recorded in 2026 and shared with permission.';
+  'From each client’s own Instagram or YouTube analytics, recorded 30 Sep 2026 and published with permission. Follower counts checked against the public profiles the same day.';
 
 /**
- * Headline figures. TODO(verify-metrics): 9.3M = the four 30-day view
- * figures summed (4.2 + 1.6 + 3.1 + 0.4016 IG views for Journey Without
- * Visa) = 9.30M; followers = IG 376.5K + YT 118.7K = 495.2K, floored to 495K+.
+ * Headline figures, each traceable to PORTFOLIO:
+ *  - 10M+  = PraGo 6M+ + Saini Telecom 4M+ views in the last 30 days.
+ *  - 570K+ = active accounts: 35.3 + 12 + 358 + 101 + 25.7 + 12 + 26 = 570.0K.
+ *  - 30×   = Saini Telecom, 400 → 12,000 followers, Jun → Sep 2026.
  */
 export const STATS: Metric[] = [
-  { value: '9.3M+', label: 'Views a month across the accounts we manage' },
-  { value: '495K+', label: 'Followers and subscribers on those accounts' },
-  { value: `${PORTFOLIO.length}`, label: 'Brands and creators we publish results for' },
+  { value: '10M+', label: 'Views in 30 days on two retail accounts we run' },
+  { value: '570K+', label: 'Followers and subscribers on the accounts we manage' },
+  { value: '30×', label: 'Follower growth for Saini Telecom since June' },
+  { value: `${PORTFOLIO.length}`, label: 'Brands and creators with published results' },
+];
+
+export const RESULTS_FAQS: Faq[] = [
+  {
+    q: 'Can a social media agency really increase Instagram followers and sales?',
+    a: 'Yes, but not on a promise. Saini Telecom went from 400 to 12K followers between June and September 2026, Big Discount Mart from 800 to 10.8K in two months, and PraGo Outdoors from 14K to 35.3K while passing 6M views a month. Results depend on your product, content and consistency, so we don’t guarantee numbers.',
+  },
+  {
+    q: 'How long does it take to see results on Instagram?',
+    a: 'The first month sets up the content and tests formats, and most accounts show measurable movement in reach by day 60. Big Discount Mart’s growth from 800 to 10.8K followers took two months.',
+  },
+  {
+    q: 'Where do these numbers come from?',
+    a: 'From each client’s own Instagram professional dashboard or YouTube Studio, recorded on 30 September 2026 and shared with permission. Follower and subscriber counts were checked against the public profiles the same day. The “before” figures are the ones this site published on 1 July 2026, or the follower count when we took an account over.',
+  },
+  {
+    q: 'Do you work with influencers and content creators?',
+    a: 'Yes. For AC Delhi Vlogs, Subh Journey and Journey Without Visa we handle content strategy, shooting and editing for Instagram and YouTube. AC Delhi Vlogs has 358K Instagram followers and 101K YouTube subscribers.',
+  },
 ];
 
 // ── Homepage sections ──────────────────────────────────────────────
@@ -678,7 +834,7 @@ export const FAQS: Faq[] = [
   },
   {
     q: 'Which platforms do you manage?',
-    a: 'Instagram, Facebook and YouTube for content and page management, plus paid campaigns on Meta and Google Ads. We deliberately don’t spread across ten platforms. One Instagram account we manage has 336K followers, and one YouTube channel has 96.6K subscribers.',
+    a: 'Instagram, Facebook and YouTube for content and page management, plus paid campaigns on Meta and Google Ads. We deliberately don’t spread across ten platforms. One Instagram account we work on has 358K followers, and one YouTube channel has 101K subscribers.',
   },
   {
     q: 'How long until we see real growth?',

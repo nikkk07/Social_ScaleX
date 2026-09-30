@@ -1,37 +1,47 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 import { SiteShell } from '@/components/site/SiteShell';
 import { PageIntro } from '@/components/site/PageIntro';
-import { MetricList } from '@/components/site/Cards';
+import { SectionHead } from '@/components/site/SectionHead';
+import { FaqList } from '@/components/site/FaqList';
 import { LeadSection } from '@/components/site/LeadSection';
+import { ResultCase } from '@/components/site/Results';
+import { ResultsFilter } from '@/components/site/ResultsFilter';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { PORTFOLIO, PORTFOLIO_NOTE, getService } from '@/lib/content';
-import { breadcrumbNode, caseStudyNode, graph, webPageNode } from '@/lib/schema';
+import { GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_FAQS, STATS, type ResultGoal } from '@/lib/content';
+import { breadcrumbNode, caseStudyNode, faqNode, graph, webPageNode } from '@/lib/schema';
 
-const TITLE = 'Client Results & Case Studies';
+const PATH = '/case-studies';
+const TITLE = 'Client Results: Instagram & YouTube Case Studies';
 const DESCRIPTION =
-  'Real Instagram and YouTube results from accounts Social ScaleX manages: 4.2M monthly views, 336K followers, 96.6K subscribers. Figures from client analytics.';
+  'Real results from brands and creators we work with: 400 to 12K followers since June, 10M+ Instagram views in 30 days, a 358K creator. Delhi NCR agency.';
 const CRUMBS = [
   { name: 'Home', path: '/' },
-  { name: 'Client results', path: '/case-studies' },
+  { name: 'Client results', path: PATH },
 ];
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
-  alternates: { canonical: '/case-studies' },
-  openGraph: { title: `${TITLE} | Social ScaleX`, description: DESCRIPTION, url: '/case-studies' },
+  alternates: { canonical: PATH },
+  openGraph: { title: `${TITLE} | Social ScaleX`, description: DESCRIPTION, url: PATH },
 };
 
+const GOALS: ResultGoal[] = ['sales', 'awareness', 'creator'];
+
 export default function CaseStudiesPage() {
+  const filters = GOALS.filter((g) => PORTFOLIO.some((p) => p.goal === g)).map((g) => ({ key: g, label: GOAL_LABEL[g] }));
+
   return (
     <>
       <JsonLd
         data={graph([
-          webPageNode({ path: '/case-studies', name: TITLE, description: DESCRIPTION, type: 'CollectionPage', hasBreadcrumb: true }),
-          breadcrumbNode(CRUMBS, '/case-studies'),
+          webPageNode({ path: PATH, name: TITLE, description: DESCRIPTION, type: 'CollectionPage', hasBreadcrumb: true }),
+          breadcrumbNode(CRUMBS, PATH),
           ...PORTFOLIO.map(caseStudyNode),
+          faqNode(RESULTS_FAQS, PATH),
         ])}
       />
       <SiteShell>
@@ -39,46 +49,67 @@ export default function CaseStudiesPage() {
           crumbs={CRUMBS}
           eyebrow="Client results"
           title="Real accounts, real numbers"
-          lede={<p>Every account below is one we run today. The figures come from each client’s own Instagram or YouTube dashboard, published with their permission. No projections, and nothing rounded up.</p>}
+          lede={
+            <p>
+              Stores that sell on Instagram, a brand that wanted to be known, and creators with audiences in the hundreds of
+              thousands. Every figure comes from the client’s own dashboard, with their permission, and is rounded down, never up.
+            </p>
+          }
         >
-          <nav aria-label="Case studies on this page" className="mt-8">
-            <ul className="flex flex-wrap gap-2">
-              {PORTFOLIO.map((p) => (
-                <li key={p.id}><a href={`#${p.id}`} className="btn btn-secondary">{p.client}</a></li>
-              ))}
-            </ul>
-          </nav>
+          <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line lg:grid-cols-4">
+            {STATS.map((s) => (
+              <div key={s.label} className="flex flex-col-reverse bg-surface p-5 sm:p-6">
+                <dt className="mt-1 text-sm text-ink-3">{s.label}</dt>
+                <dd className="font-display text-4xl text-ink sm:text-5xl">{s.value}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link href="#get-started" className="btn btn-primary btn-lg">Get a free plan <ArrowRight className="size-4" aria-hidden="true" /></Link>
+            <Link href="#results" className="btn btn-secondary btn-lg">See the case studies</Link>
+          </div>
         </PageIntro>
 
-        <div className="py-section">
-          <div className="wrap grid gap-8">
-            {PORTFOLIO.map((p) => (
-              <article key={p.id} id={p.id} aria-labelledby={`${p.id}-title`} className="card scroll-mt-24 overflow-hidden">
-                <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[1.3fr_1fr]">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">{p.kind} · {p.platform}</p>
-                    <h2 id={`${p.id}-title`} className="mt-3 text-4xl text-ink">{p.client}</h2>
-                    <p className="mt-1 text-ink-3">{p.category}</p>
-                    <p className="mt-6 text-lg text-ink-2">{p.detail}</p>
-                    <h3 className="mt-8 font-sans text-sm font-semibold text-ink">Services on this account</h3>
-                    <ul className="mt-3 flex flex-wrap gap-2">
-                      {p.services.map(getService).filter((x): x is NonNullable<typeof x> => Boolean(x)).map((s) => (
-                        <li key={s.slug}>
-                          <Link href={`/services/${s.slug}`} className="inline-block rounded-full bg-paper-2 px-3.5 py-1.5 text-sm text-ink hover:bg-coral-tint">{s.name}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="self-start rounded-card bg-paper p-6 ring-1 ring-line">
-                    <h3 className="font-sans text-sm font-semibold text-ink">The numbers</h3>
-                    <div className="mt-5"><MetricList metrics={p.metrics} size="lg" /></div>
-                  </div>
-                </div>
-              </article>
-            ))}
-            <p className="text-sm text-ink-3">{PORTFOLIO_NOTE}</p>
+        <section id="results" aria-label="Case studies" className="scroll-mt-20 py-section">
+          <div className="wrap">
+            <ResultsFilter
+              filters={filters}
+              items={PORTFOLIO.map((p) => ({ id: p.id, group: p.goal, node: <ResultCase p={p} /> }))}
+            />
+            <p className="mt-8 text-sm text-ink-3">{PORTFOLIO_NOTE}</p>
           </div>
-        </div>
+        </section>
+
+        <section aria-labelledby="method-title" className="border-t border-line bg-surface py-section">
+          <div className="wrap grid grid-cols-1 gap-10 lg:grid-cols-2">
+            <SectionHead
+              id="method-title"
+              eyebrow="How we report"
+              title="Numbers you can check yourself"
+              intro="Every account links to its public profile, so you can see it for yourself."
+            />
+            <ul className="grid gap-6 text-ink-2">
+              {[
+                ['From the client’s dashboard', 'Views come from Instagram’s professional dashboard or YouTube Studio, not from screenshots we picked.'],
+                ['Dated', 'Current figures were recorded on 30 September 2026. “Before” figures are the ones this site published on 1 July 2026.'],
+                ['Rounded down', 'A figure shown as “6M+” means the dashboard showed more than 6 million. We never round up.'],
+                ['Past clients stay honest', 'For accounts we no longer run, we show the number at hand-over, not what happened after.'],
+              ].map(([t, d]) => (
+                <li key={t} className="border-t-2 border-ink pt-4">
+                  <h3 className="font-display text-2xl text-ink">{t}</h3>
+                  <p className="mt-1">{d}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section aria-labelledby="faq-title" className="border-t border-line py-section">
+          <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.6fr]">
+            <SectionHead id="faq-title" eyebrow="Questions" title="About these results" />
+            <FaqList faqs={RESULTS_FAQS} />
+          </div>
+        </section>
 
         <LeadSection title="Want numbers like these on your account?" intro="Tell us where your account is today. On the free call we’ll show you what we’d change first." />
       </SiteShell>

@@ -127,13 +127,15 @@ export default async function ServicePage({ params }: Props) {
         {cases.length ? (
           <section aria-labelledby="proof-title" className="border-t border-line bg-surface py-section">
             <div className="wrap">
-              <SectionHead id="proof-title" eyebrow="Proof" title="Accounts where we do this today" intro={PORTFOLIO_NOTE} />
+              <SectionHead id="proof-title" eyebrow="Proof" title="Accounts where we’ve done this" intro={PORTFOLIO_NOTE} />
               <ul className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {cases.map((p) => (
                   <li key={p.id} className="card flex flex-col p-6">
                     <h3 className="text-2xl text-ink">{p.client}</h3>
                     <p className="mt-1 text-sm text-ink-3">{p.category} · {p.platform}</p>
-                    <div className="mt-6 flex-1 border-t border-line pt-5"><MetricList metrics={p.metrics} /></div>
+                    <div className="mt-6 flex-1 border-t border-line pt-5">
+                      {p.metrics.length ? <MetricList metrics={p.metrics} /> : <p className="text-ink-2">{p.description}</p>}
+                    </div>
                     <Link href={`/case-studies#${p.id}`} className="link mt-5 text-sm">Read the case<span className="sr-only">: {p.client}</span></Link>
                   </li>
                 ))}

@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { ArrowRight, Check } from 'lucide-react';
 import { SiteShell } from '@/components/site/SiteShell';
 import { SectionHead } from '@/components/site/SectionHead';
-import { ServiceCard, CaseCard } from '@/components/site/Cards';
+import { ServiceCard } from '@/components/site/Cards';
+import { ResultTeaser } from '@/components/site/Results';
 import { ProofPanel } from '@/components/site/ProofPanel';
 import { FaqList } from '@/components/site/FaqList';
 import { LeadSection } from '@/components/site/LeadSection';
@@ -21,6 +22,9 @@ import { AREAS_SERVED, whatsappLink } from '@/lib/site';
 import { faqNode, graph, itemListNode, webPageNode } from '@/lib/schema';
 
 export const metadata: Metadata = { alternates: { canonical: '/' } };
+
+/** The three biggest sales stories and the biggest creator. */
+const FEATURED = ['saini-telecom', 'big-discount-mart', 'prago', 'acdelhivlogs'];
 
 export default function HomePage() {
   return (
@@ -72,7 +76,7 @@ export default function HomePage() {
 
         {/* Stats */}
         <section aria-label="Results in numbers" className="border-y border-line bg-surface">
-          <dl className="wrap grid gap-8 py-10 sm:grid-cols-3">
+          <dl className="wrap grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
             {STATS.map((s) => (
               <div key={s.label} className="flex flex-col-reverse">
                 <dt className="mt-1 max-w-[16rem] text-sm text-ink-3">{s.label}</dt>
@@ -171,11 +175,18 @@ export default function HomePage() {
               title="Real accounts. Real numbers."
               intro={PORTFOLIO_NOTE}
             />
-            <ul className="mt-12 grid gap-5 md:grid-cols-2">
-              {PORTFOLIO.map((p) => (
-                <li key={p.id}><CaseCard p={p} /></li>
-              ))}
+            <ul className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {FEATURED.map((id) => PORTFOLIO.find((p) => p.id === id))
+                .filter((p): p is NonNullable<typeof p> => Boolean(p))
+                .map((p) => (
+                  <li key={p.id} className="min-w-0"><ResultTeaser p={p} /></li>
+                ))}
             </ul>
+            <p className="mt-8">
+              <Link href="/case-studies" className="btn btn-secondary btn-lg">
+                See all {PORTFOLIO.length} client results <ArrowRight className="size-4" aria-hidden="true" />
+              </Link>
+            </p>
           </div>
         </section>
 

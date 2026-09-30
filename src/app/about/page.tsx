@@ -56,7 +56,7 @@ export default function AboutPage() {
                 That means {SERVICES.length} services, from <Link href="/services/instagram-marketing">page management</Link> and <Link href="/services/reels-production">Reels production</Link> to <Link href="/services/meta-ads">Meta ads</Link> and <Link href="/services/google-ads">Google Ads</Link>, delivered together rather than sold separately.
               </p>
               <p>
-                The work splits between creators building an audience and businesses using social media to sell. An outdoor-gear store is not run the same way as a travel vlogger, and we don’t pretend otherwise. Today we publish results for {PORTFOLIO.length} accounts across Instagram and YouTube; each one agreed to have its numbers shown on this site. See them on <Link href="/case-studies">client results</Link>.
+                The work splits between creators building an audience and businesses using social media to sell. An outdoor-gear store is not run the same way as a travel vlogger, and we don’t pretend otherwise. Today we publish results for {PORTFOLIO.length} accounts across Instagram and YouTube, current and past; each one agreed to have its work shown on this site. See them on <Link href="/case-studies">client results</Link>.
               </p>
               <p>
                 Shoots happen across {AREAS_SERVED.join(', ')}. Management, advertising and reporting run remotely, so we work with brands from anywhere in India.

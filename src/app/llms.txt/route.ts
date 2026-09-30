@@ -1,4 +1,4 @@
-import { FAQS, PORTFOLIO, PORTFOLIO_NOTE, SERVICES } from '@/lib/content';
+import { FAQS, GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, SERVICES } from '@/lib/content';
 import { GUIDES } from '@/lib/guides';
 import { AUTOMATIONS, PLAN_99 } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
@@ -18,9 +18,13 @@ function build(): string {
     (s) => `- [${s.name}](${abs(`/services/${s.slug}`)}): ${s.lede}`,
   ).join('\n');
 
-  const clients = PORTFOLIO.map(
-    (p) => `- **${p.client}** (${p.category}, ${p.platform}): ${p.metrics.map((m) => `${m.value} ${m.label.toLowerCase()}`).join(', ')}.`,
-  ).join('\n');
+  const clients = PORTFOLIO.map((p) => {
+    const nums = [
+      ...p.metrics.map((m) => `${m.value} ${m.label.toLowerCase()}`),
+      ...p.growth.map((g) => `${g.label.toLowerCase()} ${g.fromText} to ${g.toText} (${g.period})`),
+    ];
+    return `- **${p.client}** (@${p.handle}; ${p.category}; ${p.status.toLowerCase()} client; goal: ${GOAL_LABEL[p.goal].toLowerCase()}): ${nums.length ? `${nums.join(', ')}.` : p.description}`;
+  }).join('\n');
 
   const automations = AUTOMATIONS.map(
     (a) => `- [${a.name}](${abs(`/automation/${a.slug}`)})${a.priced ? ` (₹${PLAN_99.price}/month)` : ''}: ${a.lede}`,
