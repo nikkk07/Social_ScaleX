@@ -1,200 +1,112 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { MarketingShell } from '@/components/MarketingShell';
-import { PageHeader } from '@/components/sections/PageHeader';
-import { FAQ } from '@/components/sections/FAQ';
-import { Reveal } from '@/components/effects/Reveal';
+import { Phone } from 'lucide-react';
+import { SiteShell } from '@/components/site/SiteShell';
+import { PageIntro } from '@/components/site/PageIntro';
+import { SectionHead } from '@/components/site/SectionHead';
+import { FaqList } from '@/components/site/FaqList';
+import { LeadSection } from '@/components/site/LeadSection';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { FAQS, PORTFOLIO, SERVICES } from '@/lib/content';
-import { CONTACTS } from '@/lib/site';
-import { breadcrumbNode, faqNode, graph, webPageNode } from '@/lib/schema';
+import { FAQS, PORTFOLIO, PRINCIPLES, SERVICES } from '@/lib/content';
+import { AREAS_SERVED, CONTACTS, FOUNDING_YEAR } from '@/lib/site';
+import { breadcrumbNode, faqNode, graph, personId, webPageNode } from '@/lib/schema';
 
 const TITLE = 'About Social ScaleX';
-// Shown in <title> via the layout template, which appends the brand — so the
-// tag itself must not repeat it ("About Social ScaleX | Social ScaleX").
-const META_TITLE = 'About';
 const DESCRIPTION =
-  'Who Social ScaleX is: a social media marketing agency in Delhi NCR running Instagram, Facebook and YouTube for a small number of brands and creators.';
-
-export const metadata: Metadata = {
-  title: META_TITLE,
-  description: DESCRIPTION,
-  alternates: { canonical: '/about' },
-  openGraph: {
-    title: `${TITLE} | Social ScaleX`,
-    description: DESCRIPTION,
-    url: '/about',
-  },
-};
-
+  'Social ScaleX is a Delhi NCR social media marketing agency founded in 2025 by Nikhil Bisht and Abhishek Anand. A small team that publishes its client numbers.';
 const CRUMBS = [
   { name: 'Home', path: '/' },
   { name: 'About', path: '/about' },
 ];
-
-// The two entity-resolution questions an answer engine asks about a business.
-// Kept on this page specifically, not duplicated onto the homepage FAQ.
 const ABOUT_FAQS = FAQS.filter((f) =>
-  ['Where are you based, and do you work remotely?',
-   'What makes Social ScaleX different from other agencies?',
-   'Which platforms do you manage?'].includes(f.q),
+  ['Where are you based, and do you work remotely?', 'What makes Social ScaleX different from other agencies?', 'Which platforms do you manage?'].includes(f.q),
 );
+
+export const metadata: Metadata = {
+  title: 'About Us: Delhi NCR Social Media Agency',
+  description: DESCRIPTION,
+  alternates: { canonical: '/about' },
+  openGraph: { title: `${TITLE} | Social ScaleX`, description: DESCRIPTION, url: '/about' },
+};
 
 export default function AboutPage() {
   return (
     <>
       <JsonLd
         data={graph([
-          webPageNode({
-            path: '/about',
-            name: TITLE,
-            description: DESCRIPTION,
-            hasBreadcrumb: true,
-          }),
+          { ...webPageNode({ path: '/about', name: TITLE, description: DESCRIPTION, type: 'AboutPage', hasBreadcrumb: true }), mentions: CONTACTS.map((_, i) => ({ '@id': personId(i) })) },
           breadcrumbNode(CRUMBS, '/about'),
           faqNode(ABOUT_FAQS, '/about'),
         ])}
       />
-      <MarketingShell>
-        <PageHeader
+      <SiteShell>
+        <PageIntro
           crumbs={CRUMBS}
-          eyebrow="Who we are"
-          title="A small agency that publishes its numbers."
-          intro="Social ScaleX is a social media marketing agency based in Delhi NCR. We manage Instagram, Facebook and YouTube for brands and creators — content production, page management, paid advertising and reporting — and we run a deliberately small book of accounts so each one gets real attention."
+          eyebrow="About us"
+          title="A small agency that publishes its numbers"
+          lede={<p>Social ScaleX is a social media marketing agency based in Delhi NCR, started in {FOUNDING_YEAR}. We run Instagram, Facebook and YouTube for brands and creators: content production, page management, Meta and Google Ads, and reporting. We keep a deliberately small book of accounts, so each one gets real attention.</p>}
         />
 
-        <div className="max-w-3xl mx-auto px-6 pb-8 space-y-16">
-          <Reveal>
-            <section aria-labelledby="what-we-do">
-              <h2
-                id="what-we-do"
-                className="text-2xl md:text-3xl font-display font-bold text-white mb-4"
-              >
-                What does Social ScaleX do?
-              </h2>
-              <p className="text-white/75 text-lg leading-relaxed mb-6">
-                We run social media accounts end to end for other people&apos;s
-                brands. That means {SERVICES.length} services — page management,
-                content production, paid ads on Meta and YouTube, profile
-                optimization, analytics, shoots, influencer marketing and growth
-                strategy — delivered together rather than sold separately.
+        <section aria-labelledby="story-title" className="py-section">
+          <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.4fr]">
+            <SectionHead id="story-title" eyebrow="What we do" title="We run social media for other people’s brands" />
+            <div className="prose-site">
+              <p>
+                That means {SERVICES.length} services, from <Link href="/services/instagram-marketing">page management</Link> and <Link href="/services/reels-production">Reels production</Link> to <Link href="/services/meta-ads">Meta ads</Link> and <Link href="/services/google-ads">Google Ads</Link>, delivered together rather than sold separately.
               </p>
-              <p className="text-white/70 leading-relaxed">
-                Most of our shoots happen across Delhi, Noida and Gurugram.
-                Management, advertising and reporting all happen remotely, so we
-                take on brands from anywhere in India. The work splits between
-                creators building an audience and businesses using social to
-                sell — an outdoor-gear store is not run the same way as a travel
-                vlogger, and we do not pretend otherwise.
+              <p>
+                The work splits between creators building an audience and businesses using social media to sell. An outdoor-gear store is not run the same way as a travel vlogger, and we don’t pretend otherwise. Today we publish results for {PORTFOLIO.length} accounts across Instagram and YouTube; each one agreed to have its numbers shown on this site. See them on <Link href="/case-studies">client results</Link>.
               </p>
-            </section>
-          </Reveal>
+              <p>
+                Shoots happen across {AREAS_SERVED.join(', ')}. Management, advertising and reporting run remotely, so we work with brands from anywhere in India.
+              </p>
+            </div>
+          </div>
+        </section>
 
-          <Reveal>
-            <section aria-labelledby="who-we-work-with">
-              <h2
-                id="who-we-work-with"
-                className="text-2xl md:text-3xl font-display font-bold text-white mb-4"
-              >
-                Who do you work with?
-              </h2>
-              <p className="text-white/75 text-lg leading-relaxed mb-6">
-                Travel and lifestyle creators, and e-commerce brands selling to
-                people who already scroll. We currently manage{' '}
-                {PORTFOLIO.length} accounts we publish openly, across Instagram
-                and YouTube. Each one gave permission for their figures to
-                appear on this site.
-              </p>
-              <ul className="space-y-3">
-                {PORTFOLIO.map((p) => (
-                  <li key={p.id} className="flex flex-wrap gap-x-3 gap-y-1 text-white/70">
-                    <Link
-                      href={`/case-studies#${p.id}`}
-                      className="font-semibold text-white hover:text-[var(--color-violet-light)] transition-colors"
-                    >
-                      {p.client}
-                    </Link>
-                    <span className="text-white/50">— {p.category}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          </Reveal>
+        <section aria-labelledby="team-title" className="border-t border-line bg-paper-2 py-section">
+          <div className="wrap">
+            <SectionHead id="team-title" eyebrow="The team" title="You talk to the people doing the work" intro="There is no account manager relaying messages to a team you never meet. The founders run the accounts and answer the phone." />
+            <ul className="mt-10 grid gap-5 md:grid-cols-2">
+              {CONTACTS.map((c, i) => (
+                <li key={c.phone} id={`founder-${i + 1}`} className="card flex flex-wrap items-center justify-between gap-4 p-6 sm:p-8">
+                  <div>
+                    <h3 className="text-3xl text-ink">{c.name}</h3>
+                    <p className="mt-1 text-ink-3">{c.role}, Social ScaleX</p>
+                  </div>
+                  <a href={`tel:${c.phone}`} className="btn btn-secondary">
+                    <Phone className="size-4" aria-hidden="true" /> <span className="sr-only">Call {c.name.split(' ')[0]} on </span>{c.display}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
 
-          <Reveal>
-            <section aria-labelledby="how-we-report">
-              <h2
-                id="how-we-report"
-                className="text-2xl md:text-3xl font-display font-bold text-white mb-4"
-              >
-                How do you report on results?
-              </h2>
-              <p className="text-white/75 text-lg leading-relaxed mb-6">
-                Every number we publish comes from the client&apos;s own
-                Instagram or YouTube dashboard, and every client can check it
-                against their own analytics. Reporting is weekly by call and
-                monthly in writing. When something is not working we say so in
-                that report rather than burying it under a chart that is.
-              </p>
-              <p className="text-white/70 leading-relaxed">
-                You keep ownership throughout. Accounts stay in your name,
-                passwords stay with you, and the content we produce belongs to
-                your brand — including if you leave.
-              </p>
-            </section>
-          </Reveal>
+        <section aria-labelledby="principles-title" className="py-section">
+          <div className="wrap">
+            <SectionHead id="principles-title" eyebrow="How we work" title="Four things you can hold us to" />
+            <ul className="mt-12 grid gap-x-10 gap-y-10 sm:grid-cols-2 lg:grid-cols-4">
+              {PRINCIPLES.map((p) => (
+                <li key={p.title} className="border-t-2 border-ink pt-5">
+                  <h3 className="text-xl text-ink">{p.title}</h3>
+                  <p className="mt-2 text-ink-2">{p.desc}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
 
-          <Reveal>
-            <section aria-labelledby="who-to-talk-to">
-              <h2
-                id="who-to-talk-to"
-                className="text-2xl md:text-3xl font-display font-bold text-white mb-4"
-              >
-                Who do I talk to?
-              </h2>
-              <p className="text-white/75 text-lg leading-relaxed mb-6">
-                Directly to the people running the work. There is no account
-                manager relaying messages to a team you never meet.
-              </p>
-              <ul className="space-y-4">
-                {CONTACTS.map((c) => (
-                  <li key={c.phone} className="liquid-glass rounded-2xl px-6 py-5">
-                    <div className="text-white font-display font-bold mb-1">
-                      {c.name}
-                    </div>
-                    <a
-                      href={`tel:${c.phone}`}
-                      className="text-[var(--color-violet-light)] hover:underline font-medium"
-                    >
-                      {c.display}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          </Reveal>
+        <section aria-labelledby="faq-title" className="border-t border-line py-section">
+          <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.6fr]">
+            <SectionHead id="faq-title" eyebrow="Questions" title="The basics" />
+            <FaqList faqs={ABOUT_FAQS} />
+          </div>
+        </section>
 
-          <Reveal className="border-t border-white/10 pt-10">
-            <Link
-              href="/#contact"
-              className="inline-flex items-center justify-center gap-2 bg-[var(--color-violet-cta)] text-white px-8 py-4 rounded-full font-semibold border border-white/15 shadow-[0_8px_28px_rgba(124,58,237,0.35)] transition-[transform,background-color] duration-200 hover:bg-[var(--color-violet)] hover:scale-[1.02] active:scale-[0.99]"
-            >
-              Get a free strategy call
-              <ArrowRight size={18} aria-hidden />
-            </Link>
-          </Reveal>
-        </div>
-
-        <FAQ
-          faqs={ABOUT_FAQS}
-          eyebrow="Common questions"
-          heading="The rest of the basics."
-          intro="Where we are, what we run, and why we work the way we do."
-          headingId="about-faq-heading"
-        />
-      </MarketingShell>
+        <LeadSection />
+      </SiteShell>
     </>
   );
 }

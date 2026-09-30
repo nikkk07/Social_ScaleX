@@ -10,11 +10,12 @@ import { SITE_URL } from '@/lib/site';
  * their access is a decision rather than an oversight.
  */
 export default function robots(): MetadataRoute.Robots {
-  // Gated by Supabase auth (signup is closed and the handle_new_user() trigger
-  // rejects any email not in allowed_emails), so this is not what keeps people
-  // out — it keeps the login page out of search results rather than having it
-  // surface on a query for the brand name.
-  const disallow = ['/crm', '/crm/', '/login'];
+  // Preview deployments: block everything so they never compete with production.
+  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production') {
+    return { rules: [{ userAgent: '*', disallow: '/' }] };
+  }
+  // Auth keeps people out of the CRM; this keeps its pages out of search.
+  const disallow = ['/crm', '/crm/', '/login', '/api/'];
 
   const aiCrawlers = [
     'GPTBot',        // OpenAI — ChatGPT training + browsing
@@ -38,6 +39,5 @@ export default function robots(): MetadataRoute.Robots {
       ...aiCrawlers.map((userAgent) => ({ userAgent, allow: '/', disallow })),
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
-    host: SITE_URL,
   };
 }

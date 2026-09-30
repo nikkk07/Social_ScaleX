@@ -1,572 +1,293 @@
 /* ─────────────────────────────────────────────────────────────────────
- * Base element styles and the component utilities built on tokens.css.
- * No raw hex values, no px font sizes, no inline beziers below this line.
- * ───────────────────────────────────────────────────────────────────── */
+ * Base styles and the small set of component classes the public site
+ * shares. Element defaults live in @layer base and the component classes in
+ * @layer components, so a Tailwind utility on the same element always wins
+ * (e.g. `btn hidden sm:inline-flex` really hides the button on phones).
+ * ──────────────────────────────────────────────────────────────────── */
 
-/* ── Document ─────────────────────────────────────────── */
-html {
-  /* Native smooth scroll for anchor links. Lenis, when it loads, takes over
-     and sets `scroll-behavior: auto` itself — this is the no-JS path and the
-     touch-device path, where Lenis deliberately never runs. */
-  scroll-behavior: smooth;
-  -webkit-text-size-adjust: 100%;
-}
-
-html,
-body {
-  position: relative;
-}
-
-body {
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  background-color: var(--color-base-950);
-  color: var(--color-ink);
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  letter-spacing: var(--tracking-tight);
-  text-wrap: balance;
-}
-
-/* Long-form paragraphs read better without orphans. */
-p {
-  text-wrap: pretty;
-}
-
-::selection {
-  background: color-mix(in oklab, var(--color-growth-2) 40%, transparent);
-  color: #fff;
-}
-
-/* ── Scrollbar (Apple-thin) ───────────────────────────── */
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb {
-  background: var(--color-stroke-strong);
-  border-radius: var(--radius-pill);
-  border: 3px solid transparent;
-  background-clip: content-box;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.28);
-  border: 3px solid transparent;
-  background-clip: content-box;
-}
-
-/* ── The growth gradient ──────────────────────────────── */
-/*
- * ONE gradient on the site, violet → cyan. As text only: cyan behind white
- * is 1.81:1, so this must never become a fill under light copy.
- */
-/*
- * WARNING: .text-growth owns the element's `background`. Never combine it
- * with a background-setting class (.liquid-glass*, bg-*) — the gradient is
- * overwritten while -webkit-text-fill-color stays transparent, and the text
- * disappears entirely. Put the gradient on an inner span instead, or use a
- * solid token.
- */
-.text-growth {
-  background: linear-gradient(
-    118deg,
-    var(--color-growth-1) 0%,
-    var(--color-growth-2) 42%,
-    var(--color-growth-3) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  /* A clipped gradient has no glyph antialiasing to inherit; without this it
-     renders visibly thinner than the text beside it. */
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Legacy names — Phase 2 migrates call sites onto .text-growth, then these
-   two selectors come out. */
-.text-gradient,
-.text-gradient-animated {
-  background: linear-gradient(
-    118deg,
-    var(--color-growth-1) 0%,
-    var(--color-growth-2) 42%,
-    var(--color-growth-3) 100%
-  );
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Hairline rule that carries the gradient — section dividers, timelines. */
-.rule-growth {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--color-growth-2) 35%,
-    var(--color-growth-3) 100%
-  );
-}
-
-/* ── Buttons ──────────────────────────────────────────── */
-/*
- * Extracted rather than repeated as Tailwind strings at ten call sites.
- * Only these wear the accent, and only these are animated: motion is the
- * hierarchy signal, so anything that moves should be clickable.
- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  border-radius: var(--radius-pill);
-  font-weight: 600;
-  font-size: var(--text-base);
-  padding: 0.9375rem 2rem;
-  /* Min touch target on the shortest axis. */
-  min-height: 2.75rem;
-  transition:
-    transform var(--dur-fast) var(--ease-out-quint),
-    background-color var(--dur-fast) var(--ease-out-quint),
-    box-shadow var(--dur-fast) var(--ease-out-quint);
-  will-change: auto;
-}
-.btn:hover { transform: scale(1.02); }
-.btn:active { transform: scale(0.985); }
-
-/* Primary. 10.91:1. There is exactly one of these per screen. */
-.btn-cta {
-  background: var(--color-cta);
-  color: var(--color-cta-ink);
-  box-shadow: var(--shadow-cta);
-}
-.btn-cta:hover { background: var(--color-cta-hover); }
-
-/* Secondary. 5.70:1 behind white text. */
-.btn-action {
-  background: var(--color-action);
-  color: var(--color-action-ink);
-  border: 1px solid var(--color-stroke-strong);
-  box-shadow: var(--shadow-action);
-}
-.btn-action:hover { background: var(--color-action-hover); }
-
-/* Compact variant for the nav capsule. Desktop-only surface, so the 44px
-   touch floor does not apply — the mobile nav uses full-size buttons. */
-.btn-sm {
-  font-size: var(--text-sm);
-  padding: 0.5rem 1.125rem;
-  min-height: 2.25rem;
-}
-
-/* Tertiary — glass, no accent, no shadow. */
-.btn-ghost {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--color-ink);
-  border: 1px solid var(--color-stroke);
-}
-.btn-ghost:hover { background: rgba(255, 255, 255, 0.1); }
-
-/* ── Liquid glass surfaces ────────────────────────────── */
-/*
- * Two treatments, not four. `.liquid-glass-lite` and `.liquid-glass-inset`
- * are kept as the small-element and input-well variants because collapsing
- * them costs chip legibility and input depth for no measurable gain.
- */
-.liquid-glass {
-  background:
-    linear-gradient(
-      160deg,
-      rgba(255, 255, 255, 0.09) 0%,
-      rgba(255, 255, 255, 0.02) 45%,
-      rgba(255, 255, 255, 0.05) 100%
-    ),
-    var(--color-glass);
-  backdrop-filter: blur(var(--blur-glass)) saturate(1.4);
-  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(1.4);
-  /*
-   * Longhands rather than the `border` shorthand, so a utility that sets only
-   * border-width or border-style at a call site still lands.
-   *
-   * It does NOT make border-color overridable, and it is worth being exact
-   * about why: this file is UNLAYERED CSS imported after Tailwind, and an
-   * unlayered declaration beats any declaration in `@layer utilities` for the
-   * same property — specificity and shorthand-vs-longhand never enter into
-   * it. GlassCard's `hover:border-white/20` was therefore inert on every card
-   * on the site, and swapping the shorthand for longhands did not revive it.
-   * The hover state is declared below instead, which is the only fix that
-   * works from this side of the layer boundary.
-   */
-  border-width: 1px;
-  border-style: solid;
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow:
-    var(--shadow-card),
-    inset 0 1px 0 rgba(255, 255, 255, 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
-    inset 1px 0 0 rgba(255, 255, 255, 0.06),
-    inset -1px 0 0 rgba(255, 255, 255, 0.06);
-}
-
-/*
- * Interactive glass. Opt-in, because most glass on the site is not clickable:
- * a blanket `.liquid-glass:hover` would make the hero badge and the services
- * panel react to a cursor that can do nothing with them.
- *
- * This lives here, not at the call site, for the reason spelled out above —
- * an unlayered `border-color` cannot be overridden by a utility, so the state
- * has to be declared beside the class that owns it.
- */
-.liquid-glass.glass-hover:hover {
-  border-color: var(--color-stroke-strong);
-}
-
-/* Heavier frost for nav and overlays — small area, true blur reads there. */
-.liquid-glass-strong {
-  background: linear-gradient(
-    160deg,
-    rgba(20, 18, 30, 0.72) 0%,
-    var(--color-glass-strong) 100%
-  );
-  backdrop-filter: blur(var(--blur-glass)) saturate(1.6);
-  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(1.6);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow:
-    var(--shadow-nav),
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.4);
-}
-
-/* Input wells. No backdrop-filter: these sit inside already-blurred panels,
-   so a plain translucent fill reads identically for far less compositing. */
-.liquid-glass-inset {
-  background: rgba(255, 255, 255, 0.055);
-  border: 1px solid var(--color-stroke);
-  box-shadow:
-    inset 0 2px 8px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(0, 0, 0, 0.2);
-}
-
-/*
- * State lives HERE, not in a Tailwind variant at the call site.
- *
- * `.liquid-glass-inset` sets the `border` shorthand, and this file is plain
- * CSS imported after Tailwind — so it is not in the utilities layer and wins
- * against every `focus:border-*` / `aria-[invalid=true]:border-*` utility
- * regardless of source order. The contact inputs carried both, and neither
- * had any effect: an invalid field looked identical to an untouched one.
- * Same trap as `.text-growth` owning `background`; same rule follows from it
- * — if a class here owns a property, its states belong here too.
- *
- * Invalid is declared after focus so an invalid field still reads as invalid
- * while focused. The keyboard focus ring is a separate `outline`, so both
- * signals show at once rather than one masking the other.
- */
-.liquid-glass-inset:focus-visible {
-  border-color: var(--color-cta);
-}
-.liquid-glass-inset[aria-invalid='true'] {
-  border-color: var(--color-critical);
-}
-
-/* Chips, badges, icon tiles — every backdrop-filter is a separate
-   compositing pass, and these are too small to be worth one. */
-.liquid-glass-lite {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-/* ── Entrance animation (no JavaScript) ───────────────── */
-/*
- * The base layer, and it stays the base layer even once GSAP is loaded.
- * Content must be visible without JavaScript: GPTBot, ClaudeBot,
- * PerplexityBot and CCBot do not run it, and an element parked at
- * `opacity: 0` waiting for a library is an element they never see.
- * GSAP enhances motion here; it is never what makes content appear.
- */
-@keyframes rise-in {
-  from { opacity: 0; transform: translate3d(0, 16px, 0); }
-  to   { opacity: 1; transform: none; }
-}
-
-.rise-in {
-  animation: rise-in var(--dur-slow) var(--ease-out-expo) both;
-}
-
-.reveal { opacity: 1; }
-
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .reveal {
-      animation: rise-in linear both;
-      animation-timeline: view();
-      animation-range: entry 8% cover 20%;
-    }
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: 5.5rem;
+    background-color: var(--color-paper);
   }
-}
-
-/* ── Split-text headline ──────────────────────────────── */
-/*
- * Split at BUILD time, not runtime.
- *
- * A split-text entrance needs its words to start hidden. Driving that from
- * GSAP SplitText would put the LCP element behind an idle-deferred chunk and
- * produce a visible flash-then-hide-then-animate on slow connections — the
- * exact failure standing decision 01 exists to prevent. The words are
- * server-rendered spans instead, and CSS masks and staggers them: identical
- * effect, no JavaScript, and the headline text is in the HTML for crawlers
- * either way.
- *
- * Each word is an overflow-hidden box; the inner span rises out of it.
- */
-.split-word {
-  display: inline-block;
-  overflow: hidden;
-  vertical-align: bottom;
-  /* Descenders and the gradient fill both overrun the line box, so the mask
-     is grown and pulled back to avoid clipping glyph bottoms. */
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
-}
-
-.split-word > span {
-  display: inline-block;
-  animation: word-rise var(--dur-reveal) var(--ease-out-quint) both;
-  animation-delay: calc(var(--i, 0) * 90ms);
-}
-
-@keyframes word-rise {
-  from { transform: translate3d(0, 110%, 0); }
-  to   { transform: none; }
-}
-
-/* ── Hero atmosphere ──────────────────────────────────── */
-/*
- * Zero JS and zero 3D — standing decision 02. Layered gradients plus one
- * inline SVG motif, painted once and composited thereafter.
- *
- * The drift is a scroll-driven timeline, so it costs no main-thread work and
- * simply does not run where timelines are unsupported. Transform only: moving
- * a blurred layer reuses its cached texture, whereas scaling or re-blurring
- * it forces a re-raster every frame.
- */
-.atmo-layer { will-change: transform; }
-
-@supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .atmo-drift {
-      animation: atmo-drift linear both;
-      animation-timeline: view();
-      animation-range: entry 0% exit 100%;
-    }
+    html { scroll-behavior: smooth; }
   }
-}
 
-@keyframes atmo-drift {
-  from { transform: translate3d(0, -4%, 0); }
-  to   { transform: translate3d(0, 8%, 0); }
-}
-
-/* ── Case-study media parallax ────────────────────────── */
-/*
- * The base layer, and the one that actually ships today.
- *
- * Same contract as .reveal: CSS carries the effect, the motion layer only
- * ever refines it. GSAP ScrollTrigger would give this cross-browser scrub,
- * but the layer will not load until a second feature also wants it
- * (requestMotion, src/lib/motion.ts) — one effect does not justify 55.5 kB.
- *
- * The inner layer is over-scaled so the drift never exposes an edge, and
- * only `transform` animates: moving a painted layer reuses its texture,
- * while animating position or size re-rasterises it every frame.
- */
-.parallax-frame {
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.parallax-layer {
-  transform: scale(1.16);
-  will-change: transform;
-}
-
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .parallax-layer {
-      animation: media-parallax linear both;
-      animation-timeline: view();
-      animation-range: entry 0% exit 100%;
-    }
+  .site {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+  .site ::selection { background: var(--color-coral-tint); color: var(--color-ink); }
+
+  .site :where(h1, h2, h3) {
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: var(--tracking-display);
+  
+    text-wrap: balance;
+  }
+  .site :where(p, li) { text-wrap: pretty; }
+
+  .site :where(a, button, summary, input, select, textarea):focus-visible {
+    outline: 2px solid var(--color-cta);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
 }
 
-@keyframes media-parallax {
-  from { transform: translate3d(0, -7%, 0) scale(1.16); }
-  to   { transform: translate3d(0, 7%, 0) scale(1.16); }
+@layer components {
+  /* ── Skip link ── */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-ink);
+    color: var(--color-paper);
+    font-weight: 600;
+    transition: top 150ms var(--ease-out);
+  }
+  .skip-link:focus { top: 1rem; }
+
+  /* ── Layout ── */
+  .wrap {
+    width: 100%;
+    max-width: var(--container-wide);
+    margin-inline: auto;
+    padding-inline: var(--spacing-gutter);
+  }
+
+  /* ── Eyebrow: small label above a heading ── */
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-ink-3);
+  }
+  .eyebrow::before {
+    content: '';
+    width: 1.5rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--color-coral);
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 3rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid transparent;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 180ms var(--ease-out), border-color 180ms var(--ease-out),
+      color 180ms var(--ease-out), transform 180ms var(--ease-out);
+  }
+  .btn:active { transform: translateY(1px); }
+  .btn[disabled] { opacity: 0.6; cursor: progress; }
+
+  .btn-primary { background: var(--color-cta); color: #fff; }
+  .btn-primary:hover { background: var(--color-cta-hover); }
+
+  .btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-ink);
+    border-color: var(--color-line-strong);
+  }
+  .btn-secondary:hover { border-color: var(--color-ink); }
+
+  .btn-night { background: var(--color-on-night); color: var(--color-ink); }
+  .btn-night:hover { background: #fff; }
+
+  .btn-night-ghost { background: transparent; color: var(--color-on-night); border-color: rgba(250, 248, 244, 0.35); }
+  .btn-night-ghost:hover { border-color: var(--color-on-night); }
+
+  .btn-lg { min-height: 3.375rem; padding: 0.875rem 1.75rem; font-size: var(--text-base); }
+
+  /* ── Text link with a persistent underline ── */
+  .link {
+    color: var(--color-coral-text);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    text-decoration-color: color-mix(in srgb, var(--color-coral-text) 45%, transparent);
+    transition: text-decoration-color 150ms var(--ease-out);
+  }
+  .link:hover { text-decoration-color: currentColor; }
+
+  /* ── Card ── */
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .card-link {
+    transition: border-color 200ms var(--ease-out), box-shadow 200ms var(--ease-out), transform 200ms var(--ease-out);
+  }
+  .card-link:hover { border-color: var(--color-line-strong); box-shadow: var(--shadow-lift); transform: translateY(-2px); }
+
+  /* ── Header ── */
+  /* No backdrop-filter here: it would make the header the containing block
+     for the fixed mobile menu inside it, pinning that menu to the header. */
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--color-paper);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  /* Desktop services menu: opens on hover and on keyboard focus, no JS. */
+  .menu { position: relative; }
+  .menu-panel {
+    position: absolute;
+    left: 50%;
+    top: 100%;
+    width: min(40rem, 90vw);
+    padding-top: 0.75rem;
+    transform: translate(-50%, 6px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 160ms var(--ease-out), transform 160ms var(--ease-out), visibility 0s linear 160ms;
+  }
+  .menu:hover .menu-panel,
+  .menu:focus-within .menu-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    transition-delay: 0s;
+  }
+
+  /* ── Forms ── */
+  .field {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-field);
+    border: 1px solid var(--color-line-strong);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    font-size: 1rem; /* 16px stops iOS zooming on focus */
+    transition: border-color 150ms var(--ease-out), box-shadow 150ms var(--ease-out);
+  }
+  .field::placeholder { color: var(--color-ink-3); opacity: 1; }
+  .field:hover { border-color: var(--color-ink-3); }
+  .field:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 0 0 3px var(--color-coral-tint); }
+  .field[aria-invalid='true'] { border-color: var(--color-critical); }
+  select.field {
+    appearance: none;
+    padding-right: 2.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%236B6558' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+  }
+
+  /* ── FAQ disclosure (native <details>, zero JS) ── */
+  .faq { border-top: 1px solid var(--color-line); }
+  .faq:last-child { border-bottom: 1px solid var(--color-line); }
+  .faq > summary {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.25rem 0;
+    cursor: pointer;
+    list-style: none;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+  .faq > summary::-webkit-details-marker { display: none; }
+  .faq > summary::after {
+    content: '+';
+    flex: none;
+    width: 1.75rem;
+    height: 1.75rem;
+    display: grid;
+    place-items: center;
+    border-radius: 999px;
+    border: 1px solid var(--color-line-strong);
+    font-family: var(--font-sans);
+    font-size: 1.125rem;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--color-ink-2);
+    transition: transform 200ms var(--ease-out);
+  }
+  .faq[open] > summary::after { transform: rotate(45deg); }
+  .faq > div { padding: 0 3rem 1.5rem 0; color: var(--color-ink-2); }
+
+  /* ── Long-form reading (guides, legal) ── */
+  .prose-site { color: var(--color-ink-2); font-size: var(--text-lg); line-height: 1.7; }
+  .prose-site > * + * { margin-top: 1.25em; }
+  .prose-site h2 { color: var(--color-ink); font-size: var(--text-3xl); line-height: 1.2; margin-top: 2.2em; }
+  .prose-site h3 { color: var(--color-ink); font-size: var(--text-xl); line-height: 1.3; margin-top: 1.8em; }
+  .prose-site h2 + *, .prose-site h3 + * { margin-top: 0.75em; }
+  .prose-site ul, .prose-site ol { padding-left: 1.25em; }
+  .prose-site ul { list-style: disc; }
+  .prose-site ol { list-style: decimal; }
+  .prose-site li + li { margin-top: 0.5em; }
+  .prose-site li::marker { color: var(--color-coral); }
+  .prose-site strong { color: var(--color-ink); font-weight: 600; }
+  .prose-site a { color: var(--color-coral-text); text-decoration: underline; text-underline-offset: 0.2em; }
+  .prose-site blockquote {
+    border-left: 3px solid var(--color-coral);
+    padding-left: 1.25rem;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    color: var(--color-ink);
+  }
+
+  /* ── Mobile action bar ── */
+  .action-bar {
+    position: fixed;
+    inset: auto 0 0 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1.4fr;
+    gap: 0.5rem;
+    padding: 0.625rem var(--spacing-gutter) calc(0.625rem + env(safe-area-inset-bottom));
+    background: color-mix(in srgb, var(--color-paper) 94%, transparent);
+    border-top: 1px solid var(--color-line);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+  .action-bar .btn { min-height: 2.875rem; padding-inline: 0.75rem; }
+  @media (min-width: 768px) {
+    .action-bar { display: none; }
+  }
+
 }
 
-/* ── Scroll progress ──────────────────────────────────── */
-.scroll-progress {
-  position: fixed;
-  inset: 0 0 auto 0;
-  height: 2px;
-  transform-origin: 0 50%;
-  /* Written by the same passive scroll listener that drives the nav shrink,
-     so the page has one scroll handler rather than two. scaleX on a
-     composited layer — no layout, no paint. */
-  transform: scaleX(var(--scroll-progress, 0));
-  background: linear-gradient(90deg, var(--color-growth-2), var(--color-growth-3));
-  z-index: 60;
-  pointer-events: none;
-}
-
-/* ── Nav ──────────────────────────────────────────────── */
-.nav-link {
-  position: relative;
-  padding: 0.5rem 1rem;
-  border-radius: var(--radius-pill);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--color-ink-muted);
-  transition:
-    color var(--dur-fast) var(--ease-out-quint),
-    background-color var(--dur-fast) var(--ease-out-quint);
-}
-.nav-link:hover { color: var(--color-ink); background: rgba(255, 255, 255, 0.08); }
-.nav-link[aria-current='page'] { color: var(--color-ink); }
-/* The active marker is the accent, and it is the only thing in the nav
-   wearing it — the CTA aside. */
-.nav-link[aria-current='page']::after {
-  content: '';
-  position: absolute;
-  left: 1rem;
-  right: 1rem;
-  bottom: 0.15rem;
-  height: 1.5px;
-  border-radius: var(--radius-pill);
-  background: var(--color-cta);
-}
-
-/* Mobile overlay. Kept mounted and toggled through visibility so the exit
-   transition still runs; `visibility: hidden` also removes every child from
-   the tab order, which `opacity: 0` alone does not. */
-.nav-overlay {
-  /*
-   * Fully opaque, and no backdrop-filter.
-   *
-   * This used .liquid-glass-strong, which is tuned for the small nav capsule
-   * where partial transparency reads as depth. Stretched over the whole
-   * viewport it left the page content legible straight through the menu, and
-   * it degraded to unreadable wherever backdrop-filter is unavailable:
-   * Firefox until recently, iOS low-power mode, GPU-less rendering.
-   *
-   * Partial transparency buys nothing on a full-screen scrim, and a
-   * backdrop-filter spanning the entire viewport is the single most expensive
-   * place to put one. The glass character of this design lives in the nav
-   * capsule and the cards; here, a solid ground with a slight gradient is
-   * both cheaper and more legible.
-   */
-  background: linear-gradient(160deg, var(--color-base-700) 0%, var(--color-base-900) 100%);
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity var(--dur-base) var(--ease-out-quint),
-    visibility 0s linear var(--dur-base);
-}
-.nav-overlay[data-open='true'] {
-  opacity: 1;
-  visibility: visible;
-  transition:
-    opacity var(--dur-base) var(--ease-out-quint),
-    visibility 0s linear 0s;
-}
-
-/* Staggered links, in CSS. GSAP is reserved for split-text, scrub and
-   parallax; a menu stagger needs none of it, and doing it here means the
-   mobile nav ships no JavaScript beyond its open/close state. */
-.nav-overlay .nav-stagger {
-  opacity: 0;
-  transform: translate3d(0, 12px, 0);
-  transition:
-    opacity var(--dur-base) var(--ease-out-quint),
-    transform var(--dur-base) var(--ease-out-quint);
-}
-.nav-overlay[data-open='true'] .nav-stagger {
-  opacity: 1;
-  transform: none;
-  transition-delay: calc(var(--i, 0) * var(--stagger));
-}
-
-/* ── Below-fold rendering skip ────────────────────────── */
-.section-cv {
-  content-visibility: auto;
-  contain-intrinsic-size: auto 900px;
-}
-
-/* ── Skip link (a11y / SEO) ───────────────────────────── */
-.skip-link {
-  position: absolute;
-  left: var(--spacing-gutter);
-  top: -100px;
-  z-index: 100;
-  padding: 0.75rem 1.25rem;
-  border-radius: var(--radius-pill);
-  background: var(--color-cta);
-  color: var(--color-cta-ink);
-  font-weight: 600;
-  transition: top var(--dur-fast) var(--ease-out-quint);
-}
-.skip-link:focus { top: var(--spacing-gutter); }
-
-/* ── Ambient float for decorative orbs ────────────────── */
-/* Translate only: scaling a blur()ed layer forces re-rasterisation every
-   frame, pure translation reuses the cached texture. */
-@keyframes float-slow {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  33% { transform: translate3d(28px, -36px, 0); }
-  66% { transform: translate3d(-24px, 20px, 0); }
-}
-.animate-float-slow {
-  animation: float-slow 16s ease-in-out infinite;
-  will-change: transform;
-}
-
-/* ── Focus rings (keyboard nav) ───────────────────────── */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible,
-summary:focus-visible,
-[tabindex]:focus-visible {
-  outline: 2px solid var(--color-cta);
-  outline-offset: 3px;
-  border-radius: var(--radius-sm);
-}
-
-/* ── Global interaction tweaks ────────────────────────── */
-* { -webkit-tap-highlight-color: transparent; }
-a, button, summary { cursor: pointer; }
-
-/* ── Reduced motion ───────────────────────────────────── */
-/*
- * Full degradation, not partial. The JS motion layer checks this same query
- * before it loads at all, so under `reduce` there is no Lenis, no GSAP, no
- * ScrollTrigger and no split text — not merely faster versions of them.
- */
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
+  .site *, .site *::before, .site *::after {
     transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
   }
 }

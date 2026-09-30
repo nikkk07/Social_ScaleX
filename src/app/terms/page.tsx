@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { LegalPage } from '@/components/LegalPage';
+import { LegalPage } from '@/components/site/LegalPage';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { breadcrumbNode, graph, webPageNode } from '@/lib/schema';
 
@@ -32,7 +32,7 @@ export default function Page() {
           breadcrumbNode(CRUMBS, '/terms'),
         ])}
       />
-      <LegalPage title={TITLE} updated="July 2026">
+      <LegalPage title={TITLE} updated="July 2026" crumbs={CRUMBS}>
       <section>
         <h2>Who we are</h2>
         <p>

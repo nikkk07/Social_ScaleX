@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import { CrmRoot } from '@/components/crm/CrmRoot';
+import '@/styles/crm-app.css';
 
 export const metadata: Metadata = {
   title: { default: 'CRM', template: '%s · Social ScaleX CRM' },

@@ -1,20 +1,21 @@
 import type { MetadataRoute } from 'next';
+import { SERVICES } from '@/lib/content';
+import { GUIDES } from '@/lib/guides';
 import { abs } from '@/lib/site';
 
-/**
- * Public marketing routes only. /crm and /login are absent on purpose and are
- * Disallow-ed in robots.ts — a URL in the sitemap is a request to index it,
- * which would contradict the Disallow.
- */
+/** Public pages only. /crm and /login are disallowed in robots.ts and must never appear here. */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date('2026-08-30');
-
+  const site = new Date('2026-09-30');
   return [
-    { url: abs('/'), lastModified, changeFrequency: 'weekly', priority: 1.0 },
-    { url: abs('/services'), lastModified, changeFrequency: 'monthly', priority: 0.9 },
-    { url: abs('/case-studies'), lastModified, changeFrequency: 'monthly', priority: 0.9 },
-    { url: abs('/about'), lastModified, changeFrequency: 'monthly', priority: 0.7 },
-    { url: abs('/privacy'), lastModified, changeFrequency: 'yearly', priority: 0.2 },
-    { url: abs('/terms'), lastModified, changeFrequency: 'yearly', priority: 0.2 },
+    { url: abs('/'), lastModified: site, changeFrequency: 'weekly', priority: 1 },
+    { url: abs('/services'), lastModified: site, changeFrequency: 'monthly', priority: 0.9 },
+    ...SERVICES.map((s) => ({ url: abs(`/services/${s.slug}`), lastModified: site, changeFrequency: 'monthly' as const, priority: 0.9 })),
+    { url: abs('/case-studies'), lastModified: site, changeFrequency: 'monthly', priority: 0.8 },
+    { url: abs('/about'), lastModified: site, changeFrequency: 'monthly', priority: 0.6 },
+    { url: abs('/contact'), lastModified: site, changeFrequency: 'yearly', priority: 0.7 },
+    { url: abs('/guides'), lastModified: site, changeFrequency: 'weekly', priority: 0.7 },
+    ...GUIDES.map((g) => ({ url: abs(`/guides/${g.slug}`), lastModified: new Date(g.updated), changeFrequency: 'monthly' as const, priority: 0.7 })),
+    { url: abs('/privacy'), lastModified: site, changeFrequency: 'yearly', priority: 0.2 },
+    { url: abs('/terms'), lastModified: new Date('2026-07-01'), changeFrequency: 'yearly', priority: 0.2 },
   ];
 }

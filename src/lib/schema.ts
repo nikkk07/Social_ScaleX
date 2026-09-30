@@ -1,15 +1,17 @@
 // ─────────────────────────────────────────────────────────────────────
 // JSON-LD builders.
 //
-// Two rules hold this file together:
-//  1. Every node is built from src/lib/content.ts, so structured data can
-//     never drift from the text a reader actually sees on the page.
-//  2. The organisation and website are declared once, at stable @ids, and
-//     every other node REFERENCES those ids rather than restating them.
-//     Restating produces one entity per page instead of one entity.
+//  1. Every node is built from content.ts / guides.ts, so structured data
+//     never says something the visible page doesn't.
+//  2. The organisation, website and founders are declared at stable @ids and
+//     referenced everywhere else, so search engines see one entity.
+//  3. No AggregateRating or Review: Google ignores self-served reviews for a
+//     business's own markup, and none exist yet anyway.
 // ─────────────────────────────────────────────────────────────────────
 import {
+  AREAS_SERVED,
   CONTACTS,
+  FOUNDING_YEAR,
   ORG_ID,
   SITE_NAME,
   SITE_TAGLINE,
@@ -19,9 +21,21 @@ import {
   sameAs,
 } from './site';
 import type { Faq, PortfolioItem, Service } from './content';
+import type { Guide } from './guides';
 
-/** Loose JSON-LD node type — schema.org shapes are open-ended by design. */
 export type SchemaNode = Record<string, unknown>;
+
+export interface Crumb {
+  name: string;
+  path: string;
+}
+
+const AREA_NODES = [
+  ...AREAS_SERVED.map((name) => ({ '@type': 'City', name })),
+  { '@type': 'Country', name: 'India' },
+];
+
+export const personId = (i: number) => `${SITE_URL}/about#founder-${i + 1}`;
 
 export function organizationNode(): SchemaNode {
   return {
@@ -30,20 +44,18 @@ export function organizationNode(): SchemaNode {
     name: SITE_NAME,
     description: SITE_TAGLINE,
     url: abs('/'),
-    telephone: CONTACTS[0].phone,
-    priceRange: '₹₹',
+    logo: `${SITE_URL}/logo.png`,
     image: `${SITE_URL}/og-image.png`,
-    areaServed: [
-      { '@type': 'Place', name: 'Delhi NCR' },
-      { '@type': 'Country', name: 'India' },
-    ],
+    telephone: CONTACTS[0].phone,
+    foundingDate: FOUNDING_YEAR,
+    founder: CONTACTS.map((_, i) => ({ '@id': personId(i) })),
     address: {
       '@type': 'PostalAddress',
+      addressLocality: 'Delhi',
       addressRegion: 'Delhi NCR',
       addressCountry: 'IN',
     },
-    // Omitted entirely when no profile URLs are set — an empty sameAs array
-    // is worse than none, and a fabricated profile URL is worse than both.
+    areaServed: AREA_NODES,
     ...(sameAs.length > 0 ? { sameAs } : {}),
     contactPoint: CONTACTS.map((c) => ({
       '@type': 'ContactPoint',
@@ -55,14 +67,26 @@ export function organizationNode(): SchemaNode {
     })),
     knowsAbout: [
       'Social media marketing',
-      'Instagram growth',
+      'Instagram marketing',
+      'Instagram Reels production',
+      'Facebook and Instagram advertising',
+      'Google Ads',
       'YouTube channel management',
-      'Facebook advertising',
-      'Reels production',
       'Influencer marketing',
-      'Content creation',
+      'Product photography',
     ],
   };
+}
+
+export function personNodes(): SchemaNode[] {
+  return CONTACTS.map((c, i) => ({
+    '@type': 'Person',
+    '@id': personId(i),
+    name: c.name,
+    jobTitle: `${c.role}, ${SITE_NAME}`,
+    telephone: c.phone,
+    worksFor: { '@id': ORG_ID },
+  }));
 }
 
 export function websiteNode(): SchemaNode {
@@ -74,11 +98,6 @@ export function websiteNode(): SchemaNode {
     publisher: { '@id': ORG_ID },
     inLanguage: 'en-IN',
   };
-}
-
-export interface Crumb {
-  name: string;
-  path: string;
 }
 
 export function breadcrumbNode(crumbs: Crumb[], pagePath: string): SchemaNode {
@@ -98,10 +117,11 @@ export function webPageNode(opts: {
   path: string;
   name: string;
   description: string;
+  type?: 'WebPage' | 'AboutPage' | 'ContactPage' | 'CollectionPage';
   hasBreadcrumb?: boolean;
 }): SchemaNode {
   return {
-    '@type': 'WebPage',
+    '@type': opts.type ?? 'WebPage',
     '@id': `${abs(opts.path)}#webpage`,
     url: abs(opts.path),
     name: opts.name,
@@ -109,30 +129,25 @@ export function webPageNode(opts: {
     isPartOf: { '@id': WEBSITE_ID },
     about: { '@id': ORG_ID },
     inLanguage: 'en-IN',
-    ...(opts.hasBreadcrumb
-      ? { breadcrumb: { '@id': `${abs(opts.path)}#breadcrumb` } }
-      : {}),
+    ...(opts.hasBreadcrumb ? { breadcrumb: { '@id': `${abs(opts.path)}#breadcrumb` } } : {}),
   };
 }
 
-/** One Service node per offering, each provided by the one organisation. */
-export function serviceNode(service: Service): SchemaNode {
+export function serviceNode(s: Service): SchemaNode {
+  const path = `/services/${s.slug}`;
   return {
     '@type': 'Service',
-    '@id': `${abs('/services')}#${service.slug}`,
-    name: service.title,
-    // Matches the visible 40–60 word answer under the H2 on /services.
-    description: service.answer,
-    serviceType: service.title,
+    '@id': `${abs(path)}#service`,
+    name: s.name,
+    serviceType: s.h1,
+    description: s.lede,
+    url: abs(path),
     provider: { '@id': ORG_ID },
-    areaServed: [
-      { '@type': 'Place', name: 'Delhi NCR' },
-      { '@type': 'Country', name: 'India' },
-    ],
+    areaServed: AREA_NODES,
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
-      name: `${service.title} deliverables`,
-      itemListElement: service.deliverables.map((d) => ({
+      name: `${s.name}: what's included`,
+      itemListElement: s.deliverables.map((d) => ({
         '@type': 'Offer',
         itemOffered: { '@type': 'Service', name: d },
       })),
@@ -152,19 +167,15 @@ export function faqNode(faqs: Faq[], pagePath: string): SchemaNode {
   };
 }
 
-/** Case studies are described as CreativeWork, not Review or AggregateRating:
- *  no review data exists, and inventing it to win a star snippet is exactly
- *  the kind of thing that earns a structured-data manual action. */
+/** Case studies are CreativeWork, never Review: no review data exists. */
 export function caseStudyNode(item: PortfolioItem): SchemaNode {
   return {
     '@type': 'CreativeWork',
     '@id': `${abs('/case-studies')}#${item.id}`,
-    name: `${item.client} — ${item.category}`,
-    description: item.description,
+    name: `${item.client}: ${item.category}`,
+    description: item.detail,
     about: item.category,
     creator: { '@id': ORG_ID },
-    // Metrics restated as named values so an extractor reads "336K" as
-    // belonging to "IG Followers" rather than as a loose number in prose.
     additionalProperty: item.metrics.map((m) => ({
       '@type': 'PropertyValue',
       name: m.label,
@@ -173,7 +184,39 @@ export function caseStudyNode(item: PortfolioItem): SchemaNode {
   };
 }
 
-/** Wrap nodes in a single @graph. One script tag per page beats five. */
+export function articleNode(g: Guide, wordCount: number): SchemaNode {
+  const path = `/guides/${g.slug}`;
+  return {
+    '@type': 'Article',
+    '@id': `${abs(path)}#article`,
+    headline: g.title,
+    description: g.description,
+    url: abs(path),
+    mainEntityOfPage: { '@id': `${abs(path)}#webpage` },
+    datePublished: g.published,
+    dateModified: g.updated,
+    author: { '@id': ORG_ID },
+    publisher: { '@id': ORG_ID },
+    image: `${SITE_URL}/og-image.png`,
+    inLanguage: 'en-IN',
+    wordCount,
+    citation: g.sources.map((s) => s.url),
+  };
+}
+
+export function itemListNode(id: string, items: { name: string; path: string }[]): SchemaNode {
+  return {
+    '@type': 'ItemList',
+    '@id': id,
+    itemListElement: items.map((it, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: it.name,
+      url: abs(it.path),
+    })),
+  };
+}
+
 export function graph(nodes: SchemaNode[]): SchemaNode {
   return { '@context': 'https://schema.org', '@graph': nodes };
 }

@@ -30,8 +30,26 @@ JavaScript. Never invent a `NEXT_PUBLIC_`-prefixed secret.
 There is one more optional browser variable, `NEXT_PUBLIC_SITE_URL`. It sets
 the canonical origin for every absolute URL the site emits — canonical tags, OG
 URLs, JSON-LD `@id`s, `sitemap.xml`, `robots.txt` and `llms.txt`. Leave it
-unset to fall back to the Vercel deployment URL. Setting it is the entire
-domain cutover; see §7.
+unset to fall back to the Vercel deployment URL.
+
+### Moving to socialscalex.in
+
+1. Vercel → Project → Settings → Domains: add `socialscalex.in` and
+   `www.socialscalex.in`, set `socialscalex.in` as primary (www redirects to it).
+   Add the DNS records Vercel shows at your registrar.
+2. Vercel → Environment Variables (Production): `NEXT_PUBLIC_SITE_URL =
+   https://socialscalex.in`, then redeploy.
+3. That one variable switches every canonical, OG URL, JSON-LD `@id`, the
+   sitemap, robots.txt and llms.txt, and `next.config.mjs` starts 301-ing
+   every `social-scalex.vercel.app` URL to the same path on the new domain.
+4. Supabase → Authentication → URL Configuration: Site URL
+   `https://socialscalex.in`.
+5. Google Search Console: add the Domain property, submit
+   `https://socialscalex.in/sitemap.xml`. The 301s carry the old URLs over;
+   nothing else is needed.
+
+Preview deployments are automatically `noindex` (header, meta tag and
+robots.txt), so they never compete with production.
 
 ### Setting them
 

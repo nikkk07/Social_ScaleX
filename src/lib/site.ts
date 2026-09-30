@@ -17,22 +17,37 @@
  * so this must never be aspirational.
  */
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? 'https://social-scalex.vercel.app'
+  (process.env.NEXT_PUBLIC_SITE_URL ?? '').trim() || 'https://social-scalex.vercel.app'
 ).replace(/\/$/, '');
+
+/** The domain the business owns. It becomes the canonical the moment
+ *  NEXT_PUBLIC_SITE_URL is set to it in Vercel (see docs/DEPLOYMENT.md). */
+export const OWNED_DOMAIN = 'socialscalex.in';
 
 export const SITE_NAME = 'Social ScaleX';
 
 /** One brand definition. Reused verbatim in JSON-LD, llms.txt and /about so
  *  answer engines resolve a single consistent entity. */
 export const SITE_TAGLINE =
-  'Social media marketing agency in Delhi NCR managing Instagram, Facebook and YouTube for brands and creators — content production, page management, paid advertising and analytics.';
+  'Social media marketing agency in Delhi NCR managing Instagram, Facebook and YouTube for brands and creators: Reels production, page management, Meta and Google Ads, and reporting from your own analytics.';
+
+/** Where shoots happen in person. Everything else runs remotely across India. */
+export const AREAS_SERVED = ['Delhi', 'Noida', 'Gurugram'] as const;
+export const FOUNDING_YEAR = '2025';
 
 export const CONTACTS = [
-  { name: 'Nikhil Bisht', phone: '+918077727669', display: '+91 80777 27669' },
-  { name: 'Abhishek Anand', phone: '+917827810150', display: '+91 78278 10150' },
+  { name: 'Nikhil Bisht', role: 'Co-founder', phone: '+918077727669', display: '+91 80777 27669' },
+  { name: 'Abhishek Anand', role: 'Co-founder', phone: '+917827810150', display: '+91 78278 10150' },
 ] as const;
 
+export const PRIMARY_PHONE = CONTACTS[0];
+
 export const WHATSAPP_URL = 'https://wa.me/918077727669';
+
+/** WhatsApp link with a first message already typed, so the chat opens with context. */
+export function whatsappLink(text: string): string {
+  return `${WHATSAPP_URL}?text=${encodeURIComponent(text)}`;
+}
 
 /**
  * Public profile URLs. Empty strings are filtered out everywhere they are
@@ -57,7 +72,7 @@ export const OG_IMAGE = {
   url: `${SITE_URL}/og-image.png`,
   width: 1200,
   height: 630,
-  alt: 'Social ScaleX — social media marketing agency in Delhi NCR',
+  alt: 'Social ScaleX, social media marketing agency in Delhi NCR',
 } as const;
 
 /** Stable JSON-LD node identifiers. Every schema graph on the site points at

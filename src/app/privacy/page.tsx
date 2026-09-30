@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import { LegalPage } from '@/components/LegalPage';
+import { LegalPage } from '@/components/site/LegalPage';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { breadcrumbNode, graph, webPageNode } from '@/lib/schema';
 
@@ -32,13 +32,15 @@ export default function Page() {
           breadcrumbNode(CRUMBS, '/privacy'),
         ])}
       />
-      <LegalPage title={TITLE} updated="July 2026">
+      <LegalPage title={TITLE} updated="September 2026" crumbs={CRUMBS}>
       <section>
         <h2>What we collect</h2>
         <p>
-          When you request a callback or send a query through our website, we collect the
-          details you type in: your name, phone number, email address, and anything you tell
-          us about your brand. That&apos;s it — we don&apos;t harvest anything behind your back.
+          When you send the enquiry form on our website, we collect what you type in: your
+          name, mobile number, the service you&apos;re interested in, your Instagram handle or
+          website if you add it, and anything you tell us about your brand. We also store the
+          page you sent it from and your browser&apos;s user-agent string, so we can see which
+          page the enquiry came from and spot spam. Nothing else is collected.
         </p>
       </section>
       <section>

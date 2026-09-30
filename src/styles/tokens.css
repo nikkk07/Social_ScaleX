@@ -1,103 +1,20 @@
 /* ─────────────────────────────────────────────────────────────────────
- * Social ScaleX — design tokens.
+ * Social ScaleX: design tokens for the public site.
  *
- * The single source for colour, type, space, motion and elevation.
- * Components consume these; they never hard-code a hex, a px font size or
- * a bezier. Tailwind v4 turns every entry here into a utility, so
- * `--color-cta` gives `bg-cta` / `text-cta`, `--text-5xl` gives `text-5xl`.
+ * Light editorial system: warm ivory paper, near-black ink, one coral
+ * accent. Every colour pair carries its measured WCAG ratio. Measure a new
+ * pair before you use it.
  *
- * CONTRAST IS PART OF THE TOKEN. Every foreground/background pairing below
- * carries its measured WCAG ratio. Do not invent a new pairing without
- * measuring it — the retired `--color-violet` is here precisely because
- * #8B5CF6 behind white text is 4.23:1, which fails AA.
- *
- * STANDING DECISIONS (owner-approved 2026-08-30):
- *   - CSS owns ALL entrance reveals, everywhere, with no exceptions. Never
- *     move a reveal into JS — see .reveal and .rise-in in theme.css. An
- *     element parked at opacity:0 waiting on a chunk is one that non-JS
- *     crawlers never see.
- *   - NO 3D on the LCP element, ever. The hero atmosphere is CSS/SVG, zero
- *     JS. A lazy R3F scene in a BELOW-FOLD section is open as a post-launch
- *     addition, where "mount only when in viewport" can actually hold.
- *   - Never fabricate testimonials. The slot renders verified-results proof
- *     from content.ts until real, attributed quotes exist.
- *   - SOURCED COPY WINS OVER JUDGEMENT, ALWAYS. Never replace or delete
- *     content on a content.ts search alone — search the whole repo first
- *     (src/imports/ holds the original brief), and flag any "unsupported
- *     content" finding for the owner rather than acting on it. This rule
- *     exists because a partial search once produced a confident, wrong
- *     edit to sourced project copy.
- *   - Absolutely positioned elements NEVER live inside a transformed or
- *     animated wrapper (.reveal, .rise-in, .parallax-layer). A transformed
- *     ancestor becomes the containing block, so the child anchors to the
- *     wrapper instead of the intended parent. Every such layout keeps a
- *     rectangle-intersection assertion in its test pass.
- *   - GSAP is permanently unwired from the hero, and never runs anything
- *     above the fold. The counters stay on a plain rAF loop permanently:
- *     0 kB, no dependency.
- *   - NO SINGLE FEATURE JUSTIFIES LOADING THE MOTION LAYER. 55.5 kB gz is
- *     not worth one effect. Features register intent via requestMotion();
- *     the layer boots only once at least two of them want it. This is
- *     enforced in src/lib/motion.ts, not left to discipline.
- *   - If the motion gate never opens, that is a correct outcome. Never
- *     manufacture a second consumer to justify loading the layer.
- *   - Metrics render as <dl> label/value pairs, never divs — the pairing is
- *     what lets an extractor read a number as belonging to its label.
- *   - A card's headline metric is the FIRST in its data array. Never "the
- *     largest" or "the most impressive": a rule that picks the flattering
- *     number per client is spin with extra steps.
- *   - No figure may render twice within one card. Every metrics-rendering
- *     section carries a no-duplicate-figure assertion in its test pass.
- *   - Any "+" figure derived from a real number must FLOOR, never round.
- *     376.5K prints as "376K+", never "377K+": a "+" claim has to sit at or
- *     below the true value or it is simply false.
- *   - CSS OWNERSHIP. A component class here or in theme.css is plain CSS
- *     imported after Tailwind, so it is UNLAYERED, and an unlayered
- *     declaration beats any declaration in `@layer utilities` for the same
- *     property. Not by specificity — by cascade layer, which is checked
- *     first. Silently, with no warning and nothing visibly wrong at the
- *     call site. Therefore:
- *       · a class that sets a property OWNS that property. Its state
- *         variants (:hover, :focus-visible, [aria-invalid], [data-*]) are
- *         declared in the SAME stylesheet, immediately after it. This is
- *         the only fix that works — see `.liquid-glass.glass-hover`;
- *       · longhands instead of a shorthand help ONLY where a utility sets
- *         a property the class does not set at all (e.g. `border-width`
- *         alone). They do NOT rescue an overridden `border-color`: the
- *         layer boundary decides that, not the form of the declaration;
- *       · never "fix" this by reaching for `!important` at the call site.
- *     Learned three times: `.text-growth` owning `background` blanks any
- *     text it is combined with; `.liquid-glass-inset` owning `border` made
- *     `aria-[invalid=true]:border-critical` on the contact inputs a no-op,
- *     so an invalid field looked exactly like an untouched one; and
- *     `.liquid-glass` owning `border` made GlassCard's documented
- *     `hover:border-white/20` inert on every card on the site — splitting
- *     that shorthand into longhands did not revive it, which is how the
- *     real mechanism was finally pinned down.
- *   - CLASS PRESENCE IS NOT VISUAL STATE. Never assert that a state renders
- *     by checking for a class name or a utility string — that is the exact
- *     check that passed while the border above was dead. State indicators
- *     are asserted through getComputedStyle on the property that carries
- *     the meaning (border-color, background-color, outline-style, rotate),
- *     against the token's resolved value. See scripts/layout-check.mjs.
- * ───────────────────────────────────────────────────────────────────── */
+ * NAMING: these tokens must never reuse a name that crm.css registers
+ * (background, foreground, card, muted, accent, border, radius-sm…xl, …).
+ * crm.css is imported later, so a clash would silently repaint the site.
+ * ──────────────────────────────────────────────────────────────────── */
 
-/*
- * `static` forces every token below into the emitted CSS. Without it
- * Tailwind v4 tree-shakes theme values nothing references yet, so a token
- * defined here would simply not exist at runtime and `var(--spacing-section)`
- * would silently resolve to nothing. A design system has to be a contract,
- * not a set of suggestions — the unused ones cost well under 1 kB gzipped.
- */
 @theme static {
-  /* ══ Typography ══════════════════════════════════════════════════════
-   * Fluid between a 360px and a 1440px viewport, so there is not a single
-   * fixed px font size on the site and no breakpoint jumps. Generated, not
-   * eyeballed: slope = (max-min)/(1440-360), intercept solved from there.
-   */
-  --font-display: var(--font-space-grotesk), "Space Grotesk", sans-serif;
-  --font-sans: var(--font-inter), "Inter", sans-serif;
+  --font-display: var(--font-fraunces), 'Iowan Old Style', Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
+  /* Fluid type scale (the CRM shares these sizes). */
   --text-2xs: clamp(0.75rem, 0.7292rem + 0.0926vw, 0.8125rem);
   --text-2xs--line-height: 1.4;
   --text-xs: clamp(0.8125rem, 0.7917rem + 0.0926vw, 0.875rem);
@@ -109,156 +26,63 @@
   --text-lg: clamp(1.125rem, 1.0833rem + 0.1852vw, 1.25rem);
   --text-lg--line-height: 1.6;
   --text-xl: clamp(1.25rem, 1.1667rem + 0.3704vw, 1.5rem);
-  --text-xl--line-height: 1.5;
+  --text-xl--line-height: 1.45;
   --text-2xl: clamp(1.5rem, 1.375rem + 0.5556vw, 1.875rem);
-  --text-2xl--line-height: 1.3;
+  --text-2xl--line-height: 1.25;
   --text-3xl: clamp(1.75rem, 1.5417rem + 0.9259vw, 2.375rem);
-  --text-3xl--line-height: 1.22;
+  --text-3xl--line-height: 1.18;
   --text-4xl: clamp(2rem, 1.6667rem + 1.4815vw, 3rem);
-  --text-4xl--line-height: 1.14;
+  --text-4xl--line-height: 1.1;
   --text-5xl: clamp(2.375rem, 1.875rem + 2.2222vw, 3.875rem);
-  --text-5xl--line-height: 1.08;
-  --text-6xl: clamp(2.75rem, 2rem + 3.3333vw, 5rem);
-  --text-6xl--line-height: 1.05;
-  --text-7xl: clamp(3.125rem, 2rem + 5vw, 6.5rem);
-  --text-7xl--line-height: 1;
+  --text-5xl--line-height: 1.05;
+  --text-6xl: clamp(2.625rem, 1.9rem + 3.2vw, 4.75rem);
+  --text-6xl--line-height: 1.02;
 
-  /* Display type needs negative tracking to stop looking loose at size. */
-  --tracking-display: -0.035em;
-  --tracking-tight: -0.02em;
-  --tracking-normal: 0;
-  --tracking-wide: 0.06em;
-  --tracking-caps: 0.14em;
+  --tracking-display: -0.022em;
+  --tracking-caps: 0.12em;
 
-  /* ══ Colour — base ramp ══════════════════════════════════════════════
-   * Dark premium base. Five steps so elevation reads without a single
-   * border, and every surface stays neutral-cool rather than muddy.
-   */
-  --color-base-950: #050508;  /* page ground */
-  --color-base-900: #08070E;  /* raised section */
-  --color-base-850: #0C0A14;  /* card */
-  --color-base-800: #12101C;  /* elevated card / popover */
-  --color-base-700: #1B1828;  /* hairline fills, input wells */
+  /* Surfaces */
+  --color-paper: #FAF8F4;     /* page ground */
+  --color-paper-2: #F3EFE7;   /* alternate band */
+  --color-surface: #FFFFFF;   /* cards, inputs */
+  --color-line: #E7E1D6;      /* hairlines, decorative only */
+  --color-line-strong: #CFC6B5;
 
-  /* ══ Colour — the growth gradient ════════════════════════════════════
-   * ONE gradient, violet → cyan, used for emphasis text, hairlines and
-   * data. It is never a fill behind white text: cyan at #22D3EE under
-   * white is 1.81:1. On the dark base as TEXT it is 11.26:1.
-   */
-  --color-growth-1: #A78BFA;  /* violet-400  — 7.48:1 on base */
-  --color-growth-2: #8B5CF6;  /* violet-500  — 4.81:1 on base */
-  --color-growth-3: #22D3EE;  /* cyan-400    — 11.26:1 on base */
+  /* Ink on paper (ratios against #FAF8F4 / #F3EFE7) */
+  --color-ink: #16140F;       /* 17.35 / 16.05 */
+  --color-ink-2: #3D3931;     /* 10.83 / 10.02: body copy */
+  --color-ink-3: #6B6558;     /*  5.46 /  5.05: captions, meta */
 
-  /* ══ Colour — the CTA accent ═════════════════════════════════════════
-   * ONE accent, and only interactive things wear it. Solid cyan carrying
-   * near-black text measures 10.91:1 — the highest-contrast pairing
-   * available on this palette, and unmistakable against a violet-dominant
-   * page. Motion is reserved for elements in this colour: animate only
-   * what you want clicked.
-   */
-  --color-cta: #22D3EE;
-  --color-cta-hover: #67E8F9;   /* cyan-300 — 13.60:1 with cta-ink */
-  --color-cta-ink: #0B0A10;     /* the text that sits ON the accent */
+  /* Coral */
+  --color-coral: #E0462B;      /* decoration and large display only (3.9:1) */
+  --color-coral-text: #B8361F; /* 5.52 on paper: links, small accents */
+  --color-cta: #C23A22;        /* white on it 5.35:1 */
+  --color-cta-hover: #A8321C;  /* white on it 6.69:1 */
+  --color-coral-tint: #FBEBE5; /* soft fills behind ink text */
 
-  /* Secondary action. Violet-600 is the darkest violet that still clears
-     AA behind white text (5.70:1); violet-500 does not (4.23:1). */
-  --color-action: #7C3AED;
-  --color-action-hover: #8B5CF6;
-  --color-action-ink: #FFFFFF;
+  /* Night band (final CTA, footer strip) */
+  --color-night: #16140F;
+  --color-night-2: #25221B;
+  --color-on-night: #FAF8F4;        /* 17.35 */
+  --color-on-night-2: #BDB6A8;      /*  9.13 */
+  --color-coral-on-night: #F07A5E;  /*  6.70 */
 
-  /* ══ Colour — ink ════════════════════════════════════════════════════
-   * Measured against --color-base-950. Anything below `subtle` fails AA
-   * for body copy, which is why there is no fainter token: 0.45 alpha
-   * lands at 4.14:1 and there is no legitimate body use for it.
-   */
-  --color-ink: #F4F3F8;                        /* 18.44:1 */
-  --color-ink-muted: rgba(244, 243, 248, 0.72); /*  9.48:1 */
-  --color-ink-subtle: rgba(244, 243, 248, 0.55);/*  5.77:1 — AA floor */
+  --color-positive: #1E6B45;   /* 6.3:1 on paper */
+  --color-critical: #B42318;   /* 6.1:1 on paper */
 
-  /*
-   * DECORATIVE ONLY. 0.25 alpha measures 2.35:1 and fails AA outright, which
-   * is why it is named for its job rather than sitting on the ink ramp: it is
-   * legal on aria-hidden ornament — a breadcrumb chevron, a divider glyph —
-   * and on nothing a reader is ever expected to read. The ink floor is
-   * unchanged and stays `ink-subtle`; if text needs this colour, the text is
-   * wrong, not the token. Existing to stop the raw `text-white/25` that this
-   * replaced from being copied around as if it were a considered value.
-   */
-  --color-ink-decor: rgba(244, 243, 248, 0.25); /* 2.35:1 — never readable text */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 
-  /* ══ Colour — semantic ═══════════════════════════════════════════════ */
-  --color-positive: #34D399;   /* 10.59:1 on base — growth, "up" states */
-  --color-critical: #F87171;   /* form errors */
-  --color-warning: #FBBF24;
+  --spacing-section: clamp(4rem, 2.8rem + 5.3vw, 7.5rem);
+  --spacing-gutter: clamp(1rem, 0.6rem + 1.8vw, 2rem);
 
-  /* ══ Colour — surfaces & strokes ═════════════════════════════════════ */
-  --color-stroke: rgba(255, 255, 255, 0.10);
-  --color-stroke-strong: rgba(255, 255, 255, 0.18);
-  --color-glass: rgba(16, 14, 24, 0.42);
-  --color-glass-strong: rgba(12, 10, 20, 0.62);
-
-  /* ══ Motion ══════════════════════════════════════════════════════════
-   * Never `linear` for UI motion. Every duration here is short enough that
-   * a repeat visitor never waits on the interface.
-   */
-  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
-  --ease-out-back: cubic-bezier(0.34, 1.4, 0.64, 1);
-
-  --dur-instant: 120ms;
-  --dur-fast: 200ms;
-  --dur-base: 320ms;
-  --dur-slow: 520ms;
-  --dur-reveal: 700ms;
-  --stagger: 70ms;
-
-  /* ══ Space ═══════════════════════════════════════════════════════════
-   * Fluid section rhythm on the same 360→1440 locks as the type scale, so
-   * vertical rhythm and type grow together instead of drifting apart.
-   */
-  --spacing-section: clamp(4rem, 2.4167rem + 7.037vw, 8.75rem);
-  --spacing-gutter: clamp(1.25rem, 1rem + 1.1111vw, 2rem);
-  --spacing-stack: clamp(2rem, 1.3333rem + 2.963vw, 4rem);
-
-  /* ══ Radii ═══════════════════════════════════════════════════════════ */
-  --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.25rem;
-  --radius-xl: 1.75rem;
+  --radius-card: 1.25rem;
+  --radius-field: 0.75rem;
   --radius-pill: 999px;
 
-  /* ══ Elevation ═══════════════════════════════════════════════════════ */
-  --shadow-card:
-    0 4px 8px rgba(0, 0, 0, 0.25),
-    0 24px 64px rgba(0, 0, 0, 0.45);
-  --shadow-nav: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-cta: 0 8px 28px rgba(34, 211, 238, 0.28);
-  --shadow-action: 0 8px 28px rgba(124, 58, 237, 0.35);
+  --shadow-soft: 0 1px 2px rgba(22, 20, 15, 0.04), 0 8px 24px -12px rgba(22, 20, 15, 0.12);
+  --shadow-lift: 0 2px 4px rgba(22, 20, 15, 0.05), 0 18px 40px -18px rgba(22, 20, 15, 0.22);
 
-  --blur-glass: 12px;
-
-  /* ══ Layout ══════════════════════════════════════════════════════════ */
-  --container-content: 48rem;   /* long-form reading measure */
-  --container-wide: 80rem;      /* section max width */
-
-  /* ══ LEGACY ALIASES ══════════════════════════════════════════════════
-   * Everything below maps an old token onto its replacement so the site
-   * keeps building while Phase 2 migrates components one at a time.
-   * Delete an entry the moment its last consumer is gone; the whole block
-   * should disappear by the end of Phase 2.
-   *
-   * `git grep -n 'color-void-black\|color-violet\|color-emerald'` finds
-   * the remaining callers.
-   */
-  --color-void-black: var(--color-base-950);
-  --color-void-deep: var(--color-base-900);
-  --color-violet: var(--color-growth-2);
-  --color-violet-light: var(--color-growth-1);
-  --color-violet-cta: var(--color-action);
-  --color-emerald: var(--color-positive);
-  --color-emerald-dark: #059669;
-  --color-cyan: var(--color-growth-3);
-  --color-amber: var(--color-warning);
-  --color-paper-white: #FAF9F6;
+  --container-prose: 42rem;
+  --container-content: 48rem;
+  --container-wide: 76rem;
 }

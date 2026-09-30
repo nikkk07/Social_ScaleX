@@ -1,153 +1,87 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Instagram, Youtube } from 'lucide-react';
-import { MarketingShell } from '@/components/MarketingShell';
-import { PageHeader } from '@/components/sections/PageHeader';
-import { Reveal } from '@/components/effects/Reveal';
-import { GlassCard } from '@/components/GlassCard';
+import { SiteShell } from '@/components/site/SiteShell';
+import { PageIntro } from '@/components/site/PageIntro';
+import { MetricList } from '@/components/site/Cards';
+import { LeadSection } from '@/components/site/LeadSection';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { PORTFOLIO } from '@/lib/content';
-import {
-  breadcrumbNode,
-  caseStudyNode,
-  graph,
-  webPageNode,
-} from '@/lib/schema';
+import { PORTFOLIO, PORTFOLIO_NOTE, getService } from '@/lib/content';
+import { breadcrumbNode, caseStudyNode, graph, webPageNode } from '@/lib/schema';
 
-const TITLE = 'Client Case Studies & Results';
+const TITLE = 'Client Results & Case Studies';
 const DESCRIPTION =
-  'Four managed accounts with the numbers from their own Instagram and YouTube dashboards: 336K followers, 4.2M monthly views, 96.6K subscribers.';
+  'Real Instagram and YouTube results from accounts Social ScaleX manages: 4.2M monthly views, 336K followers, 96.6K subscribers. Figures from client analytics.';
+const CRUMBS = [
+  { name: 'Home', path: '/' },
+  { name: 'Client results', path: '/case-studies' },
+];
 
 export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: '/case-studies' },
-  openGraph: {
-    title: `${TITLE} | Social ScaleX`,
-    description: DESCRIPTION,
-    url: '/case-studies',
-  },
+  openGraph: { title: `${TITLE} | Social ScaleX`, description: DESCRIPTION, url: '/case-studies' },
 };
-
-const CRUMBS = [
-  { name: 'Home', path: '/' },
-  { name: 'Case Studies', path: '/case-studies' },
-];
-
-function PlatformIcons({ platform }: { platform: string }) {
-  const showIg = platform.includes('Instagram');
-  const showYt = platform.includes('YouTube');
-  return (
-    <span className="flex -space-x-1" aria-hidden>
-      {showIg && <Instagram size={13} className="text-white" />}
-      {showYt && <Youtube size={13} className="text-white" />}
-    </span>
-  );
-}
 
 export default function CaseStudiesPage() {
   return (
     <>
       <JsonLd
         data={graph([
-          webPageNode({
-            path: '/case-studies',
-            name: TITLE,
-            description: DESCRIPTION,
-            hasBreadcrumb: true,
-          }),
+          webPageNode({ path: '/case-studies', name: TITLE, description: DESCRIPTION, type: 'CollectionPage', hasBreadcrumb: true }),
           breadcrumbNode(CRUMBS, '/case-studies'),
           ...PORTFOLIO.map(caseStudyNode),
         ])}
       />
-      <MarketingShell>
-        <PageHeader
+      <SiteShell>
+        <PageIntro
           crumbs={CRUMBS}
-          eyebrow="Client portfolio"
-          title="Real accounts. Real numbers."
-          intro="Four accounts Social ScaleX manages, with the figures taken from each client's own Instagram and YouTube dashboards: 336K followers on the largest, 4.2M views in 30 days, 96.6K subscribers. Nothing here is projected or rounded up, and every client gave permission to publish."
-        />
+          eyebrow="Client results"
+          title="Real accounts, real numbers"
+          lede={<p>Every account below is one we run today. The figures come from each client’s own Instagram or YouTube dashboard, published with their permission. No projections, and nothing rounded up.</p>}
+        >
+          <nav aria-label="Case studies on this page" className="mt-8">
+            <ul className="flex flex-wrap gap-2">
+              {PORTFOLIO.map((p) => (
+                <li key={p.id}><a href={`#${p.id}`} className="btn btn-secondary">{p.client}</a></li>
+              ))}
+            </ul>
+          </nav>
+        </PageIntro>
 
-        <div className="max-w-5xl mx-auto px-6 pb-24">
-          <div className="space-y-16">
-            {PORTFOLIO.map((item) => (
-              <Reveal key={item.id}>
-                <article
-                  id={item.id}
-                  aria-labelledby={`${item.id}-heading`}
-                  className="scroll-mt-32"
-                >
-                  <GlassCard className="p-7 md:p-10">
-                    <div className="flex flex-wrap items-center gap-3 mb-5">
-                      <span className="liquid-glass-lite rounded-full px-3 py-1.5 flex items-center gap-2">
-                        <PlatformIcons platform={item.platform} />
-                        <span className="text-xs font-medium text-white">
-                          {item.platform}
-                        </span>
-                      </span>
-                      <span className="text-xs font-semibold text-[var(--color-emerald)] uppercase tracking-wider">
-                        {item.category}
-                      </span>
-                    </div>
-
-                    <h2
-                      id={`${item.id}-heading`}
-                      className="text-2xl md:text-3xl font-display font-bold text-white mb-4"
-                    >
-                      {item.client}
-                    </h2>
-
-                    {/* Metrics first, prose after. An extractor reading this
-                        card should reach the numbers before the narrative. */}
-                    <dl className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-7 pb-7 border-b border-white/10">
-                      {item.metrics.map((m) => (
-                        <div key={m.label}>
-                          <dt className="text-[10px] uppercase tracking-wider text-white/55 leading-tight order-2 mt-1">
-                            {m.label}
-                          </dt>
-                          <dd className="text-2xl md:text-3xl font-display font-bold text-white">
-                            {m.value}
-                          </dd>
-                        </div>
+        <div className="py-section">
+          <div className="wrap grid gap-8">
+            {PORTFOLIO.map((p) => (
+              <article key={p.id} id={p.id} aria-labelledby={`${p.id}-title`} className="card scroll-mt-24 overflow-hidden">
+                <div className="grid gap-10 p-6 sm:p-10 lg:grid-cols-[1.3fr_1fr]">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">{p.kind} · {p.platform}</p>
+                    <h2 id={`${p.id}-title`} className="mt-3 text-4xl text-ink">{p.client}</h2>
+                    <p className="mt-1 text-ink-3">{p.category}</p>
+                    <p className="mt-6 text-lg text-ink-2">{p.detail}</p>
+                    <h3 className="mt-8 font-sans text-sm font-semibold text-ink">Services on this account</h3>
+                    <ul className="mt-3 flex flex-wrap gap-2">
+                      {p.services.map(getService).filter((x): x is NonNullable<typeof x> => Boolean(x)).map((s) => (
+                        <li key={s.slug}>
+                          <Link href={`/services/${s.slug}`} className="inline-block rounded-full bg-paper-2 px-3.5 py-1.5 text-sm text-ink hover:bg-coral-tint">{s.name}</Link>
+                        </li>
                       ))}
-                    </dl>
-
-                    <p className="text-white/70 leading-relaxed mb-4">
-                      {item.description}
-                    </p>
-                    <p className="text-white/70 leading-relaxed">{item.detail}</p>
-                  </GlassCard>
-                </article>
-              </Reveal>
+                    </ul>
+                  </div>
+                  <div className="self-start rounded-card bg-paper p-6 ring-1 ring-line">
+                    <h3 className="font-sans text-sm font-semibold text-ink">The numbers</h3>
+                    <div className="mt-5"><MetricList metrics={p.metrics} size="lg" /></div>
+                  </div>
+                </div>
+              </article>
             ))}
+            <p className="text-sm text-ink-3">{PORTFOLIO_NOTE}</p>
           </div>
-
-          <Reveal className="mt-16 border-t border-white/10 pt-8">
-            <p className="text-sm text-white/55 mb-8 max-w-2xl">
-              Client data shared with permission, and there are more brands
-              beyond the four shown here. Figures are point-in-time snapshots
-              from the client dashboards, not running totals.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center gap-5">
-              <Link
-                href="/#contact"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[var(--color-violet-cta)] text-white px-8 py-4 rounded-full font-semibold border border-white/15 shadow-[0_8px_28px_rgba(124,58,237,0.35)] transition-[transform,background-color] duration-200 hover:bg-[var(--color-violet)] hover:scale-[1.02] active:scale-[0.99]"
-              >
-                Get a free strategy call
-                <ArrowRight size={18} aria-hidden />
-              </Link>
-              <Link
-                href="/services"
-                className="inline-flex items-center gap-1.5 text-white/70 hover:text-white font-medium transition-colors"
-              >
-                See what each service includes
-                <ArrowRight size={17} aria-hidden />
-              </Link>
-            </div>
-          </Reveal>
         </div>
-      </MarketingShell>
+
+        <LeadSection title="Want numbers like these on your account?" intro="Tell us where your account is today. On the free call we’ll show you what we’d change first." />
+      </SiteShell>
     </>
   );
 }

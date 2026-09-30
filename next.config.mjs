@@ -47,13 +47,35 @@ const crmHeaders = [
   { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
 ];
 
+// Once NEXT_PUBLIC_SITE_URL points at the owned domain, every request to the
+// old production host is 301'd there, path and query kept. Until then this is
+// a no-op, so the site keeps working on vercel.app.
+const LEGACY_HOST = 'social-scalex.vercel.app';
+let canonicalOrigin = '';
+try {
+  const raw = (process.env.NEXT_PUBLIC_SITE_URL ?? '').trim();
+  canonicalOrigin = raw ? new URL(raw).origin : '';
+} catch {
+  canonicalOrigin = '';
+}
+const hostRedirects =
+  canonicalOrigin && new URL(canonicalOrigin).host !== LEGACY_HOST
+    ? [{ source: '/:path*', has: [{ type: 'host', value: LEGACY_HOST }], destination: `${canonicalOrigin}/:path*`, permanent: true }]
+    : [];
+
 const nextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return hostRedirects;
+  },
   // Vercel already advertises itself; one less response header on every request.
   poweredByHeader: false,
   async headers() {
     return [
       { source: '/:path*', headers: baseHeaders },
+      ...(process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production'
+        ? [{ source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }]
+        : []),
       { source: '/crm', headers: crmHeaders },
       { source: '/crm/:path*', headers: crmHeaders },
       { source: '/login', headers: crmHeaders },

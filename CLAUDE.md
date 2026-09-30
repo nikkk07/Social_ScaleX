@@ -16,10 +16,11 @@
 > | Brief says | Reality | Why |
 > |---|---|---|
 > | Vite, `index.html`, `react-router`, `react-helmet-async` | Next.js App Router; metadata via the Metadata API | An SPA served an empty `<div id="root">` — invisible to every crawler that does not run JS |
-> | Framer Motion everywhere, 3D tilt cards, magnetic buttons, custom cursor, `layoutId` morphing | CSS-only entrances (`.reveal` / `.rise-in`); no motion library on marketing pages | Motion-rendered content is `opacity: 0` in the HTML until hydration, and it was ~56 kB gzipped on every page. The tilt/glare was removed in the minimal-glass redesign — see `GlassCard.tsx` |
-> | WebGL / R3F animated orb background; Lenis smooth scroll | Static painted background (`LiquidBackground.tsx`); native scroll | ~888 kB of JS repainting every frame, and scroll hijacking is an a11y liability |
+> | "Apple Liquid Glass", dark theme, Framer Motion, 3D tilt, magnetic buttons | Light editorial design (Sep 2026): ivory `#FAF8F4`, ink `#16140F`, one coral accent, Fraunces + Inter; tokens in `src/styles/tokens.css`. No motion library, no reveal-on-scroll | The owner asked for a light, premium, human-looking site. Motion-rendered content is invisible until hydration and costs JS on every page |
+> | WebGL / R3F background; Lenis smooth scroll; GSAP | None. gsap and lenis are uninstalled | JS weight and scroll hijacking hurt Core Web Vitals and accessibility |
 > | Zustand for global state | Not installed; no global UI state exists | Nothing needs it — adding it would be architecture for its own sake |
-> | `/pricing` page, `AggregateRating` schema | Neither exists | No real pricing or review data. Inventing either is a structured-data manual action waiting to happen |
+> | `/pricing` page, `AggregateRating` schema | Neither exists | Owner decided: no public pricing (Sep 2026). No self-served review markup |
+> | City landing pages | None; one page per service | Google's doorway-page spam policy. Add a city page only with real local work to show |
 >
 > **Two rules that override anything below:**
 >
@@ -31,7 +32,8 @@
 >    markers where currency is unconfirmed.
 >
 > Architecture, commands and conventions: `README.md`. SEO/GEO/AEO status and
-> what is still outstanding: `SEO.md`.
+> what is still outstanding: `SEO.md`. Platform facts in guides and FAQs must
+> cite an official source (`src/lib/guides.ts` lists them).
 
 ---
 

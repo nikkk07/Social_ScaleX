@@ -1,0 +1,9 @@
+/* CRM stylesheet, loaded only by the (crm) route group. A separate Tailwind
+   build over the CRM sources keeps its ~100 kB of utilities off the site. */
+@import 'tailwindcss' source(none);
+@source '../crm';
+@source '../components/crm';
+@source '../components/ui';
+@import 'tw-animate-css';
+@import './tokens.css';
+@import './crm.css';

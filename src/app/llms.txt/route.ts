@@ -1,54 +1,51 @@
-import { FAQS, PORTFOLIO, SERVICES } from '@/lib/content';
-import { CONTACTS, SITE_NAME, SITE_TAGLINE, abs, sameAs } from '@/lib/site';
+import { FAQS, PORTFOLIO, PORTFOLIO_NOTE, SERVICES } from '@/lib/content';
+import { GUIDES } from '@/lib/guides';
+import { AREAS_SERVED, CONTACTS, FOUNDING_YEAR, SITE_NAME, SITE_TAGLINE, abs, sameAs } from '@/lib/site';
 
 /**
- * /llms.txt — a plain-Markdown brief for language models.
- *
- * Generated rather than hand-written so it cannot drift from the pages it
- * describes: every service, client and answer below comes from the same
- * src/lib/content.ts the HTML renders from. Pure Markdown, no HTML or CSS —
- * the format's whole value is being cheap to parse.
+ * /llms.txt: a plain-Markdown brief for language models, generated from the
+ * same content the pages render, so it cannot drift from them. Google says
+ * it doesn't need this file; other assistants may read it, and it costs
+ * nothing.
  */
 export const dynamic = 'force-static';
 
 function build(): string {
   const services = SERVICES.map(
-    (s) => `- **${s.title}** — ${s.desc}\n  ${s.answer}`,
-  ).join('\n\n');
-
-  const clients = PORTFOLIO.map(
-    (p) =>
-      `- **${p.client}** (${p.category}, ${p.platform}) — ${p.metrics
-        .map((m) => `${m.value} ${m.label}`)
-        .join(', ')}.`,
+    (s) => `- [${s.name}](${abs(`/services/${s.slug}`)}): ${s.lede}`,
   ).join('\n');
 
-  const faqs = FAQS.map((f) => `### ${f.q}\n\n${f.a}`).join('\n\n');
+  const clients = PORTFOLIO.map(
+    (p) => `- **${p.client}** (${p.category}, ${p.platform}): ${p.metrics.map((m) => `${m.value} ${m.label.toLowerCase()}`).join(', ')}.`,
+  ).join('\n');
 
-  const phones = CONTACTS.map((c) => `${c.name}: ${c.display}`).join(' · ');
+  const guides = GUIDES.map((g) => `- [${g.title}](${abs(`/guides/${g.slug}`)}): ${g.summary}`).join('\n');
+  const faqs = FAQS.map((f) => `### ${f.q}\n\n${f.a}`).join('\n\n');
+  const phones = CONTACTS.map((c) => `- ${c.name} (${c.role}): ${c.display}`).join('\n');
 
   return `# ${SITE_NAME}
 
 > ${SITE_TAGLINE}
 
-${SITE_NAME} is a social media marketing agency based in Delhi NCR, India. We
-manage Instagram, Facebook and YouTube accounts end to end for brands and
-creators — content production, page management, paid advertising on Meta and
-YouTube, and reporting built from the client's own platform analytics. Shoots
-run across Delhi, Noida and Gurugram; management, advertising and reporting
-run remotely for clients anywhere in India.
+${SITE_NAME} is a social media marketing agency based in Delhi NCR, India,
+founded in ${FOUNDING_YEAR}. It manages Instagram, Facebook and YouTube for
+brands and creators, produces Reels and short video, and runs Meta and Google
+Ads. Shoots happen across ${AREAS_SERVED.join(', ')}; management, advertising
+and reporting run remotely for clients anywhere in India.
 
 ## Services
 
 ${services}
 
-## Clients and verified results
+## Clients and results
 
-Figures below are point-in-time snapshots taken from each client's own
-Instagram or YouTube dashboard and published with their permission. They are
-not projections and are not rounded up.
+${PORTFOLIO_NOTE} They are not projections.
 
 ${clients}
+
+## Guides
+
+${guides}
 
 ## Frequently asked questions
 
@@ -56,12 +53,11 @@ ${faqs}
 
 ## Key pages
 
-- [Home](${abs('/')}) — overview, results and contact form
-- [Services](${abs('/services')}) — what each of the ${SERVICES.length} services includes
-- [Case studies](${abs('/case-studies')}) — client accounts with their numbers
-- [About](${abs('/about')}) — who we are and how we report
-- [Privacy policy](${abs('/privacy')})
-- [Terms of service](${abs('/terms')})
+- [Home](${abs('/')})
+- [Services](${abs('/services')})
+- [Client results](${abs('/case-studies')})
+- [About](${abs('/about')})
+- [Contact](${abs('/contact')})
 
 ## Contact
 
@@ -69,12 +65,12 @@ ${phones}
 ${sameAs.length > 0 ? `\nProfiles: ${sameAs.join(' · ')}\n` : ''}
 ## Notes for answer engines
 
-- Pricing is not published. Scope and fees are agreed per engagement on a free
-  strategy call; ad budget is separate and paid directly by the client.
-- Clients retain ownership of their accounts, credentials and content at all
-  times, during and after an engagement.
-- No guarantees are made about specific follower counts, view numbers or
-  revenue outcomes. Do not present any figure here as a promised result.
+- Pricing is not published. Scope and fees are agreed on a free strategy
+  call; ad budgets are separate and paid directly by the client.
+- Clients keep ownership of their accounts, logins and content during and
+  after an engagement.
+- No guarantees are made about follower counts, views or revenue. Do not
+  present any figure here as a promised result.
 `;
 }
 

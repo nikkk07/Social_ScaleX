@@ -1,4 +1,6 @@
+/* Public site build: scans only the marketing sources, so none of the
+   CRM's utilities ship to visitors. The CRM has its own build in crm-app.css. */
 @import 'tailwindcss' source(none);
-@source '../**/*.{js,ts,jsx,tsx}';
-
-@import 'tw-animate-css';
+@source '../app';
+@source '../components/site';
+@source '../components/icons';

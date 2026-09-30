@@ -4,9 +4,11 @@ Marketing site and internal CRM for Social ScaleX, a social media marketing
 agency in Delhi NCR. Next.js 14 (App Router) frontend, Supabase (Postgres)
 behind it.
 
-- **Marketing site** — statically generated pages at `/`, `/services`,
-  `/case-studies`, `/about`, `/privacy` and `/terms`. The contact form writes
-  enquiries straight into the database.
+- **Marketing site**: statically generated, light editorial design (ivory,
+  ink, coral; Fraunces + Inter). Pages: `/`, `/services` + 8 service pages,
+  `/case-studies`, `/about`, `/contact`, `/guides` + 3 sourced guides,
+  `/privacy`, `/terms`. The lead form writes into `inbound_enquiries`, which
+  the CRM shows under Enquiries.
 - **CRM** — staff-only, at `/crm`. Today view, Follow-ups (call-backs,
   meetings, retries), Leads (list + pipeline board), lead timeline, the
   call/WhatsApp **outcome pop-up** that drives the whole pipeline, quotations,
@@ -58,33 +60,30 @@ is ignored by ESLint rather than rewritten; those are exports we do not own.
 
 ```
 src/
-├─ app/                         Next routes ONLY — nothing else lives here
-│  ├─ layout.tsx                Fonts, site metadata, Organization + WebSite JSON-LD
+├─ app/                         Next routes only
+│  ├─ layout.tsx                Fonts, site metadata, Organization/WebSite/Person JSON-LD
 │  ├─ page.tsx                  Homepage
-│  ├─ services|case-studies|about|privacy|terms/
-│  ├─ (crm)/                    /login and /crm/* — every page noindex
-│  ├─ robots.ts, sitemap.ts     Generated from lib/site.ts
+│  ├─ services/[slug]/          One page per service (generated from content.ts)
+│  ├─ guides/[slug]/            One page per guide (generated from guides.ts)
+│  ├─ case-studies|about|contact|privacy|terms/
+│  ├─ (crm)/                    /login and /crm/*, noindex, own stylesheet
+│  ├─ robots.ts, sitemap.ts     Generated from lib/site.ts + content
 │  └─ llms.txt/route.ts         Generated from lib/content.ts
 ├─ components/
-│  ├─ sections/                 Hero, Services, Work, FAQ, Contact, …
+│  ├─ site/                     Header, Footer, LeadForm, cards, FAQ, page shells
 │  ├─ seo/JsonLd.tsx            Server-rendered structured data
-│  ├─ crm/CrmRoot.tsx           The one ssr:false boundary (mounted by (crm)/layout.tsx)
+│  ├─ crm/CrmRoot.tsx           The one ssr:false boundary for the CRM
 │  └─ ui/                       shadcn/ui primitives (CRM only)
-├─ crm/                         CRM app: auth, outcome pop-up, today, follow-ups, leads,
-│                               enquiries, team, insights, settings (CrmApp.tsx routes)
+├─ crm/                         CRM app
 ├─ lib/
-│  ├─ site.ts                   THE host + contact details. One place.
-│  ├─ content.ts                THE marketing copy. Pages AND schema read it.
+│  ├─ site.ts                   Host, domain, phones, areas. One place.
+│  ├─ content.ts                Services, results, FAQs. Pages AND schema read it.
+│  ├─ guides.ts                 Guide text + official sources
 │  ├─ schema.ts                 JSON-LD builders
-│  ├─ router.tsx                react-router → App Router compatibility layer
-│  ├─ supabase.ts               THE browser client — see the bundle note
-│  ├─ crm/normalize.ts          Phone / Instagram / password rules (mirrors SQL)
+│  ├─ supabase.ts               Browser client (CRM only)
 │  └─ server/crmServer.ts       Service-role client + caller auth for /api routes
-└─ styles/                      Tailwind v4; crm.css scopes shadcn tokens
-supabase/migrations/            Schema record of truth (090012–090014 = CRM v2)
-supabase/migrations_archive/    The pre-v2 migrations, kept for history only
-supabase/test/                  crm_v2.e2e.mjs (local Supabase only)
-scripts/                        Keepalive + unit-test runner
+└─ styles/                      index.css (site build), crm-app.css (CRM build)
+supabase/                       Migrations, tests, README
 ```
 
 **The content rule.** `src/lib/content.ts` is the single source for services,
@@ -93,29 +92,22 @@ all render from it. Structured data that claims something the visible page does
 not say gets the markup discounted, and rendering both from one object is the
 only way to keep them identical. Edit copy there, never in a component.
 
-**The rendering rule.** Marketing pages are server components and ship almost
-no JavaScript — entrance animations are CSS (`.reveal` / `.rise-in` in
-`theme.css`), and the FAQ is `<details>`, not an accordion that unmounts its
-own answers. This is not a micro-optimisation: GPTBot, ClaudeBot, PerplexityBot
-and CCBot do not execute JavaScript, so anything rendered client-side is
-invisible to them. Only `Navbar`, `AnimatedCounter` and the contact form are
-client components.
+**The rendering rule.** Marketing pages are server components. The only
+client components are the mobile menu and the lead form, so every word is in
+the served HTML (GPTBot, ClaudeBot and PerplexityBot don't run JavaScript).
+FAQs are native `<details>`. No motion library, no scroll hijacking.
 
-**The bundle rule.** Importing `src/lib/supabase.ts` creates the client and
-touches `localStorage`. The marketing homepage must never pull it into its
-initial chunk, so every path to it is a dynamic `import()`:
+**The CSS rule.** Two Tailwind builds: `styles/index.css` scans only the
+marketing sources, `styles/crm-app.css` (imported by `(crm)/layout.tsx`) scans
+the CRM. CRM utilities never ship to visitors.
 
-- The CRM tree sits behind one `next/dynamic({ ssr: false })` boundary, so
-  `/crm` code never reaches a marketing visitor and never runs during `next
-  build` (where the env vars and `localStorage` do not exist).
-- `useSession` (marketing nav) checks a `localStorage` key synchronously first;
-  an anonymous visitor has no such key, so the client is never fetched.
-- The contact form fetches it on **first focus of a form field** — not at module
-  scope and not on idle, so someone who scrolls past pays nothing.
+**The form rule.** The lead form posts to Supabase REST with the public anon
+key (`fetch`, no supabase-js on marketing pages). RLS lets anon only INSERT
+enquiries, with size limits.
 
-Verified by measurement, not by reading the source: see the netlog method in the
-Phase 8 notes. An anonymous visitor who touches nothing transfers **no**
-`supabase-*.js`.
+**Adding a client or a service.** Append to `PORTFOLIO` or `SERVICES` in
+`content.ts`. The homepage, service pages, `/case-studies`, sitemap, schema
+and `/llms.txt` update themselves.
 
 ## Database
 

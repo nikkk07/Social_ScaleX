@@ -15,7 +15,7 @@ cd "$(dirname "$0")/.."
 
 SUITES=(
   src/crm/crm.test.ts
-  src/components/sections/enquiry.test.ts
+  src/components/site/enquiry.test.ts
 )
 
 OUT=node_modules/.cache/ssx-tests
