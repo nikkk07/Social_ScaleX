@@ -87,13 +87,13 @@ function Headline({ p, size = 'lg' }: { p: PortfolioItem; size?: 'lg' | 'md' }) 
 }
 
 /** Before → after as two bars. The numbers are text; the bars only illustrate them. */
-function GrowthBars({ g }: { g: Growth }) {
+export function GrowthBars({ g, aside = 'change' }: { g: Growth; aside?: 'change' | 'period' }) {
   const pct = Math.max(3, Math.round((g.from / g.to) * 100));
   return (
     <div>
       <p className="flex items-baseline justify-between gap-3 text-sm">
         <span className="font-semibold text-ink">{g.label}</span>
-        <span className="font-semibold text-positive">{growthChange(g)}</span>
+        {aside === 'change' ? <span className="font-semibold text-positive">{growthChange(g)}</span> : <span className="text-ink-3">{g.period}</span>}
       </p>
       <div aria-hidden="true" className="mt-2 grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-x-3 gap-y-1.5 text-xs">
         <span className="tabular-nums text-ink-3">{g.fromText}</span>

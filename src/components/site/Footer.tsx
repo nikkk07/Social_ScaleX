@@ -1,16 +1,20 @@
 import React from 'react';
 import Link from 'next/link';
+import { Phone } from 'lucide-react';
 import { Logo } from './Logo';
 import { AUTOMATION_LINKS, GOAL_LINKS, SERVICE_LINKS } from './nav';
+import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
 import { GUIDES } from '@/lib/guides';
-import { AREAS_SERVED, CONTACTS, SITE_NAME, WHATSAPP_URL, SOCIAL_PROFILES } from '@/lib/site';
+import { CITIES } from '@/lib/areas';
+import { CONTACTS, SITE_NAME, SOCIAL_PROFILES, WHATSAPP_URL } from '@/lib/site';
 
-const COMPANY = [
+type L = { href: string; label: string };
+
+const COMPANY: L[] = [
   { href: '/about', label: 'About us' },
   { href: '/case-studies', label: 'Client results' },
   { href: '/services', label: 'All services' },
-  { href: '/areas', label: 'Areas we serve' },
-  { href: '/guides', label: 'Guides' },
+  { href: '/automation', label: 'All automation' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -20,28 +24,39 @@ const SOCIAL_LABEL: Record<keyof typeof SOCIAL_PROFILES, string> = {
   youtube: 'YouTube',
 };
 
+/**
+ * Every public page is one click from every other page through this footer,
+ * so crawlers reach the whole site from any entry point.
+ */
 export function Footer() {
   const socials = (Object.keys(SOCIAL_PROFILES) as (keyof typeof SOCIAL_PROFILES)[]).filter((k) => SOCIAL_PROFILES[k]);
   return (
     <footer className="border-t border-line bg-paper-2 pb-28 md:pb-0">
-      <div className="wrap grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr]">
-        <div className="max-w-sm">
+      <div className="wrap grid grid-cols-1 gap-12 py-14 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-16">
+        <div>
           <Logo />
           <p className="mt-4 text-sm text-ink-2">
-            Social media marketing agency in Delhi NCR. We run Instagram, Facebook and YouTube for brands and creators, and report every number from your own dashboard.
+            Social media marketing agency in Delhi NCR for brands and creators on Instagram, Facebook and YouTube.
           </p>
-          <address className="mt-6 space-y-2 text-sm not-italic">
+          <ul className="mt-6 space-y-2 text-sm">
             {CONTACTS.map((c) => (
-              <p key={c.phone}>
-                <a href={`tel:${c.phone}`} className="font-semibold text-ink hover:text-coral-text">{c.display}</a>
-                <span className="text-ink-3"> · {c.name}</span>
-              </p>
+              <li key={c.phone}>
+                <a href={`tel:${c.phone}`} className="inline-flex items-center gap-2 text-ink hover:text-coral-text">
+                  <Phone className="size-4 text-ink-3" aria-hidden="true" />
+                  <span className="font-semibold tabular-nums">{c.display}</span>
+                  <span className="text-ink-3">{c.name.split(' ')[0]}</span>
+                </a>
+              </li>
             ))}
-            <p>
-              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="font-semibold text-ink hover:text-coral-text">WhatsApp us</a>
-            </p>
-            <p className="text-ink-3">Shoots across {AREAS_SERVED.join(', ')}. Remote work across India. <Link href="/areas" className="underline underline-offset-2 hover:text-ink">Check your area</Link></p>
-          </address>
+          </ul>
+          <a
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink"
+          >
+            <WhatsappIcon size={18} className="text-[#128C7E]" /> WhatsApp us
+          </a>
           {socials.length ? (
             <ul className="mt-5 flex gap-4 text-sm">
               {socials.map((k) => (
@@ -50,14 +65,26 @@ export function Footer() {
             </ul>
           ) : null}
         </div>
-        <FooterCol title="Services" links={[...SERVICE_LINKS.map((s) => ({ href: s.href, label: s.label })), ...GOAL_LINKS]} />
-        <FooterCol title="Automation" links={AUTOMATION_LINKS.map((s) => ({ href: s.href, label: s.label }))} />
-        <FooterCol title="Company" links={COMPANY} />
-        <FooterCol title="Guides" links={GUIDES.map((g) => ({ href: `/guides/${g.slug}`, label: g.metaTitle }))} />
+
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
+          <FooterCol title="Services" links={SERVICE_LINKS.map((s) => ({ href: s.href, label: s.label }))} />
+          <div className="space-y-10">
+            <FooterCol title="Automation" links={AUTOMATION_LINKS.map((s) => ({ href: s.href, label: s.label }))} />
+            <FooterCol title="By goal" links={GOAL_LINKS} />
+          </div>
+          <FooterCol
+            title="Areas we serve"
+            links={[...CITIES.map((c) => ({ href: `/areas/${c.slug}`, label: c.name })), { href: '/areas', label: 'Check your pin code' }]}
+          />
+          <div className="space-y-10">
+            <FooterCol title="Company" links={COMPANY} />
+            <FooterCol title="Free guides" links={[...GUIDES.map((g) => ({ href: `/guides/${g.slug}`, label: g.navTitle })), { href: '/guides', label: 'All guides' }]} />
+          </div>
+        </div>
       </div>
       <div className="border-t border-line">
         <div className="wrap flex flex-col gap-2 py-6 text-xs text-ink-3 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} {SITE_NAME}. Delhi NCR, India.</p>
+          <p>© {new Date().getFullYear()} {SITE_NAME} · Delhi NCR, India · Shoots across Delhi NCR, remote work across India</p>
           <p className="flex gap-5">
             <Link href="/privacy" className="hover:text-ink">Privacy</Link>
             <Link href="/terms" className="hover:text-ink">Terms</Link>
@@ -68,11 +95,11 @@ export function Footer() {
   );
 }
 
-function FooterCol({ title, links }: { title: string; links: { href: string; label: string }[] }) {
+function FooterCol({ title, links }: { title: string; links: L[] }) {
   return (
     <nav aria-label={title}>
       <h2 className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">{title}</h2>
-      <ul className="mt-4 space-y-2.5 text-sm">
+      <ul className="mt-4 space-y-2.5 text-sm leading-snug">
         {links.map((l) => (
           <li key={l.href}><Link href={l.href} className="text-ink-2 hover:text-ink">{l.label}</Link></li>
         ))}

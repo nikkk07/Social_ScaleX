@@ -1,4 +1,5 @@
 // Checks that every published result adds up. Run with: npm run test:unit
+import { formatDay, monthShort } from './dates';
 import { PORTFOLIO, RESULTS_FAQS, SERVICES, STATS, getService, growthChange } from './content';
 
 declare const process: { exit(code: number): never };
@@ -41,6 +42,7 @@ check('Big Discount Mart 13.5×', growthChange(by('big-discount-mart').growth[0]
 check('30× stat matches Saini', STATS[2]!.value === growthChange(by('saini-telecom').growth[0]!), growthChange(by('saini-telecom').growth[0]!));
 check('Saini first (strongest growth)', PORTFOLIO[0]!.id === 'saini-telecom');
 check('client count stat', STATS[3]!.value === String(PORTFOLIO.length));
+check('date label', formatDay('2026-09-30') === '30 Sep 2026' && monthShort('2026-09-30') === 'Sep');
 check('results FAQs', RESULTS_FAQS.length >= 4);
 
 if (failures) { console.log(`\n${failures} check(s) failed`); process.exit(1); }

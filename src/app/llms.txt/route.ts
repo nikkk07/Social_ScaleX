@@ -89,6 +89,8 @@ ${faqs}
 - [Services](${abs('/services')})
 - [Automation](${abs('/automation')})
 - [Areas we serve](${abs('/areas')})
+- [Full site content in one file](${abs('/llms-full.txt')})
+- [Sitemap](${abs('/sitemap.xml')})
 - [Client results](${abs('/case-studies')})
 - [About](${abs('/about')})
 - [Contact](${abs('/contact')})

@@ -11,7 +11,8 @@ import { FaqList } from '@/components/site/FaqList';
 import { LeadSection } from '@/components/site/LeadSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
-import { FAQS, PAINS, PORTFOLIO, PORTFOLIO_NOTE, PRINCIPLES, PROCESS, SERVICES, STATS } from '@/lib/content';
+import { UpdatedAgo } from '@/components/site/UpdatedAgo';
+import { FAQS, PAINS, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_AS_OF, PRINCIPLES, PROCESS, SERVICES, STATS } from '@/lib/content';
 import { GUIDES } from '@/lib/guides';
 import { AUTOMATIONS } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
@@ -175,7 +176,11 @@ export default function HomePage() {
               title="Real accounts. Real numbers."
               intro={PORTFOLIO_NOTE}
             />
-            <ul className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2">
+              <span aria-hidden="true" className="size-1.5 rounded-full bg-positive" />
+              <UpdatedAgo iso={RESULTS_AS_OF} prefix="Figures updated" />
+            </p>
+            <ul className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {FEATURED.map((id) => PORTFOLIO.find((p) => p.id === id))
                 .filter((p): p is NonNullable<typeof p> => Boolean(p))
                 .map((p) => (

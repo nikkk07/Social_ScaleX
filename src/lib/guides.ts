@@ -28,6 +28,8 @@ export interface Guide {
   slug: string;
   title: string;
   metaTitle: string;
+  /** Short label for navigation and the footer. */
+  navTitle: string;
   description: string;
   /** Answer-first summary shown under the H1. */
   summary: string;
@@ -94,6 +96,7 @@ export const GUIDES: Guide[] = [
     slug: 'free-instagram-comment-to-dm-automation',
     title: 'Instagram comment to DM automation: free setup guide (2026)',
     metaTitle: 'Instagram Comment to DM Automation: Free Guide',
+    navTitle: 'Comment-to-DM setup (free)',
     description:
       'Set up Instagram comment to DM automation free with Meta Business Suite. 4 steps, best keywords, Meta’s auto-DM rules and fixes. Updated for 2026.',
     summary:
@@ -274,6 +277,7 @@ export const GUIDES: Guide[] = [
     slug: 'increase-instagram-followers',
     title: 'How to increase Instagram followers, likes and views without buying them',
     metaTitle: 'How to Increase Instagram Followers Organically',
+    navTitle: 'Grow Instagram followers',
     description:
       'Grow Instagram followers, likes, views and comments the way Instagram rewards: original Reels, sends and watch time, Trial Reels. Why bought followers backfire.',
     summary:
@@ -360,6 +364,7 @@ export const GUIDES: Guide[] = [
     slug: 'instagram-reels-reach',
     title: 'How Instagram decides who sees your Reels',
     metaTitle: 'How the Instagram Reels Algorithm Works (2026)',
+    navTitle: 'Reels algorithm explained',
     description:
       'What Instagram and Adam Mosseri have said about ranking Reels: watch time, sends and likes per reach, originality rules and Trial Reels. Sourced and practical.',
     summary:
@@ -457,6 +462,7 @@ export const GUIDES: Guide[] = [
     slug: 'meta-ads-vs-google-ads',
     title: 'Meta ads or Google Ads: which should a local business start with?',
     metaTitle: 'Meta Ads vs Google Ads for Local Businesses',
+    navTitle: 'Meta Ads vs Google Ads',
     description:
       'How Meta and Google Ads find customers, how each auction sets your price, which lead formats suit local businesses, and a simple way to choose where to start.',
     summary:
@@ -546,6 +552,7 @@ export const GUIDES: Guide[] = [
     slug: 'choose-social-media-agency',
     title: 'How to choose a social media marketing agency: 10 checks before you sign',
     metaTitle: 'How to Choose a Social Media Marketing Agency',
+    navTitle: 'Choosing an agency',
     description:
       'Ten checks before you hire a social media agency in Delhi NCR or anywhere in India: ownership, passwords, real numbers, reporting, disclosure and exit terms.',
     summary:

@@ -10,7 +10,8 @@ import { LeadSection } from '@/components/site/LeadSection';
 import { ResultCase } from '@/components/site/Results';
 import { ResultsFilter } from '@/components/site/ResultsFilter';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_FAQS, STATS, type ResultGoal } from '@/lib/content';
+import { GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_AS_OF, RESULTS_FAQS, STATS, type ResultGoal } from '@/lib/content';
+import { UpdatedAgo } from '@/components/site/UpdatedAgo';
 import { breadcrumbNode, caseStudyNode, faqNode, graph, webPageNode } from '@/lib/schema';
 
 const PATH = '/case-studies';
@@ -56,7 +57,11 @@ export default function CaseStudiesPage() {
             </p>
           }
         >
-          <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line lg:grid-cols-4">
+          <p className="mt-8 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2">
+              <span aria-hidden="true" className="size-1.5 rounded-full bg-positive" />
+              <UpdatedAgo iso={RESULTS_AS_OF} prefix="Figures updated" />
+            </p>
+          <dl className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line lg:grid-cols-4">
             {STATS.map((s) => (
               <div key={s.label} className="flex flex-col-reverse bg-surface p-5 sm:p-6">
                 <dt className="mt-1 text-sm text-ink-3">{s.label}</dt>

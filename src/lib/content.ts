@@ -504,6 +504,8 @@ export interface PortfolioItem {
   avatar: string;
   profiles: { label: 'Instagram' | 'YouTube'; url: string }[];
   category: string;
+  /** Two or three words for tight spaces (hero card). */
+  short: string;
   platform: 'Instagram' | 'Instagram + YouTube' | 'YouTube';
   kind: 'Creator' | 'Business';
   goal: ResultGoal;
@@ -563,6 +565,7 @@ export const PORTFOLIO: PortfolioItem[] = [
     avatar: '/clients/saini-telecom.webp',
     profiles: [{ label: 'Instagram', url: 'https://www.instagram.com/saini_telecom__/' }],
     category: 'Mobile phone and electronics store, Delhi',
+    short: 'Mobile store, Delhi',
     platform: 'Instagram',
     kind: 'Business',
     goal: 'sales',
@@ -585,6 +588,7 @@ export const PORTFOLIO: PortfolioItem[] = [
     avatar: '/clients/big-discount-mart.webp',
     profiles: [{ label: 'Instagram', url: 'https://www.instagram.com/bigdiscountmartofficial/' }],
     category: 'Discount and gift store, Nangloi, Delhi',
+    short: 'Discount store, Delhi',
     platform: 'Instagram',
     kind: 'Business',
     goal: 'sales',
@@ -606,6 +610,7 @@ export const PORTFOLIO: PortfolioItem[] = [
     avatar: '/clients/prago.webp',
     profiles: [{ label: 'Instagram', url: 'https://www.instagram.com/prago.outdoors/' }],
     category: 'Camping, trekking and riding gear store',
+    short: 'Outdoor gear store',
     platform: 'Instagram',
     kind: 'Business',
     goal: 'sales',
@@ -634,6 +639,7 @@ export const PORTFOLIO: PortfolioItem[] = [
       { label: 'YouTube', url: 'https://www.youtube.com/@acdelhivlogs' },
     ],
     category: 'Events, places and travel in Delhi NCR',
+    short: 'Delhi NCR creator',
     platform: 'Instagram + YouTube',
     kind: 'Creator',
     goal: 'creator',
@@ -659,6 +665,7 @@ export const PORTFOLIO: PortfolioItem[] = [
     avatar: '/clients/subh.webp',
     profiles: [{ label: 'Instagram', url: 'https://www.instagram.com/the_subh_journey/' }],
     category: 'Travel, stories and events in Delhi NCR',
+    short: 'Travel creator',
     platform: 'Instagram',
     kind: 'Creator',
     goal: 'creator',
@@ -680,6 +687,7 @@ export const PORTFOLIO: PortfolioItem[] = [
       { label: 'YouTube', url: 'https://www.youtube.com/@journeywithoutvisa' },
     ],
     category: 'Travel, places, events and food',
+    short: 'Travel creator',
     platform: 'Instagram + YouTube',
     kind: 'Creator',
     goal: 'creator',
@@ -704,6 +712,7 @@ export const PORTFOLIO: PortfolioItem[] = [
     avatar: '/clients/wanna-party.webp',
     profiles: [{ label: 'Instagram', url: 'https://www.instagram.com/wannaparty.in/' }],
     category: 'Party supplies brand, online since 2011',
+    short: 'Party supplies brand',
     platform: 'Instagram',
     kind: 'Business',
     goal: 'awareness',

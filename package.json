@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test:unit": "bash scripts/test-unit.sh",
     "test:db": "node supabase/test/crm_v2.e2e.mjs",
-    "test:site": "node scripts/site-qa.mjs"
+    "test:site": "node scripts/site-qa.mjs",
+    "indexnow": "node scripts/indexnow.mjs",
+    "test:crawl": "node scripts/crawl-audit.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
