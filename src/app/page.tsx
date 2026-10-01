@@ -110,7 +110,7 @@ export default function HomePage() {
               <SectionHead
                 id="services-title"
                 eyebrow="Services"
-                title="Everything your social media needs, under one roof."
+                title="Instagram page management, Reels and ads, under one roof."
                 intro="Content, page management and paid ads, delivered together so each one makes the others work harder."
               />
               <Link href="/services" className="btn btn-secondary self-start md:self-auto">All services</Link>
@@ -130,7 +130,7 @@ export default function HomePage() {
               <SectionHead
                 id="automation-title"
                 eyebrow="Automation"
-                title="Auto-reply to every comment and DM"
+                title="Instagram and WhatsApp auto-replies for every comment and DM"
                 intro="Instagram comment-to-DM, DM auto-reply, WhatsApp and Facebook automation on Meta’s official tools. Comment-to-DM starts at ₹99 a month."
               />
               <ul className="mt-10 grid gap-5 sm:grid-cols-2">

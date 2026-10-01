@@ -4,6 +4,8 @@ import { Fraunces, Inter } from 'next/font/google';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { graph, organizationNode, personNodes, websiteNode } from '@/lib/schema';
 import { OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/site';
+import { Analytics } from '@/components/seo/Analytics';
+import { GA_ID, META_PIXEL_ID } from '@/lib/tracking';
 import '@/styles/index.css';
 
 // Self-hosted by next/font: no third-party request before first paint.
@@ -15,7 +17,7 @@ const indexable = process.env.VERCEL_ENV === undefined || process.env.VERCEL_ENV
 
 const DEFAULT_TITLE = 'Social Media Marketing Agency in Delhi NCR';
 const DEFAULT_DESCRIPTION =
-  'Instagram & Facebook management, Reels production, Meta and Google Ads for Delhi NCR brands. Real client results. Book a free strategy call.';
+  'Social ScaleX is a social media marketing agency in Delhi NCR: Instagram page management, Reels, Meta and Google Ads. Book a free strategy call.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -74,7 +76,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <JsonLd data={graph([organizationNode(), websiteNode(), ...personNodes()])} />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        {GA_ID || META_PIXEL_ID ? <Analytics gaId={GA_ID} pixelId={META_PIXEL_ID} /> : null}
+      </body>
     </html>
   );
 }

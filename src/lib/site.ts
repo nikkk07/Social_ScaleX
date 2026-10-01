@@ -57,7 +57,7 @@ export function whatsappLink(text: string): string {
  */
 export const SOCIAL_PROFILES = {
   instagram: '',
-  linkedin: '',
+  linkedin: 'https://www.linkedin.com/company/143428030/',
   youtube: '',
 } as const;
 

@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { LegalPage } from '@/components/site/LegalPage';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { breadcrumbNode, graph, webPageNode } from '@/lib/schema';
+import { GA_ID, META_PIXEL_ID } from '@/lib/tracking';
 
 const TITLE = 'Privacy Policy';
 const DESCRIPTION = 'What Social ScaleX collects when you send an enquiry, how it is used, and how to have it deleted.';
@@ -63,11 +64,35 @@ export default function Page() {
       </section>
       <section>
         <h2>Cookies and analytics</h2>
-        <p>
-          This site may use basic analytics to understand how visitors use it — page views
-          and rough location, never anything that identifies you personally. No advertising
-          trackers run on this site.
-        </p>
+        {GA_ID || META_PIXEL_ID ? (
+          <>
+            {GA_ID ? (
+              <p>
+                We use Google Analytics 4 to see which pages are read and where visitors come
+                from. It sets cookies and records page views, device type and approximate
+                location. Google&apos;s use of this data is covered by its{' '}
+                <a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank">privacy policy</a>.
+              </p>
+            ) : null}
+            {META_PIXEL_ID ? (
+              <p>
+                We use the Meta Pixel to measure our Facebook and Instagram ads and to show our
+                ads to people who have visited this site. It sets cookies and shares page visits
+                with Meta under Meta&apos;s{' '}
+                <a href="https://www.facebook.com/privacy/policy/" rel="noopener noreferrer" target="_blank">privacy policy</a>.
+                You can turn off ad personalisation in your Facebook or Instagram ad settings.
+              </p>
+            ) : null}
+            <p>
+              You can block or delete these cookies in your browser settings at any time; the
+              site works the same without them.
+            </p>
+          </>
+        ) : (
+          <p>
+            No analytics or advertising trackers run on this site at the moment.
+          </p>
+        )}
       </section>
       <section>
         <h2>Your choices</h2>
