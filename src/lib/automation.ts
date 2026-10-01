@@ -290,7 +290,7 @@ export const AUTOMATIONS: Automation[] = [
       { title: 'Audit settings', desc: 'We check your default comment settings and filters in YouTube Studio.' },
       { title: 'Set the filters', desc: 'Blocked words, blocked links and held-for-review set for your channel.' },
       { title: 'Reply and pin', desc: 'We reply to comments and pin the useful ones.' },
-      { title: 'Report', desc: 'What viewers keep asking, so your next video can answer it.' },
+      { title: 'Report', desc: 'The questions viewers keep asking, so your next video can answer them.' },
     ],
     useCases: [
       'Creators whose comment section is filling with spam',

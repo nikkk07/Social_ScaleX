@@ -190,7 +190,7 @@ export const SERVICES: Service[] = [
     fit: [
       'Local businesses that want enquiries, calls or WhatsApp chats',
       'Online stores selling to people who already scroll Instagram',
-      'Launches and events that need reach in a specific city',
+      'Launches and events that need to reach people in one city',
     ],
     notFit: [
       'You want ads live today, before tracking works. We fix measurement first.',
@@ -380,6 +380,114 @@ export const SERVICES: Service[] = [
     ],
     caseIds: ['wanna-party'],
     related: ['reels-production', 'instagram-marketing', 'meta-ads'],
+  },
+  {
+    slug: 'influencer-pr-management',
+    name: 'Creator PR & management',
+    metaTitle: 'Influencer & Creator Management Agency in Delhi',
+    metaDescription:
+      'Creator management in Delhi NCR: brand collab deals, event and PR invites, PR packages, media kits and rate cards for Instagram and YouTube creators.',
+    h1: 'Influencer PR and creator management in Delhi NCR',
+    lede:
+      'We handle the business side of being a creator. We pitch you to brands that fit your audience, negotiate the fee, read the contract, get you on the list for launches and openings, and look after the PR packages that land at your door. You keep making content. We keep the inbox moving.',
+    outcome:
+      'More paid collabs and invites, without living in your DMs.',
+    deliverables: [
+      'Media kit and rate card built from your own Insights',
+      'Brand pitches and replies to collab enquiries',
+      'Fee negotiation and a contract check before you sign',
+      'Event, launch and opening invites across Delhi NCR',
+      'PR package and gifting coordination',
+      'A disclosure check on every paid or gifted post',
+    ],
+    fit: [
+      'Creators who get brand DMs but not enough paid deals',
+      'Food, travel, lifestyle and events creators in Delhi NCR',
+      'Creators tired of quoting a different price every time',
+    ],
+    notFit: [
+      'You want to hide that a post was paid for or gifted. Under ASCI’s rules, free products and invites count too, so they have to be labelled.',
+    ],
+    steps: [
+      { title: 'Audit', desc: 'We go through your Insights, your past collabs and what brands have asked you for.' },
+      { title: 'Package', desc: 'A media kit, a rate card and a short pitch, all based on your real numbers.' },
+      { title: 'Pitch', desc: 'We reach out to brands and handle incoming enquiries, rates and paperwork.' },
+      { title: 'Deliver', desc: 'Dates, briefs, drafts and payments tracked until the collab is live and paid.' },
+    ],
+    faqs: [
+      {
+        q: 'What does an influencer management agency do?',
+        a: 'It runs the business side of a creator’s account: finding and pitching brands, answering collab requests, negotiating fees, checking contracts and tracking deliverables and payments. For us, it also covers event invites and PR packages, which many Delhi brands use to bring creators through their doors.',
+      },
+      {
+        q: 'Do I have to label a PR package or a free event invite?',
+        a: 'Yes. ASCI’s influencer guidelines treat free products, gifts, trips and hotel stays as a material connection, even when the brand sent them without being asked. Labels such as Ad, Collaboration, Partnership or Free gift work, and so does Instagram’s Paid partnership tag.',
+      },
+      {
+        q: 'How do you set my rate card?',
+        a: 'From your own Insights: average reach, views and saves on recent Reels, plus your audience’s cities and age. We set separate prices for Reels, Stories, YouTube integrations and event visits, so you quote the same way every time.',
+      },
+      {
+        q: 'Can you help if I’m a smaller creator?',
+        a: 'Yes, as long as your audience is engaged and local. Plenty of restaurants, cafés and stores in Delhi NCR would rather work with a smaller creator whose followers actually live nearby. To them, reach in the right city matters more than a big follower count.',
+      },
+    ],
+    caseIds: ['acdelhivlogs', 'subh', 'journey'],
+    related: ['influencer-marketing', 'reels-production', 'youtube-management'],
+  },
+  {
+    slug: 'digital-pr',
+    name: 'Digital PR & UGC',
+    metaTitle: 'Digital PR Agency in Delhi NCR',
+    metaDescription:
+      'Digital PR for Delhi NCR brands: features on news and online media, influencer PR visits and gifting, and UGC videos for your page and ads. Free strategy call.',
+    h1: 'Digital PR agency in Delhi NCR for brands',
+    lede:
+      'PR gets other people talking about you: a feature on a news or lifestyle site, creators visiting your café or launch, and real customers on camera. We find the story, line up the right media and creators, handle the invites and PR packages, and turn the coverage into content you can post and run as ads.',
+    outcome:
+      'People hear about you from someone other than you.',
+    deliverables: [
+      'Story angles and press releases for your launch or news',
+      'Features on news, business and lifestyle websites',
+      'Influencer PR: creator visits, invites and PR packages',
+      'UGC videos and photos for your page and your ads',
+      'Usage rights agreed in writing for every piece of UGC',
+      'A coverage report with links, reach and views',
+    ],
+    fit: [
+      'Restaurant, café, store and venue launches in Delhi NCR',
+      'Brands that need credibility before they spend on ads',
+      'D2C brands that need natural-looking product videos for ads',
+    ],
+    notFit: [
+      'You want guaranteed backlinks from paid articles. Google treats paid links that pass ranking credit as link spam, so paid features have to carry sponsored or nofollow links.',
+    ],
+    steps: [
+      { title: 'Story', desc: 'What is new, why it matters and who needs to hear about it.' },
+      { title: 'Outreach', desc: 'Media, creators and UGC creators matched to the story and the city.' },
+      { title: 'Coverage', desc: 'Features published, visits hosted, PR packages delivered and every post labelled.' },
+      { title: 'Reuse', desc: 'The best coverage and UGC goes on your page and into your ads.' },
+    ],
+    faqs: [
+      {
+        q: 'What is digital PR?',
+        a: 'It means getting other people to talk about your brand online: features on news and lifestyle sites, creators sharing their visit, and customers showing your product. It builds trust before people ever see one of your ads.',
+      },
+      {
+        q: 'Are online news features paid?',
+        a: 'Some are earned and many are paid placements, and we tell you which is which before you spend anything. Google’s spam policies say links in paid articles and press releases should carry a sponsored or nofollow tag, so we treat paid features as exposure, not as a way to buy rankings.',
+      },
+      {
+        q: 'What is UGC, and can we use it in ads?',
+        a: 'User-generated content is video or photos made by real people or by UGC creators, usually shot on a phone with the product in use. You can run it as an ad once the creator grants usage rights. We agree those rights in writing before the shoot, including where and for how long you can use the content.',
+      },
+      {
+        q: 'Is influencer PR the same as influencer marketing?',
+        a: 'They are close but not the same. Influencer marketing is a paid campaign with fixed deliverables. Influencer PR usually means invites, visits and gifted products, and creators post if they enjoy the experience. Both still need a label under ASCI’s rules, because free products and invites count as a material connection.',
+      },
+    ],
+    caseIds: [],
+    related: ['influencer-marketing', 'influencer-pr-management', 'product-shoots'],
   },
   {
     slug: 'product-shoots',
@@ -656,7 +764,7 @@ export const PORTFOLIO: PortfolioItem[] = [
       { label: 'Instagram followers', from: 336_000, to: 358_000, fromText: '336K', toText: '358K', period: JUL },
       { label: 'YouTube subscribers', from: 96_600, to: 101_000, fromText: '96.6K', toText: '101K', period: JUL },
     ],
-    services: ['social-media-strategy', 'reels-production', 'youtube-management'],
+    services: ['social-media-strategy', 'reels-production', 'youtube-management', 'influencer-pr-management'],
   },
   {
     id: 'subh',
@@ -675,7 +783,7 @@ export const PORTFOLIO: PortfolioItem[] = [
       'Content strategy plus shooting and editing for Instagram Reels. The focus is Reels that travel beyond the existing audience, and it shows in the follower count: 15.9K in July, 25.7K now.',
     metrics: [{ value: '25.7K', label: 'Instagram followers' }],
     growth: [{ label: 'Instagram followers', from: 15_900, to: 25_700, fromText: '15.9K', toText: '25.7K', period: JUL }],
-    services: ['social-media-strategy', 'reels-production', 'instagram-marketing'],
+    services: ['social-media-strategy', 'reels-production', 'instagram-marketing', 'influencer-pr-management'],
   },
   {
     id: 'journey',
@@ -703,7 +811,7 @@ export const PORTFOLIO: PortfolioItem[] = [
       { label: 'YouTube subscribers', from: 22_100, to: 26_000, fromText: '22.1K', toText: '26K', period: JUL },
       { label: 'Instagram followers', from: 10_600, to: 12_000, fromText: '10.6K', toText: '12K', period: JUL },
     ],
-    services: ['social-media-strategy', 'reels-production', 'youtube-management'],
+    services: ['social-media-strategy', 'reels-production', 'youtube-management', 'influencer-pr-management'],
   },
   {
     id: 'wanna-party',
@@ -806,7 +914,7 @@ export const PROCESS: Step[] = [
   },
   {
     title: 'Measure and scale',
-    desc: 'Weekly reviews and a monthly deep-dive. What works gets more budget and more versions. What doesn’t gets cut.',
+    desc: 'Weekly reviews and a monthly deep-dive. What works gets more budget and more versions. What doesn’t work gets cut.',
   },
 ];
 

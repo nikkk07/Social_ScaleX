@@ -77,6 +77,9 @@ export function organizationNode(): SchemaNode {
       'YouTube channel management',
       'Influencer marketing',
       'Product photography',
+      'Influencer and creator management',
+      'Digital PR',
+      'User-generated content (UGC)',
     ],
   };
 }

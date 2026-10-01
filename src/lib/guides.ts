@@ -98,7 +98,7 @@ export const GUIDES: Guide[] = [
     metaTitle: 'Instagram Comment to DM Automation: Free Guide',
     navTitle: 'Comment-to-DM setup (free)',
     description:
-      'Set up Instagram comment to DM automation free with Meta Business Suite. 4 steps, best keywords, Meta’s auto-DM rules and fixes. Updated for 2026.',
+      'Set up Instagram comment to DM automation free with Meta Business Suite. 4 steps, the best keywords, Meta’s DM rules and fixes. Updated for 2026.',
     summary:
       'Yes, Instagram comment to DM automation is free. Meta Business Suite has a built-in “Comment to message” automation on desktop. Switch to a professional account, connect Instagram to Meta Business Suite, go to Inbox → Automations → Create automation → Comment to message, add your keyword and write the DM. Meta allows one automatic DM per comment, within 7 days.',
     published: '2026-09-30',
