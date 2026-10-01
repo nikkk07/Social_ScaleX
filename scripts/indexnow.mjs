@@ -3,7 +3,7 @@
 //   BASE=https://socialscalex.in npm run indexnow
 // The key file is public/<key>.txt; the key proves we own the host.
 const KEY = 'a7ed10d4cdc3f3e76c5bb3e9d82b79ca';
-const BASE = (process.env.BASE ?? 'https://social-scalex.vercel.app').replace(/\/$/, '');
+const BASE = (process.env.BASE ?? 'https://www.socialscalex.in').replace(/\/$/, '');
 const host = new URL(BASE).host;
 
 const xml = await (await fetch(BASE + '/sitemap.xml')).text();

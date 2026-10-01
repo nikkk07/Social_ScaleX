@@ -17,7 +17,7 @@
  * so this must never be aspirational.
  */
 export const SITE_URL = (
-  (process.env.NEXT_PUBLIC_SITE_URL ?? '').trim() || 'https://social-scalex.vercel.app'
+  (process.env.NEXT_PUBLIC_SITE_URL ?? '').trim() || 'https://www.socialscalex.in'
 ).replace(/\/$/, '');
 
 /** The domain the business owns. It becomes the canonical the moment

@@ -30,23 +30,22 @@ JavaScript. Never invent a `NEXT_PUBLIC_`-prefixed secret.
 There is one more optional browser variable, `NEXT_PUBLIC_SITE_URL`. It sets
 the canonical origin for every absolute URL the site emits — canonical tags, OG
 URLs, JSON-LD `@id`s, `sitemap.xml`, `robots.txt` and `llms.txt`. Leave it
-unset to fall back to the Vercel deployment URL.
+unset to use the live domain, `https://www.socialscalex.in`.
 
-### Moving to socialscalex.in
+### The live domain (www.socialscalex.in)
 
-1. Vercel → Project → Settings → Domains: add `socialscalex.in` and
-   `www.socialscalex.in`, set `socialscalex.in` as primary (www redirects to it).
-   Add the DNS records Vercel shows at your registrar.
-2. Vercel → Environment Variables (Production): `NEXT_PUBLIC_SITE_URL =
-   https://socialscalex.in`, then redeploy.
-3. That one variable switches every canonical, OG URL, JSON-LD `@id`, the
-   sitemap, robots.txt and llms.txt, and `next.config.mjs` starts 301-ing
-   every `social-scalex.vercel.app` URL to the same path on the new domain.
-4. Supabase → Authentication → URL Configuration: Site URL
-   `https://socialscalex.in`.
-5. Google Search Console: add the Domain property, submit
-   `https://socialscalex.in/sitemap.xml`. The 301s carry the old URLs over;
-   nothing else is needed.
+- Vercel → Domains: `www.socialscalex.in` is primary; `socialscalex.in`
+  redirects to it. `next.config.mjs` 301s every `social-scalex.vercel.app` URL
+  to the same path on www, so Google only ever sees one host.
+- Supabase → Authentication → URL Configuration: Site URL
+  `https://www.socialscalex.in`.
+- Google Search Console: add a **Domain** property for `socialscalex.in`
+  (verified with a DNS TXT record), then submit
+  `https://www.socialscalex.in/sitemap.xml`. For a URL-prefix property instead,
+  set `GOOGLE_SITE_VERIFICATION` in Vercel to the token from Google's HTML-tag
+  method and redeploy; `BING_SITE_VERIFICATION` does the same for Bing.
+- After each production deploy: `npm run indexnow` tells Bing and the other
+  IndexNow engines that the sitemap's pages changed.
 
 Preview deployments are automatically `noindex` (header, meta tag and
 robots.txt), so they never compete with production.

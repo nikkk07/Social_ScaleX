@@ -47,14 +47,14 @@ const crmHeaders = [
   { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
 ];
 
-// Once NEXT_PUBLIC_SITE_URL points at the owned domain, every request to the
-// old production host is 301'd there, path and query kept. Until then this is
-// a no-op, so the site keeps working on vercel.app.
+// Every request to the old production host is 301'd to the live domain, path
+// and query kept, so Google only ever sees www.socialscalex.in.
 const LEGACY_HOST = 'social-scalex.vercel.app';
 let canonicalOrigin = '';
 try {
-  const raw = (process.env.NEXT_PUBLIC_SITE_URL ?? '').trim();
-  canonicalOrigin = raw ? new URL(raw).origin : '';
+  // Same default as SITE_URL in src/lib/site.ts: the live domain.
+  const raw = (process.env.NEXT_PUBLIC_SITE_URL ?? '').trim() || 'https://www.socialscalex.in';
+  canonicalOrigin = new URL(raw).origin;
 } catch {
   canonicalOrigin = '';
 }
