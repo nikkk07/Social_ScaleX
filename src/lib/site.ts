@@ -56,7 +56,7 @@ export function whatsappLink(text: string): string {
  * Fill these in and both the footer and the Organization schema update.
  */
 export const SOCIAL_PROFILES = {
-  instagram: '',
+  instagram: 'https://www.instagram.com/social_scalex/',
   linkedin: 'https://www.linkedin.com/company/143428030/',
   youtube: '',
 } as const;

@@ -4,6 +4,7 @@ import { Phone } from 'lucide-react';
 import { Logo } from './Logo';
 import { AUTOMATION_LINKS, GOAL_LINKS, SERVICE_LINKS } from './nav';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
+import { InstagramIcon, LinkedinIcon, YoutubeIcon } from '@/components/icons/PlatformIcons';
 import { GUIDES } from '@/lib/guides';
 import { CITIES } from '@/lib/areas';
 import { CONTACTS, SITE_NAME, SOCIAL_PROFILES, WHATSAPP_URL } from '@/lib/site';
@@ -18,11 +19,15 @@ const COMPANY: L[] = [
   { href: '/contact', label: 'Contact' },
 ];
 
-const SOCIAL_LABEL: Record<keyof typeof SOCIAL_PROFILES, string> = {
-  instagram: 'Instagram',
-  linkedin: 'LinkedIn',
-  youtube: 'YouTube',
+/** Brand glyph and colour for each profile, shown like the WhatsApp button. */
+const SOCIAL: Record<keyof typeof SOCIAL_PROFILES, { label: string; icon: React.ReactNode }> = {
+  instagram: { label: 'Instagram', icon: <InstagramIcon size={18} className="text-[#C13584]" /> },
+  linkedin: { label: 'LinkedIn', icon: <LinkedinIcon size={17} className="text-[#0A66C2]" /> },
+  youtube: { label: 'YouTube', icon: <YoutubeIcon size={19} className="text-[#E00000]" /> },
 };
+
+const PILL =
+  'inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition-colors hover:border-ink';
 
 /**
  * Every public page is one click from every other page through this footer,
@@ -49,21 +54,21 @@ export function Footer() {
               </li>
             ))}
           </ul>
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink"
-          >
-            <WhatsappIcon size={18} className="text-[#128C7E]" /> WhatsApp us
-          </a>
-          {socials.length ? (
-            <ul className="mt-5 flex gap-4 text-sm">
-              {socials.map((k) => (
-                <li key={k}><a href={SOCIAL_PROFILES[k]} rel="me noopener noreferrer" target="_blank" className="link">{SOCIAL_LABEL[k]}</a></li>
-              ))}
-            </ul>
-          ) : null}
+          <ul className="mt-5 flex flex-wrap gap-2.5">
+            <li>
+              <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className={PILL}>
+                <WhatsappIcon size={18} className="text-[#128C7E]" /> WhatsApp us
+              </a>
+            </li>
+            {socials.map((k) => (
+              <li key={k}>
+                <a href={SOCIAL_PROFILES[k]} target="_blank" rel="me noopener noreferrer" className={PILL}>
+                  {SOCIAL[k].icon} {SOCIAL[k].label}
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-4">
