@@ -92,6 +92,7 @@ export function personNodes(): SchemaNode[] {
     jobTitle: `${c.role}, ${SITE_NAME}`,
     telephone: c.phone,
     worksFor: { '@id': ORG_ID },
+    ...(c.linkedin ? { sameAs: [c.linkedin] } : {}),
   }));
 }
 
@@ -239,7 +240,7 @@ export function caseStudyNode(item: PortfolioItem): SchemaNode {
       sameAs: item.profiles.map((p) => p.url),
     },
     creator: { '@id': ORG_ID },
-    dateModified: RESULTS_AS_OF,
+    dateModified: item.asOf ?? RESULTS_AS_OF,
     additionalProperty: [
       ...item.metrics.map((m) => ({ '@type': 'PropertyValue', name: m.label, value: m.value })),
       ...item.growth.map((g) => ({ '@type': 'PropertyValue', name: `${g.label} (${g.period})`, value: `${g.fromText} to ${g.toText}` })),

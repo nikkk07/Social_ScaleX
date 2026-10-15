@@ -64,7 +64,7 @@ export const GOALS: Goal[] = [
       'People buy the brand they remember. We build awareness with original Reels made to be shared, creator collaborations that borrow trust, and reach campaigns that put you in front of the right city, then measure it in reach to new people, not follower count.',
     measures: [
       { metric: 'Reach to non-followers', why: 'How many new people saw you, from your own Insights.' },
-      { metric: 'Sends and shares', why: 'The signal Instagram weighs most for reaching people who don’t follow you.' },
+      { metric: 'Sends and shares', why: 'Instagram’s head has said sends count slightly more when a post reaches people who don’t follow you.' },
       { metric: 'Profile visits and follows', why: 'How many of those new people came to look, and stayed.' },
     ],
     plan: [

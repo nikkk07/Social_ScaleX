@@ -2,6 +2,7 @@ import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Phone } from 'lucide-react';
+import { LinkedinIcon } from '@/components/icons/PlatformIcons';
 import { SiteShell } from '@/components/site/SiteShell';
 import { PageIntro } from '@/components/site/PageIntro';
 import { SectionHead } from '@/components/site/SectionHead';
@@ -77,9 +78,16 @@ export default function AboutPage() {
                     <h3 className="text-3xl text-ink">{c.name}</h3>
                     <p className="mt-1 text-ink-3">{c.role}, Social ScaleX</p>
                   </div>
-                  <a href={`tel:${c.phone}`} className="btn btn-secondary">
-                    <Phone className="size-4" aria-hidden="true" /> <span className="sr-only">Call {c.name.split(' ')[0]} on </span>{c.display}
-                  </a>
+                  <div className="flex flex-wrap gap-3">
+                    <a href={`tel:${c.phone}`} className="btn btn-secondary">
+                      <Phone className="size-4" aria-hidden="true" /> <span className="sr-only">Call {c.name.split(' ')[0]} on </span>{c.display}
+                    </a>
+                    {c.linkedin ? (
+                      <a href={c.linkedin} target="_blank" rel="noopener noreferrer me" className="btn btn-secondary">
+                        <LinkedinIcon size={16} /> LinkedIn<span className="sr-only"> profile of {c.name} (opens in a new tab)</span>
+                      </a>
+                    ) : null}
+                  </div>
                 </li>
               ))}
             </ul>

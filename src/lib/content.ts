@@ -620,6 +620,8 @@ export interface PortfolioItem {
   status: 'Active' | 'Past';
   description: string;
   detail: string;
+  /** Date this client's figures were recorded, when newer than RESULTS_AS_OF. */
+  asOf?: string;
   /** Headline figures, current at `asOf` (or at hand-over for past clients). */
   metrics: Metric[];
   /** Before → after, from our own earlier published snapshot or hand-over records. */
@@ -679,14 +681,15 @@ export const PORTFOLIO: PortfolioItem[] = [
     goal: 'sales',
     status: 'Active',
     description:
-      'Delhi mobile, electronics and LED TV store. From 400 to 12K Instagram followers since June 2026.',
+      'Delhi mobile, electronics and LED TV store. From 400 to 13.1K Instagram followers since June 2026.',
     detail:
-      'A local store, so the job is enquiries and footfall. We took the account over at 400 followers at the start of June 2026. We run the page, shoot the phones and electronics in the store, and edit them into Reels. Four months later it has 12K followers and passed 4M views in the last 30 days.',
+      'A local store, so the job is enquiries and footfall. We took the account over at 400 followers at the start of June 2026. We run the page, shoot the phones and electronics in the store, and edit them into Reels. By 15 October 2026 it had 13.1K followers and passed 5M views in the last 30 days.',
+    asOf: '2026-10-15',
     metrics: [
-      { value: '4M+', label: 'Views in the last 30 days' },
-      { value: '12K', label: 'Instagram followers' },
+      { value: '5M+', label: 'Views in the last 30 days' },
+      { value: '13.1K', label: 'Instagram followers' },
     ],
-    growth: [{ label: 'Followers', from: 400, to: 12_000, fromText: '400', toText: '12K', period: 'Jun → Sep 2026' }],
+    growth: [{ label: 'Followers', from: 400, to: 13_100, fromText: '400', toText: '13.1K', period: 'Jun → Oct 2026' }],
     services: ['instagram-marketing', 'reels-production', 'product-shoots'],
   },
   {
@@ -835,33 +838,34 @@ export const PORTFOLIO: PortfolioItem[] = [
 ];
 
 export const PORTFOLIO_NOTE =
-  'From each client’s own Instagram or YouTube analytics, recorded 30 Sep 2026 and published with permission. Follower counts checked against the public profiles the same day.';
+  'From each client’s own Instagram or YouTube analytics, recorded 30 Sep 2026 (Saini Telecom: 15 Oct 2026) and published with permission. Follower counts checked against the public profiles the same day.';
 
 /**
  * Headline figures, each traceable to PORTFOLIO:
- *  - 10M+  = PraGo 6M+ + Saini Telecom 4M+ views in the last 30 days.
- *  - 570K+ = active accounts: 35.3 + 12 + 358 + 101 + 25.7 + 12 + 26 = 570.0K.
- *  - 30×   = Saini Telecom, 400 → 12,000 followers, Jun → Sep 2026.
+ *  - 10M+  = PraGo 6M+ (30 Sep) + Saini Telecom 5M+ (15 Oct) views in each
+ *            account's last 30 days = 11M; kept at 10M+ as the windows differ.
+ *  - 570K+ = active accounts: 35.3 + 13.1 + 358 + 101 + 25.7 + 12 + 26 = 571.1K.
+ *  - 32.7× = Saini Telecom, 400 → 13,100 followers, Jun → 15 Oct 2026.
  */
 export const STATS: Metric[] = [
   { value: '10M+', label: 'Views in 30 days on two retail accounts we run' },
   { value: '570K+', label: 'Followers and subscribers on the accounts we manage' },
-  { value: '30×', label: 'Follower growth for Saini Telecom since June' },
+  { value: '32.7×', label: 'Follower growth for Saini Telecom since June' },
   { value: `${PORTFOLIO.length}`, label: 'Brands and creators with published results' },
 ];
 
 export const RESULTS_FAQS: Faq[] = [
   {
     q: 'Can a social media agency really increase Instagram followers and sales?',
-    a: 'Yes, but not on a promise. Saini Telecom went from 400 to 12K followers between June and September 2026, Big Discount Mart from 800 to 10.8K in two months, and PraGo Outdoors from 14K to 35.3K while passing 6M views a month. Results depend on your product, content and consistency, so we don’t guarantee numbers.',
+    a: 'Yes, but not on a promise. Saini Telecom went from 400 to 13.1K followers between June and mid-October 2026, Big Discount Mart from 800 to 10.8K in two months, and PraGo Outdoors from 14K to 35.3K while passing 6M views a month. Results depend on your product, content and consistency, so we don’t guarantee numbers.',
   },
   {
     q: 'How long does it take to see results on Instagram?',
-    a: 'The first month sets up the content and tests formats, and most accounts show measurable movement in reach by day 60. Big Discount Mart’s growth from 800 to 10.8K followers took two months.',
+    a: 'The first month sets up the content and tests formats. How quickly reach moves after that depends on the account, the product and how consistently it posts. Big Discount Mart went from 800 to 10.8K followers in two months, but that is one account, not a promise.',
   },
   {
     q: 'Where do these numbers come from?',
-    a: 'From each client’s own Instagram professional dashboard or YouTube Studio, recorded on 30 September 2026 and shared with permission. Follower and subscriber counts were checked against the public profiles the same day. The “before” figures are the ones this site published on 1 July 2026, or the follower count when we took an account over.',
+    a: 'From each client’s own Instagram professional dashboard or YouTube Studio, recorded on 30 September 2026 (Saini Telecom on 15 October 2026) and shared with permission. Follower and subscriber counts were checked against the public profiles the same day. The “before” figures are the ones this site published on 1 July 2026, or the follower count when we took an account over.',
   },
   {
     q: 'Do you work with influencers and content creators?',
@@ -881,13 +885,13 @@ export interface Pain {
 export const PAINS: Pain[] = [
   {
     problem: 'You post regularly, but reach never leaves your followers.',
-    answer: 'Reels edited for watch time and shares, the signals Instagram says it weighs most.',
+    answer: 'We edit Reels for watch time and shares, two of the signals Instagram’s head has said matter most.',
     href: '/services/reels-production',
     cta: 'Reels production',
   },
   {
     problem: 'Money goes into ads, but the enquiries don’t come back.',
-    answer: 'Tracking fixed first, then creative tested weekly on Meta and Google until cost per lead falls.',
+    answer: 'We fix your conversion tracking first, then test new ad creative every week on Meta and Google and keep what lowers your cost per lead.',
     href: '/services/meta-ads',
     cta: 'Meta ads',
   },
@@ -955,7 +959,7 @@ export const FAQS: Faq[] = [
   },
   {
     q: 'How long until we see real growth?',
-    a: 'The first 30 days are setup and testing: audit, content pillars and finding what your audience responds to. Most accounts show measurable movement in reach and engagement by day 60, with compounding growth from day 90. Anyone promising viral results in week one is guessing with your money.',
+    a: 'The first 30 days are setup and testing: audit, content pillars and finding what your audience responds to. After that, we judge progress month by month in your own Insights; how fast it comes depends on your product, your content and how often you post. Anyone promising viral results in week one is guessing with your money.',
   },
   {
     q: 'Do you work with small businesses or only creators?',

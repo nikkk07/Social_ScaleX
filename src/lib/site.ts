@@ -36,9 +36,11 @@ export const SITE_TAGLINE =
 export const AREAS_SERVED = ['Delhi', 'Noida', 'Gurugram', 'Ghaziabad', 'Faridabad'] as const;
 export const FOUNDING_YEAR = '2025';
 
+/** `linkedin`: the founder's own public profile (owner-supplied, 15 Oct 2026);
+ *  empty = none yet. Shown on /about and emitted as the Person's `sameAs`. */
 export const CONTACTS = [
-  { name: 'Nikhil Bisht', role: 'Co-founder', phone: '+918077727669', display: '+91 80777 27669' },
-  { name: 'Abhishek Anand', role: 'Co-founder', phone: '+917827810150', display: '+91 78278 10150' },
+  { name: 'Nikhil Bisht', role: 'Co-founder', phone: '+918077727669', display: '+91 80777 27669', linkedin: 'https://www.linkedin.com/in/nikhil07bisht/' },
+  { name: 'Abhishek Anand', role: 'Co-founder', phone: '+917827810150', display: '+91 78278 10150', linkedin: '' },
 ] as const;
 
 export const PRIMARY_PHONE = CONTACTS[0];

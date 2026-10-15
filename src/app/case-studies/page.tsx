@@ -18,7 +18,7 @@ import { socialMeta } from '@/lib/site';
 const PATH = '/case-studies';
 const TITLE = 'Client Results: Instagram & YouTube Case Studies';
 const DESCRIPTION =
-  'Real results from brands and creators we work with: 400 to 12K followers since June, 10M+ Instagram views in 30 days, a 358K creator. Delhi NCR agency.';
+  'Real results from brands and creators we work with: 400 to 13.1K followers since June, 10M+ Instagram views in 30 days, a 358K creator. Delhi NCR agency.';
 const CRUMBS = [
   { name: 'Home', path: '/' },
   { name: 'Client results', path: PATH },

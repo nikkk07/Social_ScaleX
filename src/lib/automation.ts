@@ -62,7 +62,7 @@ export const AUTOMATIONS: Automation[] = [
     h1: 'Instagram comment to DM automation for ₹99 a month',
     lede:
       'Someone comments a keyword like “PRICE” on your post or Reel. They get your DM with the link automatically. We set it up on your Instagram through Meta’s official tools and keep it running for ₹99 a month: one account, unlimited posts, tool fees included.',
-    outcome: 'Every comment becomes a conversation, even at 2 AM.',
+    outcome: 'Comments with your keyword get your DM automatically, even at 2 AM.',
     example: { trigger: 'Comments “PRICE” on your Reel', reply: 'Gets a DM: “Here’s the price list and the order link 👇”' },
     features: [
       { title: 'Keyword triggers', desc: 'Pick the words that start the DM: PRICE, LINK, MENU, INFO. Use them on any post or Reel.' },
@@ -174,8 +174,8 @@ export const AUTOMATIONS: Automation[] = [
       'WhatsApp Business automation: greeting and away messages, quick replies, Click-to-WhatsApp ads and WhatsApp Business Platform setup. Delhi NCR. Free call.',
     h1: 'WhatsApp Business automation and auto reply',
     lede:
-      'Many customers would rather WhatsApp you than fill a form. We set up WhatsApp Business so every chat gets a reply: greeting and away messages, quick replies for common answers, and Click-to-WhatsApp ads that bring new chats. When you outgrow the app, we move you to the WhatsApp Business Platform.',
-    outcome: 'Every WhatsApp enquiry gets an answer, and ads start conversations instead of clicks.',
+      'Many customers would rather WhatsApp you than fill a form. We set up WhatsApp Business so new chats get an instant reply: greeting and away messages, quick replies for common answers, and Click-to-WhatsApp ads that bring new chats. When you outgrow the app, we move you to the WhatsApp Business Platform.',
+    outcome: 'New chats get an instant greeting or away message, your team answers the rest with saved replies, and ads start conversations instead of clicks.',
     example: { trigger: 'Messages you on WhatsApp at 11 PM', reply: 'Gets your greeting, price list and a “we’ll call you at 10 AM” note' },
     features: [
       { title: 'Greeting message', desc: 'Sent automatically on a customer’s first message, and again after 14 days of no chat.' },
@@ -332,5 +332,5 @@ export const AUTOMATION_HUB = {
     'Instagram comment-to-DM from ₹99/month, DM auto reply, WhatsApp Business automation, Facebook auto reply and YouTube comment management. Official Meta tools.',
   h1: 'Instagram, WhatsApp and Facebook automation',
   lede:
-    'Reply to every comment and message automatically, on Meta’s official tools. Comment-to-DM, DM auto-reply, WhatsApp auto-reply and Facebook Messenger automation, set up and managed for you. Comment-to-DM starts at ₹99 a month.',
+    'Automatic replies to comments and messages on Meta’s official tools: comment-to-DM, DM auto-reply, WhatsApp auto-reply and Facebook Messenger automation, set up and managed for you. YouTube has no official auto-reply, so we manage those comments by hand. Comment-to-DM starts at ₹99 a month.',
 } as const;

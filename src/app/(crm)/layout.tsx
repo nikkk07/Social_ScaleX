@@ -6,6 +6,9 @@ import '@/styles/crm-app.css';
 export const metadata: Metadata = {
   title: { default: 'CRM', template: '%s · Social ScaleX CRM' },
   robots: { index: false, follow: false, nocache: true },
+  // Private and noindexed: no canonical. Inheriting the root layout's '/'
+  // pointed the login page's canonical at the homepage, a mixed signal.
+  alternates: { canonical: null },
 };
 
 // One client-only boundary for the whole CRM: session, providers and the

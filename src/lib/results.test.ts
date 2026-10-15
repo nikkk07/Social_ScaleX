@@ -39,10 +39,12 @@ check('10M+ = PraGo + Saini 30-day views', num(STATS[0]!.value) <= views, String
 const audience = PORTFOLIO.filter((p) => p.status === 'Active').flatMap((p) => p.metrics).filter((m) => /followers|subscribers/i.test(m.label)).reduce((n, m) => n + num(m.value), 0);
 check('570K+ ≤ active followers + subscribers', num(STATS[1]!.value) <= audience + 0.5, String(audience));
 check('Big Discount Mart 13.5×', growthChange(by('big-discount-mart').growth[0]!) === '13.5×');
-check('30× stat matches Saini', STATS[2]!.value === growthChange(by('saini-telecom').growth[0]!), growthChange(by('saini-telecom').growth[0]!));
+check('Saini growth stat matches data', STATS[2]!.value === growthChange(by('saini-telecom').growth[0]!), growthChange(by('saini-telecom').growth[0]!));
 check('Saini first (strongest growth)', PORTFOLIO[0]!.id === 'saini-telecom');
 check('client count stat', STATS[3]!.value === String(PORTFOLIO.length));
 check('date label', formatDay('2026-09-30') === '30 Sep 2026' && monthShort('2026-09-30') === 'Sep');
+check('per-client asOf is an ISO date on or after RESULTS_AS_OF', PORTFOLIO.every((p) => !p.asOf || (/^\d{4}-\d{2}-\d{2}$/.test(p.asOf) && p.asOf >= '2026-09-30')));
+check('Saini 13.1K / 5M+ (owner update 15 Oct 2026)', by('saini-telecom').metrics[0]!.value === '5M+' && by('saini-telecom').metrics[1]!.value === '13.1K');
 check('results FAQs', RESULTS_FAQS.length >= 4);
 
 if (failures) { console.log(`\n${failures} check(s) failed`); process.exit(1); }

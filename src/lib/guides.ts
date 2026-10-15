@@ -346,7 +346,7 @@ export const GUIDES: Guide[] = [
       { t: 'h2', text: 'Real numbers from accounts we manage' },
       {
         t: 'p',
-        text: 'prago.outdoors passed 6M views in 30 days with 35.3K followers, and saini_telecom__ passed 4M views in 30 days with 12K followers: reach far beyond the following, driven by Reels. See the details in our [client results](/case-studies).',
+        text: 'prago.outdoors passed 6M views in 30 days with 35.3K followers, and saini_telecom__ passed 5M views in 30 days with 13.1K followers (15 Oct 2026): reach far beyond the following, driven by Reels. See the details in our [client results](/case-studies).',
       },
     ],
     faqs: [

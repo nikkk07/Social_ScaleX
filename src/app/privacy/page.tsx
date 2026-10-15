@@ -43,7 +43,9 @@ export default function Page() {
           name, mobile number, the service you&apos;re interested in, your Instagram handle or
           website if you add it, and anything you tell us about your brand. We also store the
           page you sent it from and your browser&apos;s user-agent string, so we can see which
-          page the enquiry came from and spot spam. Nothing else is collected.
+          page the enquiry came from and spot spam. The form collects nothing else. It also has a
+          hidden field that people never see; it only catches spam bots, and a form that fills
+          it in is not sent. Analytics, when it is switched on, is described below.
         </p>
       </section>
       <section>
