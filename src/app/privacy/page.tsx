@@ -4,6 +4,7 @@ import { LegalPage } from '@/components/site/LegalPage';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { breadcrumbNode, graph, webPageNode } from '@/lib/schema';
 import { GA_ID, META_PIXEL_ID } from '@/lib/tracking';
+import { socialMeta } from '@/lib/site';
 
 const TITLE = 'Privacy Policy';
 const DESCRIPTION = 'What Social ScaleX collects when you send an enquiry, how it is used, and how to have it deleted.';
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: '/privacy' },
+  ...socialMeta({ title: TITLE, description: DESCRIPTION, path: '/privacy' }),
 };
 
 const CRUMBS = [
@@ -33,7 +35,7 @@ export default function Page() {
           breadcrumbNode(CRUMBS, '/privacy'),
         ])}
       />
-      <LegalPage title={TITLE} updated="September 2026" crumbs={CRUMBS}>
+      <LegalPage title={TITLE} updated="October 2026" crumbs={CRUMBS}>
       <section>
         <h2>What we collect</h2>
         <p>
@@ -70,7 +72,8 @@ export default function Page() {
               <p>
                 We use Google Analytics 4 to see which pages are read and where visitors come
                 from. It sets cookies and records page views, device type and approximate
-                location. Google&apos;s use of this data is covered by its{' '}
+                location. It also counts clicks on our call, WhatsApp and email buttons and
+                successful enquiry sends, without the number, address or anything you typed. Google&apos;s use of this data is covered by its{' '}
                 <a href="https://policies.google.com/privacy" rel="noopener noreferrer" target="_blank">privacy policy</a>.
               </p>
             ) : null}

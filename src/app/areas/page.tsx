@@ -11,7 +11,7 @@ import { AreaChecker } from '@/components/site/AreaChecker';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { AREAS_FAQS, CITIES, allEntries, cityStats } from '@/lib/areas';
 import { breadcrumbNode, faqNode, graph, itemListNode, webPageNode } from '@/lib/schema';
-import { abs } from '@/lib/site';
+import { abs, socialMeta } from '@/lib/site';
 
 const PATH = '/areas';
 const TITLE = 'Areas We Serve in Delhi NCR: Pin Code Check';
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: PATH },
-  openGraph: { title: `${TITLE} | Social ScaleX`, description: DESCRIPTION, url: PATH },
+  ...socialMeta({ title: TITLE, description: DESCRIPTION, path: PATH }),
 };
 
 export default function AreasPage() {

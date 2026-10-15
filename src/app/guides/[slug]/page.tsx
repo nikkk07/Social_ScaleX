@@ -14,6 +14,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { GUIDES, getGuide, guideWordCount, type Block } from '@/lib/guides';
 import { getService } from '@/lib/content';
 import { articleNode, breadcrumbNode, faqNode, graph, howToNode, webPageNode, type SchemaNode } from '@/lib/schema';
+import { socialMeta } from '@/lib/site';
 
 export const dynamicParams = false;
 
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: g.metaTitle,
     description: g.description,
     alternates: { canonical: path },
-    openGraph: { type: 'article', title: `${g.metaTitle} | Social ScaleX`, description: g.description, url: path, publishedTime: g.published, modifiedTime: g.updated },
+    ...socialMeta({ title: g.metaTitle, description: g.description, path, article: { publishedTime: g.published, modifiedTime: g.updated } }),
   };
 }
 

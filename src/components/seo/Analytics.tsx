@@ -3,18 +3,16 @@
 import React, { useEffect, useRef } from 'react';
 import Script from 'next/script';
 import { usePathname } from 'next/navigation';
-
-declare global {
-  interface Window {
-    fbq?: (...args: unknown[]) => void;
-  }
-}
+import { contactMethod, trackContact } from '@/lib/track';
 
 /**
  * GA4 and Meta Pixel, loaded once the browser is idle after page load so they never
  * delay the first paint. GA4 records client-side navigations itself
  * (enhanced measurement, "page changes based on browser history");
  * the Pixel needs a PageView per route change, sent below.
+ *
+ * Clicks on call, WhatsApp and email links are caught by one delegated
+ * listener, so the dozen CTA links across server components need no changes.
  */
 export function Analytics({ gaId, pixelId }: { gaId: string; pixelId: string }) {
   const pathname = usePathname();
@@ -30,6 +28,17 @@ export function Analytics({ gaId, pixelId }: { gaId: string; pixelId: string }) 
     }
     window.fbq?.('track', 'PageView');
   }, [pathname, internal]);
+
+  useEffect(() => {
+    if (internal) return;
+    const onClick = (e: MouseEvent) => {
+      const link = e.target instanceof Element ? e.target.closest('a[href]') : null;
+      const method = link ? contactMethod(link.getAttribute('href') ?? '') : null;
+      if (method) trackContact(method);
+    };
+    document.addEventListener('click', onClick, { capture: true });
+    return () => document.removeEventListener('click', onClick, { capture: true });
+  }, [internal]);
 
   if (internal) return null;
   return (

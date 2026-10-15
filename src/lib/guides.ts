@@ -1,8 +1,8 @@
 // ─────────────────────────────────────────────────────────────────────
 // Guides: long-form answers to what our buyers search before hiring.
 //
-// Every platform fact below is taken from the official source listed in the
-// guide's `sources`, checked on 2026-09-30. Inline markup is deliberately
+// Every platform fact below is taken from the source listed in the guide's
+// `sources`, checked on the guide's `updated` date. Inline markup is deliberately
 // tiny: **bold** and [text](url). See src/components/site/Rich.tsx.
 // ─────────────────────────────────────────────────────────────────────
 
@@ -57,6 +57,12 @@ const S = {
   threeMinutes: { label: 'MediaNama: Instagram Reels up to 3 minutes (19 Jan 2025)', url: 'https://www.medianama.com/2025/01/223-instagram-reels-3-minutes-us-tiktok-ban/' },
   edits: { label: 'Instagram for Creators: Edits app (22 Apr 2025)', url: 'https://creators.instagram.com/blog/edits-video-creation-app' },
   indexing: { label: 'Instagram Help: Search engine indexing of public content', url: 'https://help.instagram.com/147542625391305' },
+  reposts: { label: 'Meta: New Instagram features, including reposts (6 Aug 2025)', url: 'https://about.fb.com/news/2025/08/new-instagram-features-help-you-connect/' },
+  skipRate: { label: 'Social Media Today: Instagram adds retention insights and skip rate for Reels (24 Aug 2025)', url: 'https://www.socialmediatoday.com/news/instagram-adds-retention-insights-reels/758464/' },
+  indiaReelsFirst: { label: 'Meta: In India, Instagram tests a Reels-first app (28 Sep 2025)', url: 'https://about.fb.com/news/2025/09/in-india-instagram-debuts-a-reels-first-experience-for-its-mobile-app/' },
+  yourAlgorithm: { label: 'TechCrunch: Instagram’s Your Algorithm tool (10 Dec 2025)', url: 'https://techcrunch.com/2025/12/10/instagrams-new-your-algorithm-tool-gives-you-more-control-over-the-reels-you-see' },
+  hashtags: { label: 'Social Samosa: Instagram limits hashtags to five per post (19 Dec 2025)', url: 'https://www.socialsamosa.com/news-2/instagram-hashtags-five-per-post-10923075' },
+  aiLabel: { label: 'Instagram for Creators: AI-generated profile label (31 Aug 2026)', url: 'https://creators.instagram.com/blog/ai-generated-profile-label/' },
   recGuidelines: { label: 'Instagram Help: Recommendations guidelines', url: 'https://help.instagram.com/313829416281232/' },
   accountStatus: { label: 'Instagram Help: Account Status', url: 'https://help.instagram.com/653964212890722' },
   gSearch: { label: 'Google Ads Help: About Search campaigns', url: 'https://support.google.com/google-ads/answer/2567043' },
@@ -88,6 +94,10 @@ const S = {
   igProfessional: { label: 'Meta Business Help: Set up a professional Instagram account', url: 'https://www.facebook.com/business/help/502981923235522' },
   privateReplies: { label: 'Meta for Developers: Instagram Platform, Private Replies', url: 'https://developers.facebook.com/docs/instagram-platform/private-replies/' },
   msgPolicy: { label: 'Meta for Developers: Messenger Platform and IG Messaging API policy', url: 'https://developers.facebook.com/documentation/business-messaging/messenger-platform/policy' },
+  diwali2026: { label: 'DoPT: Holidays in Central Government offices, 2026 (OM dated 3 Jul 2025), via StaffNews', url: 'https://www.staffnews.in/2025/07/list-of-holidays-2026-dopt-order-reg-closed-and-restricted-holidays.html' },
+  gbpHours: { label: 'Google Business Profile Help: How to set special hours', url: 'https://support.google.com/business/answer/6303076' },
+  gReviews: { label: 'Google Maps User Generated Content Policy: Prohibited & restricted content', url: 'https://support.google.com/contributionpolicy/answer/7400114' },
+  waPolicy: { label: 'WhatsApp Business Messaging Policy', url: 'https://business.whatsapp.com/policy' },
   manychat: { label: 'ManyChat: Pricing', url: 'https://manychat.com/pricing' },
 } satisfies Record<string, Source>;
 
@@ -362,21 +372,21 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: 'instagram-reels-reach',
-    title: 'How Instagram decides who sees your Reels',
-    metaTitle: 'How the Instagram Reels Algorithm Works (2026)',
-    navTitle: 'Reels algorithm explained',
+    title: 'How the Instagram Reels algorithm works in 2026',
+    metaTitle: 'Instagram Reels Algorithm 2026: What’s Confirmed',
+    navTitle: 'Reels algorithm 2026',
     description:
-      'What Instagram and Adam Mosseri have said about ranking Reels: watch time, sends and likes per reach, originality rules and Trial Reels. Sourced and practical.',
+      'What Instagram has confirmed about ranking Reels in 2026: watch time, sends, likes, originality, Your Algorithm controls and AI labels. Dated and sourced.',
     summary:
-      'Instagram ranks Reels by predicting how likely each viewer is to share a Reel, watch it to the end, like it and open its audio page. In 2025 Adam Mosseri named watch time, likes per reach and sends per reach as the three signals that matter most. Reposted, watermarked or unoriginal content is shown less, and accounts that mostly post it stop being recommended.',
+      'Instagram ranks Reels by predicting what each viewer will do: share it, watch it to the end, like it or open its audio page. Adam Mosseri has named watch time, likes per reach and sends per reach as the signals that matter most. Originality rules, AI-profile labels and each viewer’s own topic settings now shape who sees a Reel too. Instagram publishes no formula and no signal weights.',
     published: '2026-09-30',
-    updated: '2026-09-30',
+    updated: '2026-10-15',
     author: 'Social ScaleX team',
     blocks: [
       { t: 'h2', text: 'What Instagram says it predicts for every Reel' },
       {
         t: 'p',
-        text: 'Instagram does not use one algorithm. In its own explainer it describes separate ranking systems for Feed, Stories, Explore and Reels, each built around what people do in that part of the app. For Reels, the goal is entertainment, and most of what you see comes from accounts you don’t follow. [Instagram ranking explained](https://about.instagram.com/blog/announcements/instagram-ranking-explained)',
+        text: 'Instagram does not use one algorithm. Its own explainer describes separate ranking systems for Feed, Stories, Explore and Reels, each built around what people do in that part of the app. For Reels, the goal is entertainment, and most of what you see comes from accounts you don’t follow. [Instagram ranking explained](https://about.instagram.com/blog/announcements/instagram-ranking-explained)',
       },
       {
         t: 'quote',
@@ -393,10 +403,14 @@ export const GUIDES: Guide[] = [
           '**Information about the account that posted:** how popular it is and how many people engage with it.',
         ],
       },
+      {
+        t: 'p',
+        text: 'That 2023 page is still Instagram’s most complete public explanation. Everything since has come as product changes and comments from Instagram’s head, Adam Mosseri, not as a new formula.',
+      },
       { t: 'h2', text: 'The three numbers Adam Mosseri says to watch' },
       {
         t: 'p',
-        text: 'In January 2025, Instagram’s head Adam Mosseri said the top three ranking signals are watch time, likes and sends, and told creators to track **average watch time, likes per reach and sends per reach**. He added that likes matter slightly more for content shown to your followers, and sends matter slightly more for content shown to people who don’t follow you. [Social Media Today, 22 Jan 2025](https://www.socialmediatoday.com/news/instagram-shares-algorithm-insights-2025/738034/)',
+        text: 'In January 2025, Mosseri said the top three ranking signals are watch time, likes and sends, and told creators to track **average watch time, likes per reach and sends per reach**. He added that likes matter slightly more for content shown to your followers, and sends matter slightly more for content shown to people who don’t follow you. [Social Media Today, 22 Jan 2025](https://www.socialmediatoday.com/news/instagram-shares-algorithm-insights-2025/738034/)',
       },
       {
         t: 'p',
@@ -406,6 +420,19 @@ export const GUIDES: Guide[] = [
         t: 'p',
         text: 'The practical reading: a Reel that people send to a friend is the one that travels to new audiences. A Reel your followers like keeps your existing audience engaged. Both depend on people watching past the first few seconds.',
       },
+      { t: 'h2', text: 'What changed in 2025 and 2026' },
+      {
+        t: 'ul',
+        items: [
+          '**Reposts (August 2025).** People can repost public Reels and posts. Instagram says reposts are recommended to the reposter’s friends and followers and stay credited to the original creator, so a repost can carry your Reel to people who don’t follow you. [Meta, 6 Aug 2025](https://about.fb.com/news/2025/08/new-instagram-features-help-you-connect/)',
+          '**Skip rate and a retention chart (August 2025).** Instagram said Insights would show where viewers drop off in each Reel, and a skip rate: the share of views where people skipped within the first three seconds. [Social Media Today, 24 Aug 2025](https://www.socialmediatoday.com/news/instagram-adds-retention-insights-reels/758464/)',
+          '**A Reels-first app test in India (September 2025).** Instagram began testing an app that opens straight into Reels for a limited group of users in India. It is a test, not the app everyone has. [Meta, 28 Sep 2025](https://about.fb.com/news/2025/09/in-india-instagram-debuts-a-reels-first-experience-for-its-mobile-app/)',
+          '**Your Algorithm (December 2025).** Viewers can now see the topics shaping their Reels recommendations and ask for more or less of each. It launched in the US on 10 December 2025, with a global English rollout announced. Your Reel reaches people whose chosen topics it clearly fits. [TechCrunch, 10 Dec 2025](https://techcrunch.com/2025/12/10/instagrams-new-your-algorithm-tool-gives-you-more-control-over-the-reels-you-see)',
+          '**Five hashtags at most (December 2025).** Instagram said, through its @creators account, that it would gradually limit captions on Reels and posts to five hashtags, and that fewer, more targeted hashtags work better. [Social Samosa, 19 Dec 2025](https://www.socialsamosa.com/news-2/instagram-hashtags-five-per-post-10923075)',
+          '**Originality beyond Reels (April 2026).** The rule that recommends only the original of duplicate content was extended from Reels to photos and carousels. [Instagram for Creators, 30 Apr 2026](https://creators.instagram.com/blog/rewarding-original-creators-on-instagram)',
+          '**AI-generated profile label (August 2026).** Instagram limits the reach of unlabelled profiles that feature an AI-generated person. Using AI tools while making a Reel does not need the label. [Instagram for Creators, 31 Aug 2026](https://creators.instagram.com/blog/ai-generated-profile-label/)',
+        ],
+      },
       { t: 'h2', text: 'What gets a Reel shown to fewer people' },
       {
         t: 'p',
@@ -413,7 +440,7 @@ export const GUIDES: Guide[] = [
       },
       {
         t: 'p',
-        text: 'Originality has become the biggest rule. Since April 2024, when Instagram finds two or more identical pieces of content it recommends only the original, and accounts that post unoriginal content ten or more times in 30 days are removed from recommendations. [Social Media Today, 30 Apr 2024](https://www.socialmediatoday.com/news/instagram-algorithm-prioritize-original-emerging-creators/714777/) In April 2026 the rule was extended from Reels to photos and carousels. Adding a border, a watermark, subtitles or a credit in the caption does not make a repost original. [Instagram for Creators, 30 Apr 2026](https://creators.instagram.com/blog/rewarding-original-creators-on-instagram)',
+        text: 'Originality is the biggest rule. Since April 2024, when Instagram finds two or more identical pieces of content it recommends only the original, and accounts that post unoriginal content ten or more times in 30 days are removed from recommendations. [Social Media Today, 30 Apr 2024](https://www.socialmediatoday.com/news/instagram-algorithm-prioritize-original-emerging-creators/714777/) Adding a border, a watermark, subtitles or a credit in the caption does not make a repost original. [Instagram for Creators, 30 Apr 2026](https://creators.instagram.com/blog/rewarding-original-creators-on-instagram)',
       },
       {
         t: 'p',
@@ -427,6 +454,46 @@ export const GUIDES: Guide[] = [
       {
         t: 'p',
         text: 'If that happens, **none** of the account’s content is recommended to non-followers, though followers still see it. Professional accounts can check this under Account Status in settings and request a review. [Account Status](https://help.instagram.com/653964212890722)',
+      },
+      { t: 'h2', text: 'Metrics to watch in Insights' },
+      {
+        t: 'p',
+        text: 'Judge each Reel against your own recent Reels, not against other accounts. Metric names change from time to time, so check the labels in your professional dashboard.',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**Skip rate and the retention chart:** whether the opening works and where people leave.',
+          '**Average watch time:** one of the three signals Mosseri named.',
+          '**Sends per reach:** shares divided by accounts reached. Your best guide to reach beyond your followers.',
+          '**Likes per reach:** likes divided by accounts reached. Your best guide to how followers respond.',
+          '**Profile visits, follows, link taps and messages:** what tells a business whether reach is turning into enquiries.',
+        ],
+      },
+      { t: 'h2', text: 'Myths that don’t hold up' },
+      {
+        t: 'ul',
+        items: [
+          '**“Trending audio guarantees reach.”** Instagram counts audio as one piece of information about a Reel, alongside the visuals and how people respond. No Instagram source says a sound guarantees distribution.',
+          '**“There’s a magic number of hashtags.”** Instagram now caps captions at five and says targeted hashtags beat many. It has never said hashtags guarantee reach.',
+          '**“There’s one best time to post.”** Instagram has published no universal posting time. Your own Insights show when your followers are active.',
+          '**“Reels must be under a set length.”** Mosseri said Instagram weighs both the share and the seconds watched so longer videos aren’t penalised.',
+          '**“Low reach means a shadowban.”** Account Status tells you whether your account can be recommended. If it says yes, look at the Reel’s skip rate and retention first.',
+          '**“A border or a credit makes a repost original.”** Instagram says it doesn’t.',
+        ],
+      },
+      { t: 'h2', text: 'Low reach? Check these in order' },
+      {
+        t: 'ol',
+        items: [
+          'Open Account Status and confirm the account is eligible for recommendations.',
+          'Check originality: your own footage, no other app’s watermark, not a re-upload of someone else’s video.',
+          'If your profile features an AI-generated person, turn on the AI-generated profile label.',
+          'Read the skip rate and retention chart. Most fixes start with the first three seconds.',
+          'Compare sends per reach and likes per reach with your last ten Reels.',
+          'Try the next idea as a Trial Reel shown to non-followers first.',
+          'Give a new format several posts before judging it. One Reel is a small sample.',
+        ],
       },
       { t: 'h2', text: 'Tools worth using' },
       {
@@ -446,16 +513,43 @@ export const GUIDES: Guide[] = [
       {
         t: 'ul',
         items: [
-          'Plan the first seconds before the shoot. If people don’t keep watching, nothing else in this guide matters.',
+          'Plan the first three seconds before the shoot, then check the skip rate after posting.',
           'Make things people want to send: useful, local and specific beats generic.',
           'Track likes per reach and sends per reach per Reel, not follower count.',
           'Shoot original footage and export clean files. No reposts, no other app’s watermark.',
+          'Use up to five hashtags that describe the Reel, and say what it is about in the caption.',
           'Test new formats as Trial Reels before they reach the whole following.',
           'Never buy likes, follows or comments. It costs the whole account its recommendations.',
         ],
       },
     ],
-    sources: [S.rankingExplained, S.mosseri2025, S.watchSeconds, S.engagementRates, S.originality2024, S.originality2026, S.originalHelp, S.recGuidelines, S.accountStatus, S.trialReels, S.threeMinutes, S.edits, S.indexing],
+    faqs: [
+      {
+        q: 'Does Instagram have one algorithm for Reels and posts?',
+        a: 'No. Instagram describes separate ranking systems for Feed, Stories, Explore and Reels, each based on how people use that part of the app.',
+      },
+      {
+        q: 'What are the most important Reels ranking signals in 2026?',
+        a: 'Instagram has not published weights. Its 2023 explainer says Reels ranking predicts whether you will share, finish, like or open the audio page of a Reel, and in January 2025 Adam Mosseri named watch time, likes per reach and sends per reach as the top three.',
+      },
+      {
+        q: 'Can viewers change which Reels Instagram shows them?',
+        a: 'Yes. Your Algorithm, launched in the US in December 2025 with a global English rollout announced, shows viewers the topics behind their Reels recommendations and lets them ask for more or less of each.',
+      },
+      {
+        q: 'How many hashtags should a Reel have?',
+        a: 'Five at most. Instagram said in December 2025 it would limit captions to five hashtags and that fewer, targeted hashtags work better. Hashtags help describe a Reel; they don’t guarantee reach.',
+      },
+      {
+        q: 'Do longer Reels get less reach?',
+        a: 'Not for being long. Adam Mosseri said in February 2025 that Instagram weighs both the percentage and the seconds watched, so longer videos aren’t penalised. A long Reel still has to hold attention.',
+      },
+      {
+        q: 'Can an agency guarantee Reels reach?',
+        a: 'No. Nobody outside Instagram controls its recommendations. An agency can control what Instagram rewards: original footage, a strong opening, ideas people want to send, and honest measurement.',
+      },
+    ],
+    sources: [S.rankingExplained, S.mosseri2025, S.watchSeconds, S.engagementRates, S.reposts, S.skipRate, S.indiaReelsFirst, S.yourAlgorithm, S.hashtags, S.originality2024, S.originality2026, S.originalHelp, S.aiLabel, S.recGuidelines, S.accountStatus, S.trialReels, S.threeMinutes, S.edits, S.indexing],
     services: ['reels-production', 'instagram-marketing'],
   },
   {
@@ -634,6 +728,124 @@ export const GUIDES: Guide[] = [
     ],
     sources: [S.mPartners, S.gThirdParty, S.igTerms, S.gThirdPartyPolicy, S.igApps, S.recGuidelines, S.originality2026, S.asci, S.doca, S.asciReport, S.gAccess],
     services: ['social-media-strategy', 'instagram-marketing', 'influencer-marketing'],
+  },
+  {
+    slug: 'diwali-social-media-plan',
+    title: 'Diwali 2026 social media plan for Delhi NCR small businesses',
+    metaTitle: 'Diwali 2026 Social Media Plan for Small Business',
+    navTitle: 'Diwali 2026 plan',
+    description:
+      'A dated Diwali 2026 plan for Delhi NCR shops, clinics and cafés: what to post each week, Reels ideas by business, WhatsApp and Meta ads setup, what to measure.',
+    summary:
+      'Diwali falls on Sunday 8 November 2026. From mid-October that leaves about three weeks: one to set up your offer, profile and replies, one to build interest with Reels and ads, and Diwali week to answer every enquiry fast. Start paid ads by the end of October so they have time to settle before the rush.',
+    published: '2026-10-15',
+    updated: '2026-10-15',
+    author: 'Social ScaleX team',
+    blocks: [
+      { t: 'h2', text: 'The dates that set the plan' },
+      {
+        t: 'p',
+        text: 'The Government of India’s 2026 holiday list puts Diwali (Deepavali) on **Sunday 8 November 2026**. [DoPT holiday list 2026](https://www.staffnews.in/2025/07/list-of-holidays-2026-dopt-order-reg-closed-and-restricted-holidays.html) Dhanteras falls in the days just before it; check your local panchang for the exact date if your offer depends on it.',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**15–21 October: set up.** One offer, your profile, your replies and your tracking.',
+          '**22–31 October: build interest.** Reels, Stories and paid ads, launched by the end of the month.',
+          '**1–8 November: convert.** Fast replies, reminders to people who asked for them, clear opening hours.',
+          '**After Diwali: follow up.** Thank customers, ask happy ones for a Google review, and read the numbers.',
+        ],
+      },
+      { t: 'h2', text: 'Week 1: set up before you post' },
+      {
+        t: 'ol',
+        items: [
+          '**Pick one offer and one end date.** A gift box, a festive menu, a pre-Diwali appointment slot. One clear offer is easier to post about and easier to measure than five.',
+          '**Fix your Instagram profile.** Say the offer and your area in the bio, pin the offer post, and add a link or WhatsApp button that opens a chat.',
+          '**Set holiday hours on Google.** Google Business Profile lets you set special hours for holidays, and Google suggests confirming them even when they don’t change. [Google Business Profile Help](https://support.google.com/business/answer/6303076)',
+          '**Prepare WhatsApp replies.** Write quick replies for price, stock, delivery area and timings, and a greeting message that says when you’ll reply. Our [WhatsApp automation page](/automation/whatsapp-automation) covers the setup.',
+          '**Decide how you’ll count enquiries.** A different pre-typed WhatsApp message for the bio link, each ad and the website tells you where each chat came from.',
+        ],
+      },
+      { t: 'h2', text: 'Week 2: Reels that people send to each other' },
+      {
+        t: 'p',
+        text: 'Instagram says the Reels it predicts people will share and watch to the end are the ones it shows more, and it recommends only the original when it finds duplicates. [Instagram ranking explained](https://about.instagram.com/blog/announcements/instagram-ranking-explained) So shoot your own footage in your own shop, and make something a customer would forward to the person they’re shopping with. Our [Reels algorithm guide](/guides/instagram-reels-reach) explains the rest.',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**Sweet shop or bakery:** one box packed start to finish, with the price and the last order date on screen.',
+          '**Jewellery or gifting:** three choices at three budgets, filmed at the counter.',
+          '**Boutique:** one outfit styled three ways for the three days of the festival.',
+          '**Salon or clinic:** the slots still open before Diwali, filmed as a walk through the space.',
+          '**Café or restaurant:** the festive menu plated in one take, with how to book a table.',
+          '**Home décor or electronics:** a quick set-up at a real customer’s home, with their permission.',
+          '**Any local shop:** name your market and the landmark beside you. Shoppers in Delhi NCR search by market name.',
+        ],
+      },
+      {
+        t: 'p',
+        text: 'Test a new idea as a Trial Reel shown to non-followers first. [Trial Reels](https://creators.instagram.com/blog/instagram-trial-reels) If you pay a creator to feature your offer, the post must be labelled as an ad under ASCI’s influencer guidelines. [ASCI guidelines](https://www.ascionline.in/wp-content/uploads/2023/08/GUIDELINES-FOR-INFLUENCER-ADVERTISING-IN-DIGITAL-MEDIA.pdf)',
+      },
+      { t: 'h2', text: 'Paid ads: start by the end of October' },
+      {
+        t: 'p',
+        text: 'Meta’s delivery system goes through a learning phase after an ad set launches and again after significant edits. [Meta: learning phase](https://www.facebook.com/business/help/112167992830700) Launching in late October and leaving the ads alone gives them time to settle before Diwali week, when you want them delivering steadily.',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**You sell through conversations:** ads that open a WhatsApp chat. [Meta: click-to-WhatsApp ads](https://www.facebook.com/business/help/447934475640650)',
+          '**You call people back:** lead ads with a short form. [Meta: lead ads](https://www.facebook.com/business/help/761812391313386)',
+          '**People already search for what you sell:** Google Search ads may catch them first. Our [Meta vs Google Ads guide](/guides/meta-ads-vs-google-ads) helps you choose.',
+          '**Keep the target area tight.** A store doesn’t need to pay to reach people across the city who will never visit.',
+        ],
+      },
+      { t: 'h2', text: 'Diwali week: answer fast, message only people who asked' },
+      {
+        t: 'p',
+        text: 'Most festive enquiries arrive as DMs and WhatsApp chats, and a slow reply loses the sale to the next shop. Check messages several times a day and use your saved replies.',
+      },
+      {
+        t: 'p',
+        text: 'Don’t broadcast offers to every contact in your phone. WhatsApp’s Business Messaging Policy lets you message people only if they gave you their number and agreed to hear from you, and you must respect anyone who asks you to stop. [WhatsApp Business Messaging Policy](https://business.whatsapp.com/policy)',
+      },
+      { t: 'h2', text: 'After Diwali: what to measure' },
+      {
+        t: 'ul',
+        items: [
+          '**Enquiries by source:** bio link, each ad, website, walk-ins who mention Instagram.',
+          '**Enquiries that bought:** the number that matters; reach and likes only explain it.',
+          '**Cost per enquiry and per sale** for each ad.',
+          '**Which Reels people sent:** sends per reach, for next year’s ideas.',
+        ],
+      },
+      {
+        t: 'p',
+        text: 'Then ask customers who were happy to leave a Google review. Don’t offer anything in return: Google removes reviews given for payment, discounts or free goods. [Google Maps content policy](https://support.google.com/contributionpolicy/answer/7400114)',
+      },
+    ],
+    faqs: [
+      {
+        q: 'When is Diwali 2026?',
+        a: 'Sunday 8 November 2026, according to the Government of India’s 2026 holiday list.',
+      },
+      {
+        q: 'Is mid-October too late to plan Diwali social media?',
+        a: 'No, if you keep it to one offer. Set up in the first week, post and launch ads in the second, and spend Diwali week replying to enquiries.',
+      },
+      {
+        q: 'Can I send my Diwali offer to all my WhatsApp contacts?',
+        a: 'Only to people who gave you their number and agreed to receive messages from you. WhatsApp’s Business Messaging Policy requires that opt-in and requires you to stop when someone asks.',
+      },
+      {
+        q: 'Should I use Meta ads or Google Ads for a Diwali sale?',
+        a: 'Meta ads create interest among people nearby who aren’t searching yet; Google Search ads reach people already looking for what you sell. Many local shops start with Meta ads that open a WhatsApp chat.',
+      },
+    ],
+    sources: [S.diwali2026, S.gbpHours, S.rankingExplained, S.trialReels, S.asci, S.mLearning, S.mCtwa, S.mLeadAds, S.waPolicy, S.gReviews],
+    services: ['meta-ads', 'reels-production'],
   },
 ];
 

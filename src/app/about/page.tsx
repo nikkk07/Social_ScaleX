@@ -9,10 +9,12 @@ import { FaqList } from '@/components/site/FaqList';
 import { LeadSection } from '@/components/site/LeadSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { FAQS, PORTFOLIO, PRINCIPLES, SERVICES } from '@/lib/content';
-import { AREAS_SERVED, CONTACTS, FOUNDING_YEAR } from '@/lib/site';
+import { AREAS_SERVED, CONTACTS, FOUNDING_YEAR, socialMeta } from '@/lib/site';
 import { breadcrumbNode, faqNode, graph, personId, webPageNode } from '@/lib/schema';
 
 const TITLE = 'About Social ScaleX';
+/** Search and share title; TITLE stays the on-page and schema name. */
+const META_TITLE = 'About Us: Delhi NCR Social Media Agency';
 const DESCRIPTION =
   'Social ScaleX is a Delhi NCR social media marketing agency founded in 2025 by Nikhil Bisht and Abhishek Anand. A small team that publishes its client numbers.';
 const CRUMBS = [
@@ -24,10 +26,10 @@ const ABOUT_FAQS = FAQS.filter((f) =>
 );
 
 export const metadata: Metadata = {
-  title: 'About Us: Delhi NCR Social Media Agency',
+  title: META_TITLE,
   description: DESCRIPTION,
   alternates: { canonical: '/about' },
-  openGraph: { title: `${TITLE} | Social ScaleX`, description: DESCRIPTION, url: '/about' },
+  ...socialMeta({ title: META_TITLE, description: DESCRIPTION, path: '/about' }),
 };
 
 export default function AboutPage() {

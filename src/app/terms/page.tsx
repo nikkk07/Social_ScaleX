@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { LegalPage } from '@/components/site/LegalPage';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { breadcrumbNode, graph, webPageNode } from '@/lib/schema';
+import { socialMeta } from '@/lib/site';
 
 const TITLE = 'Terms of Service';
 const DESCRIPTION = 'The terms covering Social ScaleX engagements: scope, results, content ownership and liability.';
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: '/terms' },
+  ...socialMeta({ title: TITLE, description: DESCRIPTION, path: '/terms' }),
 };
 
 const CRUMBS = [

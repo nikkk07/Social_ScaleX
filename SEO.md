@@ -19,8 +19,8 @@ here is mostly off-site and owner work. Ordered by impact.
    footer links and the Organization `sameAs` update together.
 5. **Search Console + Bing Webmaster Tools.** Verify the domain, submit
    `/sitemap.xml`, request indexing for `/` and the 8 service pages.
-6. **Verify the numbers.** `content.ts` carries `TODO(verify-metrics)`. Re-pull
-   the figures before launch and whenever you add the two new clients.
+6. **Verify the numbers.** Results figures in `content.ts` are dated (recorded
+   30 Sep 2026). Re-pull them, and update the date, whenever you add a client.
 
 ## Where the business comes from (keyword map)
 
@@ -38,7 +38,8 @@ Get listed on all five: that is how you appear for the head term early.
 | Product photoshoot / event shoot Delhi NCR | /services/product-shoots | Yes |
 | YouTube channel management services | /services/youtube-management | Medium |
 | Social media audit / strategy | /services/social-media-strategy | Medium |
-| Instagram algorithm / Reels reach 2026 | /guides/instagram-reels-reach | Yes (AI answers too) |
+| Instagram Reels algorithm 2026, Reels reach | /guides/instagram-reels-reach | Yes (AI answers too) |
+| Diwali 2026 social media / marketing ideas | /guides/diwali-social-media-plan | Seasonal; review after 8 Nov 2026 |
 | Meta ads vs Google Ads | /guides/meta-ads-vs-google-ads | Yes |
 | How to choose a social media agency | /guides/choose-social-media-agency | Yes |
 | Social media marketing agency Delhi NCR | / (homepage) + directories | Slow |
@@ -88,10 +89,14 @@ in Noida", "how does the Instagram Reels algorithm work in 2026". Note whether
 Social ScaleX or a guide is cited. Directories, reviews and your GBP feed these
 answers as much as the site does.
 
-## Already in the code (verified 30 Sep 2026)
+## Already in the code (verified 30 Sep 2026; counts updated 15 Oct 2026)
 
-- 19 static pages, each with one H1, unique title (≤ 63 chars) and description
-  (≤ 160), canonical, Open Graph and a 1200×630 OG image.
+- 39 public URLs in the sitemap, each with one H1, unique title (≤ 65 chars)
+  and description (≤ 160), canonical, Open Graph + X card and a 1200×630 OG
+  image (via `socialMeta()`; fixed 15 Oct, before that 35 pages had none).
+- GA4 / Meta Pixel load only when `NEXT_PUBLIC_GA_ID` / `NEXT_PUBLIC_META_PIXEL_ID`
+  are set in Vercel production (not set as of 15 Oct 2026). Events:
+  `contact_click` (method: whatsapp | phone | email) and `generate_lead`.
 - JSON-LD: ProfessionalService (founders, area served, contact points),
   WebSite, Person ×2, WebPage/AboutPage/ContactPage/CollectionPage,
   BreadcrumbList, Service per service page, FAQPage, CreativeWork per case

@@ -14,7 +14,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
 import { AUTOMATIONS, PLAN_99, getAutomation } from '@/lib/automation';
 import { getGuide } from '@/lib/guides';
-import { whatsappLink } from '@/lib/site';
+import { socialMeta, whatsappLink } from '@/lib/site';
 import { inSentence } from '@/lib/content';
 import { automationNode, breadcrumbNode, faqNode, graph, webPageNode } from '@/lib/schema';
 
@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: a.metaTitle,
     description: a.metaDescription,
     alternates: { canonical: path },
-    openGraph: { title: `${a.metaTitle} | Social ScaleX`, description: a.metaDescription, url: path },
+    ...socialMeta({ title: a.metaTitle, description: a.metaDescription, path: path }),
   };
 }
 

@@ -13,7 +13,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
 import { PORTFOLIO, PORTFOLIO_NOTE, PRINCIPLES, SERVICES, getService, inSentence } from '@/lib/content';
 import { GUIDES } from '@/lib/guides';
-import { whatsappLink } from '@/lib/site';
+import { socialMeta, whatsappLink } from '@/lib/site';
 import { breadcrumbNode, faqNode, graph, serviceNode, webPageNode } from '@/lib/schema';
 
 export const dynamicParams = false;
@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: s.metaTitle,
     description: s.metaDescription,
     alternates: { canonical: path },
-    openGraph: { title: `${s.metaTitle} | Social ScaleX`, description: s.metaDescription, url: path },
+    ...socialMeta({ title: s.metaTitle, description: s.metaDescription, path: path }),
   };
 }
 

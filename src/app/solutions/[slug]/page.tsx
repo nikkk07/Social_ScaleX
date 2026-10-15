@@ -15,6 +15,7 @@ import { GOALS, getGoal } from '@/lib/goals';
 import { getService } from '@/lib/content';
 import { getAutomation } from '@/lib/automation';
 import { breadcrumbNode, faqNode, graph, webPageNode } from '@/lib/schema';
+import { socialMeta } from '@/lib/site';
 
 export const dynamicParams = false;
 
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: g.metaTitle,
     description: g.metaDescription,
     alternates: { canonical: path },
-    openGraph: { title: `${g.metaTitle} | Social ScaleX`, description: g.metaDescription, url: path },
+    ...socialMeta({ title: g.metaTitle, description: g.metaDescription, path: path }),
   };
 }
 

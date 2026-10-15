@@ -14,6 +14,7 @@ import { CITIES, PIN_GROUPS, cityStats, getCity, type AreaEntry } from '@/lib/ar
 import { getService } from '@/lib/content';
 import { getAutomation } from '@/lib/automation';
 import { areaServiceNode, breadcrumbNode, faqNode, graph, webPageNode } from '@/lib/schema';
+import { socialMeta } from '@/lib/site';
 
 export const dynamicParams = false;
 
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: c.metaTitle,
     description: c.metaDescription,
     alternates: { canonical: path },
-    openGraph: { title: `${c.metaTitle} | Social ScaleX`, description: c.metaDescription, url: path },
+    ...socialMeta({ title: c.metaTitle, description: c.metaDescription, path: path }),
   };
 }
 

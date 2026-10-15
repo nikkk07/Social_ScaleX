@@ -11,6 +11,7 @@ import { PriceCard } from '@/components/site/Offer';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { AUTOMATIONS, AUTOMATION_HUB } from '@/lib/automation';
 import { breadcrumbNode, faqNode, graph, itemListNode, webPageNode } from '@/lib/schema';
+import { socialMeta } from '@/lib/site';
 
 const CRUMBS = [
   { name: 'Home', path: '/' },
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
   title: AUTOMATION_HUB.metaTitle,
   description: AUTOMATION_HUB.metaDescription,
   alternates: { canonical: '/automation' },
-  openGraph: { title: `${AUTOMATION_HUB.metaTitle} | Social ScaleX`, description: AUTOMATION_HUB.metaDescription, url: '/automation' },
+  ...socialMeta({ title: AUTOMATION_HUB.metaTitle, description: AUTOMATION_HUB.metaDescription, path: '/automation' }),
 };
 
 export default function AutomationHub() {

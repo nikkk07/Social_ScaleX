@@ -13,6 +13,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_AS_OF, RESULTS_FAQS, STATS, type ResultGoal } from '@/lib/content';
 import { UpdatedAgo } from '@/components/site/UpdatedAgo';
 import { breadcrumbNode, caseStudyNode, faqNode, graph, webPageNode } from '@/lib/schema';
+import { socialMeta } from '@/lib/site';
 
 const PATH = '/case-studies';
 const TITLE = 'Client Results: Instagram & YouTube Case Studies';
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: PATH },
-  openGraph: { title: `${TITLE} | Social ScaleX`, description: DESCRIPTION, url: PATH },
+  ...socialMeta({ title: TITLE, description: DESCRIPTION, path: PATH }),
 };
 
 const GOALS: ResultGoal[] = ['sales', 'awareness', 'creator'];

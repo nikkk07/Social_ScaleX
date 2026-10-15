@@ -1,3 +1,5 @@
+import type { Metadata } from 'next';
+
 // ─────────────────────────────────────────────────────────────────────
 // Single source of truth for every absolute URL, contact detail and
 // entity fact the site publishes.
@@ -12,7 +14,7 @@
 /**
  * Canonical origin, no trailing slash.
  *
- * Defaults to the Vercel deployment URL, which actually serves the site.
+ * Defaults to the live domain, https://www.socialscalex.in.
  * A canonical pointing at a host nobody serves gets a site indexed nowhere,
  * so this must never be aspirational.
  */
@@ -20,8 +22,7 @@ export const SITE_URL = (
   (process.env.NEXT_PUBLIC_SITE_URL ?? '').trim() || 'https://www.socialscalex.in'
 ).replace(/\/$/, '');
 
-/** The domain the business owns. It becomes the canonical the moment
- *  NEXT_PUBLIC_SITE_URL is set to it in Vercel (see docs/DEPLOYMENT.md). */
+/** The domain the business owns; the www host above is its canonical form. */
 export const OWNED_DOMAIN = 'socialscalex.in';
 
 export const SITE_NAME = 'Social ScaleX';
@@ -74,6 +75,40 @@ export const OG_IMAGE = {
   height: 630,
   alt: 'Social ScaleX, social media marketing agency in Delhi NCR',
 } as const;
+
+/**
+ * Open Graph and X/Twitter card for one page.
+ *
+ * Next.js merges metadata shallowly: a page that sets its own `openGraph` or
+ * `twitter` replaces the root layout's whole object, image and site name
+ * included (nextjs.org/docs/app/api-reference/functions/generate-metadata,
+ * "Merging"). Before this helper, 35 pages shipped no og:image and sent the
+ * homepage title as their X card. Every page calls this instead of writing
+ * `openGraph` by hand, so the share preview can't drift again.
+ */
+export function socialMeta(p: {
+  title: string;
+  description: string;
+  path: string;
+  article?: { publishedTime: string; modifiedTime: string };
+}): Pick<Metadata, 'openGraph' | 'twitter'> {
+  const title = `${p.title} | ${SITE_NAME}`;
+  const base = {
+    siteName: SITE_NAME,
+    locale: 'en_IN',
+    url: p.path,
+    title,
+    description: p.description,
+    images: [OG_IMAGE],
+  };
+  const openGraph: Metadata['openGraph'] = p.article
+    ? { ...base, type: 'article', publishedTime: p.article.publishedTime, modifiedTime: p.article.modifiedTime }
+    : { ...base, type: 'website' };
+  return {
+    openGraph,
+    twitter: { card: 'summary_large_image', title, description: p.description, images: [OG_IMAGE.url] },
+  };
+}
 
 /** Stable JSON-LD node identifiers. Every schema graph on the site points at
  *  these two @ids so the org is one entity, not one per page. */

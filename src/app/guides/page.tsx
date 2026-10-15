@@ -7,6 +7,7 @@ import { LeadSection } from '@/components/site/LeadSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { GUIDES } from '@/lib/guides';
 import { breadcrumbNode, graph, itemListNode, webPageNode } from '@/lib/schema';
+import { socialMeta } from '@/lib/site';
 
 const TITLE = 'Social Media Marketing Guides';
 const DESCRIPTION =
@@ -20,7 +21,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: '/guides' },
-  openGraph: { title: `${TITLE} | Social ScaleX`, description: DESCRIPTION, url: '/guides' },
+  ...socialMeta({ title: TITLE, description: DESCRIPTION, path: '/guides' }),
 };
 
 const fmt = (d: string) => new Date(`${d}T00:00:00+05:30`).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Kolkata' });

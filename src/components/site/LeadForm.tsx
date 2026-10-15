@@ -3,6 +3,7 @@ import React, { useId, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { CheckCircle2 } from 'lucide-react';
 import { submitEnquiry, type SubmitResult } from './submitEnquiry';
+import { trackLead } from '@/lib/track';
 
 /** Indian mobile: 10 digits starting 6–9, optional +91 / 0 prefix, spaces or hyphens. */
 const INDIAN_MOBILE = /^(?:\+?91|0)?[6-9]\d{9}$/;
@@ -75,7 +76,10 @@ export function LeadForm({
     setBusy(true);
     const result = await submitEnquiry({ kind: 'callback', name, phone, best_time: null, message });
     setBusy(false);
-    if (result.ok) setSentTo(name.split(' ')[0] ?? name);
+    if (result.ok) {
+      trackLead();
+      setSentTo(name.split(' ')[0] ?? name);
+    }
     else setFailure(failureText(result, phoneLabel));
   }
 

@@ -8,6 +8,7 @@ import { LeadSection } from '@/components/site/LeadSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { SERVICES } from '@/lib/content';
 import { breadcrumbNode, graph, itemListNode, webPageNode } from '@/lib/schema';
+import { socialMeta } from '@/lib/site';
 
 const TITLE = 'Social Media Marketing Services';
 const DESCRIPTION =
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: '/services' },
-  openGraph: { title: `${TITLE} | Social ScaleX`, description: DESCRIPTION, url: '/services' },
+  ...socialMeta({ title: TITLE, description: DESCRIPTION, path: '/services' }),
 };
 
 export default function ServicesPage() {

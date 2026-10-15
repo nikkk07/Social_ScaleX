@@ -20,7 +20,7 @@
 > | WebGL / R3F background; Lenis smooth scroll; GSAP | None. gsap and lenis are uninstalled | JS weight and scroll hijacking hurt Core Web Vitals and accessibility |
 > | Zustand for global state | Not installed; no global UI state exists | Nothing needs it — adding it would be architecture for its own sake |
 > | `/pricing` page, `AggregateRating` schema | Neither exists | Owner decided (Sep 2026): the only public price is Instagram comment-to-DM at ₹99/month (`PLAN_99` in `src/lib/automation.ts`); everything else is quoted on a call. No self-served review markup |
-> | City landing pages | None; one page per service | Google's doorway-page spam policy. Add a city page only with real local work to show |
+> | City landing pages | `/areas` hub + 5 city pages (Delhi, Noida, Gurugram, Ghaziabad, Faridabad), each with its own local notes and pin codes; no per-pin-code or per-service city pages | Google's doorway-page spam policy. The city pages show no local client work yet; kept pending an owner review (Oct 2026 audit). Don't add more without real local work to show |
 >
 > **Two rules that override anything below:**
 >
@@ -28,8 +28,14 @@
 >    and `/llms.txt` all render from it. Never write marketing copy into a
 >    component — schema that contradicts visible text gets discounted.
 > 2. **Never invent a metric, a price, a client name or a review.** Figures in
->    this repo come from client dashboards and carry `TODO(verify-metrics)`
->    markers where currency is unconfirmed.
+>    this repo come from client dashboards, carry the date they were recorded
+>    (`asOf` / the Results note in `content.ts`) and are published with the
+>    client's permission.
+>
+> Share previews: every page sets Open Graph and X metadata through
+> `socialMeta()` in `src/lib/site.ts`, never a hand-written `openGraph` object
+> (Next.js replaces the layout's whole object, image included).
+> Conversion events: `src/lib/track.ts`.
 >
 > Architecture, commands and conventions: `README.md`. SEO/GEO/AEO status and
 > what is still outstanding: `SEO.md`. Platform facts in guides and FAQs must

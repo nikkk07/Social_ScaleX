@@ -8,6 +8,7 @@ import { LeadSection } from '@/components/site/LeadSection';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { CONTACT_FAQS } from '@/lib/content';
 import { breadcrumbNode, faqNode, graph, webPageNode } from '@/lib/schema';
+import { socialMeta } from '@/lib/site';
 
 const TITLE = 'Contact Us: Book a Free Strategy Call';
 const DESCRIPTION =
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESCRIPTION,
   alternates: { canonical: '/contact' },
-  openGraph: { title: `${TITLE} | Social ScaleX`, description: DESCRIPTION, url: '/contact' },
+  ...socialMeta({ title: TITLE, description: DESCRIPTION, path: '/contact' }),
 };
 
 export default function ContactPage() {
