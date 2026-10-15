@@ -93,7 +93,7 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'Do you buy followers or use engagement apps?',
-        a: 'Never. Instagram says it may remove likes and follows that come from these apps and can limit the accounts using them, and buying likes can make an account ineligible for recommendations. Every follower on the accounts we manage arrived because of the content.',
+        a: 'Never. Instagram says it may remove likes and follows that come from these apps and can limit the accounts using them, and buying likes can make an account ineligible for recommendations. We never buy followers, likes or comments for the accounts we manage.',
       },
       {
         q: 'How many posts a month will you publish?',
@@ -848,9 +848,9 @@ export const PORTFOLIO_NOTE =
  *  - 32.7× = Saini Telecom, 400 → 13,100 followers, Jun → 15 Oct 2026.
  */
 export const STATS: Metric[] = [
-  { value: '10M+', label: 'Views in 30 days on two retail accounts we run' },
+  { value: '10M+', label: 'Views on two retail accounts we run, each over its latest 30 days' },
   { value: '570K+', label: 'Followers and subscribers on the accounts we manage' },
-  { value: '32.7×', label: 'Follower growth for Saini Telecom since June' },
+  { value: '32.7×', label: 'Saini Telecom’s followers vs June (400 → 13.1K)' },
   { value: `${PORTFOLIO.length}`, label: 'Brands and creators with published results' },
 ];
 

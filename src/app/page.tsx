@@ -130,7 +130,7 @@ export default function HomePage() {
               <SectionHead
                 id="automation-title"
                 eyebrow="Automation"
-                title="Instagram and WhatsApp auto-replies for every comment and DM"
+                title="Instagram and WhatsApp auto-replies for comments and DMs"
                 intro="Instagram comment-to-DM, DM auto-reply, WhatsApp and Facebook automation on Meta’s official tools. Comment-to-DM starts at ₹99 a month."
               />
               <ul className="mt-10 grid gap-5 sm:grid-cols-2">

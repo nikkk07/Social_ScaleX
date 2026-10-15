@@ -275,7 +275,7 @@ export const AUTOMATIONS: Automation[] = [
       'YouTube comment management for channels: replies from YouTube Studio, held-for-review filters, blocked words and links, and spam clean-up. Free call.',
     h1: 'YouTube comment management and moderation',
     lede:
-      'YouTube has no official comment auto-reply, so we do the next best thing properly. We reply to comments from YouTube Studio, pin the right one, and set up held-for-review, blocked words and blocked links so spam never reaches your audience.',
+      'YouTube has no official comment auto-reply, so we do the next best thing properly. We reply to comments from YouTube Studio, pin the right one, and set up held-for-review, blocked words and blocked links so most spam is held back before your audience sees it.',
     outcome: 'Your comments section stays clean, and real viewers get real replies.',
     example: { trigger: 'Posts a question under your video', reply: 'Gets a real reply from your channel, not a bot' },
     features: [

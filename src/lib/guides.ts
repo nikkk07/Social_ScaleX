@@ -293,7 +293,7 @@ export const GUIDES: Guide[] = [
     summary:
       'Instagram grows accounts whose Reels people watch, share and like. Post original Reels with a strong opening, make content people send to friends, test new formats with Trial Reels, and keep your account eligible for recommendations. Bought followers, likes and comments can be removed by Instagram and can stop it recommending your account at all.',
     published: '2026-09-30',
-    updated: '2026-09-30',
+    updated: '2026-10-15',
     author: 'Social ScaleX team',
     blocks: [
       { t: 'h2', text: 'Why buying followers, likes or views backfires' },

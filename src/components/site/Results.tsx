@@ -2,7 +2,8 @@ import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, TrendingUp } from 'lucide-react';
-import { GOAL_LABEL, getService, growthChange, type Growth, type Metric, type PortfolioItem } from '@/lib/content';
+import { GOAL_LABEL, RESULTS_AS_OF, getService, growthChange, type Growth, type Metric, type PortfolioItem } from '@/lib/content';
+import { formatDay } from '@/lib/dates';
 import { InstagramIcon, YoutubeIcon } from '@/components/icons/PlatformIcons';
 
 const CTA: Record<PortfolioItem['goal'], string> = {
@@ -189,6 +190,10 @@ export function ResultCase({ p }: { p: PortfolioItem }) {
                   ))}
                 </dl>
               ) : null}
+              {/* Each client's own capture date: figures are not all recorded on the same day. */}
+              <p className="mt-5 text-xs text-ink-3">
+                {p.status === 'Past' ? 'Figures at hand-over' : `Figures as of ${formatDay(p.asOf ?? RESULTS_AS_OF)}`}
+              </p>
             </>
           ) : (
             <>
