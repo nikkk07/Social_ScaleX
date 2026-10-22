@@ -10,6 +10,8 @@ import { Rich } from '@/components/site/Rich';
 import { TocSpy, type TocItem } from '@/components/site/TocSpy';
 import { FaqList } from '@/components/site/FaqList';
 import { CompareTable, OfferBox } from '@/components/site/Offer';
+import { Callout, DataTable, Flow, GuideCta, Verdict } from '@/components/site/GuideBlocks';
+import { Check } from 'lucide-react';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { GUIDES, getGuide, guideWordCount, type Block } from '@/lib/guides';
 import { getService } from '@/lib/content';
@@ -53,6 +55,16 @@ function BlockView({ b }: { b: Block }) {
       return <OfferBox variant={b.variant} />;
     case 'compare':
       return <CompareTable />;
+    case 'verdict':
+      return <Verdict sides={b.sides} />;
+    case 'table':
+      return <DataTable b={b} />;
+    case 'flow':
+      return <Flow steps={b.steps} label={b.label} />;
+    case 'callout':
+      return <Callout tone={b.tone} title={b.title} text={b.text} />;
+    case 'cta':
+      return <GuideCta b={b} />;
     case 'quote':
       return (
         <figure>
@@ -107,6 +119,16 @@ export default async function GuidePage({ params }: Props) {
               <div className="mt-8 rounded-card border-l-4 border-coral bg-surface p-6 ring-1 ring-line">
                 <p className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">The short answer</p>
                 <p className="mt-2 text-lg text-ink">{g.summary}</p>
+                {g.keyPoints?.length ? (
+                  <ul className="mt-4 space-y-2 border-t border-line pt-4">
+                    {g.keyPoints.map((k) => (
+                      <li key={k} className="flex gap-2.5 text-base text-ink-2">
+                        <Check className="mt-1 size-4 flex-none text-positive" aria-hidden="true" />
+                        <span><Rich text={k} /></span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </div>
               </div>
             </div>

@@ -17,7 +17,51 @@ export type Block =
   /** Done-for-you offer box (₹99 comment-to-DM plan). */
   | { t: 'offer'; variant: 'mid' | 'end' }
   /** The do-it-yourself vs done-for-you table from automation.ts. */
-  | { t: 'compare' };
+  | { t: 'compare' }
+  /** Two options as side-by-side cards: the one to avoid and the one to pick. */
+  | { t: 'verdict'; sides: VerdictSide[] }
+  /** Comparison table; first column holds row labels. */
+  | TableBlock
+  /** Numbered journey shown as connected steps. */
+  | { t: 'flow'; label: string; steps: FlowStep[] }
+  /** Tip or warning box for skimmers. */
+  | { t: 'callout'; tone: 'tip' | 'warn'; title: string; text: string }
+  /** Social ScaleX offer box linking to a service page. */
+  | CtaBlock;
+
+export interface VerdictSide {
+  label: string;
+  tone: 'good' | 'bad';
+  title: string;
+  points: string[];
+}
+
+export interface TableBlock {
+  t: 'table';
+  caption: string;
+  /** Column headings; the first labels the row-heading column ('' for none). */
+  head: string[];
+  rows: string[][];
+  /** 1-based data column to highlight as the recommended option. */
+  highlight: number;
+}
+
+export interface FlowStep {
+  title: string;
+  text: string;
+}
+
+export interface CtaBlock {
+  t: 'cta';
+  variant: 'mid' | 'end';
+  title: string;
+  text: string;
+  points: string[];
+  button: string;
+  href: string;
+  /** Prefilled WhatsApp message. */
+  whatsapp: string;
+}
 
 export interface Source {
   label: string;
@@ -33,6 +77,8 @@ export interface Guide {
   description: string;
   /** Answer-first summary shown under the H1. */
   summary: string;
+  /** Up to three one-line takeaways shown inside the short-answer box. */
+  keyPoints?: string[];
   published: string;
   updated: string;
   author: string;
@@ -99,9 +145,239 @@ const S = {
   gReviews: { label: 'Google Maps User Generated Content Policy: Prohibited & restricted content', url: 'https://support.google.com/contributionpolicy/answer/7400114' },
   waPolicy: { label: 'WhatsApp Business Messaging Policy', url: 'https://business.whatsapp.com/policy' },
   manychat: { label: 'ManyChat: Pricing', url: 'https://manychat.com/pricing' },
+  mBoostVsAds: { label: 'Meta Business Help: Boosted posts vs ads created in Ads Manager', url: 'https://www.facebook.com/business/help/317083072148603' },
+  igBoostWa: { label: 'Instagram for Business: Boost posts to WhatsApp (28 Sep 2021)', url: 'https://business.instagram.com/blog/instagram-boost-ads-whatsapp-find-customers' },
+  waCtwa: { label: 'WhatsApp Business: Ads that click to WhatsApp', url: 'https://whatsappbusiness.com/products/ads-that-click-to-whatsapp/' },
+  waBusinessApp: { label: 'WhatsApp Business: WhatsApp Business app', url: 'https://whatsappbusiness.com/products/business-app/' },
+  loomerLocation: { label: 'Jon Loomer: Why Meta ads reach people outside the targeted location (31 Mar 2025)', url: 'https://www.jonloomer.com/meta-ads-reach-people-outside-of-the-targeted-location/' },
 } satisfies Record<string, Source>;
 
 export const GUIDES: Guide[] = [
+  {
+    slug: 'boost-post-vs-click-to-whatsapp-ads',
+    title: 'Boosting posts but no customers? Use click-to-WhatsApp ads instead',
+    metaTitle: 'Boost Post Not Working? Try Click-to-WhatsApp Ads',
+    navTitle: 'Boost post vs WhatsApp ads',
+    description:
+      'Boosted your post and got likes but no customers? See why, and how click-to-WhatsApp ads bring real enquiries from people near your shop. Simple 2026 guide.',
+    summary:
+      'Boosting gets you likes and profile visits, not customers, because you pay for exactly that. A click-to-WhatsApp ad opens a chat with your business in one tap. Show it only to people near your shop, ask one clear question, and reply fast. You get enquiries you can count, not just views.',
+    keyPoints: [
+      '**Pick “messages” as your goal**, not likes, reach or profile visits.',
+      '**Show the ad only near your shop.** Drop a pin and use a small radius.',
+      '**Reply on WhatsApp within minutes.** A slow reply loses the customer.',
+    ],
+    published: '2026-10-22',
+    updated: '2026-10-22',
+    author: 'Social ScaleX team',
+    blocks: [
+      {
+        t: 'verdict',
+        sides: [
+          {
+            label: 'Avoid',
+            tone: 'bad',
+            title: 'A boost with the default goal',
+            points: [
+              'You pay for likes, reach or profile visits.',
+              'People far from your shop often see it.',
+              'Nobody gets a button to ask your price.',
+              'You can’t tell who actually bought.',
+            ],
+          },
+          {
+            label: 'Pick',
+            tone: 'good',
+            title: 'A click-to-WhatsApp ad',
+            points: [
+              'You pay to start conversations.',
+              'Only people near your shop see it.',
+              'One tap opens a WhatsApp chat with you.',
+              'You count chats, then sales.',
+            ],
+          },
+        ],
+      },
+      { t: 'h2', text: 'Why boosting brings likes, not customers' },
+      {
+        t: 'p',
+        text: 'When you tap **Boost**, Meta asks what you want. Most owners pick more profile visits or more engagement. Meta then finds the people most likely to tap and like, and it does that job well. Meta’s auction picks ads by your bid, **how likely each person is to take the action you chose**, and ad quality. [Meta: ad auctions](https://www.facebook.com/business/help/430291176997542) So the goal you choose decides who you get.',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**Wrong goal.** You paid for likes, so you got likes.',
+          '**Wrong place.** Meta targets people “living in or recently in” an area, so someone just passing through can see your ad. [Jon Loomer](https://www.jonloomer.com/meta-ads-reach-people-outside-of-the-targeted-location/)',
+          '**Too wide.** An option to reach more people “likely to respond” can stretch your ad beyond your area. Untick it unless tourists visit you.',
+          '**Basic targeting.** Meta says boosts let you choose interests, age and gender, while Ads Manager gives you more advanced tools. [Meta: boost vs ads](https://www.facebook.com/business/help/317083072148603)',
+          '**No next step.** A person who likes your post has no easy way to ask your price.',
+        ],
+      },
+      {
+        t: 'callout',
+        tone: 'warn',
+        title: 'Boosting isn’t the problem. The goal button is.',
+        text: 'Instagram lets you boost a post with the **messages** goal and pick **WhatsApp** as the destination. That boost works as a click-to-WhatsApp ad. [Instagram for Business](https://business.instagram.com/blog/instagram-boost-ads-whatsapp-find-customers)',
+      },
+      { t: 'h2', text: 'What is a click-to-WhatsApp ad?' },
+      {
+        t: 'p',
+        text: 'A click-to-WhatsApp ad shows on Facebook and Instagram. When someone taps it, a WhatsApp chat with your business opens. [WhatsApp Business](https://whatsappbusiness.com/products/ads-that-click-to-whatsapp/) The customer asks, you answer, and you keep their number for follow-ups.',
+      },
+      {
+        t: 'flow',
+        label: 'How a click-to-WhatsApp ad turns into a customer',
+        steps: [
+          { title: 'Sees your ad', text: 'Someone near your shop scrolls Instagram.' },
+          { title: 'Taps “Send message”', text: 'WhatsApp opens with a ready question.' },
+          { title: 'You reply fast', text: 'Share price, stock and location.' },
+          { title: 'Visits or orders', text: 'The chat becomes a walk-in or a sale.' },
+        ],
+      },
+      { t: 'h2', text: 'Boost vs click-to-WhatsApp ad: side by side' },
+      {
+        t: 'table',
+        caption: 'A boosted post with the default goal compared with a click-to-WhatsApp ad',
+        head: ['', 'Boost (default goal)', 'Click-to-WhatsApp ad'],
+        highlight: 2,
+        rows: [
+          ['You pay for', 'Likes, reach or profile visits', 'Conversations'],
+          ['Who sees it', 'A wide area, often far away', 'People near your shop'],
+          ['What you get', 'Numbers on a screen', 'A chat and a phone number'],
+          ['Follow-up', 'Not possible', 'Yes, on WhatsApp'],
+          ['Setup', 'A few taps in the app', 'A few more steps in Ads Manager'],
+          ['Best for', 'Getting your name seen', 'Enquiries, bookings and walk-ins'],
+        ],
+      },
+      {
+        t: 'cta',
+        variant: 'mid',
+        title: 'Want WhatsApp enquiries, not likes?',
+        text: 'We set up click-to-WhatsApp ads for Delhi NCR businesses, **inside your own ad account**.',
+        points: ['You see every rupee', 'Ads near your shop only', 'Weekly cost-per-chat report'],
+        button: 'See our Meta ads service',
+        href: '/services/meta-ads',
+        whatsapp: 'Hi Social ScaleX, I want click-to-WhatsApp ads for my business.',
+      },
+      { t: 'h2', text: 'How to set up a click-to-WhatsApp ad in 6 steps' },
+      {
+        t: 'ol',
+        items: [
+          '**Connect WhatsApp.** Use a WhatsApp Business account on your shop number and connect it to your Facebook Page or business portfolio. [Meta: click to WhatsApp](https://www.facebook.com/business/help/447934475640650)',
+          '**Pick a messages goal.** In Ads Manager, choose a goal that supports messages, then pick **WhatsApp** as where chats happen. From the Instagram app, boost with the **messages** goal instead.',
+          '**Target your area.** Drop a pin on your shop and set a small radius, such as 3 to 5 km in a city. Untick “reach more people”.',
+          '**Show the real thing.** Use a clear photo or Reel of your product or shop. Write one line with the offer and your area.',
+          '**Write the first message for them.** For example: “Hi, is this in stock? What’s the price?” One tap, and they’ve asked.',
+          '**Leave it alone for a week.** Meta says an ad set usually needs about 50 results in a week to leave the learning phase, and advises against editing it during learning. [Meta: learning phase](https://www.facebook.com/business/help/112167992830700)',
+        ],
+      },
+      {
+        t: 'callout',
+        tone: 'tip',
+        title: 'Reply in minutes, not hours',
+        text: 'A person who taps your ad may be messaging other shops too. Set a **greeting message** and an **away message** in WhatsApp Business so nobody waits in silence. [WhatsApp Business app](https://whatsappbusiness.com/products/business-app/) Need more? See our [WhatsApp automation](/automation/whatsapp-automation).',
+      },
+      { t: 'h2', text: 'How much should a local business spend?' },
+      {
+        t: 'p',
+        text: 'Meta sets no fixed minimum in rupees; it depends on the country and goal. If you set a cost-per-result goal, Meta says your daily budget should be **at least five times** that goal. [Meta: ad budgets](https://www.facebook.com/business/help/203183363050448)',
+      },
+      {
+        t: 'p',
+        text: '**Simple example:** if one WhatsApp chat is worth ₹50 to you, set at least ₹250 a day. Then judge the ad by cost per chat and by how many chats turned into sales.',
+      },
+      { t: 'h2', text: 'Track chats and sales, not likes' },
+      {
+        t: 'ul',
+        items: [
+          '**Cost per conversation.** Ads Manager shows how many chats started and what each one cost.',
+          '**Serious chats.** Count chats that asked about price, stock or timing.',
+          '**Sales.** Ask every new customer, “How did you find us?” Write it down.',
+          '**Your number:** sales ÷ ad spend. That tells you if the ad pays for itself.',
+        ],
+      },
+      { t: 'h2', text: 'Which businesses should use it?' },
+      {
+        t: 'ul',
+        items: [
+          '**Shops** that sell phones, electronics, furniture, clothes or gifts.',
+          '**Clinics, salons and gyms** that need bookings.',
+          '**Coaching centres** that get questions before admission.',
+          '**Restaurants and cloud kitchens** that take orders on WhatsApp.',
+          '**Home services** such as AC repair, cleaning or interiors.',
+        ],
+      },
+      {
+        t: 'p',
+        text: '**Not a fit yet:** if nobody can answer WhatsApp during working hours. Fix that first, or every rupee leaks.',
+      },
+      { t: 'h2', text: '5 mistakes that waste your money' },
+      {
+        t: 'ol',
+        items: [
+          'Choosing likes or profile visits when you want customers.',
+          'Targeting a whole state when you serve one area.',
+          'Using a stock photo instead of your real product or shop.',
+          'Editing the ad every day, so it never finishes learning.',
+          'Replying hours later, after the customer bought elsewhere.',
+        ],
+      },
+      {
+        t: 'cta',
+        variant: 'end',
+        title: 'Let us turn your ad spend into WhatsApp enquiries',
+        text: 'Social ScaleX runs Meta ads for local businesses across Delhi, Noida and Gurugram. You keep the ad account; we do the work.',
+        points: [
+          'Click-to-WhatsApp ads near your shop',
+          'Ad creative made for your product',
+          'Pixel and Conversions API set up',
+          'A/B tests and a weekly report',
+        ],
+        button: 'Book a free strategy call',
+        href: '/contact',
+        whatsapp: 'Hi Social ScaleX, I boosted posts but got no customers. Can you help with click-to-WhatsApp ads?',
+      },
+    ],
+    faqs: [
+      {
+        q: 'Is boosting an Instagram post a waste of money?',
+        a: 'Not always. A boost with the default goal buys likes, reach or profile visits, which rarely become customers for a local shop. A boost with the messages goal and WhatsApp as the destination can bring real enquiries.',
+      },
+      {
+        q: 'Are click-to-WhatsApp ads better than boosting for a local business?',
+        a: 'For enquiries and walk-ins, usually yes. You pay to start conversations with people near your shop, and you can follow up on WhatsApp. Boosting with the default goal pays for attention, not conversations.',
+      },
+      {
+        q: 'What do I need to run click-to-WhatsApp ads?',
+        a: 'A WhatsApp Business account on your business number, connected to your Facebook Page or Meta business portfolio, plus a payment method in Ads Manager.',
+      },
+      {
+        q: 'Can I run a WhatsApp ad from my phone?',
+        a: 'Yes. In the Instagram app, add your WhatsApp Business number to your profile, tap Boost on a post, choose the messages goal and pick WhatsApp as the destination.',
+      },
+      {
+        q: 'How do I show my ad only to people near my shop?',
+        a: 'In Ads Manager, drop a pin on your shop, set a small radius such as 3 to 5 km, and untick the option to reach more people likely to respond. Meta can still show ads to people who were recently in the area.',
+      },
+      {
+        q: 'How much budget do click-to-WhatsApp ads need?',
+        a: 'Meta has no fixed rupee minimum. If you set a cost-per-result goal, Meta advises a daily budget of at least five times that goal. Run the ad for about a week before you judge it.',
+      },
+    ],
+    howTo: {
+      name: 'How to set up a click-to-WhatsApp ad for a local business',
+      steps: [
+        { name: 'Connect WhatsApp', text: 'Connect a WhatsApp Business account on your shop number to your Facebook Page or business portfolio.' },
+        { name: 'Pick a messages goal', text: 'In Ads Manager, choose a goal that supports messages and pick WhatsApp as the destination.' },
+        { name: 'Target your area', text: 'Drop a pin on your shop, set a small radius and untick the option to reach more people.' },
+        { name: 'Show the real thing', text: 'Use a clear photo or Reel of your product or shop with one line about the offer and your area.' },
+        { name: 'Write the first message', text: 'Prefill the question the customer sends, such as asking about price and stock.' },
+        { name: 'Leave it for a week', text: 'Avoid edits so the ad set can finish the learning phase, then judge it by cost per chat and sales.' },
+      ],
+    },
+    sources: [S.mBoostVsAds, S.igBoostWa, S.waCtwa, S.mCtwa, S.mAuction, S.loomerLocation, S.mLearning, S.mBudget, S.waBusinessApp],
+    services: ['meta-ads', 'instagram-marketing'],
+  },
   {
     slug: 'free-instagram-comment-to-dm-automation',
     title: 'Instagram comment to DM automation: free setup guide (2026)',
@@ -854,7 +1130,20 @@ export function getGuide(slug: string): Guide | undefined {
 }
 
 /** Plain text of a guide's blocks, for word counts and schema. */
+export function blockText(b: Block): string {
+  switch (b.t) {
+    case 'h2': case 'p': case 'quote': return b.text;
+    case 'ul': case 'ol': return b.items.join(' ');
+    case 'verdict': return b.sides.map((x) => [x.label, x.title, ...x.points].join(' ')).join(' ');
+    case 'table': return [...b.head, ...b.rows.flat()].join(' ');
+    case 'flow': return b.steps.map((x) => `${x.title} ${x.text}`).join(' ');
+    case 'callout': return `${b.title} ${b.text}`;
+    case 'cta': return `${b.title} ${b.text} ${b.points.join(' ')}`;
+    default: return '';
+  }
+}
+
 export function guideWordCount(g: Guide): number {
-  const text = [g.summary, ...g.blocks.map((b) => ('text' in b ? b.text : 'items' in b ? b.items.join(' ') : ''))].join(' ');
+  const text = [g.summary, ...(g.keyPoints ?? []), ...g.blocks.map(blockText)].join(' ');
   return text.split(/\s+/).filter(Boolean).length;
 }

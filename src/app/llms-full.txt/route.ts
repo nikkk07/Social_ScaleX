@@ -27,6 +27,16 @@ function blockMd(b: Block): string {
     case 'offer': return `Done-for-you option: ${PLAN_99.name}, ₹${PLAN_99.price}/month (${abs('/automation/instagram-comment-to-dm')}).`;
     case 'compare':
       return DIY_VS_DFY.map((r) => `- ${r.point}: do it yourself: ${r.diy}; done for you: ${r.dfy}`).join('\n');
+    case 'verdict':
+      return b.sides.map((x) => `**${x.label}: ${x.title}**\n${list(x.points.map(absLinks))}`).join('\n\n');
+    case 'table':
+      return [`| ${b.head.join(' | ')} |`, `|${b.head.map(() => ' --- ').join('|')}|`, ...b.rows.map((r) => `| ${r.map(absLinks).join(' | ')} |`)].join('\n');
+    case 'flow':
+      return b.steps.map((x, n) => `${n + 1}. ${x.title}: ${x.text}`).join('\n');
+    case 'callout':
+      return `> **${b.title}** ${absLinks(b.text)}`;
+    case 'cta':
+      return `${b.title} ${absLinks(b.text)} (${abs(b.href)})`;
   }
 }
 
@@ -70,7 +80,7 @@ function build(): string {
 
   out.push(`\n## Guides\n\nAll guides: ${abs('/guides')}`);
   for (const g of GUIDES) {
-    out.push(`\n### ${g.title}\n\nURL: ${abs(`/guides/${g.slug}`)} · Updated ${g.updated}\n\n${absLinks(g.summary)}\n\n${g.blocks.map(blockMd).join('\n\n')}${g.faqs?.length ? `\n\n${faqMd(g.faqs)}` : ''}\n\nSources:\n${list(g.sources.map((s) => `${s.label}: ${s.url}`))}`);
+    out.push(`\n### ${g.title}\n\nURL: ${abs(`/guides/${g.slug}`)} · Updated ${g.updated}\n\n${absLinks(g.summary)}${g.keyPoints?.length ? `\n\n${list(g.keyPoints.map(absLinks))}` : ''}\n\n${g.blocks.map(blockMd).join('\n\n')}${g.faqs?.length ? `\n\n${faqMd(g.faqs)}` : ''}\n\nSources:\n${list(g.sources.map((s) => `${s.label}: ${s.url}`))}`);
   }
 
   out.push(`\n## Frequently asked questions\n\n${faqMd(FAQS)}`);
