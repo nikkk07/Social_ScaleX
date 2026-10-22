@@ -47,6 +47,15 @@ const crmHeaders = [
   { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
 ];
 
+const appHeaders = [
+  { key: 'Cache-Control', value: 'no-store' },
+  { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), payment=(self "https://api.razorpay.com" "https://checkout.razorpay.com"), usb=(), interest-cohort=()',
+  },
+];
+
 // Every request to the old production host is 301'd to the live domain, path
 // and query kept, so Google only ever sees www.socialscalex.in.
 const LEGACY_HOST = 'social-scalex.vercel.app';
@@ -81,6 +90,11 @@ const nextConfig = {
       { source: '/login', headers: crmHeaders },
       { source: '/reset-password', headers: crmHeaders },
       { source: '/api/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }, { key: 'X-Robots-Tag', value: 'noindex' }] },
+      // Customer app: private, and Razorpay Checkout may use the Payment
+      // Request API inside its frame (the base policy blocks payment for all).
+      { source: '/start', headers: appHeaders },
+      { source: '/dashboard', headers: appHeaders },
+      { source: '/dashboard/:path*', headers: appHeaders },
     ];
   },
 };

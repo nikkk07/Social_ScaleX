@@ -34,6 +34,15 @@ export interface Automation {
   guide?: string;
 }
 
+/**
+ * Where "Get it for ₹99" goes. With NEXT_PUBLIC_SELF_SERVE_99=1 (set it in
+ * Vercel once Meta has approved the app) it opens the self-serve sign-up at
+ * /start; until then it keeps scrolling to the enquiry form on the page.
+ * Testers can always open /start directly.
+ */
+export const SELF_SERVE_99 = process.env.NEXT_PUBLIC_SELF_SERVE_99 === '1';
+export const BUY_99_HREF = SELF_SERVE_99 ? '/start' : '/automation/instagram-comment-to-dm#get-started';
+
 export const PLAN_99 = {
   price: 99,
   currency: 'INR',

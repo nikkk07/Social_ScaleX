@@ -32,7 +32,7 @@ export default function robots(): MetadataRoute.Robots {
     return { rules: [{ userAgent: '*', disallow: '/' }] };
   }
   // Auth keeps people out of the CRM; this keeps its pages out of search.
-  const disallow = ['/crm', '/crm/', '/login', '/api/'];
+  const disallow = ['/crm', '/crm/', '/login', '/api/', '/dashboard', '/start'];
 
   return {
     rules: [

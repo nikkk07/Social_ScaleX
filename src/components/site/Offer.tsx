@@ -2,11 +2,10 @@ import React from 'react';
 import Link from 'next/link';
 import { Check, ArrowRight, Zap, MessageCircle, Send } from 'lucide-react';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
-import { DIY_VS_DFY, PLAN_99 } from '@/lib/automation';
+import { BUY_99_HREF, DIY_VS_DFY, PLAN_99 } from '@/lib/automation';
 import { whatsappLink } from '@/lib/site';
 
 const WA = whatsappLink('Hi Social ScaleX, I want Instagram comment-to-DM automation for ₹99/month.');
-const PAGE = '/automation/instagram-comment-to-dm';
 
 /** The ₹99 plan as a card. */
 export function PriceCard({ headingLevel = 3 }: { headingLevel?: 2 | 3 }) {
@@ -26,7 +25,7 @@ export function PriceCard({ headingLevel = 3 }: { headingLevel?: 2 | 3 }) {
         ))}
       </ul>
       <div className="mt-8 grid gap-3">
-        <Link href={`${PAGE}#get-started`} className="btn btn-primary btn-lg">Get it for ₹{PLAN_99.price}/month <ArrowRight className="size-4" aria-hidden="true" /></Link>
+        <Link href={BUY_99_HREF} className="btn btn-primary btn-lg">Get it for ₹{PLAN_99.price}/month <ArrowRight className="size-4" aria-hidden="true" /></Link>
         <a href={WA} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-lg"><WhatsappIcon size={18} /> Start on WhatsApp</a>
       </div>
       <p className="mt-4 text-center text-xs text-ink-3">{PLAN_99.note} Pay after setup.</p>
@@ -57,7 +56,7 @@ export function OfferBox({ variant }: { variant: 'mid' | 'end' }) {
               <ArrowRight className="size-4 text-coral-text" />
               <span className="inline-flex items-center gap-1.5 rounded-2xl rounded-br-sm bg-ink px-3 py-2 font-semibold text-on-night"><Send className="size-4" /> DM sent</span>
             </div>
-            <Link href={`${PAGE}#get-started`} className="btn btn-primary btn-lg">
+            <Link href={BUY_99_HREF} className="btn btn-primary btn-lg">
               Do it for me <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
             <a href={WA} target="_blank" rel="noopener noreferrer" className="text-center text-sm font-semibold text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink sm:text-right">

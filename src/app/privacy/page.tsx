@@ -66,6 +66,30 @@ export default function Page() {
           explicit permission.
         </p>
       </section>
+      <section id="comment-to-dm">
+        <h2>Comment-to-DM automation</h2>
+        <p>
+          If you use our self-serve comment-to-DM automation, you sign in with Google or an email
+          and password, and connect an Instagram professional account through Instagram&apos;s own
+          login. We store your email, the Instagram account&apos;s ID, username, name and profile
+          picture link, and an access token Instagram issues to us, encrypted. We never see your
+          Instagram password.
+        </p>
+        <p>
+          We use that access only to do what you set up: read your list of posts so you can pick
+          them, receive new comments on your posts, send the one direct message you wrote to the
+          person who commented, and post your public reply. For each comment we keep the
+          commenter&apos;s username, the comment text and whether the message went out, so you can
+          see it in your dashboard. That history is deleted after 90 days. Payments are processed
+          by Razorpay; we store the payment and subscription IDs, never card or UPI details.
+        </p>
+        <p>
+          You can remove an account from your dashboard at any time, which deletes its automations,
+          history and token. Removing our app in Instagram&apos;s settings (Settings → Website
+          permissions → Apps and websites) also cuts our access, and a data deletion request sent
+          through Instagram deletes everything we hold for that account.
+        </p>
+      </section>
       <section>
         <h2>Cookies and analytics</h2>
         {GA_ID || META_PIXEL_ID ? (

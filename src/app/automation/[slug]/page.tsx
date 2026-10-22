@@ -12,7 +12,7 @@ import { AutomationCard } from '@/components/site/AutomationCard';
 import { CompareTable, PriceCard } from '@/components/site/Offer';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
-import { AUTOMATIONS, PLAN_99, getAutomation } from '@/lib/automation';
+import { AUTOMATIONS, PLAN_99, getAutomation, BUY_99_HREF, SELF_SERVE_99 } from '@/lib/automation';
 import { getGuide } from '@/lib/guides';
 import { socialMeta, whatsappLink } from '@/lib/site';
 import { inSentence } from '@/lib/content';
@@ -63,7 +63,7 @@ export default async function AutomationPage({ params }: Props) {
       <SiteShell>
         <PageIntro crumbs={crumbs} eyebrow={a.priced ? `₹${PLAN_99.price} / month` : 'Automation'} title={a.h1} lede={<p>{a.lede}</p>}>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="#get-started" className="btn btn-primary btn-lg">
+            <Link href={a.priced && SELF_SERVE_99 ? BUY_99_HREF : '#get-started'} className="btn btn-primary btn-lg">
               {a.priced ? `Get it for ₹${PLAN_99.price}/month` : 'Book a free strategy call'} <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
             <a href={whatsappLink(`Hi Social ScaleX, I’m interested in ${a.name}.`)} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-lg">
