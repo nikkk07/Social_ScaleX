@@ -16,7 +16,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { GUIDES, getGuide, guideWordCount, type Block } from '@/lib/guides';
 import { getService } from '@/lib/content';
 import { articleNode, breadcrumbNode, faqNode, graph, howToNode, webPageNode, type SchemaNode } from '@/lib/schema';
-import { socialMeta } from '@/lib/site';
+import { CONTACTS, socialMeta } from '@/lib/site';
 
 export const dynamicParams = false;
 
@@ -85,6 +85,7 @@ export default async function GuidePage({ params }: Props) {
     { name: g.metaTitle, path },
   ];
   const words = guideWordCount(g);
+  const person = g.authorIndex !== undefined ? CONTACTS[g.authorIndex] : undefined;
   const toc: TocItem[] = [
     ...g.blocks.filter((b): b is Extract<Block, { t: 'h2' }> => b.t === 'h2').map((b) => ({ id: anchor(b.text), text: b.text })),
     ...(g.faqs?.length ? [{ id: 'faq', text: 'FAQ' }] : []),
@@ -114,7 +115,7 @@ export default async function GuidePage({ params }: Props) {
               <p className="eyebrow mt-10">Guide</p>
               <h1 className="mt-4 text-5xl text-ink">{g.title}</h1>
               <p className="mt-5 text-sm text-ink-3">
-                By {g.author} · Updated <time dateTime={g.updated}>{fmt(g.updated)}</time> · {Math.max(1, Math.round(words / 220))} min read
+                By {person ? <Link href={`/about#founder-${(g.authorIndex ?? 0) + 1}`} className="font-medium text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink">{person.name}</Link> : g.author}{person ? `, ${person.role}, Social ScaleX` : ''} · Updated <time dateTime={g.updated}>{fmt(g.updated)}</time> · {Math.max(1, Math.round(words / 220))} min read
               </p>
               <div className="mt-8 rounded-card border-l-4 border-coral bg-surface p-6 ring-1 ring-line">
                 <p className="font-sans text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">The short answer</p>

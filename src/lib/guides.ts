@@ -86,7 +86,9 @@ export interface Guide {
   /** Question-and-answer pairs shown at the end (and as FAQPage schema). */
   faqs?: Faq[];
   /** Step list mirrored as HowTo schema for answer engines. */
-  howTo?: { name: string; steps: { name: string; text: string }[] };
+  howTo?: { name: string; tools?: string[]; steps: { name: string; text: string }[] };
+  /** Index into CONTACTS of the named person who wrote or reviewed the guide. */
+  authorIndex?: number;
   sources: Source[];
   services: string[];
 }
@@ -170,6 +172,7 @@ export const GUIDES: Guide[] = [
     published: '2026-10-22',
     updated: '2026-10-22',
     author: 'Social ScaleX team',
+    authorIndex: 0,
     blocks: [
       {
         t: 'verdict',
@@ -266,7 +269,7 @@ export const GUIDES: Guide[] = [
           '**Connect WhatsApp.** Use a WhatsApp Business account on your shop number and connect it to your Facebook Page or business portfolio. [Meta: click to WhatsApp](https://www.facebook.com/business/help/447934475640650)',
           '**Pick a messages goal.** In Ads Manager, choose a goal that supports messages, then pick **WhatsApp** as where chats happen. From the Instagram app, boost with the **messages** goal instead.',
           '**Target your area.** Drop a pin on your shop and set a small radius, such as 3 to 5 km in a city. Untick “reach more people”.',
-          '**Show the real thing.** Use a clear photo or Reel of your product or shop. Write one line with the offer and your area.',
+          '**Show the real thing.** Use a clear photo or Reel of your product or shop, not a stock image. Need good visuals? See our [product shoots](/services/product-shoots). Write one line with the offer and your area.',
           '**Write the first message for them.** For example: “Hi, is this in stock? What’s the price?” One tap, and they’ve asked.',
           '**Leave it alone for a week.** Meta says an ad set usually needs about 50 results in a week to leave the learning phase, and advises against editing it during learning. [Meta: learning phase](https://www.facebook.com/business/help/112167992830700)',
         ],
@@ -275,7 +278,7 @@ export const GUIDES: Guide[] = [
         t: 'callout',
         tone: 'tip',
         title: 'Reply in minutes, not hours',
-        text: 'A person who taps your ad may be messaging other shops too. Set a **greeting message** and an **away message** in WhatsApp Business so nobody waits in silence. [WhatsApp Business app](https://whatsappbusiness.com/products/business-app/) Need more? See our [WhatsApp automation](/automation/whatsapp-automation).',
+        text: 'A person who taps your ad may be messaging other shops too. Set a **greeting message** and an **away message** in WhatsApp Business so nobody waits in silence. [WhatsApp Business app](https://whatsappbusiness.com/products/business-app/) Need more? See our [WhatsApp automation](/automation/whatsapp-automation) and [Instagram DM auto-reply](/automation/instagram-dm-auto-reply).',
       },
       { t: 'h2', text: 'How much should a local business spend?' },
       {
@@ -366,6 +369,7 @@ export const GUIDES: Guide[] = [
     ],
     howTo: {
       name: 'How to set up a click-to-WhatsApp ad for a local business',
+      tools: ['Meta Ads Manager', 'WhatsApp Business'],
       steps: [
         { name: 'Connect WhatsApp', text: 'Connect a WhatsApp Business account on your shop number to your Facebook Page or business portfolio.' },
         { name: 'Pick a messages goal', text: 'In Ads Manager, choose a goal that supports messages and pick WhatsApp as the destination.' },
@@ -390,6 +394,7 @@ export const GUIDES: Guide[] = [
     published: '2026-09-30',
     updated: '2026-09-30',
     author: 'Social ScaleX team',
+    authorIndex: 0,
     blocks: [
       { t: 'h2', text: 'What is Instagram comment to DM automation?' },
       {
@@ -517,6 +522,10 @@ export const GUIDES: Guide[] = [
           '**Keyword ignored:** check the spelling and capital letters match exactly.',
         ],
       },
+      {
+        t: 'p',
+        text: 'Want every Instagram DM answered, not only replies to comments? See [Instagram DM auto-reply](/automation/instagram-dm-auto-reply).',
+      },
       { t: 'h2', text: 'Do it yourself, or let us do it?' },
       { t: 'compare' },
       { t: 'offer', variant: 'end' },
@@ -549,6 +558,7 @@ export const GUIDES: Guide[] = [
     ],
     howTo: {
       name: 'How to set up Instagram comment to DM automation for free',
+      tools: ['Meta Business Suite (desktop)'],
       steps: [
         { name: 'Switch to a professional Instagram account', text: 'In Instagram, go to Settings and activity, then Account type and tools, and switch to a Business or Creator account.' },
         { name: 'Connect Instagram to Meta Business Suite', text: 'On a computer, open Meta Business Suite and log in with your Instagram account.' },
@@ -571,6 +581,7 @@ export const GUIDES: Guide[] = [
     published: '2026-09-30',
     updated: '2026-10-15',
     author: 'Social ScaleX team',
+    authorIndex: 0,
     blocks: [
       { t: 'h2', text: 'Why buying followers, likes or views backfires' },
       {
@@ -648,16 +659,22 @@ export const GUIDES: Guide[] = [
   },
   {
     slug: 'instagram-reels-reach',
-    title: 'How the Instagram Reels algorithm works in 2026',
-    metaTitle: 'Instagram Reels Algorithm 2026: What’s Confirmed',
+    title: 'How the Instagram Reels algorithm works in 2026, and what it means for your business',
+    metaTitle: 'Reels Algorithm 2026: What It Means for Businesses',
     navTitle: 'Reels algorithm 2026',
     description:
-      'What Instagram has confirmed about ranking Reels in 2026: watch time, sends, likes, originality, Your Algorithm controls and AI labels. Dated and sourced.',
+      'What Instagram has confirmed about ranking Reels in 2026, and how a business turns reach into customers: watch time, sends, originality. Dated and sourced.',
     summary:
       'Instagram ranks Reels by predicting what each viewer will do: share it, watch it to the end, like it or open its audio page. Adam Mosseri has named watch time, likes per reach and sends per reach as the signals that matter most. Originality rules, AI-profile labels and each viewer’s own topic settings now shape who sees a Reel too. Instagram publishes no formula and no signal weights.',
+    keyPoints: [
+      '**Hook people in the first three seconds.** Watch time is a top signal.',
+      '**Make Reels people send to a friend.** Sends per reach is a top signal.',
+      '**Post original footage.** Reposts and other apps’ watermarks lose reach.',
+    ],
     published: '2026-09-30',
-    updated: '2026-10-15',
+    updated: '2026-10-23',
     author: 'Social ScaleX team',
+    authorIndex: 0,
     blocks: [
       { t: 'h2', text: 'What Instagram says it predicts for every Reel' },
       {
@@ -785,6 +802,19 @@ export const GUIDES: Guide[] = [
         t: 'p',
         text: 'For public professional accounts whose owners are over 18, search engines may index photos and videos from public posts and Reels uploaded since 2020. It can be switched off in privacy settings. [Instagram Help](https://help.instagram.com/147542625391305) This is one more reason to write captions and on-screen text that say plainly what the Reel is about and where it was shot.',
       },
+      { t: 'h2', text: 'What this means for a business account' },
+      {
+        t: 'p',
+        text: 'Reach only helps a business when the right people see the Reel and have a way to ask. Show your real product, shop or service, say your area, and end with one clear next step, such as “Message us on WhatsApp”.',
+      },
+      {
+        t: 'p',
+        text: 'Reels can reach far beyond your followers. prago.outdoors passed 6M views in 30 days with 35.3K followers, and saini_telecom__ passed 5M views in 30 days with 13.1K followers (15 Oct 2026). See the details in our [client results](/case-studies).',
+      },
+      {
+        t: 'p',
+        text: 'Views still aren’t customers. To turn reach into enquiries, read [why click-to-WhatsApp ads beat boosting](/guides/boost-post-vs-click-to-whatsapp-ads) and [how to grow followers without buying them](/guides/increase-instagram-followers).',
+      },
       { t: 'h2', text: 'How we apply this to client Reels' },
       {
         t: 'ul',
@@ -821,6 +851,10 @@ export const GUIDES: Guide[] = [
         a: 'Not for being long. Adam Mosseri said in February 2025 that Instagram weighs both the percentage and the seconds watched, so longer videos aren’t penalised. A long Reel still has to hold attention.',
       },
       {
+        q: 'Do Reels bring customers to a local business?',
+        a: 'They can, when the Reel shows your real product or shop, names your area and gives one clear way to ask, such as a WhatsApp message. Views alone don’t pay; track enquiries and sales.',
+      },
+      {
         q: 'Can an agency guarantee Reels reach?',
         a: 'No. Nobody outside Instagram controls its recommendations. An agency can control what Instagram rewards: original footage, a strong opening, ideas people want to send, and honest measurement.',
       },
@@ -840,6 +874,7 @@ export const GUIDES: Guide[] = [
     published: '2026-09-30',
     updated: '2026-09-30',
     author: 'Social ScaleX team',
+    authorIndex: 0,
     blocks: [
       { t: 'h2', text: 'How each platform finds your customer' },
       {
@@ -930,6 +965,7 @@ export const GUIDES: Guide[] = [
     published: '2026-09-30',
     updated: '2026-09-30',
     author: 'Social ScaleX team',
+    authorIndex: 0,
     blocks: [
       {
         t: 'p',
@@ -1017,6 +1053,7 @@ export const GUIDES: Guide[] = [
     published: '2026-10-15',
     updated: '2026-10-15',
     author: 'Social ScaleX team',
+    authorIndex: 0,
     blocks: [
       { t: 'h2', text: 'The dates that set the plan' },
       {

@@ -259,7 +259,7 @@ export function articleNode(g: Guide, wordCount: number): SchemaNode {
     mainEntityOfPage: { '@id': `${abs(path)}#webpage` },
     datePublished: g.published,
     dateModified: g.updated,
-    author: { '@id': ORG_ID },
+    author: g.authorIndex !== undefined && CONTACTS[g.authorIndex] ? { '@id': personId(g.authorIndex) } : { '@id': ORG_ID },
     publisher: { '@id': ORG_ID },
     image: `${SITE_URL}/og-image.png`,
     inLanguage: 'en-IN',
@@ -275,7 +275,7 @@ export function howToNode(g: Guide): SchemaNode | null {
     '@type': 'HowTo',
     '@id': `${abs(path)}#howto`,
     name: g.howTo.name,
-    tool: [{ '@type': 'HowToTool', name: 'Meta Business Suite (desktop)' }],
+    ...(g.howTo.tools?.length ? { tool: g.howTo.tools.map((name) => ({ '@type': 'HowToTool', name })) } : {}),
     step: g.howTo.steps.map((st, i) => ({
       '@type': 'HowToStep',
       position: i + 1,
