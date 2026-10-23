@@ -9,9 +9,13 @@ Live URL used below: `https://www.socialscalex.in`
 
 ## How it works for a customer
 
-1. **Sign up** at `/start` — Google, or email + password.
-2. **Connect Instagram** — one button, Instagram's own login screen. Needs an
-   Instagram **Professional** account (Business or Creator).
+1. **Sign in / Create account** at `/start` — name, mobile (+91), WhatsApp,
+   email, password; or Google (then mobile + WhatsApp once). Sign in later
+   with email **or** mobile.
+2. **Find your Instagram account** — type the username or paste the profile
+   link; the real account appears with its photo and numbers → "Yes, this is
+   my account" → Instagram's own login confirms it. Needs an Instagram
+   **Professional** account (Business or Creator).
 3. **Set up** — pick All posts or specific posts → keyword or every comment →
    optional public reply → the DM.
 4. **Pay ₹99** — AutoPay every month, or once for 30 days (Razorpay).
@@ -75,12 +79,29 @@ Without it the page simply shows email sign-up only.
 - Terms of service URL: `https://www.socialscalex.in/terms`
 - App icon (1024×1024), category "Business and pages", contact email.
 
-**f. Testers (works today, before review)**
+**f. Account search (Business Discovery)**
+Instagram has no "search as you type"; the search box looks up the exact
+username on every pause in typing, through Social ScaleX's own account:
+1. Make sure @social_scalex (or your agency account) is a Professional
+   account linked to a Facebook Page you manage.
+2. In the same Meta app, add the product **Instagram API with Facebook Login**
+   (Facebook Login for Business).
+3. Graph API Explorer → your app → get a User token with
+   `instagram_basic`, `pages_show_list`, `pages_read_engagement`,
+   `business_management` → exchange it for a long-lived token → call
+   `me/accounts` and copy your Page's `access_token` (a Page token from a
+   long-lived user token does not expire) → `IG_LOOKUP_TOKEN`.
+4. Call `<page-id>?fields=instagram_business_account` and copy the id →
+   `IG_LOOKUP_USER_ID`.
+Without these the search still works: it shows the typed @username without
+a photo, and Instagram's login confirms the account.
+
+**g. Testers (works today, before review)**
 App roles → Roles → **Add people → Instagram tester** → enter the Instagram
 username. That person accepts in Instagram: Settings → Website permissions →
 Apps and websites → **Tester invites**. Only testers can connect until review passes.
 
-**g. App Review (to open it to everyone)**
+**h. App Review (to open it to everyone)**
 App Review → Permissions and features → request **Advanced Access** for:
 `instagram_business_basic`, `instagram_business_manage_comments`,
 `instagram_business_manage_messages`. For each: one sentence on how it is used,
@@ -114,6 +135,7 @@ Vercel → project → Settings → Environment Variables → Production (and Pr
 | `NEXT_PUBLIC_GOOGLE_CLIENT_ID` | from §2 |
 | `IG_APP_ID`, `IG_APP_SECRET` | from §3b |
 | `IG_WEBHOOK_VERIFY_TOKEN` | any long random string |
+| `IG_LOOKUP_USER_ID`, `IG_LOOKUP_TOKEN` | from §3f (account search) |
 | `IG_TOKEN_KEY` | run `openssl rand -base64 32` once. **Never change it** (every account would have to reconnect) |
 | `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET`, `RAZORPAY_WEBHOOK_SECRET` | from §4 |
 | `CRON_SECRET` | run `openssl rand -hex 24` |
@@ -129,8 +151,8 @@ before review; if real comments don't arrive yet, use the **Test** button next
 to the `comments` field in Meta's webhook settings to send a sample event, and
 expect full end-to-end DMs once App Review passes.
 
-1. Open `/start` → sign up.
-2. Connect the tester Instagram account.
+1. Open `/start` → Create account (name, mobile, email, password).
+2. Search the tester Instagram username → Yes, this is my account → log in.
 3. Create: All posts → keyword `PRICE` → public reply on → DM with a real link.
 4. Pay ₹99 with a Razorpay test card / test UPI.
 5. From a **different** Instagram account, comment `price?` on any post.
@@ -170,5 +192,11 @@ expect full end-to-end DMs once App Review passes.
 | Permissions switched off on Instagram's screen | Asked to reconnect with all permissions |
 | Removing an account | AutoPay cancelled first, then everything deleted |
 | Someone signs up with another person's email | When the real owner signs in with Google, the old password is replaced and all other sessions are signed out |
-| Wrong password 5 times | That email is locked for 15 minutes |
+| Wrong password 5 times | That email / mobile is locked for 15 minutes |
+| Mobile already registered | Asked to sign in instead; two people racing for one number can't both get it |
+| Google sign-up | Asked once for mobile + WhatsApp before anything else |
+| Search typo or personal account | "No professional account called @x" with how to fix it |
+| Profile link pasted instead of username | Username taken from the link |
+| Search lookup down or rate-limited | Typed @username shown without photo; Instagram login still confirms |
+| Picked @a but logged in to Instagram as @b | @b is connected (they proved it's theirs) and told clearly, with how to switch |
 | DM template still says `https://` | Can't save until a real link is added or it's removed |

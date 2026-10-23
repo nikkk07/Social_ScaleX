@@ -18,13 +18,14 @@ const back = (reason: string, extra = '') => NextResponse.redirect(appUrl(`/dash
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const userId = (() => {
+  const st = (() => {
     try {
       return verifyState(url.searchParams.get('state'));
     } catch {
       return null;
     }
   })();
+  const userId = st?.userId ?? null;
   if (url.searchParams.get('error')) return back('cancelled');
   const code = url.searchParams.get('code');
   if (!userId) return back('expired');
@@ -79,9 +80,16 @@ export async function GET(req: Request) {
       return back('subscribe', `&a=${accountId}`);
     }
 
+    // Logged in as a different account than the one picked in the search:
+    // keep it (they proved they own it) and let them choose on the next page.
+    const mismatch = st?.expect && st.expect !== me.username.toLowerCase() ? `&picked=${encodeURIComponent(st.expect)}` : '';
+
     // Straight on to building the first automation if there is none yet.
     const { count } = await sb.from('ig_automations').select('id', { count: 'exact', head: true }).eq('account_id', accountId);
-    return NextResponse.redirect(appUrl(count ? `/dashboard/${accountId}?connected=1` : `/dashboard/${accountId}/new?connected=1`), { status: 303 });
+    return NextResponse.redirect(
+      appUrl(count ? `/dashboard/${accountId}?connected=1${mismatch}` : `/dashboard/${accountId}/new?connected=1${mismatch}`),
+      { status: 303 },
+    );
   } catch (e) {
     console.error('[ig callback]', e instanceof IgError ? `${e.code} ${e.message}` : e);
     if (e instanceof IgError && /professional|business|creator/i.test(e.message)) return back('personal');

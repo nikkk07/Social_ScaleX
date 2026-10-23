@@ -61,7 +61,7 @@ export function AccountClient({ accountId }: { accountId: string }) {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const { connect, busy: connecting, error: connectError } = useConnect();
+  const { connect, busy: connecting, error: connectError } = useConnect(d?.account.username);
 
   const load = useCallback(() => {
     api<AccountDetail>(`/api/app/accounts/${accountId}`)
@@ -120,7 +120,12 @@ export function AccountClient({ accountId }: { accountId: string }) {
       </div>
 
       <div className="mt-6">
-        {params.get('connected') ? <Notice tone="ok">Instagram reconnected.</Notice> : null}
+        {params.get('picked') && params.get('picked') !== account.username ? (
+          <Notice tone="warn">
+            You searched for <strong>@{params.get('picked')}</strong> but logged in to Instagram as <strong>@{account.username}</strong>, so @{account.username} was connected.
+            Wrong one? Use <strong>Remove account</strong> below, then search again and log in as @{params.get('picked')}.
+          </Notice>
+        ) : params.get('connected') ? <Notice tone="ok">Instagram connected.</Notice> : null}
         {params.get('saved') ? <Notice tone="ok">Saved. Changes apply to new comments right away.</Notice> : null}
         {error ? <Notice tone="error">{error}</Notice> : null}
         {connectError ? <Notice tone="error">{connectError}</Notice> : null}

@@ -94,23 +94,26 @@ export function safeEqual(a: string, b: string): boolean {
 
 const b64url = (b: Buffer) => b.toString('base64url');
 
-/** Signed, expiring OAuth state: carries the user id through Instagram's redirect. */
-export function signState(userId: string, ttlMs = 15 * 60_000): string {
-  const payload = b64url(Buffer.from(JSON.stringify({ u: userId, e: Date.now() + ttlMs, n: randomBytes(8).toString('hex') })));
+/**
+ * Signed, expiring OAuth state: carries the user id (and the Instagram
+ * username they picked in the search, if any) through Instagram's redirect.
+ */
+export function signState(userId: string, expect?: string | null, ttlMs = 15 * 60_000): string {
+  const payload = b64url(Buffer.from(JSON.stringify({ u: userId, x: expect ?? null, e: Date.now() + ttlMs, n: randomBytes(8).toString('hex') })));
   const sig = b64url(createHmac('sha256', env('IG_TOKEN_KEY')).update('state:' + payload).digest());
   return `${payload}.${sig}`;
 }
 
-export function verifyState(state: string | null): string | null {
+export function verifyState(state: string | null): { userId: string; expect: string | null } | null {
   if (!state) return null;
   const [payload, sig] = state.split('.');
   if (!payload || !sig) return null;
-  const expect = b64url(createHmac('sha256', env('IG_TOKEN_KEY')).update('state:' + payload).digest());
-  if (!safeEqual(sig, expect)) return null;
+  const expectSig = b64url(createHmac('sha256', env('IG_TOKEN_KEY')).update('state:' + payload).digest());
+  if (!safeEqual(sig, expectSig)) return null;
   try {
-    const p = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as { u?: unknown; e?: unknown };
+    const p = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as { u?: unknown; x?: unknown; e?: unknown };
     if (typeof p.u !== 'string' || typeof p.e !== 'number' || p.e < Date.now()) return null;
-    return p.u;
+    return { userId: p.u, expect: typeof p.x === 'string' ? p.x : null };
   } catch {
     return null;
   }

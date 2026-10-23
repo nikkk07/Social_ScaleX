@@ -12,6 +12,27 @@ begin;
 
 set local search_path = public;
 
+-- ── Customer profile (name, mobile, WhatsApp) ───────────────────────
+-- Mobile is unique so customers can sign in with it instead of the email.
+-- Numbers are stored as +91XXXXXXXXXX.
+create table if not exists public.app_customers (
+  user_id     uuid primary key references auth.users(id) on delete cascade,
+  full_name   text not null check (char_length(full_name) between 2 and 80),
+  phone       text not null unique check (phone ~ '^\+91[6-9][0-9]{9}$'),
+  whatsapp    text not null check (whatsapp ~ '^\+91[6-9][0-9]{9}$'),
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
+-- Cache of Instagram username lookups (Business Discovery), so typing the
+-- same name twice, or many customers checking one account, costs one call.
+create table if not exists public.ig_lookups (
+  username    text primary key,
+  found       boolean not null,
+  data        jsonb,
+  fetched_at  timestamptz not null default now()
+);
+
 -- ── Connected Instagram professional accounts ────────────────────────
 create table if not exists public.ig_accounts (
   id                 uuid primary key default gen_random_uuid(),
@@ -146,6 +167,9 @@ create trigger ig_accounts_touch before update on public.ig_accounts
 drop trigger if exists ig_automations_touch on public.ig_automations;
 create trigger ig_automations_touch before update on public.ig_automations
   for each row execute function public.touch_updated_at();
+drop trigger if exists app_customers_touch on public.app_customers;
+create trigger app_customers_touch before update on public.app_customers
+  for each row execute function public.touch_updated_at();
 drop trigger if exists ig_billing_touch on public.ig_billing;
 create trigger ig_billing_touch before update on public.ig_billing
   for each row execute function public.touch_updated_at();
@@ -154,8 +178,8 @@ create trigger ig_billing_touch before update on public.ig_billing
 do $$
 declare t text;
 begin
-  foreach t in array array['ig_accounts','ig_automations','ig_billing','ig_checkouts',
-                           'ig_payments','rzp_events','ig_events','app_config'] loop
+  foreach t in array array['app_customers','ig_lookups','ig_accounts','ig_automations','ig_billing',
+                           'ig_checkouts','ig_payments','rzp_events','ig_events','app_config'] loop
     execute format('alter table public.%I enable row level security', t);
     execute format('revoke all on public.%I from anon, authenticated', t);
   end loop;

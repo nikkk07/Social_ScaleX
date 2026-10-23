@@ -19,9 +19,10 @@ export async function GET(req: Request) {
       .order('created_at');
     if (error) throw error;
     const ids = (accounts ?? []).map((a) => (a as { id: string }).id);
-    const [{ data: bills }, { data: rules }] = await Promise.all([
+    const [{ data: bills }, { data: rules }, { data: profile }] = await Promise.all([
       ids.length ? sb.from('ig_billing').select('*').in('account_id', ids) : Promise.resolve({ data: [] }),
       ids.length ? sb.from('ig_automations').select('account_id, is_enabled').in('account_id', ids) : Promise.resolve({ data: [] }),
+      sb.from('app_customers').select('full_name, phone, whatsapp').eq('user_id', user.id).maybeSingle(),
     ]);
     const out = (accounts ?? []).map((a) => {
       const acc = a as { id: string };
@@ -33,7 +34,7 @@ export async function GET(req: Request) {
         automations: { total: mine.length, enabled: mine.filter((r) => r.is_enabled).length },
       };
     });
-    return NextResponse.json({ user, accounts: out }, { headers: NO_STORE });
+    return NextResponse.json({ user, profile: profile ?? null, accounts: out }, { headers: NO_STORE });
   } catch (e) {
     return errorResponse(e);
   }

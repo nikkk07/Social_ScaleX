@@ -7,7 +7,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Check, ImageOff, Loader2, Plus, X } from 'lucide-react';
-import { AppShell, Notice, Spinner, Stepper, useRequireSession } from '@/components/app/AppShell';
+import { AppShell, Notice, Spinner, useRequireSession } from '@/components/app/AppShell';
 import { api, ApiError, type AccountDetail, type Automation, type MediaItem } from '@/lib/app/client';
 import { AutomationInput, cleanKeywords, LIMITS, personalize } from '@/lib/app/rules';
 
@@ -250,11 +250,15 @@ export function BuilderClient({ accountId, automationId }: { accountId: string; 
 
   return (
     <AppShell email={email}>
-      {!paid && !automationId ? <Stepper at={2} /> : null}
-      {params.get('connected') ? <Notice tone="ok">@{username} is connected. Now tell us what to send.</Notice> : null}
+      {params.get('picked') && params.get('picked') !== username ? (
+        <Notice tone="warn">
+          You searched for <strong>@{params.get('picked')}</strong> but logged in to Instagram as <strong>@{username}</strong>, so @{username} was connected.
+          Not the one you meant? <Link className="link" href={`/dashboard/${accountId}`}>Remove it</Link> and search again.
+        </Notice>
+      ) : params.get('connected') ? <Notice tone="ok">@{username} is connected. Now set up the DM.</Notice> : null}
       <Link href={`/dashboard/${accountId}`} className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-2 hover:text-ink"><ArrowLeft className="size-4" aria-hidden="true" /> @{username}</Link>
       <h1 className="font-display text-3xl leading-tight text-ink sm:text-4xl">{automationId ? 'Edit automation' : 'Set up your automation'}</h1>
-      <p className="mt-1 text-ink-2">We filled in a good starting point. Change anything you like.</p>
+      <p className="mt-1 text-ink-2">A good starting point is already filled in. Change anything you like.</p>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
         <div className="grid gap-5">

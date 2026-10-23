@@ -20,6 +20,7 @@ SUITES=(
   src/lib/results.test.ts
   src/lib/track.test.ts
   src/lib/app/rules.test.ts
+  src/lib/app/forms.test.ts
 )
 
 OUT=node_modules/.cache/ssx-tests

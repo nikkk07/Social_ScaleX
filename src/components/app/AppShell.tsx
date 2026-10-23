@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Check, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { XMark } from '@/components/site/Logo';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
 import { appSupabase } from '@/lib/app/client';
@@ -65,33 +65,6 @@ export function AppShell({ children, email }: { children: React.ReactNode; email
       </header>
       <main className="mx-auto max-w-5xl px-4 pb-24 pt-6 sm:pt-10">{children}</main>
     </div>
-  );
-}
-
-const STEPS = ['Sign up', 'Connect Instagram', 'Set up', 'Pay ₹99', 'Live'] as const;
-
-/** The five-step progress line shown until an account is live. `at` = current step index. */
-export function Stepper({ at }: { at: number }) {
-  return (
-    <ol aria-label="Progress" className="mb-8 flex items-center gap-1 overflow-x-auto pb-1 text-xs sm:text-sm">
-      {STEPS.map((s, i) => {
-        const done = i < at;
-        const now = i === at;
-        return (
-          <li key={s} className="flex flex-none items-center gap-1" aria-current={now ? 'step' : undefined}>
-            <span
-              className={`grid size-6 place-items-center rounded-full text-[11px] font-bold ${
-                done ? 'bg-positive text-white' : now ? 'bg-ink text-white' : 'bg-paper-2 text-ink-3 ring-1 ring-line'
-              }`}
-            >
-              {done ? <Check className="size-3.5" aria-hidden="true" /> : i + 1}
-            </span>
-            <span className={`whitespace-nowrap font-semibold ${now ? 'text-ink' : done ? 'text-ink-2' : 'text-ink-3'}`}>{s}</span>
-            {i < STEPS.length - 1 ? <span aria-hidden="true" className="mx-1 h-px w-4 bg-line-strong sm:w-8" /> : null}
-          </li>
-        );
-      })}
-    </ol>
   );
 }
 

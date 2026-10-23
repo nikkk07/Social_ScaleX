@@ -7,7 +7,7 @@ import Link from 'next/link';
 import Script from 'next/script';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, BadgeCheck, Lock, RefreshCw, Wallet } from 'lucide-react';
-import { AppShell, Notice, Spinner, Stepper, useRequireSession } from '@/components/app/AppShell';
+import { AppShell, Notice, Spinner, useRequireSession } from '@/components/app/AppShell';
 import { api, ApiError, fmtDate, type AccountDetail } from '@/lib/app/client';
 
 interface RzpResponse {
@@ -110,7 +110,6 @@ export function PayClient({ accountId }: { accountId: string }) {
   if (done) {
     return (
       <AppShell email={email}>
-        <Stepper at={4} />
         <section className="card max-w-xl p-6 sm:p-8">
           <BadgeCheck className="size-10 text-positive" aria-hidden="true" />
           <h1 className="mt-4 font-display text-3xl text-ink sm:text-4xl">{done.pending ? 'Payment received' : 'You’re live!'}</h1>
@@ -134,7 +133,6 @@ export function PayClient({ accountId }: { accountId: string }) {
   return (
     <AppShell email={email}>
       <Script src="https://checkout.razorpay.com/v1/checkout.js" strategy="afterInteractive" onReady={() => setSdk(true)} />
-      {!b?.active ? <Stepper at={3} /> : null}
       <Link href={`/dashboard/${accountId}`} className="mb-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ink-2 hover:text-ink"><ArrowLeft className="size-4" aria-hidden="true" /> @{username}</Link>
       <h1 className="font-display text-3xl leading-tight text-ink sm:text-4xl">{b?.active ? 'Add more time' : 'Switch it on for ₹99'}</h1>
       <p className="mt-1 text-ink-2">For @{username}. Unlimited posts, Reels, keywords and DMs.</p>
