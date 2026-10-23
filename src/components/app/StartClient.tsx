@@ -52,14 +52,14 @@ async function post<T>(path: string, body: unknown): Promise<T> {
 
 function Benefits() {
   return (
-    <section aria-label="What you get" className="overflow-hidden rounded-card bg-night p-5 text-on-night sm:p-7 md:h-full md:p-8">
+    <section aria-label="What you get" className="overflow-hidden rounded-card bg-night p-5 text-on-night sm:p-7 md:sticky md:top-6 md:p-8">
       <p className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-coral-on-night">
         <Sparkles className="size-3.5" aria-hidden="true" /> Comment-to-DM · ₹99/month
       </p>
-      <h2 className="mt-2 font-display text-2xl leading-tight sm:text-3xl md:mt-3 md:text-4xl">Every comment gets your DM. Instantly.</h2>
+      <h2 className="mt-1.5 font-display text-xl leading-tight sm:text-2xl md:mt-3 md:text-4xl">Every comment gets your DM. Instantly.</h2>
 
       {/* Phones: one line of proof. Bigger screens: the conversation. */}
-      <div className="mt-4 space-y-2.5 text-sm md:mt-8">
+      <div className="mt-4 hidden space-y-2.5 text-sm md:mt-8 md:block">
         <p className="flex items-center gap-2.5">
           <span className="grid size-7 flex-none place-items-center rounded-full bg-white/10"><MessageCircle className="size-3.5" aria-hidden="true" /></span>
           <span className="rounded-2xl rounded-tl-sm bg-white/10 px-3.5 py-2">riya.sharma: <strong>PRICE</strong></span>
@@ -70,13 +70,13 @@ function Benefits() {
         </p>
       </div>
 
-      <ul className="mt-5 flex flex-wrap gap-2 text-xs sm:text-sm md:mt-8 md:grid md:gap-3">
+      <ul className="-mx-5 mt-3 flex gap-2 overflow-x-auto px-5 pb-1 text-xs sm:mx-0 sm:flex-wrap sm:px-0 sm:text-sm md:mt-8 md:grid md:gap-3">
         {[
           { icon: InfinityIcon, t: 'Unlimited posts, Reels, keywords & DMs' },
           { icon: BadgeCheck, t: 'Official Instagram API, no password shared' },
           { icon: ShieldCheck, t: 'Cancel any time' },
         ].map(({ icon: Icon, t }) => (
-          <li key={t} className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1.5 md:rounded-none md:bg-transparent md:p-0 md:text-on-night-2">
+          <li key={t} className="inline-flex flex-none items-center gap-2 whitespace-nowrap rounded-full bg-white/10 px-3 py-1.5 md:whitespace-normal md:rounded-none md:bg-transparent md:p-0 md:text-on-night-2">
             <Icon className="size-4 flex-none text-coral-on-night" aria-hidden="true" /> {t}
           </li>
         ))}
@@ -227,10 +227,10 @@ export function StartClient() {
   return (
     <AppShell>
       {GOOGLE_ID ? <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" onReady={() => setGReady(true)} /> : null}
-      <div className="grid gap-5 md:min-h-[calc(100dvh-9rem)] md:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] md:items-stretch md:gap-8">
+      <div className="grid gap-5 md:grid-cols-[minmax(0,0.9fr)_minmax(0,1fr)] md:items-start md:gap-8">
         <Benefits />
 
-        <section className="card p-5 sm:p-7 md:self-center" aria-labelledby="auth-title">
+        <section className="card p-5 sm:p-7" aria-labelledby="auth-title">
           <div role="tablist" aria-label="Sign in or create account" className="mb-6 grid grid-cols-2 rounded-full bg-paper-2 p-1 text-sm font-semibold">
             {(['login', 'register'] as const).map((m) => (
               <button
