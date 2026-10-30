@@ -1,31 +1,31 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { SiteShell } from '@/components/site/SiteShell';
 import { SectionHead } from '@/components/site/SectionHead';
-import { ServiceCard } from '@/components/site/Cards';
-import { ResultTeaser } from '@/components/site/Results';
-import { ProofPanel } from '@/components/site/ProofPanel';
+import { HeroSection } from '@/components/site/home/HeroSection';
+import { GrowthEngine } from '@/components/site/home/GrowthEngine';
+import { ResultsSection } from '@/components/site/home/ResultsSection';
+import { HowWeWork } from '@/components/site/home/HowWeWork';
+import { ServicesControlRoom } from '@/components/site/home/ServicesControlRoom';
+import { FeaturedCase } from '@/components/site/home/FeaturedCase';
+import { Founders } from '@/components/site/home/Founders';
+import { FinalCta } from '@/components/site/home/FinalCta';
 import { FaqList } from '@/components/site/FaqList';
 import { LeadSection } from '@/components/site/LeadSection';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
-import { UpdatedAgo } from '@/components/site/UpdatedAgo';
-import { FAQS, PAINS, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_AS_OF, PRINCIPLES, PROCESS, SERVICES, STATS } from '@/lib/content';
+import { FAQS, PAINS, PRINCIPLES, SERVICES, STATS } from '@/lib/content';
 import { GUIDES } from '@/lib/guides';
 import { AUTOMATIONS } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
 import { CITIES } from '@/lib/areas';
 import { AutomationCard } from '@/components/site/AutomationCard';
 import { PriceCard } from '@/components/site/Offer';
-import { AREAS_SERVED, whatsappLink } from '@/lib/site';
+import { AREAS_SERVED } from '@/lib/site';
 import { faqNode, graph, itemListNode, webPageNode } from '@/lib/schema';
 
 export const metadata: Metadata = { alternates: { canonical: '/' } };
-
-/** The three biggest sales stories and the biggest creator. */
-const FEATURED = ['saini-telecom', 'big-discount-mart', 'prago', 'acdelhivlogs'];
 
 export default function HomePage() {
   return (
@@ -42,38 +42,7 @@ export default function HomePage() {
         ])}
       />
       <SiteShell>
-        {/* Hero */}
-        <section aria-labelledby="hero-title" className="relative overflow-hidden">
-          <div className="wrap grid grid-cols-1 items-center gap-14 pb-20 pt-12 sm:pt-16 lg:grid-cols-[1.25fr_1fr] lg:gap-16 lg:pb-28 lg:pt-20">
-            <div>
-              <h1 id="hero-title">
-                <span className="eyebrow">Social media marketing agency in Delhi NCR</span>
-                <span className="mt-5 block text-6xl text-ink">
-                  We grow brands where their customers <em className="font-normal italic text-coral-text">already</em> scroll.
-                </span>
-              </h1>
-              <p className="mt-6 max-w-xl text-lg text-ink-2">
-                Social ScaleX plans, shoots, posts and advertises for brands and creators on Instagram, Facebook and YouTube, then reports every result from your own dashboard.
-              </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link href="/contact" className="btn btn-primary btn-lg">
-                  Book a free strategy call <ArrowRight className="size-4" aria-hidden="true" />
-                </Link>
-                <a href={whatsappLink('Hi Social ScaleX, I’d like to grow my brand on social media.')} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-lg">
-                  <WhatsappIcon size={18} /> Chat on WhatsApp
-                </a>
-              </div>
-              <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-ink-2">
-                {['You keep every account', 'Reports from your own analytics', 'Talk directly to the founders'].map((t) => (
-                  <li key={t} className="inline-flex items-center gap-2">
-                    <Check className="size-4 text-positive" aria-hidden="true" /> {t}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <ProofPanel />
-          </div>
-        </section>
+        <HeroSection />
 
         {/* Stats */}
         <section aria-label="Results in numbers" className="border-y border-line bg-surface">
@@ -86,6 +55,8 @@ export default function HomePage() {
             ))}
           </dl>
         </section>
+
+        <GrowthEngine />
 
         {/* Pains */}
         <section aria-labelledby="pains-title" className="py-section">
@@ -103,25 +74,11 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Services */}
-        <section aria-labelledby="services-title" className="border-t border-line bg-paper-2 py-section">
-          <div className="wrap">
-            <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-              <SectionHead
-                id="services-title"
-                eyebrow="Services"
-                title="Instagram page management, Reels and ads, under one roof."
-                intro="Content, page management and paid ads, delivered together so each one makes the others work harder."
-              />
-              <Link href="/services" className="btn btn-secondary self-start md:self-auto">All services</Link>
-            </div>
-            <ul className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {SERVICES.map((s) => (
-                <li key={s.slug}><ServiceCard s={s} /></li>
-              ))}
-            </ul>
-          </div>
-        </section>
+        <ResultsSection />
+
+        <HowWeWork />
+
+        <ServicesControlRoom />
 
         {/* Automation */}
         <section aria-labelledby="automation-title" className="py-section">
@@ -143,6 +100,8 @@ export default function HomePage() {
             <div className="lg:pt-24"><PriceCard /></div>
           </div>
         </section>
+
+        <FeaturedCase />
 
         {/* Goals */}
         <section aria-labelledby="goals-title" className="border-t border-line bg-surface py-section">
@@ -167,55 +126,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Results */}
-        <section aria-labelledby="results-title" className="py-section">
-          <div className="wrap">
-            <SectionHead
-              id="results-title"
-              eyebrow="Client results"
-              title="Real accounts. Real numbers."
-              intro={PORTFOLIO_NOTE}
-            />
-            <p className="mt-6 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2">
-              <span aria-hidden="true" className="size-1.5 rounded-full bg-positive" />
-              <UpdatedAgo iso={RESULTS_AS_OF} prefix="Figures updated" />
-            </p>
-            <ul className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {FEATURED.map((id) => PORTFOLIO.find((p) => p.id === id))
-                .filter((p): p is NonNullable<typeof p> => Boolean(p))
-                .map((p) => (
-                  <li key={p.id} className="min-w-0"><ResultTeaser p={p} /></li>
-                ))}
-            </ul>
-            <p className="mt-8">
-              <Link href="/case-studies" className="btn btn-secondary btn-lg">
-                See all {PORTFOLIO.length} client results <ArrowRight className="size-4" aria-hidden="true" />
-              </Link>
-            </p>
-          </div>
-        </section>
-
-        {/* Process */}
-        <section aria-labelledby="process-title" className="border-t border-line bg-surface py-section">
-          <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.4fr]">
-            <SectionHead
-              id="process-title"
-              eyebrow="How we work"
-              title="Growth isn’t luck. It’s a process."
-              intro="Four steps, the same for every account. You see and approve each one."
-            />
-            <ol className="grid gap-px overflow-hidden rounded-card border border-line bg-line sm:grid-cols-2">
-              {PROCESS.map((s, i) => (
-                <li key={s.title} className="bg-surface p-6">
-                  <span className="font-display text-sm text-coral-text">Step {i + 1}</span>
-                  <h3 className="mt-2 text-2xl text-ink">{s.title}</h3>
-                  <p className="mt-2 text-ink-2">{s.desc}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        </section>
-
         {/* Principles */}
         <section aria-labelledby="why-title" className="border-t border-line py-section">
           <div className="wrap">
@@ -230,6 +140,8 @@ export default function HomePage() {
             </ul>
           </div>
         </section>
+
+        <Founders />
 
         {/* Areas */}
         <section aria-labelledby="areas-title" className="border-t border-line bg-paper-2 py-section">
@@ -288,6 +200,8 @@ export default function HomePage() {
             </ul>
           </div>
         </section>
+
+        <FinalCta />
 
         <LeadSection />
       </SiteShell>

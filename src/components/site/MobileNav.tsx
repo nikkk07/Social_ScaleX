@@ -47,6 +47,7 @@ export function MobileNav({ services, automations, nav, phone, phoneLabel, whats
       <div
         id={id}
         hidden={!open}
+        data-lenis-prevent
         className="fixed inset-x-0 bottom-0 top-[4.25rem] z-50 overflow-y-auto border-t border-line bg-paper"
       >
         <nav aria-label="Mobile" className="wrap py-6">

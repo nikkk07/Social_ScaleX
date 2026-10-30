@@ -882,6 +882,96 @@ export interface Pain {
   cta: string;
 }
 
+/**
+ * Homepage hero. The H1 keeps the SEO phrase; `line` is the display line under
+ * it (Instagram-first wording, pending owner confirmation).
+ */
+export const HERO = {
+  eyebrow: 'Social media marketing agency in Delhi NCR',
+  line: 'We grow brands on Instagram.',
+  lede: 'Social ScaleX plans, shoots, posts and advertises for brands and creators on Instagram, Facebook and YouTube, then reports every result from your own dashboard.',
+  checks: ['You keep every account', 'Reports from your own analytics', 'Talk directly to the founders'],
+} as const;
+
+/** One stage of the homepage growth engine. `from` names the page whose `outcome` line describes it. */
+export interface PipelineStage {
+  stage: string;
+  from?: { kind: 'service' | 'automation'; slug: string };
+  /** Used when no page describes the stage. */
+  desc?: string;
+  links: { href: string; label: string }[];
+}
+
+/**
+ * Homepage section 2. It ends at the enquiry, not the sale: sales happen in
+ * the client's business and are not something we measure or publish.
+ */
+export const GROWTH_ENGINE = {
+  eyebrow: 'How it fits together',
+  title: 'Your Instagram isn’t a page. It’s a growth engine.',
+  intro: 'Every part we run feeds the next one, from the Reel that gets seen to the chat that turns into an enquiry.',
+  stages: [
+    { stage: 'Reel', from: { kind: 'service', slug: 'reels-production' }, links: [{ href: '/services/reels-production', label: 'Reels production' }] },
+    {
+      stage: 'Reach',
+      from: { kind: 'service', slug: 'meta-ads' },
+      links: [
+        { href: '/services/meta-ads', label: 'Meta ads' },
+        { href: '/guides/instagram-reels-reach', label: 'How Reels reach works' },
+      ],
+    },
+    { stage: 'Engagement', from: { kind: 'service', slug: 'instagram-marketing' }, links: [{ href: '/services/instagram-marketing', label: 'Page management' }] },
+    {
+      stage: 'DM',
+      from: { kind: 'automation', slug: 'instagram-comment-to-dm' },
+      links: [
+        { href: '/automation/instagram-comment-to-dm', label: 'Comment-to-DM' },
+        { href: '/automation/instagram-dm-auto-reply', label: 'DM auto-reply' },
+      ],
+    },
+    { stage: 'WhatsApp', from: { kind: 'automation', slug: 'whatsapp-automation' }, links: [{ href: '/automation/whatsapp-automation', label: 'WhatsApp automation' }] },
+    {
+      stage: 'Enquiry',
+      desc: 'The conversation reaches you on WhatsApp, a call or the form, with the context of what they watched and asked.',
+      links: [{ href: '#get-started', label: 'Start yours' }],
+    },
+  ] satisfies PipelineStage[],
+} as const;
+
+export const HOW_WE_WORK = {
+  eyebrow: 'How we work',
+  title: 'Growth isn’t luck. It’s a process.',
+  intro: 'Four steps, the same for every account. You see and approve each one.',
+} as const;
+
+/** Homepage section 5: the seven services shown as tiles. Everything else is listed below them. */
+export const CONTROL_ROOM = {
+  eyebrow: 'Services',
+  title: 'One team runs the whole engine.',
+  intro: 'Content, page management, ads and automation, delivered together so each one makes the others work harder.',
+  tiles: [
+    { label: 'Reels', href: '/services/reels-production', icon: 'clapperboard' },
+    { label: 'Social media management', href: '/services/instagram-marketing', icon: 'layout-grid' },
+    { label: 'Meta Ads', href: '/services/meta-ads', icon: 'megaphone' },
+    { label: 'Influencers', href: '/services/influencer-marketing', icon: 'users' },
+    { label: 'DM automation', href: '/automation/instagram-comment-to-dm', icon: 'message-circle' },
+    { label: 'WhatsApp', href: '/automation/whatsapp-automation', icon: 'whatsapp' },
+    { label: 'Production', href: '/services/product-shoots', icon: 'camera' },
+  ],
+} as const;
+
+export const FOUNDERS_SECTION = {
+  eyebrow: 'Who you work with',
+  title: 'You don’t talk to an account manager. You talk to the people running the growth.',
+  intro: 'The founders run the accounts and answer the phone.',
+} as const;
+
+export const FINAL_CTA = {
+  title: 'Let’s scale your Instagram.',
+  intro: 'Tell us about your brand. We look at your account, tell you what we would change first, and you decide if we should do it.',
+  cta: 'Book a free strategy call',
+} as const;
+
 export const PAINS: Pain[] = [
   {
     problem: 'You post regularly, but reach never leaves your followers.',

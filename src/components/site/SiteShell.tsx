@@ -2,6 +2,7 @@ import React from 'react';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { ActionBar } from './ActionBar';
+import { SmoothScroll } from '@/components/motion/SmoothScroll';
 
 /** Chrome shared by every public page. Server component. */
 export function SiteShell({ children }: { children: React.ReactNode }) {
@@ -12,6 +13,7 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <main id="main">{children}</main>
       <Footer />
       <ActionBar />
+      <SmoothScroll />
     </div>
   );
 }

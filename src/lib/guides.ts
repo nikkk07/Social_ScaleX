@@ -660,7 +660,7 @@ export const GUIDES: Guide[] = [
   {
     slug: 'instagram-reels-reach',
     title: 'How the Instagram Reels algorithm works in 2026, and what it means for your business',
-    metaTitle: 'Reels Algorithm 2026: What It Means for Businesses',
+    metaTitle: 'Reels Algorithm 2026: What It Means for Business',
     navTitle: 'Reels algorithm 2026',
     description:
       'What Instagram has confirmed about ranking Reels in 2026, and how a business turns reach into customers: watch time, sends, originality. Dated and sourced.',

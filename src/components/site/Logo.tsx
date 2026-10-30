@@ -19,7 +19,6 @@ export function Logo({ className = '' }: { className?: string }) {
   return (
     <Link
       href="/"
-      aria-label="Social ScaleX, home"
       className={`inline-flex items-baseline whitespace-nowrap font-display text-[1.45rem] font-semibold leading-none tracking-[-0.02em] text-ink ${className}`}
     >
       Social Scale

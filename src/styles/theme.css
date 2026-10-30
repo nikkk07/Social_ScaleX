@@ -284,6 +284,68 @@
     .action-bar { display: none; }
   }
 
+  /* ── Homepage depth effects. CSS only: no JavaScript, nothing hidden from
+     crawlers, and every one of them is off under reduced motion. ── */
+
+  /* Growth engine: stages lift on hover or keyboard focus. */
+  .engine-stage {
+    transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out), border-color 200ms var(--ease-out);
+  }
+  .engine-stage:hover,
+  .engine-stage:focus-within { transform: translateY(-4px); box-shadow: var(--shadow-lift); border-color: var(--color-line-strong); }
+
+  /* The path's fill and token follow the list's own scroll position. */
+  .engine-path { view-timeline: --engine block; }
+  .engine-fill { transform-origin: top left; }
+  .engine-token { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .engine-fill { transform: scaleY(0); animation: engine-fill-y linear both; animation-timeline: --engine; animation-range: entry 40% exit 60%; }
+      @media (min-width: 1024px) {
+        .engine-fill { transform: scaleX(0); animation-name: engine-fill-x; }
+        .engine-token { display: block; animation: engine-token linear both; animation-timeline: --engine; animation-range: entry 40% exit 60%; }
+      }
+    }
+  }
+  @keyframes engine-fill-y { to { transform: scaleY(1); } }
+  @keyframes engine-fill-x { to { transform: scaleX(1); } }
+  @keyframes engine-token { from { transform: translateX(0); } to { transform: translateX(100%); } }
+
+  /* Result profiles: a small tilt toward the visitor, at most 6°. */
+  .tilt-card { transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out); transform-style: preserve-3d; }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .tilt-card:hover,
+    .tilt-card:focus-within { transform: perspective(900px) rotateX(3deg) rotateY(-6deg) translateY(-4px); box-shadow: var(--shadow-lift); }
+  }
+
+  /* Control room: each tile stands on an isometric plate that rises with it. */
+  .room-tile { transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), border-color 220ms var(--ease-out); }
+  .room-tile:hover,
+  .room-tile:focus-visible { transform: translateY(-6px); box-shadow: var(--shadow-lift); border-color: var(--color-line-strong); }
+  .room-plate {
+    position: absolute;
+    inset: auto 0 0.25rem 0;
+    margin-inline: auto;
+    width: 3.75rem;
+    height: 3.75rem;
+    border-radius: 0.875rem;
+    background: var(--color-coral-tint);
+    box-shadow: 0 0.5rem 0 -0.125rem color-mix(in srgb, var(--color-coral) 30%, var(--color-coral-tint));
+    transform: rotateX(58deg) rotateZ(45deg);
+    transition: transform 220ms var(--ease-out);
+  }
+  .room-tile:hover .room-plate,
+  .room-tile:focus-visible .room-plate { transform: rotateX(58deg) rotateZ(45deg) translateZ(6px); }
+
+  /* Final CTA: the mark's coral stroke runs on into an arrow as the band scrolls in. */
+  .cta-run { transform-origin: left center; }
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .cta-run { transform: scaleX(0.15); animation: cta-run linear both; animation-timeline: view(); animation-range: entry 30% cover 45%; }
+    }
+  }
+  @keyframes cta-run { to { transform: scaleX(1); } }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -291,4 +353,60 @@
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+
+/* Smooth scrolling (Lenis): the library sets these classes on <html>. */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+@layer components {
+  /* Hero proof chips. */
+  .hero-chip { transition: border-color 200ms var(--ease-out), transform 200ms var(--ease-out), background-color 200ms var(--ease-out); }
+  .hero-chip:hover, .hero-chip:focus-visible { border-color: rgba(250, 248, 244, 0.35); transform: translateY(-2px); background-color: var(--color-night-2); }
+
+  /* ── Results reel: a pinned, curved strip of client cards ──
+     The row of HTML cards is always in the page. With motion allowed, the
+     section is tall and its stage sticks while the row slides past (CSS
+     scroll timeline, or JS where that is unsupported). When WebGL is live it
+     draws the same cards on a curve and the HTML row goes transparent.
+     Under reduced motion it is a plain grid. */
+  .reel { --g: 2.5rem; --w: min(46rem, 74vw); position: relative; }
+  .reel-card { flex: none; width: var(--w); aspect-ratio: 16 / 10; }
+  @media (max-width: 639px) {
+    .reel { --g: 1rem; --w: 80vw; }
+    .reel-card { aspect-ratio: 4 / 5; }
+  }
+  .reel-caption { display: none; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .reel { height: calc(100svh + (var(--n) - 1) * 62svh); view-timeline: --reel block; }
+    .reel-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding-top: 4.25rem; }
+    .reel-row { display: flex; gap: var(--g); padding-inline: calc(50% - var(--w) / 2); will-change: transform; transition: opacity 600ms var(--ease-out); }
+    .reel-caption { display: flex; }
+    .reel-stage.is-live .reel-row { opacity: 0; }
+    @supports (animation-timeline: view()) {
+      .reel-row { animation: reel-x linear both; animation-timeline: --reel; animation-range: contain 0% contain 100%; }
+      .reel-dot { animation: reel-dot linear both; animation-timeline: --reel; animation-range: contain 0% contain 100%; }
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reel-row { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
+    .reel-card { width: auto; aspect-ratio: auto; min-height: 20rem; }
+  }
+  .reel-dot { transform: rotate(-46.6deg); }
+  @keyframes reel-dot { from { transform: rotate(-46.6deg); } to { transform: rotate(46.6deg); } }
+  @keyframes reel-x { to { transform: translateX(calc((var(--n) - 1) * -1 * (var(--w) + var(--g)))); } }
+}
+
+@layer components {
+  /* Blocks rise into place as they enter. Never starts invisible, so nothing
+     is hidden before (or without) the animation. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .rise { animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 70%; }
+    }
+  }
+  @keyframes rise { from { transform: translate3d(0, 3rem, 0) scale(0.985); } }
 }

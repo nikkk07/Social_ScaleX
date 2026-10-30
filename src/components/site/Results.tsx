@@ -60,7 +60,7 @@ function teaserExtra(p: PortfolioItem): Metric | undefined {
 }
 
 /** Big green growth figure, or the biggest number when growth is modest. */
-function Headline({ p, size = 'lg' }: { p: PortfolioItem; size?: 'lg' | 'md' }) {
+export function Headline({ p, size = 'lg' }: { p: PortfolioItem; size?: 'lg' | 'md' }) {
   const big = size === 'lg' ? 'text-6xl sm:text-7xl' : 'text-5xl';
   const g = leadGrowth(p);
   if (g) {
