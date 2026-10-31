@@ -25,16 +25,16 @@ export function GrowthEngine() {
 
         <div className="engine-path relative mt-12 overflow-x-clip">
           {/* The path: a hairline with a coral fill that grows as you scroll. Decorative. */}
-          <div aria-hidden="true" className="absolute bottom-6 left-[1.1875rem] top-6 w-px bg-line-strong lg:bottom-auto lg:left-6 lg:right-6 lg:top-[1.1875rem] lg:h-px lg:w-auto">
+          <div aria-hidden="true" className="absolute bottom-6 left-[1.1875rem] top-6 w-px bg-line-strong lg:hidden">
             <span className="engine-fill absolute inset-0 bg-coral" />
             <span className="engine-token absolute inset-0">
               <span className="absolute left-0 top-1/2 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-coral ring-4 ring-coral-tint" />
             </span>
           </div>
 
-          <ol className="rise relative grid gap-4 lg:grid-cols-6 lg:gap-4">
+          <ol className="rise relative grid gap-4 lg:grid-cols-3 lg:gap-5">
             {stages.map((s, i) => (
-              <li key={s.stage} className="flex gap-4 lg:flex-col lg:gap-5">
+              <li key={s.stage} className="flex gap-4 lg:gap-4">
                 <span
                   aria-hidden="true"
                   className={`relative z-10 grid size-10 flex-none place-items-center rounded-full font-display text-sm ring-4 ring-paper-2 ${i === stages.length - 1 ? 'bg-coral text-white' : 'bg-ink text-on-night'}`}
@@ -42,7 +42,7 @@ export function GrowthEngine() {
                   {i + 1}
                 </span>
                 <div className="engine-stage card flex min-w-0 flex-1 flex-col p-5">
-                  <h3 className="text-2xl text-ink lg:text-xl xl:text-2xl">{s.stage}</h3>
+                  <h3 className="text-2xl text-ink">{s.stage}</h3>
                   <p className="mt-2 flex-1 text-sm text-ink-2">{describe(s)}</p>
                   <ul className="mt-4 flex flex-col gap-1.5 text-sm">
                     {s.links.map((l) => (

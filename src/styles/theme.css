@@ -415,7 +415,7 @@ html.lenis, html.lenis body { height: auto; }
   /* ── Hero: pinned on large screens while the 3D feed scrolls ── */
   .hero-sticky { position: relative; }
   @media (min-width: 1024px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
-    .hero-pin { height: 240svh; view-timeline: --hero block; }
+    .hero-pin { height: 165svh; view-timeline: --hero block; }
     .hero-sticky { position: sticky; top: 4.25rem; height: calc(100svh - 4.25rem); }
     @supports (animation-timeline: view()) {
       .hero-cue-dot { animation: hero-cue linear both; animation-timeline: --hero; animation-range: contain 0% contain 100%; }

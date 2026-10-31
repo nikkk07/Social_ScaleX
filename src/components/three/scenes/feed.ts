@@ -418,7 +418,7 @@ export function mount(canvas: HTMLCanvasElement, host: HTMLElement, onReady: () 
     if (!ready) return;
     const { p, away } = progress();
     // Start on a client card; the pin walks the feed through eight more, ending on a client.
-    const target = p * 8 + Math.sin(t / 2600) * 0.08;
+    const target = p * 4 + Math.sin(t / 2600) * 0.08;
     smooth.f += (target - smooth.f) * 0.085;
     smooth.x += (look.x - smooth.x) * 0.05;
     smooth.y += (look.y - smooth.y) * 0.05;
