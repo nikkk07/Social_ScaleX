@@ -362,10 +362,6 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-stopped { overflow: hidden; }
 
 @layer components {
-  /* Hero proof chips. */
-  .hero-chip { transition: border-color 200ms var(--ease-out), transform 200ms var(--ease-out), background-color 200ms var(--ease-out); }
-  .hero-chip:hover, .hero-chip:focus-visible { border-color: rgba(250, 248, 244, 0.35); transform: translateY(-2px); background-color: var(--color-night-2); }
-
   /* ── Results reel: a pinned, curved strip of client cards ──
      The row of HTML cards is always in the page. With motion allowed, the
      section is tall and its stage sticks while the row slides past (CSS
@@ -412,17 +408,6 @@ html.lenis, html.lenis body { height: auto; }
 }
 
 @layer components {
-  /* ── Hero: pinned on large screens while the 3D feed scrolls ── */
-  .hero-sticky { position: relative; }
-  @media (min-width: 1024px) and (min-height: 760px) and (prefers-reduced-motion: no-preference) {
-    .hero-pin { height: 165svh; view-timeline: --hero block; }
-    .hero-sticky { position: sticky; top: 4.25rem; height: calc(100svh - 4.25rem); }
-    @supports (animation-timeline: view()) {
-      .hero-cue-dot { animation: hero-cue linear both; animation-timeline: --hero; animation-range: contain 0% contain 100%; }
-    }
-  }
-  @keyframes hero-cue { to { transform: translate3d(0, 33px, 0); } }
-
   /* ── 3D hover (TiltLayer): a soft glare that follows the pointer ── */
   .tilt-glare { position: relative; will-change: transform; }
   .tilt-glare::before {
@@ -446,13 +431,4 @@ html.lenis, html.lenis body { height: auto; }
     }
   }
   @keyframes unfold { from { transform: perspective(700px) rotateX(32deg) translate3d(0, 1rem, 0); } }
-}
-
-@layer components {
-  /* The feed fades in at the top and out at the bottom, like a phone screen's edge. */
-  .hero-stage-mask {
-    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
-    mask-image: linear-gradient(to bottom, transparent, #000 10%, #000 90%, transparent);
-  }
-
 }

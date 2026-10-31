@@ -9,7 +9,6 @@ import { GrowthEngine } from '@/components/site/home/GrowthEngine';
 import { ResultsSection } from '@/components/site/home/ResultsSection';
 import { HowWeWork } from '@/components/site/home/HowWeWork';
 import { ServicesControlRoom } from '@/components/site/home/ServicesControlRoom';
-import { FeaturedCase } from '@/components/site/home/FeaturedCase';
 import { Founders } from '@/components/site/home/Founders';
 import { FinalCta } from '@/components/site/home/FinalCta';
 import { FaqList } from '@/components/site/FaqList';
@@ -100,8 +99,6 @@ export default function HomePage() {
             <div className="lg:pt-24"><PriceCard /></div>
           </div>
         </section>
-
-        <FeaturedCase />
 
         {/* Goals */}
         <section aria-labelledby="goals-title" className="border-t border-line bg-surface py-section">

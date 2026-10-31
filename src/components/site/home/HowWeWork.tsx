@@ -1,28 +1,14 @@
 import React from 'react';
-import Image from 'next/image';
 import { SectionHead } from '@/components/site/SectionHead';
-import { ThreeStage } from '@/components/three/ThreeStage';
 import { HOW_WE_WORK, PROCESS } from '@/lib/content';
 
-/**
- * Homepage section 4: the real four-step PROCESS. Beside it, the brand X
- * (built from the logo's two strokes) turns a quarter turn per step as the
- * section scrolls. Until the scene loads, and for anyone who can't or
- * shouldn't get WebGL, the tile shows the logo itself.
- */
+/** Homepage: the real four-step PROCESS. */
 export function HowWeWork() {
   return (
     <section aria-labelledby="process-title" className="border-t border-line bg-surface py-section">
       <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
-        <div>
+        <div className="lg:sticky lg:top-28 lg:self-start">
           <SectionHead id="process-title" eyebrow={HOW_WE_WORK.eyebrow} title={HOW_WE_WORK.title} intro={HOW_WE_WORK.intro} />
-          <div className="mt-10 lg:sticky lg:top-28">
-            <div className="mx-auto aspect-square w-full max-w-[13rem] overflow-hidden rounded-[22%] bg-night sm:max-w-[16rem] lg:mx-0 lg:max-w-[20rem]">
-              <ThreeStage scene="brandx" className="h-full w-full">
-                <Image src="/logo.png" alt="" width={512} height={512} sizes="(min-width: 1024px) 20rem, 16rem" className="h-full w-full" />
-              </ThreeStage>
-            </div>
-          </div>
         </div>
 
         <ol className="rise grid gap-px self-start overflow-hidden rounded-card border border-line bg-line">

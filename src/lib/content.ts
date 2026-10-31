@@ -886,13 +886,6 @@ export interface Pain {
  * Homepage hero. The H1 keeps the SEO phrase; `line` is the display line under
  * it (Instagram-first wording, pending owner confirmation).
  */
-export const HERO = {
-  eyebrow: 'Social media marketing agency in Delhi NCR',
-  line: 'We grow brands on Instagram.',
-  lede: 'Social ScaleX plans, shoots, posts and advertises for brands and creators on Instagram, Facebook and YouTube, then reports every result from your own dashboard.',
-  checks: ['You keep every account', 'Reports from your own analytics', 'Talk directly to the founders'],
-} as const;
-
 /** One stage of the homepage growth engine. `from` names the page whose `outcome` line describes it. */
 export interface PipelineStage {
   stage: string;
