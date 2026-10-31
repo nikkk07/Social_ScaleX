@@ -152,9 +152,215 @@ const S = {
   waCtwa: { label: 'WhatsApp Business: Ads that click to WhatsApp', url: 'https://whatsappbusiness.com/products/ads-that-click-to-whatsapp/' },
   waBusinessApp: { label: 'WhatsApp Business: WhatsApp Business app', url: 'https://whatsappbusiness.com/products/business-app/' },
   loomerLocation: { label: 'Jon Loomer: Why Meta ads reach people outside the targeted location (31 Mar 2025)', url: 'https://www.jonloomer.com/meta-ads-reach-people-outside-of-the-targeted-location/' },
+  viewsMetric: { label: 'Social Media Today: Instagram makes Views the primary metric (7 Aug 2024)', url: 'https://www.socialmediatoday.com/news/instagram-updates-metrics-to-focus-creators-on-views/723645/' },
+  reelsInsights2025: { label: 'TechCrunch: Instagram gives creators more insight into Reels performance (29 Jan 2025)', url: 'https://techcrunch.com/2025/01/29/instagram-gives-creators-more-insight-into-their-reels-performance' },
+  accountStatus2022: { label: 'TechCrunch: Instagram tells creators when content can’t be recommended (7 Dec 2022)', url: 'https://techcrunch.com/2022/12/07/instagrams-new-transparency-tools-will-tell-you-if-your-content-is-ineligible-to-be-recommended/' },
+  yourAlgorithmGlobal: { label: 'The Keyword: Instagram expands Reels algorithm controls to all English-speaking users (14 Jan 2026)', url: 'https://www.thekeyword.co/news/instagram-expands-reels-algorithm-controls-to-all-english-speaking-users' },
+  likeInsights: { label: 'Republic World: Instagram shows when viewers like a Reel (5 Aug 2025)', url: 'https://www.republicworld.com/tech/new-instagram-feature-lets-creators-see-exactly-when-viewers-like-their-reels' },
+  metaAiRanking: { label: 'Meta: How AI influences what you see on Facebook and Instagram (29 Jun 2023)', url: 'https://about.fb.com/news/2023/06/how-ai-ranks-content-on-facebook-and-instagram/' },
 } satisfies Record<string, Source>;
 
 export const GUIDES: Guide[] = [
+  {
+    slug: 'instagram-reels-views-dropped',
+    title: 'Instagram Reels views dropped suddenly? A 10-minute diagnosis using Instagram’s own tools',
+    metaTitle: 'Reels Views Dropped? 10-Minute Diagnosis (2026)',
+    navTitle: 'Reels views dropped?',
+    description:
+      'Reels views fell overnight? Check Account Status, originality, skip rate and sends per reach in Instagram’s own tools, in order. Every step sourced. 2026.',
+    summary:
+      'When Reels views drop suddenly, find out first whether the account or the Reel is the problem. Account Status tells you whether Instagram will recommend your content to non-followers at all. If it can, the Reel’s own Insights show where it lost people: skip rate for the first three seconds, the retention chart for the middle, and sends and likes per reach for whether it travelled. Instagram publishes no secret formula, so diagnose with its tools, not guesses.',
+    keyPoints: [
+      '**Account Status first.** If your content can’t be recommended, nothing else matters until that’s fixed.',
+      '**Then originality.** Watermarks, reposts and re-uploads are shown to fewer people.',
+      '**Then the Reel’s numbers.** Skip rate, retention, and sends and likes per reach show what to fix.',
+    ],
+    published: '2026-10-31',
+    updated: '2026-10-31',
+    author: 'Social ScaleX team',
+    authorIndex: 0,
+    blocks: [
+      { t: 'h2', text: 'First: is it your account or one Reel?' },
+      {
+        t: 'p',
+        text: 'There are only two kinds of drop. Either Instagram has stopped recommending your **account** to people who don’t follow you, or a particular **Reel** didn’t hold attention. Instagram says most of what people see in Reels comes from accounts they don’t follow, so the first kind hits every post at once, while the second shows up Reel by Reel. Check in this order and stop at the first thing you find.',
+      },
+      {
+        t: 'flow',
+        label: 'The 10-minute check, in order',
+        steps: [
+          { title: 'Account Status', text: 'Can your content be recommended to non-followers? (2 minutes)' },
+          { title: 'Originality and file', text: 'Watermark, repost, low quality, muted, mostly text? (2 minutes)' },
+          { title: 'The Reel’s Insights', text: 'Skip rate, retention, followers vs non-followers. (3 minutes)' },
+          { title: 'Compare fairly', text: 'Against your own recent Reels, over the same days. (2 minutes)' },
+          { title: 'Test the fix', text: 'Post the next idea as a Trial Reel to non-followers. (1 minute)' },
+        ],
+      },
+
+      { t: 'h2', text: 'Minutes 0–2: Check Account Status' },
+      {
+        t: 'p',
+        text: 'Account Status is Instagram’s own answer to “am I being held back?”. For professional accounts it shows whether your content is eligible to be recommended to non-followers in Explore, Reels and Feed recommendations. If it isn’t, it shows examples of the posts or profile details that broke the Recommendations Guidelines. [TechCrunch, 7 Dec 2022](https://techcrunch.com/2022/12/07/instagrams-new-transparency-tools-will-tell-you-if-your-content-is-ineligible-to-be-recommended/)',
+      },
+      {
+        t: 'ol',
+        items: [
+          'Open your profile, tap the menu, and find **Account Status** in Settings. (Instagram moves menu items between app versions; searching “Account Status” inside Settings is the quickest route.)',
+          'Read the recommendations section. If it says your content can be recommended, the account is fine. Move to the next step.',
+          'If it says your content can’t be recommended, open each example. Edit or delete it, or tell Instagram you disagree so the decision is reviewed again. [Account Status](https://help.instagram.com/653964212890722)',
+        ],
+      },
+      {
+        t: 'p',
+        text: 'When an account loses recommendations, **none** of its content is shown to non-followers, though followers still see it. Instagram’s guidelines name the usual causes: unoriginal content with only minor edits, engagement bought or faked (including paid likes and comment networks), and recent Community Guidelines violations. [Recommendations guidelines](https://help.instagram.com/313829416281232/)',
+      },
+      {
+        t: 'callout',
+        tone: 'warn',
+        title: 'Bought followers or likes in the past?',
+        text: 'Instagram lists buying likes and similar tactics as a reason an account can stop being recommended. No new Reel will fix that; stop the service, and check Account Status again.',
+      },
+
+      { t: 'h2', text: 'Minutes 2–4: Check originality and the file itself' },
+      {
+        t: 'p',
+        text: 'If the account is eligible, look at the Reels that dropped. Instagram says it shows fewer people Reels that are low-resolution or carry another app’s watermark, Reels that are muted or have borders, Reels that are mostly text, and Reels that were already posted on Instagram. [Instagram ranking explained](https://about.instagram.com/blog/announcements/instagram-ranking-explained)',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**Watermark from another app:** export clean. Instagram’s own Edits app exports without one. [Edits](https://creators.instagram.com/blog/edits-video-creation-app)',
+          '**Re-uploaded content:** when Instagram finds copies, it recommends only the original. A border, subtitles, a watermark or a credit in the caption doesn’t make a repost original. [Instagram for Creators, 30 Apr 2026](https://creators.instagram.com/blog/rewarding-original-creators-on-instagram)',
+          '**Stitched clips:** simply stitching clips together doesn’t count as material editing. Use the repost or share features for someone else’s video instead. [About original content](https://help.instagram.com/1800814370401535/)',
+          '**An AI-generated person on the profile:** Instagram limits the reach of profiles that feature one without the AI-generated profile label. Using AI tools while editing does not need the label. [Instagram for Creators, 31 Aug 2026](https://creators.instagram.com/blog/ai-generated-profile-label/)',
+        ],
+      },
+
+      { t: 'h2', text: 'Minutes 4–7: Read the Reel’s own Insights' },
+      {
+        t: 'p',
+        text: 'Open the Reel, tap **View insights**, and read it top to bottom. Each number tells you where the Reel lost its audience.',
+      },
+      {
+        t: 'table',
+        caption: 'What each Insights number means and what to change',
+        head: ['Number', 'What Instagram says it measures', 'If it’s worse than your usual', 'What to change'],
+        rows: [
+          ['Skip rate', 'Share of views that skipped the Reel in its first three seconds', 'The opening didn’t stop the scroll', 'Show the result, the product or the person in the first second. Cut any slow intro.'],
+          ['Retention chart', 'Where viewers drop off; “the flatter the line, the more engaged your audience”', 'A sharp dip at one moment', 'Cut or tighten that moment. Move the payoff earlier.'],
+          ['Views: followers vs non-followers', 'Who watched; views over time compared with your usual', 'Non-follower views collapsed', 'Recheck Account Status and originality. Then sends: non-followers are reached through Reels people share.'],
+          ['Sends per reach', 'Shares divided by accounts reached (a signal Adam Mosseri named)', 'Few people sent it to anyone', 'Make it useful or specific enough to send: a price, a place, a how-to.'],
+          ['Likes per reach', 'Likes divided by accounts reached (a signal Mosseri named)', 'Followers saw it but didn’t react', 'Your followers wanted something else. Look at your best recent Reel for the pattern.'],
+        ],
+        highlight: 4,
+      },
+      {
+        t: 'p',
+        text: 'Sources for the table: skip rate and the retention chart arrived in August 2025 [Social Media Today](https://www.socialmediatoday.com/news/instagram-adds-retention-insights-reels/758464/); the follower and non-follower split and “views over time” against your average arrived in January 2025 [TechCrunch](https://techcrunch.com/2025/01/29/instagram-gives-creators-more-insight-into-their-reels-performance); and Mosseri named **watch time, likes per reach and sends per reach** as the top signals in January 2025, adding that sends matter slightly more for reaching people who don’t follow you. [Social Media Today](https://www.socialmediatoday.com/news/instagram-shares-algorithm-insights-2025/738034/)',
+      },
+      {
+        t: 'callout',
+        tone: 'tip',
+        title: 'The second-by-second like chart',
+        text: 'Since August 2025, Reel insights can show when viewers tapped like, down to the second. The peak tells you which moment worked; open the next Reel with something like it. [Republic World, 5 Aug 2025](https://www.republicworld.com/tech/new-instagram-feature-lets-creators-see-exactly-when-viewers-like-their-reels)',
+      },
+
+      { t: 'h2', text: 'Minutes 7–9: Compare fairly before you panic' },
+      {
+        t: 'ul',
+        items: [
+          '**Compare with yourself.** Judge a Reel against your own recent Reels, not another account. Instagram’s “views over time” already shows it against your usual average.',
+          '**Same days, same length.** Compare the same number of days and the same days of the week.',
+          '**Know what a view is.** Since August 2024, Views is the primary metric across Reels, posts and Stories, and repeat views count. [Social Media Today, 7 Aug 2024](https://www.socialmediatoday.com/news/instagram-updates-metrics-to-focus-creators-on-views/723645/) A view count is not the same as people reached.',
+          '**One Reel is a small sample.** Look at the last ten before deciding a format has stopped working.',
+          '**Longer isn’t penalised.** Mosseri said Instagram weighs both the share of a video watched and the seconds watched, so long Reels aren’t punished for length. [Social Media Today, 25 Feb 2025](https://www.socialmediatoday.com/news/instagram-longer-video-watch-time-versus-completion-rate/740916/)',
+        ],
+      },
+
+      { t: 'h2', text: 'Minute 10: Test the fix as a Trial Reel' },
+      {
+        t: 'p',
+        text: 'Turn on the **Trial** toggle when posting. A Trial Reel is shown to non-followers first and doesn’t appear on your grid. After about 24 hours you see views, likes, comments and shares, compared with your previous trials, and you can let Instagram share it with followers automatically if it performs well in its first 72 hours. [Instagram for Creators, 10 Dec 2024](https://creators.instagram.com/blog/instagram-trial-reels) It is the cleanest way to test a new opening without risking your followers’ feed.',
+      },
+
+      { t: 'h2', text: 'What you can’t control, and shouldn’t chase' },
+      {
+        t: 'ul',
+        items: [
+          '**Viewers now steer their own Reels.** “Your Algorithm” lets people add or remove topics that shape their recommendations; Instagram expanded it to all English-speaking users on 14 January 2026. [The Keyword](https://www.thekeyword.co/news/instagram-expands-reels-algorithm-controls-to-all-english-speaking-users) A Reel that clearly fits one topic is easier to match to the people who asked for it.',
+          '**People can tap “Not interested”.** Meta says its systems combine many predictions, some from behaviour and some from survey feedback, and no single one decides what anyone sees. [Meta, 29 Jun 2023](https://about.fb.com/news/2023/06/how-ai-ranks-content-on-facebook-and-instagram/)',
+          '**Instagram tests changes on groups of users.** In September 2025 it began testing a Reels-first app with some users in India. [Meta](https://about.fb.com/news/2025/09/in-india-instagram-debuts-a-reels-first-experience-for-its-mobile-app/) A drop can coincide with a test you can’t see.',
+          '**There are no published weights.** Instagram explains its predictions and signals, never a formula. Anyone selling the “exact algorithm” is guessing.',
+        ],
+      },
+
+      { t: 'h2', text: 'Myths that waste your time' },
+      {
+        t: 'ul',
+        items: [
+          '**“It’s a shadowban.”** Account Status tells you plainly whether your content can be recommended. If it can, the cause is in the Reel.',
+          '**“Use more hashtags.”** Instagram limited captions to five hashtags in December 2025 and said targeted beats many. [Social Samosa](https://www.socialsamosa.com/news-2/instagram-hashtags-five-per-post-10923075)',
+          '**“Trending audio fixes reach.”** Instagram counts audio as one piece of information about a Reel. No Instagram source says a sound guarantees distribution.',
+          '**“Delete and repost it.”** Instagram shows fewer people Reels already posted on Instagram, so a re-upload can do worse.',
+        ],
+      },
+
+      {
+        t: 'cta',
+        variant: 'end',
+        title: 'Want someone to run this check on your account?',
+        text: 'We look at your Account Status, your last ten Reels and their Insights, and tell you **what to change first**. Free on the strategy call.',
+        points: ['Original footage, shot in Delhi NCR', 'Read from your own Insights', 'No bought followers, ever'],
+        button: 'See our Reels production service',
+        href: '/services/reels-production',
+        whatsapp: 'Hi Social ScaleX, my Reels views dropped. Can you check my account?',
+      },
+      {
+        t: 'p',
+        text: 'For how Reels are ranked in the first place, read [how the Reels algorithm works in 2026](/guides/instagram-reels-reach). To grow without risking your account, read [how to increase Instagram followers](/guides/increase-instagram-followers), and see [real client numbers](/case-studies).',
+      },
+    ],
+    faqs: [
+      {
+        q: 'Why did my Instagram Reels views drop suddenly?',
+        a: 'Either your account stopped being recommended to non-followers, or your recent Reels lost viewers early. Check Account Status first; if your content can be recommended, read each Reel’s skip rate, retention chart and sends per reach.',
+      },
+      {
+        q: 'How do I know if Instagram is limiting my reach?',
+        a: 'Open Account Status in Settings on a professional account. It says whether your content can be recommended to people who don’t follow you, shows examples if it can’t, and lets you ask for a review.',
+      },
+      {
+        q: 'Is an Instagram shadowban real?',
+        a: 'Instagram calls it not being eligible for recommendations, and it tells you in Account Status. When it applies, none of your content is shown to non-followers; followers still see it.',
+      },
+      {
+        q: 'What is a good skip rate on Instagram Reels?',
+        a: 'Instagram has published no benchmark. Skip rate is the share of views that skipped in the first three seconds; compare each Reel with your own recent Reels and work on the opening when it rises.',
+      },
+      {
+        q: 'Do reposted or watermarked Reels get fewer views?',
+        a: 'Yes. Instagram says it shows fewer people Reels with another app’s watermark and Reels already posted on Instagram, and it recommends only the original when it finds copies.',
+      },
+      {
+        q: 'How long does it take for Reels views to recover?',
+        a: 'Instagram gives no timeline. If Account Status flagged content, edit or remove it or request a review; if not, judge the fix over several new Reels, not one.',
+      },
+    ],
+    howTo: {
+      name: 'How to diagnose a sudden drop in Instagram Reels views',
+      tools: ['Instagram app (professional account)', 'Account Status', 'Reel insights', 'Trial Reels'],
+      steps: [
+        { name: 'Check Account Status', text: 'In Settings, open Account Status and confirm your content can be recommended to non-followers. If not, edit, delete or request a review of the examples shown.' },
+        { name: 'Check originality', text: 'Make sure the Reel is your own footage with no other app’s watermark, not a re-upload, not muted and not mostly text.' },
+        { name: 'Read the skip rate', text: 'Open View insights on the Reel. A higher skip rate than usual means the first three seconds need work.' },
+        { name: 'Read the retention chart', text: 'Find where the line drops sharply and tighten that moment.' },
+        { name: 'Check sends and likes per reach', text: 'Divide shares and likes by accounts reached and compare with your last ten Reels.' },
+        { name: 'Test with a Trial Reel', text: 'Post the improved version with the Trial toggle on so it is shown to non-followers first, then review it after 24 hours.' },
+      ],
+    },
+    sources: [S.accountStatus, S.accountStatus2022, S.recGuidelines, S.rankingExplained, S.originality2026, S.originalHelp, S.aiLabel, S.edits, S.skipRate, S.reelsInsights2025, S.likeInsights, S.mosseri2025, S.watchSeconds, S.viewsMetric, S.trialReels, S.yourAlgorithmGlobal, S.metaAiRanking, S.indiaReelsFirst, S.hashtags],
+    services: ['reels-production', 'instagram-marketing'],
+  },
   {
     slug: 'boost-post-vs-click-to-whatsapp-ads',
     title: 'Boosting posts but no customers? Use click-to-WhatsApp ads instead',
@@ -776,6 +982,7 @@ export const GUIDES: Guide[] = [
         ],
       },
       { t: 'h2', text: 'Low reach? Check these in order' },
+      { t: 'p', text: 'For the step-by-step version with what each number means, see [Reels views dropped? A 10-minute diagnosis](/guides/instagram-reels-views-dropped).' },
       {
         t: 'ol',
         items: [
