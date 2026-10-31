@@ -16,7 +16,7 @@ import { canRender, whenEngagedAndIdle } from './gate';
  * - The render loop runs only while the slot is on screen.
  * - The canvas is decorative (`aria-hidden`); every word and link lives in HTML.
  */
-export type SceneName = 'orbit' | 'brandx';
+export type SceneName = 'feed' | 'brandx';
 
 export interface SceneHandle {
   setVisible: (visible: boolean) => void;
@@ -24,21 +24,25 @@ export interface SceneHandle {
 }
 
 function loadScene(name: SceneName) {
-  return name === 'orbit' ? import('./scenes/orbit') : import('./scenes/brandx');
+  return name === 'feed' ? import('./scenes/feed') : import('./scenes/brandx');
 }
 
 export function ThreeStage({
   scene,
   className = '',
   children,
+  data,
 }: {
   scene: SceneName;
   className?: string;
   children: React.ReactNode;
+  /** Serializable data handed to the scene (e.g. client figures). */
+  data?: unknown;
 }) {
   const host = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [live, setLive] = useState(false);
+  const dataRef = useRef(data);
 
   useEffect(() => {
     const el = host.current;
@@ -57,7 +61,7 @@ export function ThreeStage({
       loadScene(scene)
         .then((m) => {
           if (cancelled) return;
-          handle = m.mount(canvas, el, () => !cancelled && setLive(true));
+          handle = m.mount(canvas, el, () => !cancelled && setLive(true), dataRef.current);
           handle.setVisible(visible);
         })
         .catch(() => {

@@ -34,10 +34,11 @@ export const scrollState = { velocity: 0 };
  * against it, which costs no layout work while scrolling.
  */
 export function trackElement(el: HTMLElement) {
-  const box = { top: 0, height: 0 };
+  const box = { top: 0, left: 0, height: 0 };
   const measure = () => {
     const r = el.getBoundingClientRect();
     box.top = r.top + window.scrollY;
+    box.left = r.left + window.scrollX;
     box.height = r.height;
   };
   measure();

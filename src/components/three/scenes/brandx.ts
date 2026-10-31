@@ -8,7 +8,8 @@ import { buildMark, studioEnvironment } from './mark';
  * "How we work": the mark turns a quarter turn for each process step as the
  * visitor scrolls the section the host sits in (the nearest <section>).
  */
-export function mount(canvas: HTMLCanvasElement, host: HTMLElement, onReady: () => void): SceneHandle {
+export function mount(canvas: HTMLCanvasElement, host: HTMLElement, onReady: () => void, _data?: unknown): SceneHandle {
+  void _data;
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;

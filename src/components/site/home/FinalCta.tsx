@@ -21,7 +21,7 @@ export function FinalCta() {
           <span aria-hidden="true" className="relative hidden h-[0.3125rem] min-w-16 flex-1 sm:block">
             <span className="cta-run absolute inset-0 rounded-full bg-coral-on-night" />
           </span>
-          <Link href="#get-started" className="btn btn-primary btn-lg">
+          <Link href="#get-started" data-magnetic className="btn btn-primary btn-lg">
             {FINAL_CTA.cta} <ArrowRight className="size-4" aria-hidden="true" />
           </Link>
         </div>
