@@ -375,6 +375,12 @@ html.lenis, html.lenis body { height: auto; }
     .reel-card { aspect-ratio: 4 / 5; }
   }
   .reel-caption { display: none; }
+  /* Darkens the photo wash so text stays at full contrast, with a fine dot grid for texture. */
+  .reel-card-shade {
+    background:
+      radial-gradient(rgba(250, 248, 244, 0.07) 1px, transparent 1.4px) 0 0 / 22px 22px,
+      linear-gradient(160deg, rgba(37, 34, 27, 0.55), rgba(37, 34, 27, 0.92) 55%, #25221b);
+  }
 
   @media (prefers-reduced-motion: no-preference) {
     .reel { height: calc(100svh + (var(--n) - 1) * 62svh); view-timeline: --reel block; }
@@ -390,6 +396,9 @@ html.lenis, html.lenis body { height: auto; }
   @media (prefers-reduced-motion: reduce) {
     .reel-row { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
     .reel-card { width: auto; aspect-ratio: auto; min-height: 20rem; }
+    /* In the plain grid the bars sit in the flow, between the name and the figures. */
+    .reel-bars { position: relative !important; inset: auto !important; order: 1; width: 55% !important; height: 7.5rem !important; margin: 1.5rem 0 0 auto; }
+    .reel-bottom { order: 2; margin-top: 1.25rem; }
   }
   .reel-dot { transform: rotate(-46.6deg); }
   @keyframes reel-dot { from { transform: rotate(-46.6deg); } to { transform: rotate(46.6deg); } }
@@ -424,11 +433,4 @@ html.lenis, html.lenis body { height: auto; }
   .tilt-glare.is-tilting::before { opacity: 1; }
   .tilt-glare.is-tilting { box-shadow: var(--shadow-lift); }
 
-  /* Headings unfold toward the reader as they enter (composited transform only). */
-  @media (prefers-reduced-motion: no-preference) {
-    @supports (animation-timeline: view()) {
-      .unfold { transform-origin: 50% 100%; animation: unfold linear both; animation-timeline: view(); animation-range: entry 10% entry 80%; }
-    }
-  }
-  @keyframes unfold { from { transform: perspective(700px) rotateX(32deg) translate3d(0, 1rem, 0); } }
 }

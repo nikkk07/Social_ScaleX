@@ -93,6 +93,27 @@ function drawCard(it: ReelItem, w: number, h: number, scale: number, avatar: HTM
 
   g.fillStyle = '#25221B';
   g.fillRect(0, 0, w, h);
+  // The client's photo as a soft colour wash: drawn tiny, then scaled up.
+  if (avatar) {
+    const t = document.createElement('canvas');
+    t.width = t.height = 12;
+    t.getContext('2d')!.drawImage(avatar, 0, 0, 12, 12);
+    g.save();
+    g.globalAlpha = 0.35;
+    g.imageSmoothingEnabled = true;
+    g.imageSmoothingQuality = 'high';
+    g.filter = 'saturate(1.5)';
+    g.drawImage(t, -w * 0.125, -h * 0.125, w * 1.25, h * 1.25);
+    g.restore();
+  }
+  const shade = g.createLinearGradient(0, 0, w * 0.45, h);
+  shade.addColorStop(0, 'rgba(37,34,27,0.55)');
+  shade.addColorStop(0.55, 'rgba(37,34,27,0.92)');
+  shade.addColorStop(1, '#25221B');
+  g.fillStyle = shade;
+  g.fillRect(0, 0, w, h);
+  g.fillStyle = 'rgba(250,248,244,0.07)';
+  for (let y = 11; y < h; y += 22) for (let x = 11; x < w; x += 22) g.fillRect(x - 0.7, y - 0.7, 1.4, 1.4);
   const glow = g.createRadialGradient(w - 40, 40, 0, w - 40, 40, Math.max(w, h) * 0.55);
   glow.addColorStop(0, 'rgba(224,70,43,0.28)');
   glow.addColorStop(1, 'rgba(224,70,43,0)');
@@ -169,6 +190,46 @@ function drawCard(it: ReelItem, w: number, h: number, scale: number, avatar: HTM
   g.fillStyle = '#BDB6A8';
   g.fillText(it.label, pad, rule - 22);
 
+  if (it.bars) {
+    const bw = w * (w < 500 ? 0.38 : 0.3);
+    const bx = w - pad - bw;
+    const by = h * (w < 500 ? 0.24 : 0.26);
+    const bh = h * 0.34;
+    const capH = 24;
+    const col = (bw - 12) / 2;
+    const area = bh - capH - 20;
+    const fromH = Math.max(0.06, it.bars.from / it.bars.to) * area;
+    const base = by + bh - capH;
+    g.fillStyle = 'rgba(250,248,244,0.2)';
+    g.beginPath();
+    g.roundRect(bx, base - fromH, col, fromH, [8, 8, 0, 0]);
+    g.fill();
+    const grad = g.createLinearGradient(0, base, 0, base - area);
+    grad.addColorStop(0, BRAND.coral);
+    grad.addColorStop(1, BRAND.coralOnNight);
+    g.save();
+    g.shadowColor = 'rgba(240,122,94,0.35)';
+    g.shadowBlur = 32;
+    g.fillStyle = grad;
+    g.beginPath();
+    g.roundRect(bx + col + 12, base - area, col, area, [8, 8, 0, 0]);
+    g.fill();
+    g.restore();
+    g.font = `400 12px ${sans}`;
+    g.textAlign = 'center';
+    g.fillStyle = '#BDB6A8';
+    g.fillText(it.bars.fromText, bx + col / 2, base - fromH - 7);
+    g.font = `600 12px ${sans}`;
+    g.fillStyle = BRAND.paper;
+    g.fillText(it.bars.toText, bx + col * 1.5 + 12, base - area - 7);
+    g.fillStyle = 'rgba(250,248,244,0.15)';
+    g.fillRect(bx, base + 8, bw, 1);
+    g.font = `400 11px ${sans}`;
+    g.fillStyle = '#BDB6A8';
+    g.textAlign = 'right';
+    g.fillText(`${it.bars.label} · ${it.bars.period}`, bx + bw, base + 24);
+    g.textAlign = 'left';
+  }
   const valueBase = rule - 52;
   const icon = it.growth ? Math.min(56, h * 0.11) : 0;
   const vs = fit(g, it.value, '400', Math.min(120, w * 0.17), display, w - pad * 2 - icon - 12);

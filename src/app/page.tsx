@@ -45,7 +45,7 @@ export default function HomePage() {
 
         {/* Stats */}
         <section aria-label="Results in numbers" className="border-y border-line bg-surface">
-          <dl className="wrap grid gap-8 py-10 sm:grid-cols-2 lg:grid-cols-4">
+          <dl className="wrap grid grid-cols-2 gap-x-6 gap-y-8 py-10 lg:grid-cols-4">
             {STATS.map((s) => (
               <div key={s.label} className="flex flex-col-reverse">
                 <dt className="mt-1 max-w-[16rem] text-sm text-ink-3">{s.label}</dt>

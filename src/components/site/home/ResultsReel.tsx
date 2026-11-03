@@ -149,7 +149,26 @@ export function ResultsReel({ items }: { items: ReelItem[] }) {
           <div ref={rowRef} className="reel-row">
             {items.map((it) => (
               <article key={it.id} className="reel-card @container relative flex flex-col overflow-hidden rounded-[1.75rem] bg-night-2 p-6 ring-1 ring-on-night/10 sm:p-9">
+                {/* The client's own profile photo, scaled up from 16 px into a soft colour wash: each card gets its client's colours for a few hundred bytes. */}
+                <Image src={it.avatar} alt="" width={16} height={16} sizes="16px" aria-hidden="true" className="pointer-events-none absolute inset-0 size-full scale-125 object-cover opacity-35 saturate-150" />
+                <div aria-hidden="true" className="reel-card-shade pointer-events-none absolute inset-0" />
                 <div aria-hidden="true" className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-[radial-gradient(closest-side,rgba(224,70,43,0.22),transparent)]" />
+                {it.bars ? (
+                  <div className="reel-bars absolute right-6 top-[24%] flex h-[34%] w-[38%] flex-col sm:right-9 @lg:top-[26%] @lg:w-[30%]">
+                    <div aria-hidden="true" className="flex flex-1 items-end justify-end gap-3">
+                      <span className="flex h-full w-1/2 flex-col items-center justify-end gap-1.5">
+                        <span className="text-xs tabular-nums text-on-night-2">{it.bars.fromText}</span>
+                        <span className="w-full rounded-t-lg bg-on-night/20" style={{ height: `${Math.max(6, Math.round((it.bars.from / it.bars.to) * 100))}%` }} />
+                      </span>
+                      <span className="flex h-full w-1/2 flex-col items-center justify-end gap-1.5">
+                        <span className="text-xs font-semibold tabular-nums text-on-night">{it.bars.toText}</span>
+                        <span className="h-full w-full rounded-t-lg bg-gradient-to-t from-coral to-coral-on-night shadow-[0_0_32px_rgba(240,122,94,0.35)]" />
+                      </span>
+                    </div>
+                    <p className="mt-2 border-t border-on-night/15 pt-2 text-right text-[11px] text-on-night-2">{it.bars.label} · {it.bars.period}</p>
+                    <p className="sr-only">{it.bars.label}: {it.bars.fromText} to {it.bars.toText}, {it.bars.period}.</p>
+                  </div>
+                ) : null}
                 <div className="relative flex items-center gap-4">
                   <Image src={it.avatar} alt={`${it.client} Instagram profile photo`} width={64} height={64} className="size-14 flex-none rounded-full object-cover ring-2 ring-on-night/15 sm:size-16" />
                   <div className="min-w-0 flex-1">
@@ -162,7 +181,7 @@ export function ResultsReel({ items }: { items: ReelItem[] }) {
                     {it.status === 'Active' ? 'Active client' : 'Past client'}
                   </span>
                 </div>
-                <div className="relative mt-auto">
+                <div className="reel-bottom relative mt-auto">
                   <p className={`flex items-center gap-3 font-display text-[clamp(2.75rem,15cqw,7.5rem)] leading-none tracking-[-0.02em] ${it.growth ? 'text-coral-on-night' : 'text-on-night'}`}>
                     {it.growth ? <TrendingUp className="size-10 flex-none sm:size-14" strokeWidth={2.25} aria-hidden="true" /> : null}
                     {it.value}
