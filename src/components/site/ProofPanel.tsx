@@ -4,6 +4,7 @@ import { ArrowRight, TrendingUp } from 'lucide-react';
 import { PORTFOLIO, RESULTS_AS_OF, growthChange, type Growth } from '@/lib/content';
 import { UpdatedAgo } from './UpdatedAgo';
 import { monthShort } from '@/lib/dates';
+import { lc } from '@/lib/text';
 import { Avatar, StatusBadge } from './Results';
 
 /** Hero proof: real figures from two active retail clients, rendered as HTML. */
@@ -19,9 +20,9 @@ export function ProofPanel() {
     <figure className="mx-auto w-full max-w-md sm:pb-16 lg:mr-0">
       <div className="relative">
         <Link href={`/case-studies#${main.id}`} className="card card-link relative block p-6 shadow-lift sm:p-8">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <Avatar p={main} size={44} />
-            <div className="min-w-0 flex-1">
+            <div className="min-w-[7rem] flex-1">
               <p className="truncate text-sm font-semibold text-ink">{main.client}</p>
               <p className="truncate text-xs text-ink-3">{main.short}</p>
             </div>
@@ -31,9 +32,9 @@ export function ProofPanel() {
             <div className="mt-6 grid grid-cols-[minmax(0,1fr)_auto] items-end gap-4">
               <p>
                 <span className="block font-display text-6xl leading-none tracking-[-0.03em] text-ink">{views.value}</span>
-                <span className="mt-2 block text-sm text-ink-2">{views.label.toLowerCase()}</span>
+                <span className="mt-2 block text-sm text-ink-2">{lc(views.label)}</span>
                 {viewsGrowth ? (
-                  <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-positive/10 px-2.5 py-1 text-xs font-semibold text-positive">
+                  <span className="mt-3 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-positive/10 px-2.5 py-1 text-xs font-semibold text-positive">
                     <TrendingUp className="size-3.5" aria-hidden="true" />
                     {growthChange(viewsGrowth)} since July
                   </span>

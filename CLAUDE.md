@@ -9,7 +9,7 @@
 >
 > **Stack (actual):** Next.js 16 App Router (Turbopack) · React 18 · TypeScript strict ·
 > Tailwind v4 (`@tailwindcss/postcss`) · Radix/shadcn-ui · Lucide · Supabase ·
-> react-hook-form + zod · Recharts (CRM only) · three.js + Lenis (homepage 3D) · deployed on Vercel.
+> react-hook-form + zod · Recharts (CRM only) · Lenis (wheel smoothing) · CSS 3D (results reel) · deployed on Vercel.
 >
 > **Superseded by decisions already taken:**
 >
@@ -17,7 +17,7 @@
 > |---|---|---|
 > | Vite, `index.html`, `react-router`, `react-helmet-async` | Next.js App Router; metadata via the Metadata API | An SPA served an empty `<div id="root">` — invisible to every crawler that does not run JS |
 > | "Apple Liquid Glass", Framer Motion, 3D tilt, magnetic buttons | Light editorial design (Sep 2026): ivory `#FAF8F4`, ink `#16140F`, one coral accent, Fraunces + Inter; tokens in `src/styles/tokens.css`. Night (`#16140F`) bands for the 3D moments on `/` (Oct 2026). No motion library; scroll effects are CSS scroll timelines that never start content invisible | Owner wants a light, premium site with a live 3D homepage. Motion must never hide text before hydration |
-> | WebGL / R3F background; Lenis; GSAP | Owner approved 3D (30 Oct 2026). three.js (vanilla, pinned) for the results reel only (`src/components/three/`); hero is plain HTML again (owner, 31 Oct 2026: first load must be fast). HTML fallback for the reel, loaded only after load + first interaction + idle, off under reduced motion / Save-Data / no WebGL / low-end devices. Lenis (`src/components/motion/`) for wheel smoothing only; touch stays native. One rAF loop for both (`frame.ts`); per-frame code never reads layout. No R3F (needs React 19), no GSAP (CSS covers it), no full-page canvas | Keeps LCP/TBT at baseline and scrolling at 60 fps |
+> | WebGL / three.js / R3F; Lenis; GSAP | Owner approved 3D (30 Oct 2026). three.js removed entirely (3 Nov 2026): the results reel (`src/components/site/home/ResultsReel.tsx`) is plain server-rendered HTML cards in a pinned stage, turned on a CSS 3D curve (`perspective` + per-card `rotateY`/`translateZ`, transforms and opacity only). Pinned only with motion allowed and enough height (`min-height: 600px` from 640 px wide, `640px` on phones; keep the media query in `theme.css` and `PIN` in the component in step); otherwise a plain grid. No-JS gets the CSS scroll-timeline slide. Hero is plain HTML (owner, 31 Oct 2026: first load must be fast). Lenis (`src/components/motion/`) for wheel smoothing only; touch stays native. One rAF loop (`frame.ts`); per-frame code never reads layout. No WebGL, no R3F, no GSAP | Keeps LCP/TBT at baseline and scrolling at 60 fps |
 > | Zustand for global state | Not installed; no global UI state exists | Nothing needs it — adding it would be architecture for its own sake |
 > | `/pricing` page, `AggregateRating` schema | Neither exists | Owner decided (Sep 2026): the only public price is Instagram comment-to-DM at ₹99/month (`PLAN_99` in `src/lib/automation.ts`); everything else is quoted on a call. No self-served review markup |
 > | City landing pages | `/areas` hub + 5 city pages (Delhi, Noida, Gurugram, Ghaziabad, Faridabad), each with its own local notes and pin codes; no per-pin-code or per-service city pages | Google's doorway-page spam policy. The city pages show no local client work yet; kept pending an owner review (Oct 2026 audit). Don't add more without real local work to show |

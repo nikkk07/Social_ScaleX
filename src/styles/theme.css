@@ -362,43 +362,138 @@ html.lenis, html.lenis body { height: auto; }
 .lenis.lenis-stopped { overflow: hidden; }
 
 @layer components {
-  /* ── Results reel: a pinned, curved strip of client cards ──
-     The row of HTML cards is always in the page. With motion allowed, the
-     section is tall and its stage sticks while the row slides past (CSS
-     scroll timeline, or JS where that is unsupported). When WebGL is live it
-     draws the same cards on a curve and the HTML row goes transparent.
-     Under reduced motion it is a plain grid. */
-  .reel { --g: 2.5rem; --w: min(46rem, 74vw); position: relative; }
-  .reel-card { flex: none; width: var(--w); aspect-ratio: 16 / 10; }
-  @media (max-width: 639px) {
-    .reel { --g: 1rem; --w: 80vw; }
-    .reel-card { aspect-ratio: 4 / 5; }
-  }
+  /* ── Results reel ──
+     One layout for every card, laid out in normal flow (nothing is
+     positioned over anything else). Default: a plain grid (reduced motion,
+     or screens too short to pin). Where motion is allowed and the screen is
+     tall enough, the section pins and the row slides past: CSS scroll
+     timeline without JS, CSS 3D turn per card with JS (ResultsReel). */
+  .reel { --g: 1.25rem; position: relative; }
+  .reel-row { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
   .reel-caption { display: none; }
-  /* Darkens the photo wash so text stays at full contrast, with a fine dot grid for texture. */
-  .reel-card-shade {
-    background:
-      radial-gradient(rgba(250, 248, 244, 0.07) 1px, transparent 1.4px) 0 0 / 22px 22px,
-      linear-gradient(160deg, rgba(37, 34, 27, 0.55), rgba(37, 34, 27, 0.92) 55%, #25221b);
+
+  .reel-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-height: 22rem;
+    padding: 1.5rem;
+    border-radius: 1.75rem;
+    background: #1d1a15;
+    box-shadow:
+      inset 0 0 0 1px rgba(250, 248, 244, 0.09),
+      inset 0 1px 0 rgba(250, 248, 244, 0.14),
+      0 40px 80px -40px rgba(0, 0, 0, 0.7);
+    --ox: 92%; --oy: 0%; --sx: 0%; --sy: 100%;
+  }
+  .reel-card:nth-child(3n + 2) { --ox: 100%; --oy: 100%; --sx: 12%; --sy: 0%; }
+  .reel-card:nth-child(3n + 3) { --ox: 55%; --oy: -15%; --sx: 100%; --sy: 100%; }
+  @media (min-width: 640px) { .reel-card { padding: 2rem; } }
+  /* The whole card is the link to the case: show that on hover and keyboard focus. */
+  .reel-card:has(a:focus-visible) { outline: 2px solid var(--color-coral-on-night); outline-offset: 3px; }
+  @media (hover: hover) {
+    .reel-card { transition: box-shadow 0.3s ease; }
+    .reel-card:hover {
+      box-shadow:
+        inset 0 0 0 1px rgba(240, 122, 94, 0.4),
+        inset 0 1px 0 rgba(250, 248, 244, 0.14),
+        0 40px 80px -40px rgba(0, 0, 0, 0.7);
+    }
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .reel { height: calc(100svh + (var(--n) - 1) * 62svh); view-timeline: --reel block; }
-    .reel-stage { position: sticky; top: 0; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding-top: 4.25rem; }
-    .reel-row { display: flex; gap: var(--g); padding-inline: calc(50% - var(--w) / 2); will-change: transform; transition: opacity 600ms var(--ease-out); }
-    .reel-caption { display: flex; }
-    .reel-stage.is-live .reel-row { opacity: 0; }
+  /* Background layers. The client's own photo, loaded at 16 px, becomes a soft tint. */
+  .reel-tint {
+    position: absolute;
+    inset: 0;
+    z-index: -2;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.3);
+    opacity: 0.2;
+    filter: saturate(1.4);
+    pointer-events: none;
+  }
+  .reel-bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, rgba(250, 248, 244, 0.07), transparent 28%),
+      radial-gradient(circle at var(--ox) var(--oy), rgba(240, 122, 94, 0.42), rgba(224, 70, 43, 0.12) 38%, transparent 62%),
+      radial-gradient(circle at var(--sx) var(--sy), rgba(30, 107, 69, 0.26), transparent 48%),
+      linear-gradient(160deg, rgba(29, 26, 21, 0.35), rgba(29, 26, 21, 0.88) 60%);
+  }
+  /* Orbit rings around the glow, fading out with distance. */
+  .reel-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-radial-gradient(circle at var(--ox) var(--oy), transparent 0 54px, rgba(250, 248, 244, 0.07) 54px 55px);
+    -webkit-mask-image: radial-gradient(circle at var(--ox) var(--oy), #000, transparent 70%);
+    mask-image: radial-gradient(circle at var(--ox) var(--oy), #000, transparent 70%);
+  }
+
+  /* Body: figures, and the before/after bars. Stacked on narrow cards (bars first), side by side on wide ones. */
+  /* Narrow cards: bars right under the header, the headline figure on the
+     footer, so every card in a row lines up the same way. */
+  .reel-body { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem; }
+  .reel-bars { order: -1; display: flex; flex-direction: column; width: min(100%, 15rem); height: 6.5rem; margin: 0 0 0 auto; }
+  .reel-bar-now { background: linear-gradient(to top, var(--color-coral), var(--color-coral-on-night)); box-shadow: 0 0 32px rgba(240, 122, 94, 0.35); }
+  @container (min-width: 30rem) {
+    .reel-body { flex: none; margin-top: auto; display: grid; grid-template-columns: minmax(0, 1fr) 10.5rem; align-items: end; gap: 2rem; }
+    .reel-bars { order: 0; width: 100%; height: 7.5rem; }
+  }
+
+  /* Pinned only where a whole card and its caption fit on screen: phones need
+     more height than wider screens because their cards are taller than wide.
+     Keep this in step with PIN in ResultsReel.tsx. */
+  @media (prefers-reduced-motion: no-preference) and (min-height: 600px) and (min-width: 640px), (prefers-reduced-motion: no-preference) and (min-height: 640px) {
+    .reel {
+      --w: min(46rem, 76vw, calc((100svh - 17rem) * 1.5));
+      --h: calc(var(--w) / 1.5);
+      --g: 2.5rem;
+      height: calc(100svh + (var(--n) - 1) * 55svh);
+      view-timeline: --reel block;
+    }
+    /* Phones: the card takes its content's height (every card in the row
+       matches the tallest), so nothing is ever squeezed or clipped. */
+    @media (max-width: 639px) {
+      .reel { --w: min(86vw, 24rem); --h: auto; --g: 1rem; }
+      .reel-card, .reel-body { gap: 1rem; }
+      .reel-card { padding: 1.25rem; }
+    }
+    .reel-stage {
+      position: sticky;
+      top: 0;
+      height: 100svh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 4.25rem;
+      perspective: 1600px;
+    }
+    .reel-track { max-width: none; padding-inline: 0; }
+    .reel-row { display: flex; gap: var(--g); padding-inline: calc(50% - var(--w) / 2); transform-style: preserve-3d; will-change: transform; }
+    .reel-card { flex: none; width: var(--w); height: var(--h); min-height: 0; transform-origin: 50% 50%; will-change: transform, opacity; }
+    .reel-caption { display: flex; margin-top: 1.75rem; }
+    /* Clear the fixed contact bar that phones show at the bottom. */
+    @media (max-width: 767px) {
+      .reel-stage { padding-bottom: calc(4.25rem + env(safe-area-inset-bottom)); }
+      .reel-caption { margin-top: 1rem; }
+    }
     @supports (animation-timeline: view()) {
       .reel-row { animation: reel-x linear both; animation-timeline: --reel; animation-range: contain 0% contain 100%; }
       .reel-dot { animation: reel-dot linear both; animation-timeline: --reel; animation-range: contain 0% contain 100%; }
     }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .reel-row { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr)); }
-    .reel-card { width: auto; aspect-ratio: auto; min-height: 20rem; }
-    /* In the plain grid the bars sit in the flow, between the name and the figures. */
-    .reel-bars { position: relative !important; inset: auto !important; order: 1; width: 55% !important; height: 7.5rem !important; margin: 1.5rem 0 0 auto; }
-    .reel-bottom { order: 2; margin-top: 1.25rem; }
+    /* With JS the row and each card's turn are set per frame instead. */
+    .reel-js .reel-row { animation: none; }
   }
   .reel-dot { transform: rotate(-46.6deg); }
   @keyframes reel-dot { from { transform: rotate(-46.6deg); } to { transform: rotate(46.6deg); } }

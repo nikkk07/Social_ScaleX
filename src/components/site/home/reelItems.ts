@@ -1,5 +1,6 @@
 import { PORTFOLIO, RESULTS_AS_OF, growthChange, type PortfolioItem } from '@/lib/content';
 import { formatDay } from '@/lib/dates';
+import { lc } from '@/lib/text';
 
 /** One client card in the results reel. Every value comes from PORTFOLIO. */
 export interface ReelItem {
@@ -23,7 +24,7 @@ export function reelItems(): ReelItem[] {
     const g = p.growth[0];
     const lead = g && g.to / g.from >= 1.5 ? g : undefined;
     const head = lead
-      ? { value: growthChange(lead), label: `${lead.fromText} → ${lead.toText} ${lead.label.toLowerCase()}`, growth: true }
+      ? { value: growthChange(lead), label: `${lead.fromText} → ${lead.toText} ${lc(lead.label)}`, growth: true }
       : { value: p.metrics[0]?.value ?? '', label: p.metrics[0]?.label ?? '', growth: false };
     const shown = head.growth ? lead?.toText.replace('+', '') : head.value.replace('+', '');
     const extra = p.metrics.find((m) => m.value.replace('+', '') !== shown);

@@ -61,12 +61,13 @@ export default function HomePage() {
         <section aria-labelledby="pains-title" className="py-section">
           <div className="wrap">
             <SectionHead id="pains-title" eyebrow="Sound familiar?" title="Most brands don’t need more posts. They need posts that work." />
-            <ul className="mt-12 grid gap-5 md:grid-cols-3">
+            {/* Tablets: one row per pain, quote beside the answer. Three columns from lg. */}
+            <ul className="mt-12 grid gap-5 lg:grid-cols-3">
               {PAINS.map((p) => (
-                <li key={p.problem} className="card flex flex-col p-6">
-                  <p className="font-display text-2xl leading-snug text-ink">“{p.problem}”</p>
-                  <p className="mt-4 flex-1 text-ink-2">{p.answer}</p>
-                  <Link href={p.href} className="link mt-5 text-sm">{p.cta} <span aria-hidden="true">→</span></Link>
+                <li key={p.problem} className="card flex flex-col p-6 md:max-lg:grid md:max-lg:grid-cols-[1fr_1.2fr] md:max-lg:content-start md:max-lg:gap-x-10 md:max-lg:p-8">
+                  <p className="font-display text-2xl leading-snug text-ink md:max-lg:row-span-2">“{p.problem}”</p>
+                  <p className="mt-4 flex-1 text-ink-2 md:max-lg:mt-0">{p.answer}</p>
+                  <Link href={p.href} className="link mt-5 justify-self-start text-sm">{p.cta} <span aria-hidden="true">→</span></Link>
                 </li>
               ))}
             </ul>

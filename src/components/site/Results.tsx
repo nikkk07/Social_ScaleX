@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowRight, ArrowUpRight, TrendingUp } from 'lucide-react';
 import { GOAL_LABEL, RESULTS_AS_OF, getService, growthChange, type Growth, type Metric, type PortfolioItem } from '@/lib/content';
 import { formatDay } from '@/lib/dates';
+import { lc } from '@/lib/text';
 import { InstagramIcon, YoutubeIcon } from '@/components/icons/PlatformIcons';
 
 const CTA: Record<PortfolioItem['goal'], string> = {
@@ -49,8 +50,6 @@ function extraMetrics(p: PortfolioItem): Metric[] {
   return list.filter((m) => !shown.has(m.value.replace('+', '')));
 }
 
-/** Lower-case a label for running text, keeping platform names as written. */
-const lc = (s: string) => (/^(Instagram|YouTube)/.test(s) ? s : s.charAt(0).toLowerCase() + s.slice(1));
 
 /** One supporting figure for the compact card. */
 function teaserExtra(p: PortfolioItem): Metric | undefined {
@@ -71,7 +70,7 @@ export function Headline({ p, size = 'lg' }: { p: PortfolioItem; size?: 'lg' | '
           {growthChange(g)}
         </span>
         <span className="mt-3 block text-sm text-ink-2">
-          <span className="font-semibold text-ink">{g.fromText} → {g.toText}</span> {g.label.toLowerCase()}
+          <span className="font-semibold text-ink">{g.fromText} → {g.toText}</span> {lc(g.label)}
           <span className={size === 'md' ? 'block text-ink-3' : ''}>{size === 'md' ? g.period : ` · ${g.period}`}</span>
         </span>
       </p>

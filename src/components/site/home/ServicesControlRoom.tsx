@@ -38,9 +38,10 @@ export function ServicesControlRoom() {
           <Link href="/services" className="btn btn-secondary self-start md:self-auto">All services</Link>
         </div>
 
-        <ul className="rise mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-7">
+        {/* Seven tiles: wrap and centre, so a short last row never leaves one tile hanging at the side. */}
+        <ul className="rise mt-12 flex flex-wrap justify-center gap-4">
           {CONTROL_ROOM.tiles.map((t) => (
-            <li key={t.href}>
+            <li key={t.href} className="basis-[calc((100%-1rem)/2)] sm:basis-[calc((100%-3rem)/4)] lg:flex-1 lg:basis-0">
               <Link href={t.href} className="room-tile card flex h-full flex-col items-center p-5 text-center">
                 <span aria-hidden="true" className="relative grid h-20 w-full place-items-start justify-center [perspective:600px]">
                   <span className="room-plate" />

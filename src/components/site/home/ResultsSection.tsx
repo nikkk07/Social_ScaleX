@@ -15,7 +15,7 @@ export function ResultsSection() {
         <p className="eyebrow text-coral-on-night">Client results</p>
         <div className="mt-4 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <h2 id="results-title" className="max-w-2xl text-4xl text-on-night">Real accounts. Real numbers.</h2>
-          <p className="inline-flex items-center gap-2 self-start rounded-full border border-on-night/15 px-3 py-1.5 text-xs font-semibold text-on-night-2 md:self-auto">
+          <p className="inline-flex flex-none items-center gap-2 self-start whitespace-nowrap rounded-full border border-on-night/15 px-3 py-1.5 text-xs font-semibold text-on-night-2 md:self-auto">
             <span aria-hidden="true" className="size-1.5 rounded-full bg-coral-on-night" />
             <UpdatedAgo iso={RESULTS_AS_OF} prefix="Figures updated" />
           </p>
