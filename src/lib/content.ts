@@ -648,6 +648,21 @@ export interface PortfolioItem {
   /** Before → after, from our own earlier published snapshot or hand-over records. */
   growth: Growth[];
   services: string[];
+  /** The case told in four steps for the story view. Facts only, taken from `detail` and the figures above. */
+  story: Story;
+  /** Dashboard screenshots shared by the client. Empty until supplied; the story view shows them when present. */
+  shots?: { src: string; alt: string; caption: string }[];
+}
+
+export interface Story {
+  /** Where the account stood when we started. */
+  start: string;
+  /** What the client needed. */
+  job: string;
+  /** What we changed, one action per line. */
+  did: string[];
+  /** Where it stands now, dated. */
+  outcome: string;
 }
 
 export type ResultGoal = 'sales' | 'awareness' | 'creator';
@@ -712,6 +727,12 @@ export const PORTFOLIO: PortfolioItem[] = [
     ],
     growth: [{ label: 'Followers', from: 400, to: 13_100, fromText: '400', toText: '13.1K', period: 'Jun → Oct 2026' }],
     services: ['instagram-marketing', 'reels-production', 'product-shoots'],
+    story: {
+      start: 'The page had 400 followers when we took it over at the start of June 2026.',
+      job: 'Bring enquiries and walk-in customers to a mobile, electronics and LED TV store in Delhi.',
+      did: ['We run the Instagram page day to day.', 'We shoot the phones and electronics inside the store.', 'We edit that footage into Reels.'],
+      outcome: 'On 15 October 2026 the page had 13.1K followers and more than 5M views in the last 30 days.',
+    },
   },
   {
     id: 'big-discount-mart',
@@ -734,6 +755,12 @@ export const PORTFOLIO: PortfolioItem[] = [
     ],
     growth: [{ label: 'Followers', from: 800, to: 10_800, fromText: '800', toText: '10.8K', period: 'In 2 months' }],
     services: ['instagram-marketing', 'reels-production'],
+    story: {
+      start: 'The page had 800 followers when we picked it up.',
+      job: 'Show local shoppers in Nangloi what the store has on offer before they visit.',
+      did: ['We ran the page.', 'We shot and edited Reels of the store and its deals.'],
+      outcome: 'We handed the page back two months later with 10.8K followers.',
+    },
   },
   {
     id: 'prago',
@@ -760,6 +787,12 @@ export const PORTFOLIO: PortfolioItem[] = [
       { label: 'Views in 30 days', from: 3_100_000, to: 6_000_000, fromText: '3.1M', toText: '6M+', period: JUL },
     ],
     services: ['instagram-marketing', 'reels-production', 'product-shoots'],
+    story: {
+      start: 'On 1 July 2026 the page had 14K followers and 3.1M views a month.',
+      job: 'Sell camping, trekking and riding gear, not collect likes.',
+      did: ['We shoot the gear in use, not on white backgrounds.', 'We get product shoots and Reels from the same shoot days.', 'We build the page to send people to the store.'],
+      outcome: 'On 30 September 2026 the page had 35.3K followers and more than 6M views in 30 days.',
+    },
   },
   {
     id: 'acdelhivlogs',
@@ -789,6 +822,12 @@ export const PORTFOLIO: PortfolioItem[] = [
       { label: 'YouTube subscribers', from: 96_600, to: 101_000, fromText: '96.6K', toText: '101K', period: JUL },
     ],
     services: ['social-media-strategy', 'reels-production', 'youtube-management', 'influencer-pr-management'],
+    story: {
+      start: 'On 1 July 2026 the creator had 336K Instagram followers and 96.6K YouTube subscribers.',
+      job: 'Grow one creator on Instagram and YouTube at the same time.',
+      did: ['We plan the content strategy.', 'We plan every shoot for both platforms: Reels bring the reach, YouTube holds the watch time.', 'We shoot and edit the videos.'],
+      outcome: 'On 30 September 2026 the creator had 358K Instagram followers and 101K YouTube subscribers.',
+    },
   },
   {
     id: 'subh',
@@ -808,6 +847,12 @@ export const PORTFOLIO: PortfolioItem[] = [
     metrics: [{ value: '25.7K', label: 'Instagram followers' }],
     growth: [{ label: 'Instagram followers', from: 15_900, to: 25_700, fromText: '15.9K', toText: '25.7K', period: JUL }],
     services: ['social-media-strategy', 'reels-production', 'instagram-marketing', 'influencer-pr-management'],
+    story: {
+      start: 'On 1 July 2026 the creator had 15.9K Instagram followers.',
+      job: 'Get Reels seen by people outside the existing audience.',
+      did: ['We plan the content strategy.', 'We shoot and edit the Reels.'],
+      outcome: 'On 30 September 2026 the creator had 25.7K Instagram followers.',
+    },
   },
   {
     id: 'journey',
@@ -836,6 +881,12 @@ export const PORTFOLIO: PortfolioItem[] = [
       { label: 'Instagram followers', from: 10_600, to: 12_000, fromText: '10.6K', toText: '12K', period: JUL },
     ],
     services: ['social-media-strategy', 'reels-production', 'youtube-management', 'influencer-pr-management'],
+    story: {
+      start: 'On 1 July 2026 the creator had 22.1K YouTube subscribers and 10.6K Instagram followers.',
+      job: 'Grow a travel and food creator on YouTube and Instagram from the same footage.',
+      did: ['We plan the content strategy.', 'We shoot and edit the videos.', 'We cut the same footage as Reels for Instagram and as longer videos for YouTube.'],
+      outcome: 'On 30 September 2026 the creator had 26K YouTube subscribers and 12K Instagram followers.',
+    },
   },
   {
     id: 'wanna-party',
@@ -855,6 +906,12 @@ export const PORTFOLIO: PortfolioItem[] = [
     metrics: [],
     growth: [],
     services: ['instagram-marketing', 'reels-production', 'influencer-marketing'],
+    story: {
+      start: 'An online party-products brand, selling since 2011.',
+      job: 'Get more people to know the name. The brief was awareness, not direct sales.',
+      did: ['We ran the page.', 'We shot and edited Reels around the products.', 'We brought in creators to put the brand in front of their audiences.'],
+      outcome: 'This was a past brand-awareness project. We do not publish figures for it.',
+    },
   },
 ];
 

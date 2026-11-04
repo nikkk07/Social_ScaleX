@@ -1,14 +1,13 @@
 import React from 'react';
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
 import { SiteShell } from '@/components/site/SiteShell';
 import { PageIntro } from '@/components/site/PageIntro';
 import { SectionHead } from '@/components/site/SectionHead';
 import { FaqList } from '@/components/site/FaqList';
 import { LeadSection } from '@/components/site/LeadSection';
-import { ResultCase } from '@/components/site/Results';
 import { ResultsFilter } from '@/components/site/ResultsFilter';
+import { StoryPanels, StoryRings, StoryTile } from '@/components/site/CaseStories';
+import { StoryController } from '@/components/site/StoryController';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_AS_OF, RESULTS_FAQS, STATS, type ResultGoal } from '@/lib/content';
 import { UpdatedAgo } from '@/components/site/UpdatedAgo';
@@ -50,18 +49,20 @@ export default function CaseStudiesPage() {
         <PageIntro
           crumbs={CRUMBS}
           eyebrow="Client results"
-          title="Real accounts, real numbers"
+          title={`Instagram and YouTube results from ${PORTFOLIO.length} real clients`}
           lede={
             <p>
-              Stores that sell on Instagram, a brand that wanted to be known, and creators with audiences in the hundreds of
-              thousands. Every figure comes from the client’s own dashboard, with their permission, and is rounded down, never up.
+              Choose a profile to see its story: where the account started, what we changed and what happened next. Every number
+              comes from the client’s own dashboard, with their permission, and we round it down, never up.
             </p>
           }
         >
+          <p className="mt-8 text-sm font-semibold text-ink">Choose a profile to open its story</p>
+          <div className="mt-3"><StoryRings /></div>
           <p className="mt-8 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2">
-              <span aria-hidden="true" className="size-1.5 rounded-full bg-positive" />
-              <UpdatedAgo iso={RESULTS_AS_OF} prefix="Figures updated" />
-            </p>
+            <span aria-hidden="true" className="size-1.5 rounded-full bg-positive" />
+            <UpdatedAgo iso={RESULTS_AS_OF} prefix="Figures updated" />
+          </p>
           <dl className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line lg:grid-cols-4">
             {STATS.map((s) => (
               <div key={s.label} className="flex flex-col-reverse bg-surface p-5 sm:p-6">
@@ -70,18 +71,23 @@ export default function CaseStudiesPage() {
               </div>
             ))}
           </dl>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Link href="#get-started" className="btn btn-primary btn-lg">Get a free plan <ArrowRight className="size-4" aria-hidden="true" /></Link>
-            <Link href="#results" className="btn btn-secondary btn-lg">See the case studies</Link>
-          </div>
         </PageIntro>
 
-        <section id="results" aria-label="Case studies" className="scroll-mt-20 py-section">
+        <section id="results" aria-labelledby="results-title" className="scroll-mt-20 py-section">
           <div className="wrap">
-            <ResultsFilter
-              filters={filters}
-              items={PORTFOLIO.map((p) => ({ id: p.id, group: p.goal, node: <ResultCase p={p} /> }))}
+            <SectionHead
+              id="results-title"
+              eyebrow={`${PORTFOLIO.length} case studies`}
+              title="Pick an account"
+              intro="Each card opens the full story, with dated figures and a link to the live profile."
             />
+            <div className="mt-8">
+              <ResultsFilter
+                filters={filters}
+                gridClassName="mt-5 grid grid-cols-1 gap-3 min-[340px]:grid-cols-2 min-[340px]:[&>li:last-child:nth-child(odd)]:col-span-2 sm:gap-4 lg:grid-cols-4 lg:[&>li:last-child:nth-child(odd)]:col-span-1"
+                items={PORTFOLIO.map((p) => ({ id: p.id, group: p.goal, node: <StoryTile p={p} /> }))}
+              />
+            </div>
             <p className="mt-8 text-sm text-ink-3">{PORTFOLIO_NOTE}</p>
           </div>
         </section>
@@ -97,7 +103,7 @@ export default function CaseStudiesPage() {
             <ul className="grid gap-6 text-ink-2">
               {[
                 ['From the client’s dashboard', 'Views come from Instagram’s professional dashboard or YouTube Studio, not from screenshots we picked.'],
-                ['Dated', 'Current figures were recorded on 30 September 2026. “Before” figures are the ones this site published on 1 July 2026.'],
+                ['Dated', 'We recorded current figures on 30 September 2026 (Saini Telecom on 15 October 2026). “Before” figures are the ones this site published on 1 July 2026, or the count when we took the account over.'],
                 ['Rounded down', 'A figure shown as “6M+” means the dashboard showed more than 6 million. We never round up.'],
                 ['Past clients stay honest', 'For accounts we no longer run, we show the number at hand-over, not what happened after.'],
               ].map(([t, d]) => (
@@ -118,6 +124,8 @@ export default function CaseStudiesPage() {
         </section>
 
         <LeadSection title="Want numbers like these on your account?" intro="Tell us where your account is today. On the free call we’ll show you what we’d change first." />
+        <StoryPanels />
+        <StoryController />
       </SiteShell>
     </>
   );

@@ -10,9 +10,11 @@ type Filter = { key: string; label: string };
 export function ResultsFilter({
   filters,
   items,
+  gridClassName = 'mt-8 grid gap-8',
 }: {
   filters: Filter[];
   items: { id: string; group: string; node: React.ReactNode }[];
+  gridClassName?: string;
 }) {
   const [active, setActive] = useState('all');
   const shown = active === 'all' ? items : items.filter((i) => i.group === active);
@@ -42,11 +44,11 @@ export function ResultsFilter({
       <p className="sr-only" role="status" aria-live="polite">
         Showing {shown.length} of {items.length} results.
       </p>
-      <div className="mt-8 grid gap-8">
+      <ul className={gridClassName}>
         {shown.map((i) => (
-          <React.Fragment key={i.id}>{i.node}</React.Fragment>
+          <li key={i.id}>{i.node}</li>
         ))}
-      </div>
+      </ul>
     </>
   );
 }
