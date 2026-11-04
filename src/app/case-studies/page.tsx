@@ -70,7 +70,7 @@ export default function CaseStudiesPage() {
               </div>
             ))}
           </dl>
-          <div className="mt-8 flex flex-wrap gap-3">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link href="#get-started" className="btn btn-primary btn-lg">Get a free plan <ArrowRight className="size-4" aria-hidden="true" /></Link>
             <Link href="#results" className="btn btn-secondary btn-lg">See the case studies</Link>
           </div>

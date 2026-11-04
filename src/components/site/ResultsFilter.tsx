@@ -20,7 +20,7 @@ export function ResultsFilter({
 
   return (
     <>
-      <div role="group" aria-label="Filter results by goal" className="flex flex-wrap gap-2">
+      <div role="group" aria-label="Filter results by goal" className="grid grid-cols-1 gap-2 min-[360px]:grid-cols-2 sm:flex sm:flex-wrap">
         {[{ key: 'all', label: 'All results' }, ...filters].map((f) => {
           const on = f.key === active;
           return (
@@ -29,7 +29,7 @@ export function ResultsFilter({
               type="button"
               aria-pressed={on}
               onClick={() => setActive(f.key)}
-              className={`inline-flex min-h-11 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors ${
+              className={`inline-flex min-h-11 items-center justify-between gap-2 whitespace-nowrap rounded-full border px-3.5 text-[0.8125rem] sm:justify-start sm:px-4 sm:text-sm font-semibold transition-colors ${
                 on ? 'border-ink bg-ink text-paper' : 'border-line-strong bg-surface text-ink hover:border-ink'
               }`}
             >

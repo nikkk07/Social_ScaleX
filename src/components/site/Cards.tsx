@@ -20,7 +20,7 @@ export function MetricList({ metrics, size = 'md' }: { metrics: PortfolioItem['m
   return (
     <dl className={`grid ${cols}`}>
       {metrics.map((m) => (
-        <div key={m.label} className="flex flex-col-reverse">
+        <div key={m.label} className="flex flex-col-reverse justify-end">
           <dt className="mt-1 text-xs leading-snug text-ink-3">{m.label}</dt>
           <dd className={`font-display tabular-nums text-ink ${size === 'lg' ? 'text-5xl' : 'text-2xl sm:text-3xl'}`}>{m.value}</dd>
         </div>

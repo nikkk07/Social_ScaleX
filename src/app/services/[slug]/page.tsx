@@ -134,7 +134,7 @@ export default async function ServicePage({ params }: Props) {
                 {cases.map((p) => (
                   <li key={p.id} className="card flex flex-col p-6">
                     <h3 className="text-2xl text-ink">{p.client}</h3>
-                    <p className="mt-1 text-sm text-ink-3">{p.category} · {p.platform}</p>
+                    <p className="mt-1 text-sm text-ink-3">{p.category}<span className="whitespace-nowrap"> · {p.platform}</span></p>
                     <div className="mt-6 flex-1 border-t border-line pt-5">
                       {p.metrics.length ? <MetricList metrics={p.metrics} /> : <p className="text-ink-2">{p.description}</p>}
                     </div>
@@ -161,18 +161,28 @@ export default async function ServicePage({ params }: Props) {
         )}
 
         <section aria-labelledby="faq-title" className="border-t border-line py-section">
-          <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.6fr]">
-            <SectionHead
-              id="faq-title"
-              eyebrow={`${s.name}: FAQs`}
-              title="Common questions"
-              intro={guides.length ? (
-                <>Go deeper: {guides.map((g, i) => (
-                  <React.Fragment key={g.slug}>{i ? ' and ' : ''}<Link className="link" href={`/guides/${g.slug}`}>{g.title}</Link></React.Fragment>
-                ))}.</>
-              ) : undefined}
-            />
-            <FaqList faqs={s.faqs} />
+          <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.6fr] lg:grid-rows-[auto_1fr]">
+            <div className="lg:col-start-1 lg:row-start-1">
+              <SectionHead id="faq-title" eyebrow={`${s.name}: FAQs`} title="Common questions" />
+            </div>
+            <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
+              <FaqList faqs={s.faqs} />
+            </div>
+            {guides.length ? (
+              <div className="lg:col-start-1 lg:row-start-2">
+                <p className="text-sm font-semibold text-ink">Free guides on this</p>
+                <ul className="mt-3 grid gap-2">
+                  {guides.map((g) => (
+                    <li key={g.slug}>
+                      <Link href={`/guides/${g.slug}`} className="flex items-start gap-2 rounded-xl border border-line bg-surface p-3 text-sm font-semibold leading-snug text-ink hover:border-line-strong">
+                        <ArrowRight className="mt-0.5 size-4 flex-none text-coral-text" aria-hidden="true" />
+                        <span>{g.navTitle}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
         </section>
 

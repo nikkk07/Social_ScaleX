@@ -163,7 +163,7 @@ export default async function CityPage({ params }: Props) {
             </div>
             <details className="group mt-10">
               <summary className="inline-flex min-h-11 cursor-pointer list-none items-center rounded-full border border-line-strong bg-surface px-5 py-2.5 font-semibold text-ink hover:border-ink [&::-webkit-details-marker]:hidden">
-                <span className="group-open:hidden">Show</span><span className="hidden group-open:inline">Hide</span>&nbsp;all {stats.pins} pin codes ({stats.first}–{stats.last})
+                <span className="group-open:hidden">Show all {stats.pins} pin codes</span><span className="hidden group-open:inline">Hide the pin codes</span>
               </summary>
             <div className="mt-6 gap-5 sm:columns-2 lg:columns-3">
               {groups.map(([pin, names]) => (

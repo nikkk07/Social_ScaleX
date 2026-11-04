@@ -24,7 +24,7 @@ export function ResultsSection() {
 
       <ResultsReel items={items} />
 
-      <div className="wrap pb-section">
+      <div className="wrap pb-section pt-10">
         <p className="max-w-3xl text-sm text-on-night-2">{PORTFOLIO_NOTE}</p>
         <p className="mt-6">
           <Link href="/case-studies" className="btn btn-night btn-lg">

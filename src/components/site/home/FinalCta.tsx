@@ -17,7 +17,7 @@ export function FinalCta() {
         <h2 id="final-cta-title" className="max-w-3xl text-[clamp(2.75rem,1.8rem+4vw,5.5rem)] leading-[1.02] text-on-night">{FINAL_CTA.title}</h2>
         <p className="mt-5 max-w-xl text-lg text-on-night-2">{FINAL_CTA.intro}</p>
         <div className="mt-10 flex flex-col items-start gap-5 sm:flex-row sm:items-center">
-          <Image src="/logo.png" alt="" width={72} height={72} className="size-16 flex-none rounded-[22%] ring-1 ring-on-night/15 sm:size-[4.5rem]" />
+          <Image src="/logo.png" alt="" width={72} height={72} className="hidden size-16 flex-none rounded-[22%] ring-1 ring-on-night/15 sm:block sm:size-[4.5rem]" />
           <span aria-hidden="true" className="relative hidden h-[0.3125rem] min-w-16 flex-1 sm:block">
             <span className="cta-run absolute inset-0 rounded-full bg-coral-on-night" />
           </span>

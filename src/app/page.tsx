@@ -113,14 +113,14 @@ export default function HomePage() {
                 <li key={g.slug}>
                   <Link href={`/solutions/${g.slug}`} className="card card-link flex h-full flex-col p-6">
                     <span className="font-display text-2xl text-ink">{g.name}</span>
-                    <span className="mt-2 line-clamp-3 text-ink-2">{g.metaDescription}</span>
+                    <span className="mt-2 text-ink-2">{g.metaDescription}</span>
                   </Link>
                 </li>
               ))}
               <li>
                 <Link href="/guides/increase-instagram-followers" className="card card-link flex h-full flex-col p-6">
                   <span className="font-display text-2xl text-ink">More followers, likes and views</span>
-                  <span className="mt-2 line-clamp-3 text-ink-2">How to grow on Instagram the way Instagram rewards, without buying followers.</span>
+                  <span className="mt-2 text-ink-2">How to grow on Instagram the way Instagram rewards, without buying followers.</span>
                 </Link>
               </li>
             </ul>
@@ -194,7 +194,7 @@ export default function HomePage() {
                 <li key={g.slug}>
                   <Link href={`/guides/${g.slug}`} className="card card-link flex h-full flex-col p-6">
                     <span className="font-display text-2xl leading-snug text-ink">{g.title}</span>
-                    <span className="mt-3 line-clamp-3 text-ink-2">{g.description}</span>
+                    <span className="mt-3 text-ink-2">{g.description}</span>
                   </Link>
                 </li>
               ))}

@@ -52,7 +52,7 @@ export default function GuidesPage() {
                     <Link href={`/guides/${g.slug}`} className="after:absolute after:inset-0">{g.title}</Link>
                   </h2>
                   <div>
-                    <p className="text-ink-2">{g.summary}</p>
+                    <p className="text-ink-2">{g.description}</p>
                     <p className="mt-4 text-sm text-ink-3">Updated <time dateTime={g.updated}>{fmt(g.updated)}</time> · {g.sources.length} sources</p>
                   </div>
                 </article>

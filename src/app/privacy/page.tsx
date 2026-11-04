@@ -103,7 +103,7 @@ export default function Page() {
         <h2>Your choices</h2>
         <p>
           Want your details removed from our records? Call or message us at
-          +91 80777 27669 and we&apos;ll delete them. No forms, no waiting periods.
+          <span className="whitespace-nowrap">+91 80777 27669</span> and we&apos;ll delete them. No forms, no waiting periods.
         </p>
       </section>
     </LegalPage>

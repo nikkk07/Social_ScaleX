@@ -13,7 +13,7 @@ export function HowWeWork() {
 
         <ol className="rise grid gap-px self-start overflow-hidden rounded-card border border-line bg-line">
           {PROCESS.map((s, i) => (
-            <li key={s.title} className="grid grid-cols-[auto_1fr] gap-x-5 bg-surface p-6 sm:p-8">
+            <li key={s.title} className="grid grid-cols-[2rem_1fr] gap-x-4 bg-surface p-6 sm:grid-cols-[2.5rem_1fr] sm:gap-x-5 sm:p-8">
               <span aria-hidden="true" className="font-display text-5xl leading-none text-coral-text">{i + 1}</span>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">Step {i + 1}</p>

@@ -78,7 +78,7 @@ export default function AreasPage() {
                         <span className="font-display text-2xl leading-tight text-ink">{c.longName}</span>
                         <ArrowUpRight className="size-5 flex-none text-ink-3 transition-colors group-hover:text-coral-text" aria-hidden="true" />
                       </span>
-                      <span className="mt-1 text-sm text-ink-3">{c.district === c.name ? c.state : `${c.district}, ${c.state}`}</span>
+                      <span className="mt-1 text-sm text-ink-3">{c.district === c.name || c.state === c.name ? c.district : `${c.district}, ${c.state}`}</span>
                       <span className="mt-4 text-ink-2">{s.places} localities covered</span>
                     </Link>
                   </li>

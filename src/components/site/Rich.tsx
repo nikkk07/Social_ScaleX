@@ -2,7 +2,9 @@ import React from 'react';
 import Link from 'next/link';
 
 // Renders the tiny inline markup used in src/lib/guides.ts: **bold** and
-// [text](url). Internal links use next/link; external ones open in a new tab.
+// [text](url). Internal links use next/link. External links in guides are
+// source citations placed after the sentence they support, so they render as
+// small source chips that open in a new tab and read as citations, not prose.
 const TOKEN = /\*\*([^*]+)\*\*|\[([^\]]+)\]\(([^)\s]+)\)/g;
 
 export function Rich({ text }: { text: string }) {
@@ -20,7 +22,9 @@ export function Rich({ text }: { text: string }) {
         href.startsWith('/') ? (
           <Link key={key++} href={href} className="rich-link">{m[2]}</Link>
         ) : (
-          <a key={key++} href={href} target="_blank" rel="noopener noreferrer" className="rich-link">{m[2]}</a>
+          <a key={key++} href={href} target="_blank" rel="noopener noreferrer" className="cite">
+            {m[2]}<span className="sr-only"> (source, opens in a new tab)</span>
+          </a>
         ),
       );
     }

@@ -81,7 +81,8 @@ export default function Page() {
       <section>
         <h2>Getting in touch</h2>
         <p>
-          Questions about these terms? Call +91 80777 27669 or +91 78278 10150, or send a
+          Questions about these terms? Call <span className="whitespace-nowrap">+91 80777 27669</span> or{' '}
+          <span className="whitespace-nowrap">+91 78278 10150</span>, or send a
           query through the contact form on our homepage.
         </p>
       </section>

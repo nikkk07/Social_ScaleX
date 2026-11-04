@@ -76,7 +76,7 @@ export function OfferBox({ variant }: { variant: 'mid' | 'end' }) {
     );
   }
   return (
-    <aside aria-label="Done-for-you option" className="not-prose my-12 grid gap-8 rounded-card border border-line bg-paper-2 p-6 sm:p-8 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+    <aside aria-label="Done-for-you option" className="not-prose my-12 grid gap-6 rounded-card border border-line bg-paper-2 p-4 sm:gap-8 sm:p-8 lg:grid-cols-[1.1fr_1fr] lg:items-center">
       <div>
         <p className="font-display text-3xl leading-tight text-ink">Rather post, not set up?</p>
         <p className="mt-3 text-lg text-ink-2">We build it, test it and keep every keyword working. You reply to buyers.</p>

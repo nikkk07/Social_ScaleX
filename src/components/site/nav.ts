@@ -17,7 +17,7 @@ export const SERVICE_LINKS = SERVICES.map((s) => ({
 
 export const AUTOMATION_LINKS = AUTOMATIONS.map((a) => ({
   href: `/automation/${a.slug}`,
-  label: a.priced ? `${a.short} · ₹${PLAN_99.price}/mo` : a.name,
+  label: a.priced ? `${a.short}\u00a0· ₹${PLAN_99.price}/mo` : a.name,
   outcome: a.outcome,
 }));
 

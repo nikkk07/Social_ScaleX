@@ -14,7 +14,7 @@ export function LegalPage({ title, updated, crumbs, children }: { title: string;
         <div className="prose-site mt-10">{children}</div>
         <p className="mt-16 border-t border-line pt-8 text-sm text-ink-3">
           Questions about this page? Call{' '}
-          <a href={`tel:${CONTACTS[0].phone}`} className="link">{CONTACTS[0].display}</a>.
+          <a href={`tel:${CONTACTS[0].phone}`} className="link whitespace-nowrap">{CONTACTS[0].display}</a>.
         </p>
       </article>
     </SiteShell>

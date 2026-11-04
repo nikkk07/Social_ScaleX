@@ -53,7 +53,7 @@ export default function AboutPage() {
         />
 
         <section aria-labelledby="story-title" className="py-section">
-          <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.4fr]">
+          <div className="wrap grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1.4fr] lg:gap-12">
             <SectionHead id="story-title" eyebrow="What we do" title="We run social media for other people’s brands" />
             <div className="prose-site">
               <p>
