@@ -10,7 +10,7 @@ import { Rich } from '@/components/site/Rich';
 import { TocSpy, type TocItem } from '@/components/site/TocSpy';
 import { FaqList } from '@/components/site/FaqList';
 import { CompareTable, OfferBox } from '@/components/site/Offer';
-import { Callout, DataTable, Flow, GuideCta, Verdict } from '@/components/site/GuideBlocks';
+import { Callout, ChatExample, Checklist, DataTable, Flow, GuideCta, SourceMap, Stats, Verdict } from '@/components/site/GuideBlocks';
 import { Check } from 'lucide-react';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { GUIDES, getGuide, guideWordCount, type Block } from '@/lib/guides';
@@ -65,6 +65,14 @@ function BlockView({ b }: { b: Block }) {
       return <Callout tone={b.tone} title={b.title} text={b.text} />;
     case 'cta':
       return <GuideCta b={b} />;
+    case 'stats':
+      return <Stats b={b} />;
+    case 'chat':
+      return <ChatExample b={b} />;
+    case 'sources':
+      return <SourceMap b={b} />;
+    case 'checklist':
+      return <Checklist b={b} />;
     case 'quote':
       return (
         <figure>

@@ -27,7 +27,46 @@ export type Block =
   /** Tip or warning box for skimmers. */
   | { t: 'callout'; tone: 'tip' | 'warn'; title: string; text: string }
   /** Social ScaleX offer box linking to a service page. */
-  | CtaBlock;
+  | CtaBlock
+  /** Big-number cards, each with its own source link. */
+  | StatsBlock
+  /** A made-up AI chat answer, clearly labelled as an example. */
+  | ChatBlock
+  /** Where an AI answer gets its facts: four cards around one hub. */
+  | SourcesBlock
+  /** Detailed numbered steps with a time estimate; titles render as h3. */
+  | ChecklistBlock;
+
+export interface StatsBlock {
+  t: 'stats';
+  label: string;
+  items: { value: string; text: string; source: string; href: string }[];
+}
+
+export interface ChatBlock {
+  t: 'chat';
+  question: string;
+  intro: string;
+  answer: { name: string; note: string }[];
+  /** The empty slot shown under the answer. */
+  missing: string;
+  caption: string;
+}
+
+export type SourceIcon = 'map' | 'globe' | 'star' | 'link';
+
+export interface SourcesBlock {
+  t: 'sources';
+  label: string;
+  center: string;
+  items: { icon: SourceIcon; title: string; text: string; usedBy: string[] }[];
+}
+
+export interface ChecklistBlock {
+  t: 'checklist';
+  label: string;
+  items: { title: string; time?: string; text: string; points?: string[] }[];
+}
 
 export interface VerdictSide {
   label: string;
@@ -158,9 +197,348 @@ const S = {
   yourAlgorithmGlobal: { label: 'The Keyword: Instagram expands Reels algorithm controls to all English-speaking users (14 Jan 2026)', url: 'https://www.thekeyword.co/news/instagram-expands-reels-algorithm-controls-to-all-english-speaking-users' },
   likeInsights: { label: 'Republic World: Instagram shows when viewers like a Reel (5 Aug 2025)', url: 'https://www.republicworld.com/tech/new-instagram-feature-lets-creators-see-exactly-when-viewers-like-their-reels' },
   metaAiRanking: { label: 'Meta: How AI influences what you see on Facebook and Instagram (29 Jun 2023)', url: 'https://about.fb.com/news/2023/06/how-ai-ranks-content-on-facebook-and-instagram/' },
+  chatgptIndia: { label: 'TechCrunch: India has 100M weekly active ChatGPT users, Sam Altman says (15 Feb 2026)', url: 'https://techcrunch.com/2026/02/15/india-has-100m-weekly-active-chatgpt-users-sam-altman-says/' },
+  aiModeIo: { label: 'Google: Search updates at I/O 2026 (19 May 2026)', url: 'https://blog.google/products-and-platforms/products/search/search-io-2026/' },
+  pewAi: { label: 'Pew Research Center: Google users are less likely to click links when an AI summary appears (22 Jul 2025)', url: 'https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/' },
+  sparktoro2026: { label: 'SparkToro: In 2026, less than one third of Google searches still send a click (8 Jun 2026)', url: 'https://sparktoro.com/blog/in-2026-less-than-one-third-of-google-searches-still-send-a-click/' },
+  aiModeIndia: { label: 'Google India: Introducing AI Mode in India (24 Jun 2025)', url: 'https://blog.google/intl/en-in/products/google-search-introducing-ai-mode-in-india/' },
+  aiModeLangs: { label: 'Google India: New languages in AI Mode (8 Oct 2025)', url: 'https://blog.google/intl/en-in/products/supercharging-search-for-india-new-languages-in-ai-mode-search-live-debuts/' },
+  gAiFeatures: { label: 'Google Search Central: AI features and your website (updated 10 Dec 2025)', url: 'https://developers.google.com/search/docs/appearance/ai-features' },
+  gbpRanking: { label: 'Google Business Profile Help: Tips to improve your local ranking on Google', url: 'https://support.google.com/business/answer/7091' },
+  geminiPlaces: { label: 'Gemini Apps Help: Find places and get directions in Gemini Apps', url: 'https://support.google.com/gemini/answer/16622866' },
+  chatgptSearch: { label: 'OpenAI Help: ChatGPT search', url: 'https://help.openai.com/en/articles/9237897-chatgpt-search' },
+  oaiBots: { label: 'OpenAI: Overview of OpenAI crawlers', url: 'https://developers.openai.com/api/docs/bots' },
+  bingPlacesQa: { label: 'Microsoft Q&A forum moderator: Can Bing Places pull reviews from Google Business Profile? (27 Aug 2025)', url: 'https://learn.microsoft.com/en-us/answers/questions/5528564/can-bing-places-pull-reviews-from-google-business' },
+  chatgptAdsIndia: { label: 'Business Today: ChatGPT ads arrive in India (27 Aug 2026)', url: 'https://www.businesstoday.in/technology/artificial-intelligence/story/chatgpt-ads-arrive-in-india-as-openai-targets-free-go-users-in-major-revenue-push-ahead-of-ipo-551655-2026-08-27' },
+  googleAiAds: { label: 'TechCrunch: Google brings ads to AI Mode and AI Overviews (21 May 2025)', url: 'https://techcrunch.com/2025/05/21/google-is-bringing-ads-to-ai-mode/' },
+  oaiAds: { label: 'OpenAI: Our approach to advertising and expanding access (16 Jan 2026)', url: 'https://openai.com/index/our-approach-to-advertising-and-expanding-access/' },
 } satisfies Record<string, Source>;
 
 export const GUIDES: Guide[] = [
+  {
+    slug: 'get-recommended-by-chatgpt-gemini-ai-mode',
+    title: 'Is ChatGPT recommending your competitor? How to get your business named by ChatGPT, Gemini and Google AI Mode',
+    metaTitle: 'Get Named by ChatGPT, Gemini & AI Mode (2026)',
+    navTitle: 'Get named by ChatGPT',
+    description:
+      'Is ChatGPT naming your competitor, not you? A simple 7-step plan to get your business recommended by ChatGPT, Gemini and Google AI Mode. Official sources.',
+    summary:
+      'When a customer asks ChatGPT, Gemini or Google’s AI Mode “which shop is best near me?”, the app answers with a few business names. It picks them from what it can find about each business online. Google’s AI uses Google Search and your Google Business Profile. Gemini uses Google Maps. ChatGPT can search the web using outside search engines such as Bing. So the fix is simple: a complete Google profile with real reviews, plain words on your website, and the same details everywhere. You can’t pay to be named in the normal answer; ads are always marked as ads.',
+    keyPoints: [
+      '**Test first.** Ask the AI what your customer would ask, and see who gets named.',
+      '**Fix your Google Business Profile.** Correct details, real photos, real reviews.',
+      '**Write it plainly online.** What you sell, where you are, when you are open.',
+    ],
+    published: '2026-11-04',
+    updated: '2026-11-04',
+    author: 'Social ScaleX team',
+    authorIndex: 0,
+    blocks: [
+      { t: 'h2', text: 'What is changing: customers now ask AI' },
+      {
+        t: 'p',
+        text: 'Earlier, people typed “AC repair near me” into Google and opened a few websites. Now many people ask an **AI app** instead: ChatGPT, Gemini, or **AI Mode** inside Google Search. The app gives one short answer with a few business names. If your name is not in that answer, the customer may never see you.',
+      },
+      {
+        t: 'stats',
+        label: 'The numbers behind the change',
+        items: [
+          { value: '100 million', text: 'weekly ChatGPT users in India, its second-biggest user base after the US.', source: 'Sam Altman, via TechCrunch, 15 Feb 2026', href: 'https://techcrunch.com/2026/02/15/india-has-100m-weekly-active-chatgpt-users-sam-altman-says/' },
+          { value: '1 billion+', text: 'people use Google’s AI Mode every month, around the world.', source: 'Google, 19 May 2026', href: 'https://blog.google/products-and-platforms/products/search/search-io-2026/' },
+          { value: '8% vs 15%', text: 'When Google showed an AI summary, people clicked a regular search result in 8% of visits. Without one, 15%.', source: 'Pew Research Center, US, 22 Jul 2025', href: 'https://www.pewresearch.org/short-reads/2025/07/22/google-users-are-less-likely-to-click-on-links-when-an-ai-summary-appears-in-the-results/' },
+          { value: '68%', text: 'of Google searches in the US ended with no click at all, January to April 2026.', source: 'SparkToro, 8 Jun 2026', href: 'https://sparktoro.com/blog/in-2026-less-than-one-third-of-google-searches-still-send-a-click/' },
+        ],
+      },
+      {
+        t: 'p',
+        text: 'AI Mode came to India in June 2025, first as an English test in Search Labs. [Google, 24 Jun 2025](https://blog.google/intl/en-in/products/google-search-introducing-ai-mode-in-india/) It already worked in Hindi by October 2025, when Google added Bengali, Kannada, Malayalam, Marathi, Tamil, Telugu and Urdu. [Google, 8 Oct 2025](https://blog.google/intl/en-in/products/supercharging-search-for-india-new-languages-in-ai-mode-search-live-debuts/) So your customers can ask in their own language, and the AI answer can be the first thing they read.',
+      },
+
+      { t: 'h2', text: 'Check in 2 minutes: does AI name you?' },
+      {
+        t: 'chat',
+        question: 'Which is the best AC repair service near Sector 62, Noida?',
+        intro: 'Here are some well-rated options near Sector 62:',
+        answer: [
+          { name: 'Shop A', note: '4.8 rating · 230 reviews · open till 9 pm' },
+          { name: 'Shop B', note: '4.6 rating · 140 reviews · home visits' },
+          { name: 'Shop C', note: '4.5 rating · 95 reviews · yearly service plans' },
+        ],
+        missing: 'Your business is not in the answer.',
+        caption: 'Made-up example to show the idea. Real answers depend on where the customer is and what they type.',
+      },
+      {
+        t: 'ol',
+        items: [
+          'Open **ChatGPT**, **Gemini**, or Google and tap **AI Mode**.',
+          'Type what your customer would type, with your area: “best bakery in Rajouri Garden”, “CA near Dwarka Sector 10”.',
+          'Ask **three different questions**. Write down which businesses get named.',
+          'Ask about yourself too: “What do you know about [your business name] in [your area]?” Check the phone number, hours and address it gives.',
+        ],
+      },
+      {
+        t: 'callout',
+        tone: 'tip',
+        title: 'Ask like a customer, not like the owner',
+        text: 'Customers don’t type your name. They type their problem: “AC not cooling”, “cake for 50 people”, “help with GST filing”. Test those words.',
+      },
+
+      { t: 'h2', text: 'How AI apps choose which business to name' },
+      {
+        t: 'p',
+        text: 'No AI company publishes a secret formula. But they do say where their answers come from. Each app reads what it can find about your business online. If it can’t find clear facts about you, it is more likely to name someone else.',
+      },
+      {
+        t: 'sources',
+        label: 'Where AI gets its facts about your business',
+        center: 'AI answer',
+        items: [
+          {
+            icon: 'map',
+            title: 'Google Business Profile and Maps',
+            text: 'Your free listing on Google Maps: name, category, address, phone, hours, photos. Google tells businesses to keep it up to date for its AI features, and Gemini uses public Google Maps information.',
+            usedBy: ['Google AI Mode', 'AI Overviews', 'Gemini'],
+          },
+          {
+            icon: 'globe',
+            title: 'Your website',
+            text: 'Pages that say in plain text what you sell and where. Google reads the pages it has indexed. ChatGPT can search the web using outside search engines such as Bing.',
+            usedBy: ['ChatGPT', 'Google AI Mode', 'AI Overviews'],
+          },
+          {
+            icon: 'star',
+            title: 'Reviews and ratings',
+            text: 'Google says more reviews and good ratings can help your local ranking. Gemini can show a place’s rating when it suggests it.',
+            usedBy: ['Google Search and Maps', 'Gemini'],
+          },
+          {
+            icon: 'link',
+            title: 'Other websites that mention you',
+            text: 'Google says it also looks at how well-known a business is, including how many websites link to it. Public posts from Instagram professional accounts can show up in search engines too, unless the owner turns this off.',
+            usedBy: ['Google Search and Maps'],
+          },
+        ],
+      },
+      {
+        t: 'table',
+        caption: 'What each AI app looks at, and what you should do',
+        head: ['App', 'Where its answers come from', 'What you should do'],
+        rows: [
+          ['Google AI Overviews and AI Mode', 'Google Search and your Google Business Profile. Google says no special trick is needed. [Google](https://developers.google.com/search/docs/appearance/ai-features)', 'Complete your Business Profile. Make sure Google can find your website pages.'],
+          ['Gemini', 'Public Google Maps information: address, website, rating, hours. [Gemini Help](https://support.google.com/gemini/answer/16622866)', 'Same as above. Your Google Maps listing is the key.'],
+          ['ChatGPT', 'Web search, which may use outside search engines such as Bing. It also uses your rough location. [OpenAI Help](https://help.openai.com/en/articles/9237897-chatgpt-search)', 'Let search robots read your website. A Bing Places listing can help too.'],
+        ],
+        highlight: 2,
+      },
+      {
+        t: 'callout',
+        tone: 'warn',
+        title: 'You can’t pay to be named in the normal answer',
+        text: 'Google says there is no way to pay for a better local ranking. [Google](https://support.google.com/business/answer/7091) Google and ChatGPT do sell ads, but they are marked as ads: Google labels them “Sponsored”. [TechCrunch, 21 May 2025](https://techcrunch.com/2025/05/21/google-is-bringing-ads-to-ai-mode/) ChatGPT ads started rolling out in India in late August 2026 for logged-in Free and Go users. They appear at the bottom of the answer and are clearly labelled. [Business Today, 27 Aug 2026](https://www.businesstoday.in/technology/artificial-intelligence/story/chatgpt-ads-arrive-in-india-as-openai-targets-free-go-users-in-major-revenue-push-ahead-of-ipo-551655-2026-08-27) OpenAI says ads do not influence ChatGPT’s answers. [OpenAI, 16 Jan 2026](https://openai.com/index/our-approach-to-advertising-and-expanding-access/)',
+      },
+      {
+        t: 'cta',
+        variant: 'mid',
+        title: 'Not sure what AI says about you?',
+        text: 'We check ChatGPT, Gemini and Google AI Mode with you on a **free** strategy call.',
+        points: ['Free, no obligation', 'Talk directly to the founders', 'Fixes in plain words'],
+        button: 'Book a free check',
+        href: '/contact',
+        whatsapp: 'Hi Social ScaleX, can you check what ChatGPT and Google AI say about my business?',
+      },
+
+      { t: 'h2', text: 'The 7-step plan to get named' },
+      {
+        t: 'checklist',
+        label: 'Seven steps to get your business named by AI',
+        items: [
+          {
+            title: 'Write down what AI says today',
+            time: '10 minutes',
+            text: 'Ask the three customer questions from above in ChatGPT, Gemini and Google AI Mode. Take screenshots. This is your “before” picture.',
+          },
+          {
+            title: 'Complete your Google Business Profile',
+            time: '30 minutes',
+            text: 'For a local business, this is usually the most important step. Google says businesses with complete and correct details are more likely to show up in local results. [Google](https://support.google.com/business/answer/7091)',
+            points: [
+              'Pick the **closest category**, for example “Bakery”, not just “Shop”.',
+              'Check your **phone number, address and opening hours**. Set special hours for festivals. [Google](https://support.google.com/business/answer/6303076)',
+              'Add **real photos**: your shop, your team, your work.',
+              'List the **services** you offer and the **areas** you cover.',
+              '**Verify** the profile, so Google knows you are the owner.',
+            ],
+          },
+          {
+            title: 'Get real reviews and reply to each one',
+            time: 'Every week',
+            text: 'Google says more reviews and good ratings can help your local ranking, and replying shows customers you care. [Google](https://support.google.com/business/answer/7091)',
+            points: [
+              'Ask **every** customer after the job, not only the happy ones. Send your review link on WhatsApp.',
+              'Reply to every review, good or bad, in one or two polite lines.',
+              'Never buy reviews or give discounts for them. Google’s rules ban this, and it removes such reviews. [Google policy](https://support.google.com/contributionpolicy/answer/7400114)',
+            ],
+          },
+          {
+            title: 'Put plain answers on your website',
+            time: '1–2 hours',
+            text: 'AI can only repeat what it can read. Google says to keep important information in text, not only inside photos. [Google](https://developers.google.com/search/docs/appearance/ai-features)',
+            points: [
+              'One page for each main service, with your area in the heading: “AC repair in Sector 62, Noida”.',
+              'Write your phone number, opening hours and, if you share them, starting prices as text.',
+              'Add a short FAQ: the five questions customers ask you on the phone.',
+              'No website yet? Your Google profile still works for Google and Gemini. A simple one-page site gives ChatGPT something to read.',
+            ],
+          },
+          {
+            title: 'Use the same name, phone and address everywhere',
+            time: '20 minutes',
+            text: 'Write your details the same way on Google, Instagram, Facebook, JustDial and your website. If one place shows an old number, an AI app may repeat the wrong one.',
+            points: [
+              'Bing has its own business listing, **Bing Places**. ChatGPT may use Bing for search [OpenAI Help](https://help.openai.com/en/articles/9237897-chatgpt-search), so claiming it can help.',
+              'Bing Places can sync with your Google profile, but it does not copy your Google reviews. Bing shows reviews from sites like Yelp and Facebook instead. [Microsoft Q&A forum moderator, 27 Aug 2025](https://learn.microsoft.com/en-us/answers/questions/5528564/can-bing-places-pull-reviews-from-google-business)',
+            ],
+          },
+          {
+            title: 'Let AI search robots read your website',
+            time: '5 minutes for your web person',
+            text: 'Every website has a small file called **robots.txt**. It tells search robots which pages they may read. If it blocks them, AI search features may leave your pages out of their answers.',
+            points: [
+              '**Googlebot** reads pages for Google Search, AI Overviews and AI Mode. [Google](https://developers.google.com/search/docs/appearance/ai-features)',
+              '**OAI-SearchBot** reads pages for ChatGPT search. OpenAI says sites that block it are left out of ChatGPT search answers (they may still appear as plain links), and a change takes about 24 hours. [OpenAI](https://developers.openai.com/api/docs/bots)',
+              '**Bingbot** reads pages for Bing, one of the search engines ChatGPT search may use.',
+            ],
+          },
+          {
+            title: 'Get your name on other trusted websites',
+            time: 'Every month',
+            text: 'Google says how well-known a business is also counts, including how many websites link to it. [Google](https://support.google.com/business/answer/7091)',
+            points: [
+              'Get listed on your market association or trade body website.',
+              'Ask the brands you sell, or your suppliers, to list you as a dealer or partner.',
+              'Share real news, like a new branch or an event, with local news and community pages.',
+              'Post on Instagram from a business account, with your area in the caption. Public posts from professional accounts (18+) can appear in search engines, unless the owner turns this off. [Instagram Help](https://help.instagram.com/147542625391305)',
+            ],
+          },
+        ],
+      },
+      {
+        t: 'callout',
+        tone: 'tip',
+        title: 'Repeat the test every month',
+        text: 'Ask the same three questions on the same apps. Compare with your “before” screenshots. AI answers change, so judge over a few months, not one day.',
+      },
+
+      { t: 'h2', text: 'Before and after: what AI can and can’t use' },
+      {
+        t: 'verdict',
+        sides: [
+          {
+            label: 'AI can’t use this',
+            tone: 'bad',
+            title: 'A profile that hides the facts',
+            points: [
+              'Category just says “Shop”',
+              'Old phone number, no opening hours',
+              'Three old reviews, none answered',
+              'Website says “Welcome to our world of excellence”',
+              'Prices only inside a photo',
+            ],
+          },
+          {
+            label: 'AI can use this',
+            tone: 'good',
+            title: 'A profile that answers the question',
+            points: [
+              'Category says exactly what you do',
+              'Phone, hours and area are the same everywhere',
+              'New reviews every month, each one answered',
+              'Website says “AC repair in Sector 62, Noida. Open 9 am to 9 pm.”',
+              'Services, prices and FAQs written as text',
+            ],
+          },
+        ],
+      },
+
+      { t: 'h2', text: 'Mistakes and myths to avoid' },
+      {
+        t: 'ul',
+        items: [
+          '**“I need a special AI file or code.”** Google says its AI features need no special files, AI text files or special schema. Clear pages that Google can index are what matter. [Google](https://developers.google.com/search/docs/appearance/ai-features)',
+          '**“I can pay ChatGPT to recommend me.”** Ads in ChatGPT are separate and labelled. OpenAI says ads do not influence the answers. [OpenAI](https://openai.com/index/our-approach-to-advertising-and-expanding-access/)',
+          '**“Fake reviews will push me up.”** Google’s rules ban paid and fake reviews, and Google removes them. It can also act against the account. [Google policy](https://support.google.com/contributionpolicy/answer/7400114)',
+          '**“Only big brands get named.”** For local questions, Google also looks at how close a business is to the customer. A small shop nearby can be named before a big brand far away. [Google](https://support.google.com/business/answer/7091)',
+          '**“Once named, always named.”** Answers change with the question and the place. Keep your details fresh.',
+        ],
+      },
+
+      { t: 'h2', text: 'How to know it is working' },
+      {
+        t: 'ul',
+        items: [
+          '**Monthly test:** the same three questions, on the same apps, with saved screenshots.',
+          '**Google Search Console:** if you have a website, visits from Google’s AI features are counted in the Performance report, under “Web”. [Google](https://developers.google.com/search/docs/appearance/ai-features)',
+          '**Ask every new customer:** “How did you find us?” Add “ChatGPT or another AI app” as a choice on your enquiry form.',
+        ],
+      },
+
+      {
+        t: 'cta',
+        variant: 'end',
+        title: 'Want to know what AI says about your business?',
+        text: 'Book a free strategy call. We ask ChatGPT, Gemini and Google AI Mode the questions your customers ask, **show you who gets named**, and tell you what to fix first.',
+        points: ['Google Business Profile checked with you', 'Plain words, no jargon', 'Instagram and website covered', 'Talk directly to the founders'],
+        button: 'Book my free AI check',
+        href: '/contact',
+        whatsapp: 'Hi Social ScaleX, can you check what ChatGPT and Google AI say about my business?',
+      },
+      {
+        t: 'p',
+        text: 'To get found on Instagram as well, read [how to increase Instagram followers](/guides/increase-instagram-followers). If you are deciding where to spend on ads, read [Meta ads vs Google Ads](/guides/meta-ads-vs-google-ads), and see [real client numbers](/case-studies).',
+      },
+    ],
+    faqs: [
+      {
+        q: 'How does ChatGPT decide which business to recommend?',
+        a: 'OpenAI does not publish a formula. ChatGPT search may send searches to outside search engines such as Bing, uses the person’s rough location, and answers from the pages it finds. Clear website pages, a Bing listing and the same details everywhere give it facts to use.',
+      },
+      {
+        q: 'How do I get my business into Google AI Mode and AI Overviews?',
+        a: 'Google says no special trick is needed. Your pages must be indexed and allowed to show a snippet in Google Search, and your Google Business Profile should be complete and up to date.',
+      },
+      {
+        q: 'Can I pay to be recommended by ChatGPT or Google AI?',
+        a: 'Not in the normal answer. Google says you cannot pay for a better local ranking. Google and ChatGPT sell ads, but they are labelled and kept separate, and OpenAI says ads do not influence ChatGPT’s answers.',
+      },
+      {
+        q: 'Do I need a website to be recommended by AI?',
+        a: 'Not always. Google’s AI and Gemini can use your Google Business Profile and Maps listing. ChatGPT finds businesses through web search, so a simple website with clear text gives it more to read.',
+      },
+      {
+        q: 'How long does it take to show up in AI answers?',
+        a: 'No AI company gives a timeline. OpenAI says a robots.txt change takes about 24 hours to apply to ChatGPT search. Profile and website changes can take longer, so check again every month.',
+      },
+      {
+        q: 'Does Google AI Mode work in Hindi?',
+        a: 'Yes. Google offers AI Mode in India in English and Hindi, and added Bengali, Kannada, Malayalam, Marathi, Tamil, Telugu and Urdu in October 2025.',
+      },
+    ],
+    howTo: {
+      name: 'How to get your business recommended by ChatGPT, Gemini and Google AI Mode',
+      tools: ['ChatGPT', 'Gemini', 'Google AI Mode', 'Google Business Profile', 'Bing Places for Business'],
+      steps: [
+        { name: 'Write down what AI says today', text: 'Ask ChatGPT, Gemini and Google AI Mode three questions your customers would ask, with your area name, and save screenshots.' },
+        { name: 'Complete your Google Business Profile', text: 'Set the closest category, correct phone, address and hours, real photos, services and areas served, and verify the profile.' },
+        { name: 'Get real reviews and reply', text: 'Ask every customer for a review, reply to each one, and never buy reviews or offer anything in return.' },
+        { name: 'Put plain answers on your website', text: 'Write one page per service with your area, hours, phone and a short FAQ as text, not only in images.' },
+        { name: 'Use the same details everywhere', text: 'Keep your name, phone and address identical on Google, Bing Places, Instagram, Facebook, directories and your website.' },
+        { name: 'Let AI search robots read your website', text: 'Make sure robots.txt does not block Googlebot, Bingbot or OAI-SearchBot.' },
+        { name: 'Get mentioned on other trusted websites', text: 'Get listed by your trade body, brands and suppliers, and share real news with local media and community pages.' },
+      ],
+    },
+    sources: [S.chatgptIndia, S.aiModeIo, S.pewAi, S.sparktoro2026, S.aiModeIndia, S.aiModeLangs, S.gAiFeatures, S.gbpRanking, S.gbpHours, S.gReviews, S.geminiPlaces, S.chatgptSearch, S.oaiBots, S.bingPlacesQa, S.googleAiAds, S.chatgptAdsIndia, S.oaiAds, S.indexing],
+    services: ['social-media-strategy', 'instagram-marketing'],
+  },
   {
     slug: 'instagram-reels-views-dropped',
     title: 'Instagram Reels views dropped suddenly? A 10-minute diagnosis using Instagram’s own tools',
@@ -1383,6 +1761,10 @@ export function blockText(b: Block): string {
     case 'flow': return b.steps.map((x) => `${x.title} ${x.text}`).join(' ');
     case 'callout': return `${b.title} ${b.text}`;
     case 'cta': return `${b.title} ${b.text} ${b.points.join(' ')}`;
+    case 'stats': return b.items.map((x) => `${x.value} ${x.text}`).join(' ');
+    case 'chat': return `${b.question} ${b.intro} ${b.answer.map((x) => `${x.name} ${x.note}`).join(' ')} ${b.missing} ${b.caption}`;
+    case 'sources': return `${b.center} ${b.items.map((x) => `${x.title} ${x.text} ${x.usedBy.join(' ')}`).join(' ')}`;
+    case 'checklist': return b.items.map((x) => [x.title, x.text, ...(x.points ?? [])].join(' ')).join(' ');
     default: return '';
   }
 }

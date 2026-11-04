@@ -1,10 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Check, Lightbulb, TriangleAlert, X } from 'lucide-react';
+import { ArrowRight, Check, Globe, Lightbulb, Link2, MapPin, Sparkles, Star, TriangleAlert, UserRound, X, type LucideIcon } from 'lucide-react';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
 import { Rich } from '@/components/site/Rich';
 import { whatsappLink } from '@/lib/site';
-import type { CtaBlock, FlowStep, TableBlock, VerdictSide } from '@/lib/guides';
+import type { ChatBlock, ChecklistBlock, CtaBlock, FlowStep, SourceIcon, SourcesBlock, StatsBlock, TableBlock, VerdictSide } from '@/lib/guides';
 
 // Visual blocks for guides: answer-first cards, tables, flows and offers.
 // Server components only: no client JS, so everything is in the HTML that
@@ -166,5 +166,133 @@ export function GuideCta({ b }: { b: CtaBlock }) {
         <a href={wa} target="_blank" rel="noopener noreferrer" className="btn btn-lg bg-on-night text-night hover:opacity-90"><WhatsappIcon size={18} /> Chat on WhatsApp</a>
       </div>
     </aside>
+  );
+}
+
+/** Big numbers, each with its source. The first card is the lead figure. */
+export function Stats({ b }: { b: StatsBlock }) {
+  return (
+    <section aria-label={b.label} className="not-prose my-8">
+      <p className="text-xs font-bold uppercase tracking-[0.14em] text-ink-3">{b.label}</p>
+      <dl className="mt-3 grid gap-3 sm:grid-cols-2">
+        {b.items.map((x, i) => {
+          const lead = i === 0;
+          return (
+            <div key={x.value} className={`flex flex-col rounded-card p-5 ${lead ? 'bg-night text-on-night' : 'border border-line bg-surface'}`}>
+              <dt className={`order-2 mt-2 text-base leading-snug ${lead ? 'text-on-night' : 'text-ink'}`}>{x.text}</dt>
+              <dd className={`order-1 whitespace-nowrap font-display text-5xl leading-none tracking-[-0.02em] sm:text-4xl ${lead ? 'text-coral-on-night' : 'text-ink'}`}>{x.value}</dd>
+              <dd className={`order-3 mt-auto pt-3 text-xs ${lead ? 'text-on-night-2' : 'text-ink-3'}`}>
+                Source:{' '}
+                <a href={x.href} target="_blank" rel="noopener noreferrer" className={`underline underline-offset-2 ${lead ? 'decoration-on-night/40 hover:text-on-night' : 'decoration-line-strong hover:text-ink'}`}>{x.source}</a>
+              </dd>
+            </div>
+          );
+        })}
+      </dl>
+    </section>
+  );
+}
+
+/** What an AI answer looks like to a customer. Always labelled as a made-up example. */
+export function ChatExample({ b }: { b: ChatBlock }) {
+  return (
+    <figure className="not-prose my-8 overflow-hidden rounded-card border border-line bg-surface shadow-lift">
+      <div className="flex items-center gap-2 border-b border-line bg-paper-2 px-4 py-2.5 text-xs font-semibold text-ink-3">
+        <Sparkles className="size-3.5 text-coral-text" aria-hidden="true" /> Example only, not a real AI answer
+      </div>
+      <div className="space-y-4 p-4 sm:p-6">
+        <p className="ml-auto flex w-fit max-w-[88%] items-start gap-2 rounded-2xl rounded-br-md bg-ink px-4 py-2.5 text-base text-on-night">
+          <UserRound className="mt-0.5 size-4 flex-none opacity-70" aria-hidden="true" />
+          <span><span className="sr-only">Customer asks: </span>{b.question}</span>
+        </p>
+        <div className="max-w-[92%] rounded-2xl rounded-bl-md bg-paper-2 p-4">
+          <p className="text-base text-ink"><span className="sr-only">AI answers: </span>{b.intro}</p>
+          <ol className="mt-3 space-y-2">
+            {b.answer.map((a, i) => (
+              <li key={a.name} className="flex gap-3 rounded-xl bg-surface p-3 ring-1 ring-line">
+                <span aria-hidden="true" className="grid size-7 flex-none place-items-center rounded-full bg-positive/10 text-sm font-bold text-positive">{i + 1}</span>
+                <span className="min-w-0">
+                  <span className="block font-semibold text-ink">{a.name}</span>
+                  <span className="mt-0.5 flex items-center gap-1 text-sm text-ink-2"><Star className="size-3.5 flex-none fill-current text-coral-text" aria-hidden="true" />{a.note}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <p className="flex items-center gap-3 rounded-xl border-2 border-dashed border-coral/50 bg-coral-tint px-4 py-3 text-base font-semibold text-coral-text">
+          <X className="size-5 flex-none" aria-hidden="true" /> {b.missing}
+        </p>
+      </div>
+      <figcaption className="border-t border-line px-4 py-3 text-xs text-ink-3">{b.caption}</figcaption>
+    </figure>
+  );
+}
+
+const SOURCE_ICON: Record<SourceIcon, LucideIcon> = { map: MapPin, globe: Globe, star: Star, link: Link2 };
+
+/** Four places an AI answer reads from, arranged around one hub on wider screens. */
+export function SourceMap({ b }: { b: SourcesBlock }) {
+  const hub = (
+    <span className="grid size-24 place-items-center rounded-full bg-night p-3 text-center font-display text-base leading-tight text-on-night ring-8 ring-paper">
+      {b.center}
+    </span>
+  );
+  return (
+    <figure className="not-prose my-8">
+      <figcaption className="text-xs font-bold uppercase tracking-[0.14em] text-ink-3">{b.label}</figcaption>
+      <div className="mt-4 flex justify-center sm:hidden" aria-hidden="true">{hub}</div>
+      <div className="relative mt-3 grid gap-3 sm:mt-4 sm:grid-cols-2 sm:gap-12">
+        {/* Lines through the gaps join each card to the hub. Decorative. */}
+        <span aria-hidden="true" className="absolute inset-x-6 top-1/2 hidden h-px bg-line-strong sm:block" />
+        <span aria-hidden="true" className="absolute inset-y-6 left-1/2 hidden w-px bg-line-strong sm:block" />
+        {b.items.map((x) => {
+          const Icon = SOURCE_ICON[x.icon];
+          return (
+            <section key={x.title} aria-label={x.title} className="relative rounded-card border border-line bg-surface p-5">
+              <span aria-hidden="true" className="grid size-10 place-items-center rounded-xl bg-coral-tint text-coral-text"><Icon className="size-5" /></span>
+              <p className="mt-3 font-semibold text-ink">{x.title}</p>
+              <p className="mt-1 text-sm text-ink-2"><Rich text={x.text} /></p>
+              <p className="mt-3 text-xs text-ink-3">Used by</p>
+              <ul className="mt-1.5 flex flex-wrap gap-1.5">
+                {x.usedBy.map((u) => (
+                  <li key={u} className="rounded-full bg-paper-2 px-2.5 py-1 text-xs font-semibold text-ink-2 ring-1 ring-line">{u}</li>
+                ))}
+              </ul>
+            </section>
+          );
+        })}
+        <span aria-hidden="true" className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 sm:block">{hub}</span>
+      </div>
+    </figure>
+  );
+}
+
+/** Detailed steps: a number, a time chip and plain instructions. Titles are h3s for the outline. */
+export function Checklist({ b }: { b: ChecklistBlock }) {
+  return (
+    <ol aria-label={b.label} className="not-prose my-8 space-y-3">
+      {b.items.map((x, i) => (
+        <li key={x.title} className="relative grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 rounded-card border border-line bg-surface p-5 sm:p-6">
+          <span aria-hidden="true" className="grid size-11 place-items-center rounded-xl border-2 border-coral/50 font-display text-xl text-coral-text">{i + 1}</span>
+          <div>
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <h3 className="font-display text-2xl leading-tight text-ink">{x.title}</h3>
+              {x.time ? <span className="rounded-full bg-paper-2 px-2.5 py-0.5 text-xs font-semibold text-ink-3 ring-1 ring-line">{x.time}</span> : null}
+            </div>
+            <p className="mt-2 text-base text-ink-2"><Rich text={x.text} /></p>
+            {x.points?.length ? (
+              <ul className="mt-3 space-y-2">
+                {x.points.map((pt) => (
+                  <li key={pt} className="flex gap-2.5 text-base text-ink-2">
+                    <Check className="mt-1 size-4 flex-none text-positive" aria-hidden="true" />
+                    <span><Rich text={pt} /></span>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
+        </li>
+      ))}
+    </ol>
   );
 }

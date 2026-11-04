@@ -257,6 +257,9 @@
   .prose-site li:not(.not-prose *)::marker { color: var(--color-coral); }
   .prose-site strong:not(.not-prose *) { color: var(--color-ink); font-weight: 600; }
   .prose-site a:not(.not-prose *) { color: var(--color-coral-text); text-decoration: underline; text-underline-offset: 0.2em; }
+  /* Inline links inside guide cards, tables and callouts (outside the prose styles). */
+  .rich-link { color: var(--color-coral-text); text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 45%, transparent); text-underline-offset: 0.2em; }
+  .rich-link:hover { text-decoration-color: currentColor; }
   .prose-site blockquote {
     border-left: 3px solid var(--color-coral);
     padding-left: 1.25rem;

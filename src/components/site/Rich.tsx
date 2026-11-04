@@ -18,9 +18,9 @@ export function Rich({ text }: { text: string }) {
       const href = m[3];
       out.push(
         href.startsWith('/') ? (
-          <Link key={key++} href={href}>{m[2]}</Link>
+          <Link key={key++} href={href} className="rich-link">{m[2]}</Link>
         ) : (
-          <a key={key++} href={href} target="_blank" rel="noopener noreferrer">{m[2]}</a>
+          <a key={key++} href={href} target="_blank" rel="noopener noreferrer" className="rich-link">{m[2]}</a>
         ),
       );
     }

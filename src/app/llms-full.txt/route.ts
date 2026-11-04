@@ -37,6 +37,14 @@ function blockMd(b: Block): string {
       return `> **${b.title}** ${absLinks(b.text)}`;
     case 'cta':
       return `${b.title} ${absLinks(b.text)} (${abs(b.href)})`;
+    case 'stats':
+      return list(b.items.map((x) => `${x.value}: ${x.text} (${x.source}: ${x.href})`));
+    case 'chat':
+      return `Example (made up): Q: ${b.question}\nA: ${b.intro}\n${b.answer.map((x, n) => `${n + 1}. ${x.name}: ${x.note}`).join('\n')}\n${b.caption}`;
+    case 'sources':
+      return `${b.label}:\n${list(b.items.map((x) => `${x.title}: ${absLinks(x.text)} Used by: ${x.usedBy.join(', ')}`))}`;
+    case 'checklist':
+      return b.items.map((x, n) => `${n + 1}. **${x.title}**${x.time ? ` (${x.time})` : ''}: ${absLinks(x.text)}${x.points?.length ? `\n${x.points.map((pt) => `   - ${absLinks(pt)}`).join('\n')}` : ''}`).join('\n');
   }
 }
 
