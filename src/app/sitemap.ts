@@ -18,10 +18,18 @@ const UPDATED: Record<string, string> = {
   '/automation/instagram-comment-to-dm': '2026-10-15',
   '/automation/whatsapp-automation': '2026-10-15',
   '/automation/youtube-comment-management': '2026-10-15',
-  '/solutions/brand-awareness': '2026-10-15',
   '/case-studies': '2026-10-15',
   '/about': '2026-10-15',
   '/privacy': '2026-10-15',
+  '/areas': '2026-11-04',
+  '/areas/delhi': '2026-11-04',
+  '/areas/noida': '2026-11-04',
+  '/areas/gurugram': '2026-11-04',
+  '/areas/ghaziabad': '2026-11-04',
+  '/areas/faridabad': '2026-11-04',
+  '/solutions/increase-sales': '2026-11-04',
+  '/solutions/brand-awareness': '2026-11-04',
+  '/solutions/product-launch': '2026-11-04',
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {

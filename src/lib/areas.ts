@@ -58,12 +58,12 @@ export const CITIES: City[] = [
     state: 'Delhi',
     district: 'National Capital Territory of Delhi',
     std: '011',
-    metaTitle: 'Social Media Agency in Delhi: All Pin Codes',
+    metaTitle: 'Social Media Marketing Agency in Delhi',
     metaDescription:
-      'Social media marketing across Delhi: all 410 areas and 77 pin codes we serve, from Connaught Place 110001 to 110096. On-location shoots, Reels and ads.',
-    h1: 'Social media marketing agency in Delhi, area by area',
+      'Social media marketing agency in Delhi: Reels shot at your shop, Instagram and Facebook run for you, Meta ads near your door. See results from Delhi stores.',
+    h1: 'Social media marketing agency in Delhi',
     lede:
-      'We are a Delhi team. We shoot at your shop, clinic, café, studio or office anywhere in the city, and run Instagram, Facebook, YouTube and ads for it. Find your area and pin code below.',
+      'We are a Delhi team. We shoot at your shop, clinic, café, studio or office anywhere in the city, and run Instagram, Facebook, YouTube and ads for it. Below are results from Delhi accounts, and what works in the city’s markets.',
     local: [
       'Delhi shops by market. People follow and search by the market’s name, such as Lajpat Nagar, Kamla Nagar or Karol Bagh, more than by “Delhi”. So we name your market and the landmark beside you in Reels, captions and your profile, and tag the location on every post.',
       'Ads can reach a radius around your door instead of the whole city. A store in Rajouri Garden doesn’t need to pay to reach people across the Yamuna who will never visit. Meta and Google both let us draw that radius.',
@@ -112,10 +112,10 @@ export const CITIES: City[] = [
     std: '0120',
     metaTitle: 'Social Media Agency in Noida & Greater Noida',
     metaDescription:
-      'Social media marketing in Noida and Greater Noida: every pin code we serve in Gautam Buddh Nagar, from Sector 18 to Knowledge Park. Shoots, Reels and ads.',
+      'Social media marketing in Noida and Greater Noida: Reels shot on location, Instagram run for you and Meta ads, from Sector 18 to Knowledge Park. Free call.',
     h1: 'Social media marketing agency in Noida and Greater Noida',
     lede:
-      'We work across Gautam Buddh Nagar, from the Sector 18 market to Greater Noida’s campuses. We shoot on location and run Instagram, Facebook, YouTube and ads for Noida businesses. Your pin code is below.',
+      'We work across Gautam Buddh Nagar, from the Sector 18 market to Greater Noida’s campuses. We shoot on location and run Instagram, Facebook, YouTube and ads for Noida businesses. Below: results from Delhi NCR accounts, and what works locally.',
     local: [
       'Noida is laid out in numbered sectors, and people use them: “café in Sector 18”, “salon in Sector 62”. Say the sector in captions, in your bio and in the location tag, so a search and a local audience can place you.',
       'Greater Noida’s Knowledge Park has several universities, so for coaching, food and rentals the audience is young, on Instagram and price-aware. For them, short Reels with the price on screen and a DM or WhatsApp button work well.',
@@ -156,10 +156,10 @@ export const CITIES: City[] = [
     std: '0124',
     metaTitle: 'Social Media Marketing Agency in Gurugram',
     metaDescription:
-      'Social media marketing in Gurugram (Gurgaon): every pin code we serve, from DLF phases and Sohna Road to Manesar. On-location shoots, Reels and Meta ads.',
+      'Social media marketing in Gurugram (Gurgaon): Reels shot on location, Instagram run for you and Meta ads, from DLF phases and Sohna Road to Manesar.',
     h1: 'Social media marketing agency in Gurugram (Gurgaon)',
     lede:
-      'We shoot and run social media for Gurugram businesses, from DLF’s phases to Sohna and Manesar: restaurants, studios, clinics, D2C brands and B2B firms. Find your pin code below.',
+      'We shoot and run social media for Gurugram businesses, from DLF’s phases to Sohna and Manesar: restaurants, studios, clinics, D2C brands and B2B firms. Below: results from Delhi NCR accounts, and what works locally.',
     local: [
       'Gurugram has a large office-going, English-first audience with money to spend and little time. For them the content has to be quick and clear: the offer in the first second, subtitles on every Reel, and booking or ordering in one tap.',
       'The city runs on its roads and phases: Golf Course Road, Sohna Road, DLF Phase 1 to 5. People use those names to search and to decide whether you are close enough, so we use them in captions and location tags.',
@@ -201,10 +201,10 @@ export const CITIES: City[] = [
     std: '0120',
     metaTitle: 'Social Media Marketing Agency in Ghaziabad',
     metaDescription:
-      'Social media marketing in Ghaziabad: every pin code we serve, from Vaishali, Kaushambi and Raj Nagar Extension to Modinagar. Shoots, Reels and ads.',
+      'Social media marketing in Ghaziabad: Reels shot on location, Instagram run for you and Meta ads, from Vaishali and Kaushambi to Raj Nagar Extension.',
     h1: 'Social media marketing agency in Ghaziabad',
     lede:
-      'From Vaishali and Kaushambi on the Delhi border to Raj Nagar Extension, Modinagar and Loni, we shoot and run social media for Ghaziabad businesses. Your pin code is below.',
+      'From Vaishali and Kaushambi on the Delhi border to Raj Nagar Extension, Modinagar and Loni, we shoot and run social media for Ghaziabad businesses. Below: results from Delhi NCR accounts, and what works locally.',
     local: [
       'Much of Ghaziabad lives in large housing societies. For gyms, salons, tutors, bakeries and clinics, that means a dense local audience in a small radius. Ads aimed at a few societies around you often beat city-wide campaigns.',
       'Hindi and English sit side by side here. Captions and on-screen text in the mix your customers speak, rather than formal English, usually get more comments and saves.',
@@ -245,10 +245,10 @@ export const CITIES: City[] = [
     std: '0129',
     metaTitle: 'Social Media Marketing Agency in Faridabad',
     metaDescription:
-      'Social media marketing in Faridabad: every pin code we serve, from NIT and the sector markets to Ballabgarh and Surajkund. Shoots, Reels, YouTube and ads.',
+      'Social media marketing in Faridabad: Reels shot on location, Instagram and YouTube run for you, Meta ads, from NIT and the sector markets to Ballabgarh.',
     h1: 'Social media marketing agency in Faridabad',
     lede:
-      'We shoot and run social media for Faridabad businesses, from the NIT and sector markets to Ballabgarh, Surajkund and the industrial areas. Find your pin code below.',
+      'We shoot and run social media for Faridabad businesses, from the NIT and sector markets to Ballabgarh, Surajkund and the industrial areas. Below: results from Delhi NCR accounts, and what works locally.',
     local: [
       'Faridabad is one of Haryana’s biggest industrial cities. Many businesses here sell to other businesses, so the content that works is proof: the machine running, the batch packed, the plant on a working day, on YouTube and in Google Search ads.',
       'The sector markets and showrooms sell to local families. For them we use Reels shot in the store, offers with a clear end date, and a WhatsApp button so people can ask before they drive over.',
@@ -307,7 +307,7 @@ export function allEntries(): AreaEntry[] {
 export const AREAS_FAQS: Faq[] = [
   {
     q: 'Is there a social media agency near me in Delhi NCR?',
-    a: 'Yes. We are based in Delhi NCR and shoot on location across Delhi, Noida, Gurugram, Ghaziabad and Faridabad. Type your area or pin code in the checker above to see it on our list.',
+    a: 'Yes. We are based in Delhi NCR and shoot on location across Delhi, Noida, Gurugram, Ghaziabad and Faridabad. Type your area or pin code in the checker on this page to see it on our list.',
   },
   {
     q: 'My area isn’t on the list. Can you still work with me?',

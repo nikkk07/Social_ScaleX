@@ -1,5 +1,5 @@
 'use client';
-import React, { useDeferredValue, useId, useMemo, useState } from 'react';
+import React, { useDeferredValue, useEffect, useId, useMemo, useState } from 'react';
 import { MapPin, Search } from 'lucide-react';
 import type { AreaEntry } from '@/lib/areas';
 import { whatsappLink } from '@/lib/site';
@@ -12,6 +12,15 @@ const MAX = 8;
  * lists the page prints as text. Nothing is sent anywhere; without JS the
  * full lists below still work.
  */
+
+/** City pages fold the full pin list into a <details>; open it before jumping to a pin. */
+function revealPin(hash: string) {
+  if (!/^#pin-\d{6}$/.test(hash)) return;
+  const el = document.getElementById(hash.slice(1));
+  const box = el?.closest('details');
+  if (box && !box.open) box.open = true;
+  el?.scrollIntoView({ block: 'center' });
+}
 export function AreaChecker({
   entries,
   cityNames,
@@ -27,6 +36,13 @@ export function AreaChecker({
 }) {
   const id = useId();
   const [q, setQ] = useState('');
+  useEffect(() => {
+    if (!scoped) return;
+    revealPin(window.location.hash);
+    const onHash = () => revealPin(window.location.hash);
+    window.addEventListener('hashchange', onHash);
+    return () => window.removeEventListener('hashchange', onHash);
+  }, [scoped]);
   const query = useDeferredValue(q);
 
   const index = useMemo(() => entries.map((e) => [norm(e[0]), e] as const), [entries]);

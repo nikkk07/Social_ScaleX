@@ -11,7 +11,8 @@ import { LeadSection } from '@/components/site/LeadSection';
 import { ServiceCard, MetricList } from '@/components/site/Cards';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
-import { PORTFOLIO, PORTFOLIO_NOTE, PRINCIPLES, SERVICES, getService, inSentence } from '@/lib/content';
+import { PORTFOLIO, PORTFOLIO_NOTE, PRINCIPLES, SERVICES, TESTIMONIALS, getService, inSentence } from '@/lib/content';
+import { Testimonials } from '@/components/site/Testimonials';
 import { GUIDES } from '@/lib/guides';
 import { socialMeta, whatsappLink } from '@/lib/site';
 import { breadcrumbNode, faqNode, graph, serviceNode, webPageNode } from '@/lib/schema';
@@ -69,6 +70,7 @@ export default async function ServicePage({ params }: Props) {
               <WhatsappIcon size={18} /> Ask on WhatsApp
             </a>
           </div>
+          {s.priceFrom ? <p className="mt-4 text-sm text-ink-2">Plans from <span className="font-semibold text-ink">{s.priceFrom}</span>. Exact quote on the free call.</p> : null}
         </PageIntro>
 
         <section aria-labelledby="included-title" className="py-section">
@@ -136,7 +138,7 @@ export default async function ServicePage({ params }: Props) {
                     <div className="mt-6 flex-1 border-t border-line pt-5">
                       {p.metrics.length ? <MetricList metrics={p.metrics} /> : <p className="text-ink-2">{p.description}</p>}
                     </div>
-                    <Link href={`/case-studies#${p.id}`} className="link mt-5 text-sm">Read the case<span className="sr-only">: {p.client}</span></Link>
+                    <Link href={`/case-studies#${p.id}`} className="link mt-5 inline-flex min-h-6 items-center text-sm">Read the case<span className="sr-only">: {p.client}</span></Link>
                   </li>
                 ))}
               </ul>
@@ -182,6 +184,8 @@ export default async function ServicePage({ params }: Props) {
             </ul>
           </div>
         </section>
+
+        <Testimonials items={TESTIMONIALS.filter((t) => t.services.includes(s.slug))} />
 
         <LeadSection
           title={`Talk to us about ${inSentence(s.name)}`}

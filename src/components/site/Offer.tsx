@@ -60,7 +60,7 @@ export function OfferBox({ variant }: { variant: 'mid' | 'end' }) {
             <Link href={`${PAGE}#get-started`} className="btn btn-primary btn-lg">
               Do it for me <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
-            <a href={WA} target="_blank" rel="noopener noreferrer" className="text-center text-sm font-semibold text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink sm:text-right">
+            <a href={WA} target="_blank" rel="noopener noreferrer" className="py-1 text-center text-sm font-semibold text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink sm:text-right">
               or ask on WhatsApp
             </a>
           </div>

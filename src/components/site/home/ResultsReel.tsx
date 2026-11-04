@@ -231,7 +231,7 @@ export function ResultsReel({ items }: { items: ReelItem[] }) {
               <ArrowRight className="size-4" aria-hidden="true" />
             </button>
           </div>
-          <Link href={`/case-studies#${cur.id}`} className="mt-3 text-sm max-sm:hidden font-semibold text-coral-on-night underline decoration-coral-on-night/40 underline-offset-4 hover:decoration-coral-on-night">
+          <Link href={`/case-studies#${cur.id}`} className="mt-3 inline-flex min-h-6 items-center text-sm max-sm:hidden font-semibold text-coral-on-night underline decoration-coral-on-night/40 underline-offset-4 hover:decoration-coral-on-night">
             See the {cur.client} case <span aria-hidden="true">→</span>
           </Link>
         </div>

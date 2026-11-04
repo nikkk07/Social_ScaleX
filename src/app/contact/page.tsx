@@ -40,6 +40,7 @@ export default function ContactPage() {
         <LeadSection
           id="contact"
           headingLevel={1}
+          formFirst
           title="Book a free strategy call"
           intro="Tell us about your brand and we’ll call you back, usually within a few hours during business hours. No pitch deck and no pressure: an honest conversation about what growth looks like for you."
         />

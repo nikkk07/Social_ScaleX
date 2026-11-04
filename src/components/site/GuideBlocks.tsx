@@ -136,7 +136,7 @@ export function GuideCta({ b }: { b: CtaBlock }) {
           </div>
           <div className="flex flex-col items-stretch gap-3 sm:items-end">
             <Link href={b.href} className="btn btn-primary btn-lg">{b.button} <ArrowRight className="size-4" aria-hidden="true" /></Link>
-            <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink sm:justify-end">
+            <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-6 items-center justify-center gap-1.5 text-sm font-semibold text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink sm:justify-end">
               <WhatsappIcon size={16} /> or ask on WhatsApp
             </a>
           </div>

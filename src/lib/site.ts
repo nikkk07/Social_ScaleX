@@ -37,11 +37,14 @@ export const AREAS_SERVED = ['Delhi', 'Noida', 'Gurugram', 'Ghaziabad', 'Faridab
 export const FOUNDING_YEAR = '2025';
 
 /** `linkedin`: the founder's own public profile (owner-supplied, 15 Oct 2026);
- *  empty = none yet. Shown on /about and emitted as the Person's `sameAs`. */
-export const CONTACTS = [
-  { name: 'Nikhil Bisht', role: 'Co-founder', phone: '+918077727669', display: '+91 80777 27669', linkedin: 'https://www.linkedin.com/in/nikhil07bisht/' },
-  { name: 'Abhishek Anand', role: 'Co-founder', phone: '+917827810150', display: '+91 78278 10150', linkedin: '' },
-] as const;
+ *  empty = none yet. Shown on /about and emitted as the Person's `sameAs`.
+ *  `photo`: a real photo of the founder in /public (e.g. '/team/nikhil.jpg');
+ *  empty = the monogram is shown. Never a stock or generated face. */
+export interface Contact { name: string; role: string; phone: string; display: string; linkedin: string; photo: string }
+export const CONTACTS: readonly [Contact, ...Contact[]] = [
+  { name: 'Nikhil Bisht', role: 'Co-founder', phone: '+918077727669', display: '+91 80777 27669', linkedin: 'https://www.linkedin.com/in/nikhil07bisht/', photo: '' },
+  { name: 'Abhishek Anand', role: 'Co-founder', phone: '+917827810150', display: '+91 78278 10150', linkedin: '', photo: '' },
+];
 
 export const PRIMARY_PHONE = CONTACTS[0];
 
@@ -62,7 +65,16 @@ export const SOCIAL_PROFILES = {
   instagram: 'https://www.instagram.com/social_scalex/',
   linkedin: 'https://www.linkedin.com/company/143428030/',
   youtube: '',
+  facebook: '',
+  /** The verified Google Business Profile's public link (share link from Maps). */
+  googleBusiness: '',
 } as const;
+
+/**
+ * Street address, only once the owner chooses to show one (a service-area
+ * business may hide it on Google). Empty = schema keeps locality only.
+ */
+export const BUSINESS_ADDRESS = { streetAddress: '', postalCode: '' } as const;
 
 export const sameAs = Object.values(SOCIAL_PROFILES).filter(Boolean);
 

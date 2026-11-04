@@ -43,7 +43,28 @@ export interface Service {
   /** PORTFOLIO ids whose work used this service. Empty = no case to show. */
   caseIds: string[];
   related: string[];
+  /** Owner-approved starting price, e.g. '₹15,000 a month'. Absent = "quoted on a free call". */
+  priceFrom?: string;
 }
+
+/**
+ * Client quotes. Add one only with the client's written permission, in their
+ * exact words, with the date it was given. Empty = the section is not shown.
+ */
+export interface Testimonial {
+  quote: string;
+  name: string;
+  /** e.g. 'Owner, Saini Telecom'. */
+  role: string;
+  /** PORTFOLIO id, when the quote is from a client on the results page. */
+  clientId?: string;
+  /** Service slugs the quote is about, so it shows on those pages. */
+  services: string[];
+  /** YYYY-MM-DD the quote was given. */
+  date: string;
+}
+
+export const TESTIMONIALS: Testimonial[] = [];
 
 export const SERVICES: Service[] = [
   {

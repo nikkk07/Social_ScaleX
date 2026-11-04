@@ -11,7 +11,8 @@ import { LeadSection } from '@/components/site/LeadSection';
 import { AreaChecker } from '@/components/site/AreaChecker';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { CITIES, PIN_GROUPS, cityStats, getCity, type AreaEntry } from '@/lib/areas';
-import { getService } from '@/lib/content';
+import { PORTFOLIO, PORTFOLIO_NOTE, getService } from '@/lib/content';
+import { ResultTeaser } from '@/components/site/Results';
 import { getAutomation } from '@/lib/automation';
 import { areaServiceNode, breadcrumbNode, faqNode, graph, webPageNode } from '@/lib/schema';
 import { socialMeta } from '@/lib/site';
@@ -56,12 +57,15 @@ export default async function CityPage({ params }: Props) {
     .filter((x): x is NonNullable<typeof x> => Boolean(x));
   const others = CITIES.filter((o) => o.slug !== c.slug);
 
-  const facts = [
-    { k: 'Pin codes', v: `${stats.pins} (${stats.first}–${stats.last})` },
-    { k: 'Localities listed', v: String(stats.places) },
-    { k: 'STD code', v: c.std },
-    { k: c.district === c.name ? 'State' : 'District', v: c.district === c.name ? c.state : `${c.district}, ${c.state}` },
-  ];
+  // Proof first: real client results. Only Delhi has clients based in the city
+  // itself, so other cities say plainly that these are Delhi NCR accounts.
+  const businessFirst = (a: (typeof PORTFOLIO)[number], b: (typeof PORTFOLIO)[number]) => Number(b.kind === 'Business') - Number(a.kind === 'Business');
+  const local = PORTFOLIO.filter((p) => p.category.includes(c.name)).sort(businessFirst);
+  // Elsewhere, two of the Delhi NCR accounts, a different pair per city, so the pages don't repeat each other.
+  const ncr = PORTFOLIO.filter((p) => /Delhi/.test(p.category)).sort(businessFirst);
+  const at = CITIES.findIndex((o) => o.slug === c.slug) % Math.max(1, ncr.length);
+  const proof = local.length >= 2 ? local.slice(0, 3) : [...ncr.slice(at), ...ncr.slice(0, at)].slice(0, 2);
+  const proofTitle = local.length >= 2 ? `Results from ${c.name} accounts` : 'Results from Delhi NCR accounts';
 
   return (
     <>
@@ -75,19 +79,25 @@ export default async function CityPage({ params }: Props) {
       />
       <SiteShell>
         <PageIntro crumbs={crumbs} eyebrow={`Areas we serve · ${c.name}`} title={c.h1} lede={<p>{c.lede}</p>}>
-          <dl className="mt-8 grid max-w-3xl grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
-            {facts.map((f) => (
-              <div key={f.k} className="flex flex-col-reverse border-t border-line pt-3">
-                <dt className="mt-1 text-xs text-ink-3">{f.k}</dt>
-                <dd className="font-semibold text-ink">{f.v}</dd>
-              </div>
-            ))}
-          </dl>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="#get-started" className="btn btn-primary btn-lg">Book a free strategy call <ArrowRight className="size-4" aria-hidden="true" /></Link>
-            <Link href="#pin-codes" className="btn btn-secondary btn-lg">Find your pin code</Link>
+            <Link href="#pin-codes" className="btn btn-secondary btn-lg">Check your area</Link>
           </div>
         </PageIntro>
+
+        {proof.length ? (
+          <section aria-labelledby="proof-title" className="border-t border-line bg-surface py-section">
+            <div className="wrap">
+              <SectionHead id="proof-title" eyebrow="Proof" title={proofTitle} intro={local.length >= 2 ? PORTFOLIO_NOTE : 'Figures from each client’s own Instagram or YouTube analytics, shared with permission.'} />
+              <ul className={`mt-10 grid gap-5 md:grid-cols-2 ${proof.length > 2 ? 'lg:grid-cols-3' : ''}`}>
+                {proof.map((p) => <li key={p.id}><ResultTeaser p={p} /></li>)}
+              </ul>
+              <p className="mt-8">
+                <Link href="/case-studies" className="link text-sm">See all client results <span aria-hidden="true">→</span></Link>
+              </p>
+            </div>
+          </section>
+        ) : null}
 
         <section aria-labelledby="local-title" className="py-section">
           <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1.3fr_1fr]">
@@ -103,7 +113,7 @@ export default async function CityPage({ params }: Props) {
                 {c.hubs.map((h) => (
                   <li key={h.name} className="flex items-baseline justify-between gap-4 py-3">
                     <span className="min-w-0">
-                      <a href={`#pin-${h.pin}`} className="font-semibold text-ink hover:text-coral-text">{h.name}</a>
+                      <span className="font-semibold text-ink">{h.name}</span>
                       <span className="block text-sm text-ink-3">{h.note}</span>
                     </span>
                     <span className="shrink-0 tabular-nums text-sm text-ink-2">{h.pin}</span>
@@ -133,18 +143,29 @@ export default async function CityPage({ params }: Props) {
           </div>
         </section>
 
+        <section aria-labelledby="faq-title" className="border-t border-line py-section">
+          <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.6fr]">
+            <SectionHead id="faq-title" eyebrow="Questions" title={`${c.name}: common questions`} />
+            <FaqList faqs={c.faqs} />
+          </div>
+        </section>
+
         <section id="pin-codes" aria-labelledby="pins-title" className="scroll-mt-20 border-t border-line py-section">
           <div className="wrap">
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1fr] lg:items-end">
               <SectionHead
                 id="pins-title"
-                eyebrow="Every pin code"
-                title={`${c.longName} pin codes and areas we cover`}
-                intro={`${stats.places} localities across ${stats.pins} pin codes.${c.nameNote ? ` ${c.nameNote}` : ''}`}
+                eyebrow="Check your area"
+                title={`Do we cover your part of ${c.name}?`}
+                intro={`Type your locality or pin code. We cover ${stats.places} localities in ${c.longName}, from official lists.${c.nameNote ? ` ${c.nameNote}` : ''}`}
               />
               <AreaChecker entries={entries} cityNames={{ [c.slug]: c.name }} scoped example={`${c.hubs[0]!.name} or ${c.hubs[0]!.pin}`} />
             </div>
-            <div className="mt-10 gap-5 sm:columns-2 lg:columns-3">
+            <details className="group mt-10">
+              <summary className="inline-flex min-h-11 cursor-pointer list-none items-center rounded-full border border-line-strong bg-surface px-5 py-2.5 font-semibold text-ink hover:border-ink [&::-webkit-details-marker]:hidden">
+                <span className="group-open:hidden">Show</span><span className="hidden group-open:inline">Hide</span>&nbsp;all {stats.pins} pin codes ({stats.first}–{stats.last})
+              </summary>
+            <div className="mt-6 gap-5 sm:columns-2 lg:columns-3">
               {groups.map(([pin, names]) => (
                 <div key={pin} id={`pin-${pin}`} className="mb-5 break-inside-avoid scroll-mt-24 rounded-card border border-line bg-surface p-5 target:border-coral target:bg-coral-tint">
                   <h3 className="font-display text-xl tabular-nums text-ink">
@@ -154,17 +175,11 @@ export default async function CityPage({ params }: Props) {
                 </div>
               ))}
             </div>
+            </details>
             <p className="mt-6 text-sm text-ink-3">
               Source: <a className="link font-normal" href={c.source.url} target="_blank" rel="noopener noreferrer">{c.source.label}</a>.
               Names are as published there. Not listed? Colonies and societies usually sit under one of these post offices, and we still cover you.
             </p>
-          </div>
-        </section>
-
-        <section aria-labelledby="faq-title" className="border-t border-line py-section">
-          <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.6fr]">
-            <SectionHead id="faq-title" eyebrow="Questions" title={`${c.name}: common questions`} />
-            <FaqList faqs={c.faqs} />
           </div>
         </section>
 

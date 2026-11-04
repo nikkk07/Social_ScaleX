@@ -14,7 +14,7 @@ export function Breadcrumbs({ crumbs }: { crumbs: Crumb[] }) {
                 <span aria-current="page" className="text-ink-2">{c.name}</span>
               ) : (
                 <>
-                  <Link href={c.path} className="hover:text-ink">{c.name}</Link>
+                  <Link href={c.path} className="inline-flex min-h-6 items-center hover:text-ink">{c.name}</Link>
                   <span aria-hidden="true">/</span>
                 </>
               )}

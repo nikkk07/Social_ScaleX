@@ -14,9 +14,9 @@ import { breadcrumbNode, faqNode, graph, itemListNode, webPageNode } from '@/lib
 import { abs, socialMeta } from '@/lib/site';
 
 const PATH = '/areas';
-const TITLE = 'Areas We Serve in Delhi NCR: Pin Code Check';
+const TITLE = 'Areas We Serve: Social Media Agency in Delhi NCR';
 const DESCRIPTION =
-  'Check if we cover your area: every locality and pin code we serve in Delhi, Noida, Gurugram, Ghaziabad and Faridabad, from official lists. Remote across India.';
+  'Social media marketing across Delhi, Noida, Gurugram, Ghaziabad and Faridabad: Reels shot on location, page management and ads. Remote across India.';
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -32,10 +32,6 @@ export default function AreasPage() {
   ];
   const entries = allEntries();
   const cityNames = Object.fromEntries(CITIES.map((c) => [c.slug, c.name]));
-  const totals = CITIES.map((c) => cityStats(c.key)).reduce(
-    (t, s) => ({ pins: t.pins + s.pins, places: t.places + s.places }),
-    { pins: 0, places: 0 },
-  );
 
   return (
     <>
@@ -55,8 +51,7 @@ export default function AreasPage() {
           lede={
             <p>
               We shoot on location across Delhi, Noida, Gurugram, Ghaziabad and Faridabad, and run page management, ads and
-              automation remotely for the rest of India. Type your area or pin code to check: {totals.places} localities
-              across {totals.pins} pin codes, from official lists.
+              automation remotely for the rest of India. Not sure we come to you? Type your area below to check.
             </p>
           }
         >
@@ -71,7 +66,7 @@ export default function AreasPage() {
               id="cities-title"
               eyebrow="By city"
               title="Pick your city"
-              intro="Each city page lists every locality and pin code we cover there, with what works for local businesses."
+              intro="Each city page shows client results, what works for local businesses there, and every area we cover."
             />
             <ul className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {CITIES.map((c) => {
@@ -84,9 +79,7 @@ export default function AreasPage() {
                         <ArrowUpRight className="size-5 flex-none text-ink-3 transition-colors group-hover:text-coral-text" aria-hidden="true" />
                       </span>
                       <span className="mt-1 text-sm text-ink-3">{c.district === c.name ? c.state : `${c.district}, ${c.state}`}</span>
-                      <span className="mt-4 text-ink-2">
-                        {s.places} localities · {s.pins} pin codes · {s.first}–{s.last}
-                      </span>
+                      <span className="mt-4 text-ink-2">{s.places} localities covered</span>
                     </Link>
                   </li>
                 );

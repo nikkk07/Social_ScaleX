@@ -10,6 +10,7 @@
 // ─────────────────────────────────────────────────────────────────────
 import {
   AREAS_SERVED,
+  BUSINESS_ADDRESS,
   CONTACTS,
   FOUNDING_YEAR,
   ORG_ID,
@@ -17,6 +18,7 @@ import {
   SITE_TAGLINE,
   SITE_URL,
   WEBSITE_ID,
+  SOCIAL_PROFILES,
   abs,
   sameAs,
 } from './site';
@@ -54,10 +56,13 @@ export function organizationNode(): SchemaNode {
     founder: CONTACTS.map((_, i) => ({ '@id': personId(i) })),
     address: {
       '@type': 'PostalAddress',
+      ...(BUSINESS_ADDRESS.streetAddress ? { streetAddress: BUSINESS_ADDRESS.streetAddress } : {}),
       addressLocality: 'Delhi',
       addressRegion: 'Delhi NCR',
+      ...(BUSINESS_ADDRESS.postalCode ? { postalCode: BUSINESS_ADDRESS.postalCode } : {}),
       addressCountry: 'IN',
     },
+    ...(SOCIAL_PROFILES.googleBusiness ? { hasMap: SOCIAL_PROFILES.googleBusiness } : {}),
     areaServed: AREA_NODES,
     ...(sameAs.length > 0 ? { sameAs } : {}),
     contactPoint: CONTACTS.map((c) => ({

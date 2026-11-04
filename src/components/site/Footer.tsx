@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
-import { Phone } from 'lucide-react';
+import { Facebook, MapPin, Phone } from 'lucide-react';
 import { Logo } from './Logo';
 import { AUTOMATION_LINKS, GOAL_LINKS, SERVICE_LINKS } from './nav';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
@@ -24,6 +24,8 @@ const SOCIAL: Record<keyof typeof SOCIAL_PROFILES, { label: string; icon: React.
   instagram: { label: 'Instagram', icon: <InstagramIcon size={18} className="text-[#C13584]" /> },
   linkedin: { label: 'LinkedIn', icon: <LinkedinIcon size={17} className="text-[#0A66C2]" /> },
   youtube: { label: 'YouTube', icon: <YoutubeIcon size={19} className="text-[#E00000]" /> },
+  facebook: { label: 'Facebook', icon: <Facebook size={17} className="text-[#1877F2]" aria-hidden="true" /> },
+  googleBusiness: { label: 'Google reviews', icon: <MapPin size={17} className="text-[#EA4335]" aria-hidden="true" /> },
 };
 
 const PILL =

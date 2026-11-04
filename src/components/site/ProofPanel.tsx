@@ -89,7 +89,7 @@ export function ProofPanel() {
           <UpdatedAgo iso={RESULTS_AS_OF} />
         </span>
         <span className="mt-1 block">From the clients’ own Instagram dashboards, shared with permission.</span>
-        <Link href="/case-studies" className="mt-1.5 inline-flex items-center gap-1 font-semibold text-coral-text hover:underline">
+        <Link href="/case-studies" className="mt-1.5 inline-flex min-h-6 items-center gap-1 font-semibold text-coral-text hover:underline">
           See all {PORTFOLIO.length} results <ArrowRight className="size-3.5" aria-hidden="true" />
         </Link>
       </figcaption>

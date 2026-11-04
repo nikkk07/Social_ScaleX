@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Phone } from 'lucide-react';
 import { LinkedinIcon } from '@/components/icons/PlatformIcons';
 import { SectionHead } from '@/components/site/SectionHead';
@@ -19,9 +20,13 @@ export function Founders() {
         <ul className="rise grid gap-5 sm:grid-cols-2">
           {CONTACTS.map((c) => (
             <li key={c.phone} className="card flex flex-col p-6">
-              <span aria-hidden="true" className="grid size-20 place-items-center rounded-full bg-night font-display text-3xl text-on-night">
-                {initials(c.name)}
-              </span>
+              {c.photo ? (
+                <Image src={c.photo} alt={`${c.name}, ${c.role} of Social ScaleX`} width={160} height={160} sizes="80px" className="size-20 rounded-full object-cover" />
+              ) : (
+                <span aria-hidden="true" className="grid size-20 place-items-center rounded-full bg-night font-display text-3xl text-on-night">
+                  {initials(c.name)}
+                </span>
+              )}
               <h3 className="mt-5 text-2xl text-ink">{c.name}</h3>
               <p className="text-sm text-ink-3">{c.role}, Social ScaleX</p>
               <ul className="mt-5 flex flex-wrap gap-2">

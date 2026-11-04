@@ -47,7 +47,7 @@ export function GrowthEngine() {
                   <ul className="mt-4 flex flex-col gap-1.5 text-sm">
                     {s.links.map((l) => (
                       <li key={l.href}>
-                        <Link href={l.href} className="link">
+                        <Link href={l.href} className="link inline-flex min-h-6 items-center">
                           {l.label} <span aria-hidden="true">→</span>
                         </Link>
                       </li>

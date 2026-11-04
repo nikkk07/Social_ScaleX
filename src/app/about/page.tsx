@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Phone } from 'lucide-react';
@@ -74,9 +75,14 @@ export default function AboutPage() {
             <ul className="mt-10 grid gap-5 md:grid-cols-2">
               {CONTACTS.map((c, i) => (
                 <li key={c.phone} id={`founder-${i + 1}`} className="card flex flex-wrap items-center justify-between gap-4 p-6 sm:p-8">
-                  <div>
-                    <h3 className="text-3xl text-ink">{c.name}</h3>
-                    <p className="mt-1 text-ink-3">{c.role}, Social ScaleX</p>
+                  <div className="flex items-center gap-4">
+                    {c.photo ? (
+                      <Image src={c.photo} alt={`${c.name}, ${c.role} of Social ScaleX`} width={160} height={160} sizes="80px" className="size-20 flex-none rounded-full object-cover" />
+                    ) : null}
+                    <div>
+                      <h3 className="text-3xl text-ink">{c.name}</h3>
+                      <p className="mt-1 text-ink-3">{c.role}, Social ScaleX</p>
+                    </div>
                   </div>
                   <div className="flex flex-wrap gap-3">
                     <a href={`tel:${c.phone}`} className="btn btn-secondary">
