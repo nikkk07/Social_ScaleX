@@ -75,7 +75,7 @@ export default async function ServicePage({ params }: Props) {
 
         <section aria-labelledby="included-title" className="py-section">
           <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.3fr]">
-            <SectionHead id="included-title" eyebrow="What’s included" title={`What you get with ${inSentence(s.name)}`} intro={s.outcome} />
+            <SectionHead id="included-title" eyebrow="What’s included" title={s.qa?.included?.q ?? `What you get with ${inSentence(s.name)}`} intro={s.qa?.included?.a ?? s.outcome} />
             <ul className="grid gap-px overflow-hidden rounded-card border border-line bg-line sm:grid-cols-2 sm:[&>li:last-child:nth-child(odd)]:col-span-2">
               {s.deliverables.map((d) => (
                 <li key={d} className="flex gap-3 bg-surface p-5 text-ink-2">
@@ -89,7 +89,7 @@ export default async function ServicePage({ params }: Props) {
 
         <section aria-labelledby="fit-title" className="border-t border-line bg-paper-2 py-section">
           <div className="wrap">
-            <SectionHead id="fit-title" eyebrow="Is it right for you?" title="Who this is for, and who it isn’t" />
+            <SectionHead id="fit-title" eyebrow="Is it right for you?" title={s.qa?.fit?.q ?? 'Who this is for, and who it isn’t'} intro={s.qa?.fit?.a} />
             <div className="mt-10 grid gap-5 md:grid-cols-2">
               <div className="card p-6 sm:p-8">
                 <h3 className="text-2xl text-ink">A good fit if…</h3>
@@ -113,7 +113,7 @@ export default async function ServicePage({ params }: Props) {
 
         <section aria-labelledby="how-title" className="py-section">
           <div className="wrap">
-            <SectionHead id="how-title" eyebrow="How it works" title={`How we run ${inSentence(s.name)}`} />
+            <SectionHead id="how-title" eyebrow="How it works" title={s.qa?.how?.q ?? `How we run ${inSentence(s.name)}`} intro={s.qa?.how?.a} />
             <ol className="mt-10 grid gap-px overflow-hidden rounded-card border border-line bg-line md:grid-cols-2 lg:grid-cols-4">
               {s.steps.map((st, i) => (
                 <li key={st.title} className="bg-surface p-6">
@@ -129,7 +129,8 @@ export default async function ServicePage({ params }: Props) {
         {cases.length ? (
           <section aria-labelledby="proof-title" className="border-t border-line bg-surface py-section">
             <div className="wrap">
-              <SectionHead id="proof-title" eyebrow="Proof" title="Accounts where we’ve done this" intro={PORTFOLIO_NOTE} />
+              <SectionHead id="proof-title" eyebrow="Proof" title={s.qa?.proof?.q ?? 'Accounts where we’ve done this'} intro={s.qa?.proof?.a ?? PORTFOLIO_NOTE} />
+              {s.qa?.proof ? <p className="mt-4 max-w-2xl text-sm text-ink-3">{PORTFOLIO_NOTE}</p> : null}
               <ul className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                 {cases.map((p) => (
                   <li key={p.id} className="card flex flex-col p-6">
@@ -163,7 +164,7 @@ export default async function ServicePage({ params }: Props) {
         <section aria-labelledby="faq-title" className="border-t border-line py-section">
           <div className="wrap grid grid-cols-1 gap-12 lg:grid-cols-[1fr_1.6fr] lg:grid-rows-[auto_1fr]">
             <div className="lg:col-start-1 lg:row-start-1">
-              <SectionHead id="faq-title" eyebrow={`${s.name}: FAQs`} title="Common questions" />
+              <SectionHead id="faq-title" eyebrow={`${s.name}: FAQs`} title={s.qa?.faq ?? 'Common questions'} />
             </div>
             <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
               <FaqList faqs={s.faqs} />

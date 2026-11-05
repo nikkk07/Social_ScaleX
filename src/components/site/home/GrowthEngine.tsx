@@ -42,7 +42,7 @@ export function GrowthEngine() {
                   {i + 1}
                 </span>
                 <div className="engine-stage card flex min-w-0 flex-1 flex-col p-5">
-                  <h3 className="text-2xl text-ink">{s.stage}</h3>
+                  <p className="font-display text-2xl text-ink">{s.stage}</p>
                   <p className="mt-2 flex-1 text-sm text-ink-2">{describe(s)}</p>
                   <ul className="mt-4 flex flex-col gap-1.5 text-sm">
                     {s.links.map((l) => (

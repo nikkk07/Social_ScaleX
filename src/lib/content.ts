@@ -45,6 +45,11 @@ export interface Service {
   related: string[];
   /** Owner-approved starting price, e.g. '₹15,000 a month'. Absent = "quoted on a free call". */
   priceFrom?: string;
+  /**
+   * Question-style section headings, each with a 40–60 word answer shown
+   * directly under it. Absent = the template's default headings.
+   */
+  qa?: Partial<Record<'included' | 'fit' | 'how' | 'proof', { q: string; a: string }>> & { faq?: string };
 }
 
 /**
@@ -72,10 +77,29 @@ export const SERVICES: Service[] = [
     name: 'Instagram & Facebook management',
     metaTitle: 'Instagram Marketing Agency in Delhi NCR',
     metaDescription:
-      'Instagram and Facebook page management for Delhi NCR brands: content calendar, Reels, captions, replies and profile fixes. Book a free strategy call.',
+      'Instagram account management services in Delhi NCR: content calendar, Reels, captions, comment and DM replies, profile fixes. Book a free strategy call.',
     h1: 'Instagram marketing agency in Delhi NCR',
     lede:
-      'We run your Instagram day to day: planning the feed, producing and posting Reels and Stories, writing captions, replying to comments and DMs, and fixing the profile so new visitors follow. Your Facebook Page runs from the same plan. You approve the direction each month, and we handle everything after that.',
+      'We’re an Instagram marketing company in Delhi NCR that runs your account day to day. We plan the feed, shoot and post Reels and Stories, write captions, reply to comments and DMs, and fix the profile so new visitors follow. Your Facebook Page runs from the same plan, and you approve the direction each month.',
+    qa: {
+      included: {
+        q: 'What do Instagram account management services include?',
+        a: 'Everything it takes to run the page each month: a content calendar, Reels, carousels and Stories, captions, comment and DM replies, and a profile that turns visitors into followers. Your Facebook Page posts from the same calendar, and you get one report a month from your own Instagram Insights.',
+      },
+      fit: {
+        q: 'Who should hire an Instagram marketing agency?',
+        a: 'Hire one if your customers already spend time on Instagram and nobody on your team has the hours to shoot, post and reply every day. Skip it if you want a guaranteed follower number or a single post for an occasion.',
+      },
+      how: {
+        q: 'How does Instagram account handling work?',
+        a: 'It runs in a monthly loop. We audit your page against three competitors, plan a calendar you approve, then shoot, post and reply every day. At the end of the month we review what reached new people and change the next plan. Nothing goes live without your approval.',
+      },
+      proof: {
+        q: 'Which Instagram accounts have we grown?',
+        a: 'Three stores, all on Instagram. Saini Telecom grew from 400 to 13.1K followers between June and 15 October 2026. Big Discount Mart grew from 800 to 10.8K followers in two months. PraGo Outdoors grew from 14K to 35.3K followers between July and September 2026.',
+      },
+      faq: 'Questions about Instagram marketing services in Delhi',
+    },
     outcome:
       'Your page runs without you. Posts go out on schedule, comments get answered, and you approve the direction once a month.',
     deliverables: [
@@ -110,15 +134,19 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'Will you need my Instagram password?',
-        a: 'No. You add us as a partner in your Meta business portfolio, so the account stays yours and you can remove our access at any time. Instagram’s own terms tell people not to share or collect login details, and we don’t ask for them.',
+        a: 'No. You add us as a partner in your Meta business portfolio, so the account stays yours and you can remove our access at any time. [Meta Business Help](https://www.facebook.com/business/help/1717412048538897) Instagram warns against apps that ask for your login, and its terms forbid collecting other people’s login details. We don’t ask for yours. [Instagram Help](https://help.instagram.com/263751177667145)',
       },
       {
         q: 'Do you buy followers or use engagement apps?',
-        a: 'Never. Instagram says it may remove likes and follows that come from these apps and can limit the accounts using them, and buying likes can make an account ineligible for recommendations. We never buy followers, likes or comments for the accounts we manage.',
+        a: 'Never. Instagram says it may remove likes and follows that come from these apps and can limit the accounts using them. [Instagram Help](https://help.instagram.com/263751177667145) Buying likes can also make an account ineligible for recommendations. [Recommendations guidelines](https://help.instagram.com/313829416281232/) We never buy followers, likes or comments for the accounts we manage.',
       },
       {
         q: 'How many posts a month will you publish?',
-        a: 'It is set in the plan we agree after the audit and written into the calendar you approve. We would rather post fewer Reels that people watch to the end than hit a number for its own sake, because watch time is one of the signals Instagram weighs most.',
+        a: 'We set the number in the plan we agree after the audit, and it goes into the calendar you approve. We’d rather post fewer Reels that people watch to the end than hit a number for its own sake. Instagram says one of its most important predictions for Reels is whether you’ll watch one all the way through. [Instagram ranking explained](https://about.instagram.com/blog/announcements/instagram-ranking-explained)',
+      },
+      {
+        q: 'How much do Instagram marketing services cost in Delhi?',
+        a: 'It depends on four things: how many Reels and posts go out each month, how many shoot days that needs, whether we also handle comment and DM replies, and whether you run ads. Ad spend goes to Meta from your own ad account, separate from our fee. You get a written monthly quote after the free call, before any work starts.',
       },
       {
         q: 'Do you manage Facebook as well?',
@@ -198,7 +226,7 @@ export const SERVICES: Service[] = [
     lede:
       'We build the campaign structure, make the ad creative, set the audience, then test versions against each other until the cost per result stops falling. The ad account stays in your own Meta business portfolio under your billing, so you see every campaign, every rupee spent and every lead directly.',
     outcome:
-      'Your ad spend stops guessing. Creative is tested against creative until the cost per result stops falling.',
+      'Your ad spend stops guessing. We test creative against creative until the cost per result stops falling.',
     deliverables: [
       'Campaign, ad set and audience structure',
       'Ad creative made for paid placements, not boosted posts',
@@ -915,6 +943,9 @@ export const PORTFOLIO: PortfolioItem[] = [
   },
 ];
 
+/** Date of the newest figure on the site (an account can be updated after RESULTS_AS_OF). */
+export const RESULTS_LATEST: string = PORTFOLIO.reduce((d, p) => (p.asOf && p.asOf > d ? p.asOf : d), RESULTS_AS_OF);
+
 export const PORTFOLIO_NOTE =
   'From each client’s own Instagram or YouTube analytics, recorded 30 Sep 2026 (Saini Telecom: 15 Oct 2026) and published with permission. Follower counts checked against the public profiles the same day.';
 
@@ -979,7 +1010,7 @@ export interface PipelineStage {
  */
 export const GROWTH_ENGINE = {
   eyebrow: 'How it fits together',
-  title: 'Your Instagram isn’t a page. It’s a growth engine.',
+  title: 'How Reels, ads, DMs and WhatsApp turn into enquiries',
   intro: 'Every part we run feeds the next one, from the Reel that gets seen to the chat that turns into an enquiry.',
   stages: [
     { stage: 'Reel', from: { kind: 'service', slug: 'reels-production' }, links: [{ href: '/services/reels-production', label: 'Reels production' }] },
@@ -1011,14 +1042,14 @@ export const GROWTH_ENGINE = {
 
 export const HOW_WE_WORK = {
   eyebrow: 'How we work',
-  title: 'Growth isn’t luck. It’s a process.',
+  title: 'How we run your social media, step by step',
   intro: 'Four steps, the same for every account. You see and approve each one.',
 } as const;
 
 /** Homepage section 5: the seven services shown as tiles. Everything else is listed below them. */
 export const CONTROL_ROOM = {
   eyebrow: 'Services',
-  title: 'One team runs the whole engine.',
+  title: 'Social media services, run by one team',
   intro: 'Content, page management, ads and automation, delivered together so each one makes the others work harder.',
   tiles: [
     { label: 'Reels', href: '/services/reels-production', icon: 'clapperboard' },

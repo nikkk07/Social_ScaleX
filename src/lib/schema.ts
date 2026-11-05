@@ -42,6 +42,15 @@ const AREA_NODES = [
 
 export const personId = (i: number) => `${SITE_URL}/about#founder-${i + 1}`;
 
+/** FAQ answer for JSON-LD: drop source citations, keep link text, drop bold marks. */
+function faqText(a: string): string {
+  return a
+    .replace(/\s*\[[^\]]+\]\(https?:[^)\s]+\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)\s]+\)/g, '$1')
+    .replace(/\*\*/g, '')
+    .trim();
+}
+
 export function organizationNode(): SchemaNode {
   return {
     '@type': 'ProfessionalService',
@@ -226,7 +235,7 @@ export function faqNode(faqs: Faq[], pagePath: string): SchemaNode {
     mainEntity: faqs.map((f) => ({
       '@type': 'Question',
       name: f.q,
-      acceptedAnswer: { '@type': 'Answer', text: f.a },
+      acceptedAnswer: { '@type': 'Answer', text: faqText(f.a) },
     })),
   };
 }

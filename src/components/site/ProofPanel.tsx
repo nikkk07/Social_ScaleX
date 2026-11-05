@@ -2,8 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, TrendingUp } from 'lucide-react';
 import { PORTFOLIO, RESULTS_AS_OF, growthChange, type Growth } from '@/lib/content';
-import { UpdatedAgo } from './UpdatedAgo';
-import { monthShort } from '@/lib/dates';
+import { formatDay, monthShort } from '@/lib/dates';
 import { lc } from '@/lib/text';
 import { Avatar, StatusBadge } from './Results';
 
@@ -86,7 +85,8 @@ export function ProofPanel() {
       <figcaption className="mt-5 text-xs text-ink-3 sm:ml-60">
         <span className="inline-flex items-center gap-1.5 font-semibold text-ink-2">
           <span aria-hidden="true" className="size-1.5 rounded-full bg-positive" />
-          <UpdatedAgo iso={RESULTS_AS_OF} />
+          Figures as of {formatDay(main.asOf ?? RESULTS_AS_OF)}
+          {second?.asOf && second.asOf !== (main.asOf ?? RESULTS_AS_OF) ? ` (${second.client}: ${formatDay(second.asOf)})` : ''}
         </span>
         <span className="mt-1 block">From the clients’ own Instagram dashboards, shared with permission.</span>
         <Link href="/case-studies" className="mt-1.5 inline-flex min-h-6 items-center gap-1 font-semibold text-coral-text hover:underline">

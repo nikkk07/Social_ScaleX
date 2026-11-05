@@ -61,7 +61,7 @@ export default function HomePage() {
         {/* Pains */}
         <section aria-labelledby="pains-title" className="py-section">
           <div className="wrap">
-            <SectionHead id="pains-title" eyebrow="Sound familiar?" title="Most brands don’t need more posts. They need posts that work." />
+            <SectionHead id="pains-title" eyebrow="Sound familiar?" title="Why your posts get likes but no customers" />
             {/* Tablets: one row per pain, quote beside the answer. Three columns from lg. */}
             <ul className="mt-12 grid gap-5 lg:grid-cols-3">
               {PAINS.map((p) => (

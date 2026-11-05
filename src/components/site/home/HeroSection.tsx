@@ -17,6 +17,7 @@ export function HeroSection() {
         <div>
           <h1 id="hero-title">
             <span className="eyebrow">Social media marketing agency in Delhi NCR</span>
+            <span className="sr-only">: </span>
             <span className="mt-5 block text-6xl text-ink">
               We grow brands where their customers <em className="font-normal italic text-coral-text">already</em> scroll.
             </span>

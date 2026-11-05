@@ -9,7 +9,7 @@ import { ResultsFilter } from '@/components/site/ResultsFilter';
 import { StoryPanels, StoryRings, StoryTile } from '@/components/site/CaseStories';
 import { StoryController } from '@/components/site/StoryController';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_AS_OF, RESULTS_FAQS, STATS, type ResultGoal } from '@/lib/content';
+import { GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_LATEST, RESULTS_FAQS, STATS, type ResultGoal } from '@/lib/content';
 import { UpdatedAgo } from '@/components/site/UpdatedAgo';
 import { breadcrumbNode, caseStudyNode, faqNode, graph, webPageNode } from '@/lib/schema';
 import { socialMeta } from '@/lib/site';
@@ -61,7 +61,7 @@ export default function CaseStudiesPage() {
           <div className="mt-3"><StoryRings /></div>
           <p className="mt-8 inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-semibold text-ink-2">
             <span aria-hidden="true" className="size-1.5 rounded-full bg-positive" />
-            <UpdatedAgo iso={RESULTS_AS_OF} prefix="Figures updated" />
+            <UpdatedAgo iso={RESULTS_LATEST} prefix="Figures updated" />
           </p>
           <dl className="mt-4 grid grid-cols-2 gap-px overflow-hidden rounded-card border border-line bg-line lg:grid-cols-4">
             {STATS.map((s) => (

@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { UpdatedAgo } from '@/components/site/UpdatedAgo';
-import { PORTFOLIO, PORTFOLIO_NOTE, RESULTS_AS_OF } from '@/lib/content';
+import { PORTFOLIO, PORTFOLIO_NOTE, RESULTS_LATEST } from '@/lib/content';
 import { ResultsReel } from './ResultsReel';
 import { reelItems } from './reelItems';
 
@@ -17,7 +17,7 @@ export function ResultsSection() {
           <h2 id="results-title" className="max-w-2xl text-4xl text-on-night">Real accounts. Real numbers.</h2>
           <p className="inline-flex flex-none items-center gap-2 self-start whitespace-nowrap rounded-full border border-on-night/15 px-3 py-1.5 text-xs font-semibold text-on-night-2 md:self-auto">
             <span aria-hidden="true" className="size-1.5 rounded-full bg-coral-on-night" />
-            <UpdatedAgo iso={RESULTS_AS_OF} prefix="Figures updated" />
+            <UpdatedAgo iso={RESULTS_LATEST} prefix="Figures updated" />
           </p>
         </div>
       </div>
