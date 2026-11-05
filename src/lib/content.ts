@@ -165,6 +165,25 @@ export const SERVICES: Service[] = [
     h1: 'Reels and short video production in Delhi NCR',
     lede:
       'We produce the videos ourselves. Shooting, editing, motion graphics, sound and captions all happen in-house, so you are not hunting for freelancers or filming on your phone between meetings. Give us product access or a shoot date, and finished Reels, YouTube Shorts and carousels come back ready to publish.',
+    qa: {
+      included: {
+        q: 'What does Reels production include?',
+        a: 'Every step from idea to upload: hooks and a script before the shoot, filming on location in Delhi NCR, editing, captions, sound and motion graphics. You get finished Reels, YouTube Shorts and carousels with no other app’s watermark, and the raw footage if you ask for it.',
+      },
+      fit: {
+        q: 'Who needs a Reels production agency?',
+        a: 'Brands with no in-house video team, creators who shoot plenty but can’t find time to edit, and products that sell better when people see them in use. If you only need template graphics, or a TV commercial with a full studio crew, you need a different kind of team.',
+      },
+      how: {
+        q: 'How does a Reels shoot work with us?',
+        a: 'We agree the message and write the hooks first, so the shoot day has no guesswork. Then we film at your store, your venue or outdoors, edit, and show you the cut before it posts. Once it’s live, we check watch time and shares and feed that into the next shoot.',
+      },
+      proof: {
+        q: 'Whose Reels have we made?',
+        a: 'PraGo Outdoors, AC Delhi Vlogs and Subh Journey. Between July and September 2026, PraGo grew from 14K to 35.3K Instagram followers and passed 6M views in 30 days. AC Delhi Vlogs reached 358K Instagram followers, and Subh Journey grew from 15.9K to 25.7K.',
+      },
+      faq: 'Questions about Reels and short video production',
+    },
     outcome:
       'You stop filming on your phone between meetings. Finished Reels and posts arrive ready to publish.',
     deliverables: [
@@ -198,11 +217,11 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'What makes a Reel reach more people?',
-        a: 'Instagram says its most important Reels predictions are how likely someone is to share it, watch it to the end, like it and open its audio page. Adam Mosseri has named watch time, likes per reach and sends per reach as the top signals. So we edit for the first seconds and for rewatches, not for the thumbnail.',
+        a: 'Instagram says its most important Reels predictions are how likely someone is to share it, watch it to the end, like it and open its audio page. [Instagram ranking explained](https://about.instagram.com/blog/announcements/instagram-ranking-explained) Adam Mosseri has named watch time, likes per reach and sends per reach as the top signals. [Social Media Today](https://www.socialmediatoday.com/news/instagram-shares-algorithm-insights-2025/738034/) So we edit for the first seconds and for rewatches, not for the thumbnail.',
       },
       {
         q: 'Can the same videos go on YouTube Shorts?',
-        a: 'Yes. We cut the same shoot for Reels and Shorts and export clean files. Instagram says it shows watermarked Reels, and Reels already posted on Instagram, to fewer people, so we never re-upload another app’s export.',
+        a: 'Yes. We cut the same shoot for Reels and Shorts and export clean files. Instagram says it shows watermarked Reels, and Reels already posted on Instagram, to fewer people, so we never re-upload another app’s export. [Instagram ranking explained](https://about.instagram.com/blog/announcements/instagram-ranking-explained)',
       },
       {
         q: 'Who owns the footage?',
@@ -211,6 +230,10 @@ export const SERVICES: Service[] = [
       {
         q: 'Do you only shoot in Delhi NCR?',
         a: 'Most of our shoots happen across Delhi, Noida and Gurugram. If you are elsewhere in India, ask on the call. Editing footage you send us works from anywhere.',
+      },
+      {
+        q: 'How much does Reels production cost?',
+        a: 'It depends on how many videos you need each month, how many shoot days that takes, and how much editing each one needs, such as motion graphics or talking-head cuts. You get a written monthly quote after the free call, before any shoot is booked.',
       },
     ],
     caseIds: ['prago', 'acdelhivlogs', 'subh'],
@@ -225,6 +248,21 @@ export const SERVICES: Service[] = [
     h1: 'Meta ads agency in Delhi NCR for Facebook and Instagram ads',
     lede:
       'We build the campaign structure, make the ad creative, set the audience, then test versions against each other until the cost per result stops falling. The ad account stays in your own Meta business portfolio under your billing, so you see every campaign, every rupee spent and every lead directly.',
+    qa: {
+      included: {
+        q: 'What does a Meta ads agency do for you?',
+        a: 'We plan and run your Facebook and Instagram ads end to end: campaign structure, audiences, ad creative made for paid placements, lead forms or click-to-WhatsApp, and Pixel plus Conversions API tracking. Every week we pause losing ads, make new versions of the winners and report spend and cost per result.',
+      },
+      fit: {
+        q: 'Which businesses should run Meta ads?',
+        a: 'Local businesses that want calls, enquiries or WhatsApp chats, online stores whose buyers already scroll Instagram, and launches that need reach in one city. If you need ads live today before tracking works, or your budget can’t run long enough for Meta to learn, we’ll tell you on the call.',
+      },
+      how: {
+        q: 'How do we run Facebook and Instagram ads?',
+        a: 'We check your Pixel, Conversions API and past campaigns before any money is spent. Then we write down the offer, the audience and the result we’re paying for, launch, and leave campaigns alone through the learning phase. After that, every week, losing ads stop and winning angles get new versions.',
+      },
+      faq: 'Questions about Meta ads in Delhi NCR',
+    },
     outcome:
       'Your ad spend stops guessing. We test creative against creative until the cost per result stops falling.',
     deliverables: [
@@ -254,19 +292,23 @@ export const SERVICES: Service[] = [
     faqs: [
       {
         q: 'How much should we spend on Meta ads?',
-        a: 'Meta publishes no fixed minimum in rupees. Its own guidance is that a daily budget should be at least five times your cost-per-result goal, and that an ad set usually leaves the learning phase after about 50 results in a week. We size the budget from those two numbers, and you pay Meta directly.',
+        a: 'Meta publishes no fixed minimum in rupees. Its own guidance is that a daily budget should be at least five times your cost-per-result goal, and that an ad set usually leaves the learning phase after about 50 results in a week. [About ad budgets](https://www.facebook.com/business/help/203183363050448) [Learning phase](https://www.facebook.com/business/help/112167992830700) We size the budget from those two numbers, and you pay Meta directly.',
       },
       {
         q: 'Lead forms or WhatsApp: which works better?',
-        a: 'Lead ads collect details inside Facebook or Instagram without sending people to a website. Click-to-WhatsApp ads open a chat with your business instead. We usually test both. Forms tend to give more volume and WhatsApp gives live conversations, so the winner depends on how quickly your team replies.',
+        a: 'Lead ads collect details inside Facebook or Instagram without sending people to a website. Click-to-WhatsApp ads open a chat with your business instead. [Lead ads](https://www.facebook.com/business/help/761812391313386) [Click to WhatsApp](https://www.facebook.com/business/help/447934475640650) We usually test both. Forms tend to give more volume and WhatsApp gives live conversations, so the winner depends on how quickly your team replies.',
       },
       {
         q: 'Why set up the Conversions API as well as the Pixel?',
-        a: 'Meta says the Conversions API is less affected by browser loading errors, connectivity issues and ad blockers than the Pixel alone, and that using both helps lower cost per result. Without reliable tracking, the system optimises for cheap clicks instead of customers.',
+        a: 'Meta says the Conversions API is less affected by browser loading errors, connectivity issues and ad blockers than the Pixel alone, and that using both helps lower cost per result. [Conversions API](https://www.facebook.com/business/help/AboutConversionsAPI) Without reliable tracking, the system optimises for cheap clicks instead of customers.',
       },
       {
         q: 'Who owns the ad account?',
-        a: 'You do. We work through partner access in your Meta business portfolio. Under Meta’s rules, a partner can’t share your assets with another business; only the owner can. Remove our access and everything stays with you.',
+        a: 'You do. We work through partner access in your Meta business portfolio. Under Meta’s rules, a partner can’t share your assets with another business; only the owner can. [Meta Business Help](https://www.facebook.com/business/help/1717412048538897) Remove our access and everything stays with you.',
+      },
+      {
+        q: 'How much does a Meta ads agency charge?',
+        a: 'Our fee and your ad spend are separate, and you pay Meta directly from your own ad account. The fee depends on how many campaigns run at once, how much new ad creative you need each month, and whether tracking needs setting up first. You get a written quote after the free call.',
       },
     ],
     caseIds: [],
@@ -281,6 +323,21 @@ export const SERVICES: Service[] = [
     h1: 'Google Ads management for Delhi NCR businesses',
     lede:
       'Google Ads puts your business in front of people who are already searching for what you sell. We build Search campaigns around the words your buyers type, add Performance Max where it fits, connect conversion tracking and your Google Business Profile, and report cost per lead from an account you own.',
+    qa: {
+      included: {
+        q: 'What does Google Ads management include?',
+        a: 'Keyword research and a Search campaign built on the words your buyers type, ad copy with call, sitelink and location assets, Performance Max where it fits, and conversion tracking with enhanced conversions. Every week we read the search terms, cut wasted spend and report cost per lead.',
+      },
+      fit: {
+        q: 'Who should use Google Ads?',
+        a: 'Businesses people already search for, such as services, clinics, institutes and local stores, and brands that run Meta ads and want leads with clearer intent. If nobody searches for your product yet, Google Ads has little to catch. Meta ads usually create that demand first.',
+      },
+      how: {
+        q: 'How do we manage a Google Ads account?',
+        a: 'We first check what people in your area actually search for, and whether those searches are worth paying for. Then we set up the account in your name with conversion tracking, launch on a tight keyword list, and clean up the search terms every week.',
+      },
+      faq: 'Questions about Google Ads in Delhi NCR',
+    },
     outcome:
       'You reach people at the moment they search, and you can see which searches turned into customers.',
     deliverables: [
@@ -312,15 +369,19 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'How does Google decide what I pay per click?',
-        a: 'Google runs an auction for every search. Where your ad shows depends on your bid, the quality of your ad and landing page, and the searcher’s context. Google says higher-quality ads can often lead to lower costs per click, and what you actually pay is often less than your maximum bid.',
+        a: 'Google runs an auction for every search. Where your ad shows depends on your bid, the quality of your ad and landing page, and the searcher’s context. Google says higher-quality ads can often lead to lower costs per click, and what you actually pay is often less than your maximum bid. [Ad Rank](https://support.google.com/google-ads/answer/1722122) [The ad auction](https://support.google.com/google-ads/answer/6366577)',
       },
       {
         q: 'Will I own the Google Ads account?',
-        a: 'Yes. Google’s guidance for advertisers says an agency must set up a separate Ads account for you and that you have the right to know the clicks, impressions and total cost. We are added as users on your account, and you keep admin access.',
+        a: 'Yes. Google’s guidance for advertisers says an agency must set up a separate Ads account for you and that you have the right to know the clicks, impressions and total cost. [Google advertiser guide](https://support.google.com/adspolicy/answer/9457109) We are added as users on your account, and you keep admin access.',
       },
       {
         q: 'Can people still call us straight from an ad?',
-        a: 'Yes, through call assets. Google removed the option to create new call-only ads in February 2026, so we add your phone number as a call asset on your Search ads and people can tap to call from the results page.',
+        a: 'Yes, through call assets. Google removed the option to create new call-only ads in February 2026, so we add your phone number as a call asset on your Search ads and people can tap to call from the results page. [About call ads](https://support.google.com/google-ads/answer/6341403)',
+      },
+      {
+        q: 'How much does Google Ads management cost?',
+        a: 'Our fee and your ad spend are separate, and you pay Google directly from an account in your name. The fee depends on how many campaigns and locations we run and how much conversion tracking needs setting up. You get a written quote after the free call.',
       },
     ],
     caseIds: [],
@@ -335,6 +396,25 @@ export const SERVICES: Service[] = [
     h1: 'YouTube channel management for brands and creators',
     lede:
       'We run the channel around your videos: titles, descriptions and thumbnails, Shorts cut from long-form, playlists and channel layout, the upload schedule, and a monthly review of watch time and subscribers from YouTube Studio. One channel we work on today has 101K subscribers.',
+    qa: {
+      included: {
+        q: 'What does YouTube channel management include?',
+        a: 'Everything around your videos: the upload schedule, titles, descriptions and thumbnails, Shorts cut from long-form, the channel banner, sections and playlists, comment replies and community posts. Each month we review views, watch time, average view duration and subscribers in YouTube Studio.',
+      },
+      fit: {
+        q: 'Who needs a YouTube channel manager?',
+        a: 'Creators with plenty of footage and no time to package it, brands with product or explainer videos that nobody finds, and Instagram creators who want the same shoots working on a second platform. If you expect ad earnings within a month, YouTube isn’t that fast.',
+      },
+      how: {
+        q: 'How do we manage a YouTube channel?',
+        a: 'We start with an audit: which videos brought subscribers, where viewers drop off and how the channel looks to a first-time visitor. Then we set up a title and thumbnail system, publish long-form videos plus Shorts cut from them, and review the numbers in YouTube Studio every month.',
+      },
+      proof: {
+        q: 'Which YouTube channels do we manage?',
+        a: 'AC Delhi Vlogs and Journey Without Visa. Between July and September 2026, AC Delhi Vlogs grew from 96.6K to 101K subscribers and Journey Without Visa from 22.1K to 26K. Journey Without Visa’s YouTube Studio report showed 514 new subscribers in 28 days.',
+      },
+      faq: 'Questions about YouTube channel management',
+    },
     outcome:
       'Your videos go out packaged properly, on schedule, and you know which ones are bringing subscribers.',
     deliverables: [
@@ -370,7 +450,11 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'Do you need our Google account password?',
-        a: 'No. YouTube lets a channel owner invite managers and editors through channel permissions in YouTube Studio, so you never share your Google password and can remove access whenever you like.',
+        a: 'No. YouTube lets a channel owner invite managers and editors through channel permissions in YouTube Studio, so you never share your Google password and can remove access whenever you like. [YouTube Help](https://support.google.com/youtube/answer/9481328)',
+      },
+      {
+        q: 'How much does YouTube channel management cost?',
+        a: 'It depends on how many long-form videos and Shorts go out each month, whether we also shoot and edit them or only package what you send, and whether you want comment replies. You get a written monthly quote after the free call.',
       },
     ],
     caseIds: ['acdelhivlogs', 'journey'],
@@ -385,6 +469,25 @@ export const SERVICES: Service[] = [
     h1: 'Influencer marketing agency in Delhi NCR',
     lede:
       'We shortlist creators whose audience overlaps yours, check their real reach rather than their follower count, handle outreach and rates, then brief and schedule the collaboration. Because we manage creator accounts ourselves, we know what a fair rate looks like and where padded numbers hide.',
+    qa: {
+      included: {
+        q: 'What does an influencer marketing agency do?',
+        a: 'We find creators whose audience overlaps yours, check their real reach in their own Insights, and handle outreach and rates. Then we write the brief with the right disclosure, plan dates across platforms, and send you reach, views and clicks for each creator after the campaign.',
+      },
+      fit: {
+        q: 'When does influencer marketing make sense?',
+        a: 'When you need reach in one city fast, when your product sells better once someone shows it in use, or when you tried influencers before and couldn’t tell what worked. It doesn’t fit if you want creators to hide that you paid them. Indian rules require a clear label.',
+      },
+      how: {
+        q: 'How do we run an influencer campaign?',
+        a: 'We agree who you want to reach and what a good result looks like. Then we shortlist creators on their own Insights, negotiate rates, book dates and write a brief that includes the disclosure. After the posts go live, you get reach, views and clicks for each creator.',
+      },
+      proof: {
+        q: 'Which influencer campaigns have we run?',
+        a: 'Wanna Party, an online party-products brand selling since 2011. The brief was awareness, not direct sales, so we ran the page, made Reels around the products and brought in creators to put the brand in front of their audiences. It was a past project, and we don’t publish figures for it.',
+      },
+      faq: 'Questions about influencer marketing in Delhi NCR',
+    },
     outcome:
       'You reach people who already trust someone, at a rate we can tell you is fair.',
     deliverables: [
@@ -416,15 +519,19 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'How do you check an influencer’s audience is real?',
-        a: 'We ask for the creator’s own Insights, not just the public follower count: reach, audience cities and age, and how much of their reach comes from non-followers. Instagram says buying likes or using coordinated comment networks can make an account ineligible for recommendations, which is why padded accounts often show many followers and little reach.',
+        a: 'We ask for the creator’s own Insights, not just the public follower count: reach, audience cities and age, and how much of their reach comes from non-followers. Instagram says buying likes or using coordinated comment networks can make an account ineligible for recommendations, which is why padded accounts often show many followers and little reach. [Recommendations guidelines](https://help.instagram.com/313829416281232/)',
       },
       {
         q: 'Do influencer posts in India have to be labelled as ads?',
-        a: 'Yes. ASCI’s guidelines require a clear label such as Ad, Advertisement, Sponsored, Collaboration or Partnership, or the platform’s paid-partnership tag, and the label must not be buried in a group of hashtags. The Department of Consumer Affairs’ 2023 endorsement guidelines say disclosures must be prominent and hard to miss.',
+        a: 'Yes. ASCI’s guidelines require a clear label such as Ad, Advertisement, Sponsored, Collaboration or Partnership, or the platform’s paid-partnership tag, and the label must not be buried in a group of hashtags. [ASCI guidelines](https://www.ascionline.in/wp-content/uploads/2023/08/GUIDELINES-FOR-INFLUENCER-ADVERTISING-IN-DIGITAL-MEDIA.pdf) The Department of Consumer Affairs’ 2023 endorsement guidelines say disclosures must be prominent and hard to miss. [Department of Consumer Affairs](https://consumeraffairs.nic.in/sites/default/files/PIB1892527.pdf)',
       },
       {
         q: 'Should we use small or big influencers?',
         a: 'It depends on the goal. Smaller creators with a tight local audience usually suit footfall and product trial; bigger ones suit launch awareness. We shortlist both and compare them on audience match and past reach, not follower count.',
+      },
+      {
+        q: 'How much does an influencer campaign cost?',
+        a: 'It comes in two parts. The creators’ own fees depend on their reach and what they post. Our fee covers finding and checking creators, negotiating, briefing and reporting. You get a written quote after the free call, before any creator is booked.',
       },
     ],
     caseIds: ['wanna-party'],
@@ -439,6 +546,25 @@ export const SERVICES: Service[] = [
     h1: 'Influencer PR and creator management in Delhi NCR',
     lede:
       'We handle the business side of being a creator. We pitch you to brands that fit your audience, negotiate the fee, read the contract, get you on the list for launches and openings, and look after the PR packages that land at your door. You keep making content. We keep the inbox moving.',
+    qa: {
+      included: {
+        q: 'What does creator management include?',
+        a: 'The business side of being a creator: a media kit and rate card built from your own Insights, brand pitches, replies to collab enquiries, fee negotiation and a contract check, event and launch invites across Delhi NCR, PR packages, and a disclosure check on every paid or gifted post.',
+      },
+      fit: {
+        q: 'Which creators need an influencer management agency?',
+        a: 'Creators who get brand DMs but not enough paid deals, food, travel, lifestyle and events creators in Delhi NCR, and anyone tired of quoting a different price every time. If you want to hide that a post was paid for or gifted, we can’t help. ASCI’s rules require a label.',
+      },
+      how: {
+        q: 'How does creator management work?',
+        a: 'We go through your Insights, your past collabs and what brands have asked you for. Then we build a media kit, a rate card and a short pitch from your real numbers, reach out to brands, answer incoming enquiries, and track every brief, draft and payment until the collab is live and paid.',
+      },
+      proof: {
+        q: 'Which creators do we manage?',
+        a: 'AC Delhi Vlogs, Subh Journey and Journey Without Visa. Between July and September 2026, AC Delhi Vlogs grew from 336K to 358K Instagram followers, Subh Journey from 15.9K to 25.7K, and Journey Without Visa from 22.1K to 26K YouTube subscribers.',
+      },
+      faq: 'Questions about influencer and creator management',
+    },
     outcome:
       'More paid collabs and invites, without living in your DMs.',
     deliverables: [
@@ -470,7 +596,7 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'Do I have to label a PR package or a free event invite?',
-        a: 'Yes. ASCI’s influencer guidelines treat free products, gifts, trips and hotel stays as a material connection, even when the brand sent them without being asked. Labels such as Ad, Collaboration, Partnership or Free gift work, and so does Instagram’s Paid partnership tag.',
+        a: 'Yes. ASCI’s influencer guidelines treat free products, gifts, trips and hotel stays as a material connection, even when the brand sent them without being asked. [ASCI guidelines](https://www.ascionline.in/wp-content/uploads/2023/08/GUIDELINES-FOR-INFLUENCER-ADVERTISING-IN-DIGITAL-MEDIA.pdf) Labels such as Ad, Collaboration, Partnership or Free gift work, and so does Instagram’s Paid partnership tag.',
       },
       {
         q: 'How do you set my rate card?',
@@ -479,6 +605,10 @@ export const SERVICES: Service[] = [
       {
         q: 'Can you help if I’m a smaller creator?',
         a: 'Yes, as long as your audience is engaged and local. Plenty of restaurants, cafés and stores in Delhi NCR would rather work with a smaller creator whose followers actually live nearby. To them, reach in the right city matters more than a big follower count.',
+      },
+      {
+        q: 'How do you charge for creator management?',
+        a: 'It depends on how many brand deals and events we handle for you each month, and whether we also coordinate PR packages. We explain how we charge on the free call and put it in writing before you sign anything.',
       },
     ],
     caseIds: ['acdelhivlogs', 'subh', 'journey'],
@@ -493,6 +623,21 @@ export const SERVICES: Service[] = [
     h1: 'Digital PR agency in Delhi NCR for brands',
     lede:
       'PR gets other people talking about you: a feature on a news or lifestyle site, creators visiting your café or launch, and real customers on camera. We find the story, line up the right media and creators, handle the invites and PR packages, and turn the coverage into content you can post and run as ads.',
+    qa: {
+      included: {
+        q: 'What does a digital PR agency do?',
+        a: 'We find the story in your launch or news, write the release and pitch it to news, business and lifestyle websites. We also host creator visits, send PR packages, commission UGC videos with written usage rights, and send you a coverage report with links, reach and views.',
+      },
+      fit: {
+        q: 'Who needs digital PR?',
+        a: 'Restaurant, café, store and venue launches in Delhi NCR, brands that need credibility before they spend on ads, and D2C brands that need natural-looking product videos for ads. If you want guaranteed backlinks from paid articles, Google treats those as link spam, so we don’t sell them.',
+      },
+      how: {
+        q: 'How does a digital PR campaign work?',
+        a: 'We start with the story: what’s new, why it matters and who needs to hear it. Then we match media, creators and UGC creators to that story and your city, get the features published and the visits hosted, and put the best coverage on your page and into your ads.',
+      },
+      faq: 'Questions about digital PR and UGC in Delhi NCR',
+    },
     outcome:
       'People hear about you from someone other than you.',
     deliverables: [
@@ -524,7 +669,7 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'Are online news features paid?',
-        a: 'Some are earned and many are paid placements, and we tell you which is which before you spend anything. Google’s spam policies say links in paid articles and press releases should carry a sponsored or nofollow tag, so we treat paid features as exposure, not as a way to buy rankings.',
+        a: 'Some are earned and many are paid placements, and we tell you which is which before you spend anything. Google’s spam policies say links in paid articles and press releases should carry a sponsored or nofollow tag, so we treat paid features as exposure, not as a way to buy rankings. [Google spam policies](https://developers.google.com/search/docs/essentials/spam-policies)',
       },
       {
         q: 'What is UGC, and can we use it in ads?',
@@ -532,7 +677,11 @@ export const SERVICES: Service[] = [
       },
       {
         q: 'Is influencer PR the same as influencer marketing?',
-        a: 'They are close but not the same. Influencer marketing is a paid campaign with fixed deliverables. Influencer PR usually means invites, visits and gifted products, and creators post if they enjoy the experience. Both still need a label under ASCI’s rules, because free products and invites count as a material connection.',
+        a: 'They are close but not the same. Influencer marketing is a paid campaign with fixed deliverables. Influencer PR usually means invites, visits and gifted products, and creators post if they enjoy the experience. Both still need a label under ASCI’s rules, because free products and invites count as a material connection. [ASCI guidelines](https://www.ascionline.in/wp-content/uploads/2023/08/GUIDELINES-FOR-INFLUENCER-ADVERTISING-IN-DIGITAL-MEDIA.pdf)',
+      },
+      {
+        q: 'How much does digital PR cost?',
+        a: 'It depends on the mix: how many media features, whether any of them are paid placements, how many creator visits or PR packages, and how many UGC videos. We tell you which features are earned and which are paid before you spend anything, and you get a written quote after the free call.',
       },
     ],
     caseIds: [],
@@ -547,6 +696,25 @@ export const SERVICES: Service[] = [
     h1: 'Product photoshoots and event shoots in Delhi NCR',
     lede:
       'We shoot on location across Delhi NCR, from Delhi and Noida to Gurugram, Ghaziabad and Faridabad: product photography, event coverage, teasers and on-location video. You get original footage of your actual product or venue instead of stock images your competitors also use, and the full raw library comes to you.',
+    qa: {
+      included: {
+        q: 'What do product and event shoots include?',
+        a: 'Product photography, styled and retouched, on-location video for Reels and ads, event coverage edited the same week, teaser and announcement cutdowns, and the full raw library delivered to you. We plan one shoot day to give you photos, Reels and teasers together.',
+      },
+      fit: {
+        q: 'Who books a product or event shoot?',
+        a: 'Online stores and D2C brands that need product photos and Reels together, cafés, stores and venues that want their real space on camera, and events that need edits while people are still talking about them. If you need a large studio set and a film crew, we’re not that team.',
+      },
+      how: {
+        q: 'How does a product shoot work?',
+        a: 'We plan every photo and video against where it will run: your feed, Reels, ads or your website. Then we shoot at your store, venue or outdoors with the product in use, retouch the photos, cut the videos into Reels, teasers and ad versions, and hand over the raw library.',
+      },
+      proof: {
+        q: 'Whose products have we shot?',
+        a: 'PraGo Outdoors and Saini Telecom. For PraGo, we shoot camping, trekking and riding gear in use and get product shoots and Reels from the same days. For Saini Telecom, we shoot the phones and electronics inside the Delhi store and edit that footage into Reels.',
+      },
+      faq: 'Questions about product photoshoots and event shoots in Delhi NCR',
+    },
     outcome:
       'Your product appears in real footage of itself, not stock imagery your competitors also bought.',
     deliverables: [
@@ -583,6 +751,10 @@ export const SERVICES: Service[] = [
         q: 'How fast do event edits come back?',
         a: 'Event coverage is edited the same week, including short teaser cuts you can post while people are still talking about the event.',
       },
+      {
+        q: 'How much does a product or event shoot cost?',
+        a: 'It depends on how many products you need shot or how long the event runs, whether you need photos, video or both, how much editing and retouching each piece needs, and where in Delhi NCR we shoot. You get a written quote after the free call, before the shoot is booked.',
+      },
     ],
     caseIds: ['prago', 'saini-telecom'],
     related: ['reels-production', 'instagram-marketing', 'meta-ads'],
@@ -596,6 +768,25 @@ export const SERVICES: Service[] = [
     h1: 'Social media strategy, audits and reporting',
     lede:
       'It starts with an audit of your account and your category, then sets content pillars, posting rhythm and the formats worth testing. That becomes a 90-day roadmap with weekly check-ins and a monthly report built from your own platform analytics, so you can check every number we quote.',
+    qa: {
+      included: {
+        q: 'What does a social media audit and strategy include?',
+        a: 'An audit of your account, your competitors and your category, then content pillars, a format testing plan and a 90-day roadmap with set review points. Each week we review the numbers on a short call, and each month you get a written report from your own platform analytics.',
+      },
+      fit: {
+        q: 'Who needs a social media strategy instead of full management?',
+        a: 'Brands with an in-house team that needs direction more than hands, owners who post regularly but can’t say what’s working, and anyone about to hire an agency who wants an honest baseline first. If you want a 50-page deck, ours fit on a few pages your team will use.',
+      },
+      how: {
+        q: 'How does a social media audit work?',
+        a: 'We read your profile, content, formats, competitors and analytics together. Then we set pillars, a posting rhythm and tests for 90 days, tied to a business number such as enquiries or sales, and check in every week. Each monthly report comes from your own dashboards and explains what changes next.',
+      },
+      proof: {
+        q: 'Which accounts do we plan and report for?',
+        a: 'AC Delhi Vlogs, Subh Journey and Journey Without Visa. On 30 September 2026 they had 358K Instagram followers, 25.7K Instagram followers and 26K YouTube subscribers, up from 336K, 15.9K and 22.1K on 1 July. Every number comes from the creators’ own dashboards.',
+      },
+      faq: 'Questions about social media audits and reporting',
+    },
     outcome:
       'You get a plan that changes when the data does, and numbers you can check against your own dashboard.',
     deliverables: [
@@ -633,6 +824,10 @@ export const SERVICES: Service[] = [
       {
         q: 'Which numbers actually matter?',
         a: 'The ones tied to the business: enquiries, sales, bookings. On the platform side, reach to non-followers, watch time and shares tell you whether content is travelling. Follower count on its own tells you very little.',
+      },
+      {
+        q: 'How much does a social media audit cost?',
+        a: 'It depends on how many accounts and platforms we cover, and whether the reports also include ad accounts. You get a written quote after the free call, before any work starts.',
       },
     ],
     caseIds: ['acdelhivlogs', 'subh', 'journey'],
