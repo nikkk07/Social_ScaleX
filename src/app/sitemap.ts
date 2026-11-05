@@ -13,12 +13,12 @@ import { abs } from '@/lib/site';
  * visible content changes; guides use their own `updated` date.
  */
 const UPDATED: Record<string, string> = {
-  '/': '2026-10-15',
+  '/': '2026-11-05',
   '/automation': '2026-10-15',
   '/automation/instagram-comment-to-dm': '2026-10-15',
   '/automation/whatsapp-automation': '2026-10-15',
   '/automation/youtube-comment-management': '2026-10-15',
-  '/case-studies': '2026-10-15',
+  '/case-studies': '2026-11-05',
   '/about': '2026-10-15',
   '/privacy': '2026-10-15',
   '/areas': '2026-11-04',
@@ -30,6 +30,8 @@ const UPDATED: Record<string, string> = {
   '/solutions/increase-sales': '2026-11-04',
   '/solutions/brand-awareness': '2026-11-04',
   '/solutions/product-launch': '2026-11-04',
+  // Question headings, direct answers, sources and a price FAQ on every service page.
+  ...Object.fromEntries(SERVICES.map((s) => [`/services/${s.slug}`, '2026-11-05'])),
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -46,7 +48,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: abs('/case-studies'), lastModified: mod('/case-studies'), changeFrequency: 'monthly', priority: 0.8 },
     { url: abs('/about'), lastModified: mod('/about'), changeFrequency: 'monthly', priority: 0.6 },
     { url: abs('/contact'), lastModified: mod('/contact'), changeFrequency: 'yearly', priority: 0.7 },
-    { url: abs('/guides'), lastModified: mod('/guides'), changeFrequency: 'weekly', priority: 0.7 },
+    // The index lists every guide, so it changes when the newest one does.
+    { url: abs('/guides'), lastModified: new Date(GUIDES.reduce((d, g) => (g.updated > d ? g.updated : d), '2026-09-30')), changeFrequency: 'weekly', priority: 0.7 },
     ...GUIDES.map((g) => ({ url: abs(`/guides/${g.slug}`), lastModified: new Date(g.updated), changeFrequency: 'monthly' as const, priority: 0.7 })),
     { url: abs('/privacy'), lastModified: mod('/privacy'), changeFrequency: 'yearly', priority: 0.2 },
     { url: abs('/terms'), lastModified: new Date('2026-07-01'), changeFrequency: 'yearly', priority: 0.2 },
