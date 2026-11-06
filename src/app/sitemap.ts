@@ -1,5 +1,5 @@
 import type { MetadataRoute } from 'next';
-import { SERVICES } from '@/lib/content';
+import { SERVICES, serviceUpdated } from '@/lib/content';
 import { GUIDES } from '@/lib/guides';
 import { AUTOMATIONS } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
@@ -30,8 +30,8 @@ const UPDATED: Record<string, string> = {
   '/solutions/increase-sales': '2026-11-04',
   '/solutions/brand-awareness': '2026-11-04',
   '/solutions/product-launch': '2026-11-04',
-  // Question headings, direct answers, sources and a price FAQ on every service page.
-  ...Object.fromEntries(SERVICES.map((s) => [`/services/${s.slug}`, '2026-11-05'])),
+  // Same date the service page shows.
+  ...Object.fromEntries(SERVICES.map((s) => [`/services/${s.slug}`, serviceUpdated(s)])),
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {

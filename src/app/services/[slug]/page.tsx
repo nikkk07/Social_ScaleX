@@ -11,7 +11,8 @@ import { LeadSection } from '@/components/site/LeadSection';
 import { ServiceCard, MetricList } from '@/components/site/Cards';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
-import { PORTFOLIO, PORTFOLIO_NOTE, PRINCIPLES, SERVICES, TESTIMONIALS, getService, inSentence } from '@/lib/content';
+import { PORTFOLIO, PORTFOLIO_NOTE, PRINCIPLES, SERVICES, TESTIMONIALS, getService, inSentence, serviceUpdated } from '@/lib/content';
+import { formatDay } from '@/lib/dates';
 import { Testimonials } from '@/components/site/Testimonials';
 import { GUIDES } from '@/lib/guides';
 import { socialMeta, whatsappLink } from '@/lib/site';
@@ -54,7 +55,7 @@ export default async function ServicePage({ params }: Props) {
     <>
       <JsonLd
         data={graph([
-          webPageNode({ path, name: s.metaTitle, description: s.metaDescription, hasBreadcrumb: true }),
+          webPageNode({ path, name: s.metaTitle, description: s.metaDescription, hasBreadcrumb: true, dateModified: serviceUpdated(s) }),
           breadcrumbNode(crumbs, path),
           serviceNode(s),
           faqNode(s.faqs, path),
@@ -71,6 +72,7 @@ export default async function ServicePage({ params }: Props) {
             </a>
           </div>
           {s.priceFrom ? <p className="mt-4 text-sm text-ink-2">Plans from <span className="font-semibold text-ink">{s.priceFrom}</span>. Exact quote on the free call.</p> : null}
+          <p className="mt-6 text-xs text-ink-3">Updated <time dateTime={serviceUpdated(s)}>{formatDay(serviceUpdated(s))}</time></p>
         </PageIntro>
 
         <section aria-labelledby="included-title" className="py-section">

@@ -140,6 +140,8 @@ export function webPageNode(opts: {
   description: string;
   type?: 'WebPage' | 'AboutPage' | 'ContactPage' | 'CollectionPage';
   hasBreadcrumb?: boolean;
+  /** ISO date of the last real content change, when the page shows it. */
+  dateModified?: string;
 }): SchemaNode {
   return {
     '@type': opts.type ?? 'WebPage',
@@ -151,6 +153,7 @@ export function webPageNode(opts: {
     about: { '@id': ORG_ID },
     inLanguage: 'en-IN',
     ...(opts.hasBreadcrumb ? { breadcrumb: { '@id': `${abs(opts.path)}#breadcrumb` } } : {}),
+    ...(opts.dateModified ? { dateModified: opts.dateModified } : {}),
   };
 }
 

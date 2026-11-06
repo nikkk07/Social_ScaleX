@@ -50,7 +50,13 @@ export interface Service {
    * directly under it. Absent = the template's default headings.
    */
   qa?: Partial<Record<'included' | 'fit' | 'how' | 'proof', { q: string; a: string }>> & { faq?: string };
+  /** ISO date of this page's last real content change. Absent = SERVICES_UPDATED. */
+  updated?: string;
 }
+
+/** Last content change shared by every service page (shown on the page and used in the sitemap). */
+export const SERVICES_UPDATED = '2026-11-05';
+export const serviceUpdated = (s: Pick<Service, 'updated'>): string => s.updated ?? SERVICES_UPDATED;
 
 /**
  * Client quotes. Add one only with the client's written permission, in their
