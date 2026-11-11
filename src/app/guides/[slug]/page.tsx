@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { SiteShell } from '@/components/site/SiteShell';
 import { Breadcrumbs } from '@/components/site/Breadcrumbs';
@@ -35,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: g.metaTitle,
     description: g.description,
     alternates: { canonical: path },
-    ...socialMeta({ title: g.metaTitle, description: g.description, path, article: { publishedTime: g.published, modifiedTime: g.updated } }),
+    ...socialMeta({ title: g.metaTitle, description: g.description, path, article: { publishedTime: g.published, modifiedTime: g.updated }, ...(g.hero ? { image: { url: g.hero.og, alt: g.hero.alt } } : {}) }),
   };
 }
 
@@ -84,6 +85,13 @@ function BlockView({ b }: { b: Block }) {
       return <Plans title={b.title} note={b.note} />;
     case 'storyboard':
       return <Storyboard b={b} />;
+    case 'figure':
+      return (
+        <figure className={`not-prose my-10 ${b.portrait ? 'mx-auto max-w-[16rem]' : ''}`}>
+          <Image src={b.src} alt={b.alt} width={b.width} height={b.height} sizes={b.portrait ? '16rem' : '(min-width: 1024px) 42rem, 100vw'} className="h-auto w-full rounded-card border border-line" />
+          <figcaption className="mt-2 text-xs text-ink-3">{b.caption}</figcaption>
+        </figure>
+      );
     case 'quote':
       return (
         <figure>
@@ -150,6 +158,9 @@ export default async function GuidePage({ params }: Props) {
                   </ul>
                 ) : null}
               </div>
+              {g.hero ? (
+                <Image src={g.hero.src} alt={g.hero.alt} width={g.hero.width} height={g.hero.height} priority sizes="(min-width: 1024px) 42rem, 100vw" className="mt-8 h-auto w-full rounded-card border border-line" />
+              ) : null}
               </div>
             </div>
           </header>

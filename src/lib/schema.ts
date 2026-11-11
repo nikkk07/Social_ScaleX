@@ -278,7 +278,7 @@ export function articleNode(g: Guide, wordCount: number): SchemaNode {
     dateModified: g.updated,
     author: g.authorIndex !== undefined && CONTACTS[g.authorIndex] ? { '@id': personId(g.authorIndex) } : { '@id': ORG_ID },
     publisher: { '@id': ORG_ID },
-    image: `${SITE_URL}/og-image.png`,
+    image: g.hero ? `${SITE_URL}${g.hero.og}` : `${SITE_URL}/og-image.png`,
     inLanguage: 'en-IN',
     wordCount,
     citation: g.sources.map((s) => s.url),

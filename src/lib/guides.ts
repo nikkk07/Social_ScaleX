@@ -22,6 +22,8 @@ export type Block =
   | { t: 'verdict'; sides: VerdictSide[] }
   /** Comparison table; first column holds row labels. */
   | TableBlock
+  /** An illustration with a caption. `portrait` keeps tall images narrow. */
+  | { t: 'figure'; src: string; alt: string; caption: string; width: number; height: number; portrait?: boolean }
   /** Numbered journey shown as connected steps. */
   | { t: 'flow'; label: string; steps: FlowStep[] }
   /** Tip or warning box for skimmers. */
@@ -179,6 +181,8 @@ export interface Guide {
   howTo?: { name: string; tools?: string[]; steps: { name: string; text: string }[] };
   /** Index into CONTACTS of the named person who wrote or reviewed the guide. */
   authorIndex?: number;
+  /** Lead illustration under the short answer, plus a 1200×630 crop for sharing. */
+  hero?: { src: string; alt: string; width: number; height: number; og: string };
   sources: Source[];
   services: string[];
 }
@@ -284,6 +288,13 @@ export const GUIDES: Guide[] = [
     updated: '2026-11-11',
     author: 'Social ScaleX team',
     authorIndex: 0,
+    hero: {
+      src: '/guides/educational-videos/educational-videos-ai-hero.webp',
+      alt: 'A hand-drawn (a + b)² square in a notebook becoming a vertical educational Reel on a phone',
+      width: 1672,
+      height: 941,
+      og: '/guides/educational-videos/educational-videos-ai-og.jpg',
+    },
     blocks: [
       {
         t: 'p',
@@ -368,6 +379,14 @@ export const GUIDES: Guide[] = [
         ],
       },
       {
+        t: 'figure',
+        src: '/guides/educational-videos/faceless-educational-video-setup.webp',
+        alt: 'A desk with a phone on a small tripod showing a diagram, a microphone and a laptop with a voice waveform, and no person on camera',
+        caption: 'A faceless setup: the phone records the diagram, the microphone records your voice. Illustration.',
+        width: 1448,
+        height: 1086,
+      },
+      {
         t: 'callout',
         tone: 'warn',
         title: 'Label realistic AI video and voice',
@@ -378,6 +397,15 @@ export const GUIDES: Guide[] = [
       {
         t: 'p',
         text: 'Here is a complete plan for one 48-second maths Reel, shot by shot. Every line on screen is checkable, and the numbers work: with a = 3 and b = 2, (a + b)² is 25, while a² + b² is only 13. The missing 12 is 2ab.',
+      },
+      {
+        t: 'figure',
+        src: '/guides/educational-videos/a-plus-b-squared-reel-cover.webp',
+        alt: 'Reel cover: a square split into a², two ab rectangles in coral, and b²',
+        caption: 'The Reel’s key frame: the square split into a², two ab rectangles and b². Illustration.',
+        width: 941,
+        height: 1672,
+        portrait: true,
       },
       {
         t: 'storyboard',
@@ -2112,6 +2140,7 @@ export function blockText(b: Block): string {
     case 'usecases': return b.items.map((x) => [x.name, x.idea, x.hook, x.visuals, x.audience, x.cta].join(' ')).join(' ');
     case 'dmdemo': return [b.reel, ...b.comments.map((x) => `${x.text} ${x.reply}`), b.note].join(' ');
     case 'storyboard': return b.frames.map((x) => [x.title, x.visual, x.voice].join(' ')).join(' ');
+    case 'figure': return b.caption;
     default: return '';
   }
 }

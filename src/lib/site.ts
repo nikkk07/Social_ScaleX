@@ -105,7 +105,10 @@ export function socialMeta(p: {
   description: string;
   path: string;
   article?: { publishedTime: string; modifiedTime: string };
+  /** Page-specific 1200×630 share image (site-relative path). Absent = the site image. */
+  image?: { url: string; alt: string };
 }): Pick<Metadata, 'openGraph' | 'twitter'> {
+  const img = p.image ? { url: p.image.url, width: 1200, height: 630, alt: p.image.alt } : OG_IMAGE;
   const title = `${p.title} | ${SITE_NAME}`;
   const base = {
     siteName: SITE_NAME,
@@ -113,14 +116,14 @@ export function socialMeta(p: {
     url: p.path,
     title,
     description: p.description,
-    images: [OG_IMAGE],
+    images: [img],
   };
   const openGraph: Metadata['openGraph'] = p.article
     ? { ...base, type: 'article', publishedTime: p.article.publishedTime, modifiedTime: p.article.modifiedTime }
     : { ...base, type: 'website' };
   return {
     openGraph,
-    twitter: { card: 'summary_large_image', title, description: p.description, images: [OG_IMAGE.url] },
+    twitter: { card: 'summary_large_image', title, description: p.description, images: [img.url] },
   };
 }
 
