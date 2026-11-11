@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Image from 'next/image';
+import { GuideImage } from '@/components/site/GuideImage';
 import { notFound } from 'next/navigation';
 import { SiteShell } from '@/components/site/SiteShell';
 import { Breadcrumbs } from '@/components/site/Breadcrumbs';
@@ -88,7 +88,7 @@ function BlockView({ b }: { b: Block }) {
     case 'figure':
       return (
         <figure className={`not-prose my-10 ${b.portrait ? 'mx-auto max-w-[16rem]' : ''}`}>
-          <Image src={b.src} alt={b.alt} width={b.width} height={b.height} sizes={b.portrait ? '16rem' : '(min-width: 1024px) 42rem, 100vw'} className="h-auto w-full rounded-card border border-line" />
+          <GuideImage img={b.img} sizes={b.portrait ? '16rem' : '(min-width: 1024px) 42rem, calc(100vw - 2rem)'} className="h-auto w-full rounded-card border border-line" />
           <figcaption className="mt-2 text-xs text-ink-3">{b.caption}</figcaption>
         </figure>
       );
@@ -159,7 +159,7 @@ export default async function GuidePage({ params }: Props) {
                 ) : null}
               </div>
               {g.hero ? (
-                <Image src={g.hero.src} alt={g.hero.alt} width={g.hero.width} height={g.hero.height} priority sizes="(min-width: 1024px) 42rem, 100vw" className="mt-8 h-auto w-full rounded-card border border-line" />
+                <GuideImage img={g.hero} priority sizes="(min-width: 1024px) 42rem, calc(100vw - 2rem)" className="mt-8 h-auto w-full rounded-card border border-line" />
               ) : null}
               </div>
             </div>

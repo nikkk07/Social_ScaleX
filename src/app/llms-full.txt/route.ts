@@ -53,7 +53,7 @@ function blockMd(b: Block): string {
     case 'plans':
       return `${b.title}:\n${list(STUDIO_PLANS.map((p) => `${p.name}: ${rupees(p.price)}/month, ${p.reels} approved reels, comment-to-DM included`))}\nIn every plan: ${STUDIO_INCLUDED.join('; ')}. ${STUDIO_PLAN_RULES.join(' ')} ${absLinks(b.note)} Sign up: ${STUDIO_URL}`;
     case 'figure':
-      return `Illustration: ${b.alt}. ${b.caption}`;
+      return `Illustration: ${b.img.alt}. ${b.caption}`;
     case 'storyboard':
       return `${b.label}:\n${b.frames.map((x, n) => `${n + 1}. ${x.time} ${x.title}. On screen: ${absLinks(x.visual)} Voice-over: “${x.voice}”`).join('\n')}\n${b.caption}`;
     case 'checklist':

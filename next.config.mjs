@@ -70,12 +70,23 @@ const nextConfig = {
   },
   // Vercel already advertises itself; one less response header on every request.
   poweredByHeader: false,
+  images: {
+    // Keep optimised images (client avatars, logos) cached for 31 days instead
+    // of revalidating on every visit.
+    minimumCacheTTL: 2678400,
+  },
   async headers() {
     return [
       { source: '/:path*', headers: baseHeaders },
       ...(process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production'
         ? [{ source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }] }]
         : []),
+      // Guide illustrations are versioned in the file name (…-v1-768.avif), so
+      // browsers and the CDN may keep them for a year without asking again.
+      {
+        source: '/guides/:dir/:file((?:.*)\\.(?:avif|webp|jpg|png))',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
+      },
       { source: '/crm', headers: crmHeaders },
       { source: '/crm/:path*', headers: crmHeaders },
       { source: '/login', headers: crmHeaders },

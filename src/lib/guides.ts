@@ -7,6 +7,7 @@
 // ─────────────────────────────────────────────────────────────────────
 
 import type { Faq } from './content';
+import type { GuideImg } from '@/components/site/GuideImage';
 
 export type Block =
   | { t: 'h2'; text: string }
@@ -23,7 +24,7 @@ export type Block =
   /** Comparison table; first column holds row labels. */
   | TableBlock
   /** An illustration with a caption. `portrait` keeps tall images narrow. */
-  | { t: 'figure'; src: string; alt: string; caption: string; width: number; height: number; portrait?: boolean }
+  | { t: 'figure'; img: GuideImg; caption: string; portrait?: boolean }
   /** Numbered journey shown as connected steps. */
   | { t: 'flow'; label: string; steps: FlowStep[] }
   /** Tip or warning box for skimmers. */
@@ -182,7 +183,7 @@ export interface Guide {
   /** Index into CONTACTS of the named person who wrote or reviewed the guide. */
   authorIndex?: number;
   /** Lead illustration under the short answer, plus a 1200×630 crop for sharing. */
-  hero?: { src: string; alt: string; width: number; height: number; og: string };
+  hero?: GuideImg & { og: string };
   sources: Source[];
   services: string[];
 }
@@ -289,10 +290,12 @@ export const GUIDES: Guide[] = [
     author: 'Social ScaleX team',
     authorIndex: 0,
     hero: {
-      src: '/guides/educational-videos/educational-videos-ai-hero.webp',
+      base: '/guides/educational-videos/educational-videos-ai-hero-v1',
       alt: 'A hand-drawn (a + b)² square in a notebook becoming a vertical educational Reel on a phone',
       width: 1672,
       height: 941,
+      widths: [480, 768, 1080, 1344],
+      blur: 'data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAABwAwCdASoYAA4APu1iqU2ppaOiMAgBMB2JZwABSgGyJbb/2gAA/vmmLtn89I/j8injvRefrxSlijz45HxuGjxl+5P1kAmyjg0bF08lUGpe8fSRplHlkpN4GXAZdVrFg/mSjdEAhZp0AAAA',
       og: '/guides/educational-videos/educational-videos-ai-og.jpg',
     },
     blocks: [
@@ -380,11 +383,15 @@ export const GUIDES: Guide[] = [
       },
       {
         t: 'figure',
-        src: '/guides/educational-videos/faceless-educational-video-setup.webp',
-        alt: 'A desk with a phone on a small tripod showing a diagram, a microphone and a laptop with a voice waveform, and no person on camera',
+        img: {
+          base: '/guides/educational-videos/faceless-educational-video-setup-v1',
+          alt: 'A desk with a phone on a small tripod showing a diagram, a microphone and a laptop with a voice waveform, and no person on camera',
+          width: 1448,
+          height: 1086,
+          widths: [480, 768, 1080, 1344],
+          blur: 'data:image/webp;base64,UklGRuoAAABXRUJQVlA4IN4AAAAwBQCdASoYABIAPu1urlIppiQiqAgBMB2JQAHPlZ9ZlA3roNxz574+UFvbjGDpelCu/AD+79eRIOsqX8ngKGNyaaQRpcSBorewURuv7Owg5P81/Rzgn2llZc5PnC2eNk7etVzXvKkBr5+Be7K2Fa5NHD1tGb1BAgxhZ8Bb16fvVYrW0p9Hj+o3a2RvqFBNEgWzCh23XVXMLS1nXOW59DWXcjBnfq6tsZTrSKfHTcjI/3Ta40bMkPgTzpr9MauoHS05Iz7naLZNrUop3djtujKYBNRUuyagTl7sM9kgAAA=',
+        },
         caption: 'A faceless setup: the phone records the diagram, the microphone records your voice. Illustration.',
-        width: 1448,
-        height: 1086,
       },
       {
         t: 'callout',
@@ -400,11 +407,15 @@ export const GUIDES: Guide[] = [
       },
       {
         t: 'figure',
-        src: '/guides/educational-videos/a-plus-b-squared-reel-cover.webp',
-        alt: 'Reel cover: a square split into a², two ab rectangles in coral, and b²',
+        img: {
+          base: '/guides/educational-videos/a-plus-b-squared-reel-cover-v1',
+          alt: 'Reel cover: a square split into a², two ab rectangles in coral, and b²',
+          width: 941,
+          height: 1672,
+          widths: [256, 512, 768],
+          blur: 'data:image/webp;base64,UklGRsgAAABXRUJQVlA4ILwAAACwBQCdASoYACsAPu1kqE2ppaOiMBqqqTAdiWoAsR/BFABGrckMTrscESFe/B0ZPtP7DqvEUAAA/von8MugFBJWzRntsddn0w3LN5GqEkvxbpFzP0iL1LOdx8Ry1648VVaoyuLDRckAGynn7EFdBjGWDvVlMre7uqTJL3yXHoVf4UroMn+SwdARkoj7fNTOyzYhG6lTlwWwX3q9/8LINSK1N7PIQDTKK2DVuwbj2+o80xml9nQx4VzI01hwAA==',
+        },
         caption: 'The Reel’s key frame: the square split into a², two ab rectangles and b². Illustration.',
-        width: 941,
-        height: 1672,
         portrait: true,
       },
       {
