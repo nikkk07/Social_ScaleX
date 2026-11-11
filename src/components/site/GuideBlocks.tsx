@@ -1,10 +1,11 @@
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, Check, Globe, Lightbulb, Link2, MapPin, Sparkles, Star, TriangleAlert, UserRound, X, type LucideIcon } from 'lucide-react';
+import { ArrowRight, Check, Clapperboard, Globe, Lightbulb, Link2, MapPin, MessageCircle, Sparkles, Star, TriangleAlert, UserRound, X, type LucideIcon } from 'lucide-react';
 import { WhatsappIcon } from '@/components/icons/WhatsappIcon';
 import { Rich } from '@/components/site/Rich';
 import { whatsappLink } from '@/lib/site';
-import type { ChatBlock, ChecklistBlock, CtaBlock, FlowStep, SourceIcon, SourcesBlock, StatsBlock, TableBlock, VerdictSide } from '@/lib/guides';
+import type { ChatBlock, ChecklistBlock, CtaBlock, FlowStep, SourceIcon, SourcesBlock, StatsBlock, StoryboardBlock, TableBlock, VerdictSide } from '@/lib/guides';
+import { STUDIO_INCLUDED, STUDIO_PLAN_RULES, STUDIO_PLANS, STUDIO_URL, rupees } from '@/lib/studio';
 
 // Visual blocks for guides: answer-first cards, tables, flows and offers.
 // Server components only: no client JS, so everything is in the HTML that
@@ -122,6 +123,11 @@ export function Callout({ tone, title, text }: { tone: 'tip' | 'warn'; title: st
   );
 }
 
+/** Internal links stay client-side; full URLs (the Studio) are plain links. */
+function CtaLink({ href, className, children }: { href: string; className: string; children: React.ReactNode }) {
+  return href.startsWith('http') ? <a href={href} className={className}>{children}</a> : <Link href={href} className={className}>{children}</Link>;
+}
+
 /** Social ScaleX offer inside a guide: one promise, a few proof points, two ways to start. */
 export function GuideCta({ b }: { b: CtaBlock }) {
   const wa = whatsappLink(b.whatsapp);
@@ -135,7 +141,7 @@ export function GuideCta({ b }: { b: CtaBlock }) {
             <p className="mt-2 text-lg text-ink-2"><Rich text={b.text} /></p>
           </div>
           <div className="flex flex-col items-stretch gap-3 sm:items-end">
-            <Link href={b.href} className="btn btn-primary btn-lg">{b.button} <ArrowRight className="size-4" aria-hidden="true" /></Link>
+            <CtaLink href={b.href} className="btn btn-primary btn-lg">{b.button} <ArrowRight className="size-4" aria-hidden="true" /></CtaLink>
             <a href={wa} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-6 items-center justify-center gap-1.5 text-sm font-semibold text-ink-2 underline decoration-line-strong underline-offset-4 hover:text-ink sm:justify-end">
               <WhatsappIcon size={16} /> or ask on WhatsApp
             </a>
@@ -162,7 +168,7 @@ export function GuideCta({ b }: { b: CtaBlock }) {
         ))}
       </ul>
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-        <Link href={b.href} className="btn btn-primary btn-lg">{b.button} <ArrowRight className="size-4" aria-hidden="true" /></Link>
+        <CtaLink href={b.href} className="btn btn-primary btn-lg">{b.button} <ArrowRight className="size-4" aria-hidden="true" /></CtaLink>
         <a href={wa} target="_blank" rel="noopener noreferrer" className="btn btn-lg bg-on-night text-night hover:opacity-90"><WhatsappIcon size={18} /> Chat on WhatsApp</a>
       </div>
     </aside>
@@ -294,5 +300,85 @@ export function Checklist({ b }: { b: ChecklistBlock }) {
         </li>
       ))}
     </ol>
+  );
+}
+
+/** Reel Studio plans. Prices and rules live in src/lib/studio.ts. */
+export function Plans({ title, note }: { title: string; note: string }) {
+  const best = STUDIO_PLANS.reduce((a, p) => (p.price / p.reels < a.price / a.reels ? p : a));
+  return (
+    <section aria-label={title} className="not-prose my-10">
+      <p className="text-xs font-bold uppercase tracking-[0.14em] text-ink-3">{title}</p>
+      <ul className="mt-3 grid gap-3 sm:grid-cols-3">
+        {STUDIO_PLANS.map((p) => {
+          const lead = p === best;
+          return (
+            <li key={p.name} className={`flex flex-col rounded-card p-5 sm:p-4 ${lead ? 'bg-night text-on-night shadow-lift' : 'border border-line bg-surface'}`}>
+              <p className={`flex flex-wrap items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] ${lead ? 'text-coral-on-night' : 'text-coral-text'}`}>
+                {p.name}
+                {lead ? <span className="rounded-full bg-coral-on-night/20 px-2 py-0.5 text-[0.6875rem] normal-case tracking-normal">Lowest cost per reel</span> : null}
+              </p>
+              <p className="mt-3 flex flex-wrap items-baseline gap-x-1.5">
+                <span className="font-display text-5xl leading-none tracking-[-0.02em] sm:text-4xl">{rupees(p.price)}</span>
+                <span className={`text-sm ${lead ? 'text-on-night-2' : 'text-ink-3'}`}>/ month</span>
+              </p>
+              <p className={`mt-3 flex items-center gap-2 text-base font-semibold ${lead ? 'text-on-night' : 'text-ink'}`}>
+                <Clapperboard className="size-4 flex-none" aria-hidden="true" /> {p.reels} approved reels
+              </p>
+              <p className={`mt-1 text-sm ${lead ? 'text-on-night-2' : 'text-ink-2'}`}>{p.fit} About {rupees(Math.round(p.price / p.reels))} a reel.</p>
+              <p className={`mt-4 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold ${lead ? 'bg-on-night/10 text-on-night' : 'bg-positive/10 text-positive'}`}>
+                <MessageCircle className="size-4 flex-none" aria-hidden="true" /> Comment-to-DM included
+              </p>
+              <a href={STUDIO_URL} className={`btn mt-5 w-full ${lead ? 'btn-primary' : 'btn-secondary'}`}>
+                Start with {p.name} <ArrowRight className="size-4" aria-hidden="true" />
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+      <div className="mt-3 grid gap-4 rounded-card border border-line bg-paper-2 p-5 sm:grid-cols-2">
+        <div>
+          <p className="text-sm font-semibold text-ink">In every plan</p>
+          <ul className="mt-2 space-y-1.5 text-sm text-ink-2">
+            {STUDIO_INCLUDED.map((x) => <li key={x} className="flex gap-2"><Check className="mt-0.5 size-4 flex-none text-positive" aria-hidden="true" />{x}</li>)}
+          </ul>
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-ink">How reels are counted</p>
+          <ul className="mt-2 space-y-1.5 text-sm text-ink-2">
+            {STUDIO_PLAN_RULES.map((x) => <li key={x} className="flex gap-2"><Check className="mt-0.5 size-4 flex-none text-ink-3" aria-hidden="true" />{x}</li>)}
+          </ul>
+        </div>
+      </div>
+      <p className="mt-3 text-xs text-ink-3"><Rich text={note} /></p>
+    </section>
+  );
+}
+
+/** One short Reel planned second by second. Swipe on phones. */
+export function Storyboard({ b }: { b: StoryboardBlock }) {
+  return (
+    <figure className="not-prose my-10">
+      <figcaption className="text-xs font-bold uppercase tracking-[0.14em] text-ink-3">{b.label}</figcaption>
+      <ol tabIndex={0} aria-label={`${b.label}, ${b.frames.length} shots`} className="mt-3 flex snap-x snap-mandatory gap-3 outline-offset-4 overflow-x-auto pb-3 [scrollbar-width:thin] sm:grid sm:grid-cols-3 sm:overflow-visible sm:pb-0">
+        {b.frames.map((f, i) => (
+          <li key={f.time} className="flex w-[78%] flex-none snap-start flex-col overflow-hidden rounded-card border border-line bg-surface sm:w-auto">
+            <div className="relative bg-night px-4 pb-5 pt-4 text-on-night">
+              <div aria-hidden="true" className="absolute inset-0 bg-[radial-gradient(110%_80%_at_100%_0%,rgb(224_70_43/0.35),transparent_60%)]" />
+              <p className="relative flex items-center justify-between text-xs font-semibold text-on-night-2">
+                <span>Shot {i + 1}</span>
+                <span className="rounded-full bg-on-night/10 px-2 py-0.5 tabular-nums">{f.time}</span>
+              </p>
+              <p className="relative mt-3 font-display text-2xl leading-tight">{f.title}</p>
+            </div>
+            <dl className="grid flex-1 content-start gap-3 p-4 text-sm">
+              <div><dt className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">On screen</dt><dd className="mt-1 text-ink"><Rich text={f.visual} /></dd></div>
+              <div><dt className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">Voice-over</dt><dd className="mt-1 text-ink-2">“{f.voice}”</dd></div>
+            </dl>
+          </li>
+        ))}
+      </ol>
+      <p className="mt-2 text-xs text-ink-3">{b.caption}</p>
+    </figure>
   );
 }

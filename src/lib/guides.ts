@@ -35,7 +35,58 @@ export type Block =
   /** Where an AI answer gets its facts: four cards around one hub. */
   | SourcesBlock
   /** Detailed numbered steps with a time estimate; titles render as h3. */
-  | ChecklistBlock;
+  | ChecklistBlock
+  /** Clickable steps with one detail panel. Every panel is in the HTML; JS only switches. */
+  | WorkflowBlock
+  /** Clickable industry cards, each with one sample Reel. */
+  | UseCasesBlock
+  /** Interactive comment-to-DM example with the platform limits beside it. */
+  | DmDemoBlock
+  /** Reel Studio plans, from src/lib/studio.ts. */
+  | { t: 'plans'; title: string; note: string }
+  /** Second-by-second plan of one short educational Reel. */
+  | StoryboardBlock;
+
+export interface WorkflowBlock {
+  t: 'workflow';
+  label: string;
+  steps: { title: string; text: string; points: string[] }[];
+  note: string;
+}
+
+export interface UseCase {
+  name: string;
+  idea: string;
+  hook: string;
+  visuals: string;
+  audience: string;
+  cta: string;
+}
+
+export interface UseCasesBlock {
+  t: 'usecases';
+  label: string;
+  items: UseCase[];
+  note: string;
+}
+
+export interface DmDemoBlock {
+  t: 'dmdemo';
+  label: string;
+  account: string;
+  reel: string;
+  commenter: string;
+  /** `reply` empty = no trigger word, so no DM. */
+  comments: { text: string; reply: string }[];
+  note: string;
+}
+
+export interface StoryboardBlock {
+  t: 'storyboard';
+  label: string;
+  frames: { time: string; title: string; visual: string; voice: string }[];
+  caption: string;
+}
 
 export interface StatsBlock {
   t: 'stats';
@@ -215,6 +266,298 @@ const S = {
 } satisfies Record<string, Source>;
 
 export const GUIDES: Guide[] = [
+  {
+    slug: 'how-to-make-educational-videos-using-ai',
+    title: 'How to make educational videos using AI, step by step (free method included)',
+    metaTitle: 'How to Make Educational Videos Using AI (2026 Guide)',
+    navTitle: 'Educational videos with AI',
+    description:
+      'Make educational videos with AI in 8 steps: one idea, checked facts, a 45-second script, AI visuals, voice-over and captions. Free method plus a Reel example.',
+    summary:
+      'Pick one small idea, check the facts yourself, and let AI do the slow parts: the first draft of the script, the visuals, the voice-over and the captions. Keep each video short and about one thing. Watch every second before you post, and label realistic AI footage. You can do all of this free with general AI tools, or let Reel Studio run the weekly routine for you.',
+    keyPoints: [
+      '**Short wins.** In 6.9 million lesson-video sessions, the median watch time was at most about 6 minutes, however long the video ran.',
+      '**AI drafts, you check.** AI writes fast and sometimes gets facts wrong. Every claim needs a human check.',
+      '**Label realistic AI.** Instagram and YouTube ask you to disclose realistic AI video or voice.',
+    ],
+    published: '2026-11-11',
+    updated: '2026-11-11',
+    author: 'Social ScaleX team',
+    authorIndex: 0,
+    blocks: [
+      {
+        t: 'p',
+        text: 'You know your subject. You can explain a tricky idea to a student across the table in two minutes. Turning that into a video every week is the hard part: writing, recording, editing, posting, replying. AI now handles most of that work. It still can’t replace your judgement, and this guide shows exactly where each one fits.',
+      },
+
+      { t: 'h2', text: 'Can AI really make educational videos?' },
+      {
+        t: 'p',
+        text: 'Yes, for short explainers. AI can draft a script, generate images and video clips, read the script in a natural voice, and add captions, in Hindi, Hinglish or English. What it can’t do is know whether the facts are right for your students. A teacher, coach or expert still picks the topic and checks every claim before posting.',
+      },
+      {
+        t: 'table',
+        caption: 'Who does what in an AI-made educational video',
+        head: ['Job', 'AI does it well', 'You still decide'],
+        rows: [
+          ['Topic', 'Suggests ideas from your notes, comments or website', 'Which question your audience actually asks'],
+          ['Script', 'Writes a first draft in seconds', 'Whether every fact is right'],
+          ['Visuals', 'Generates images, clips and simple animations', 'Whether each visual explains or just decorates'],
+          ['Voice and captions', 'Reads the script and adds subtitles', 'Pronunciation of names and technical terms'],
+          ['Posting', 'Schedules, posts and replies to set comments', 'What goes live under your name'],
+        ],
+        highlight: 2,
+      },
+      {
+        t: 'callout',
+        tone: 'tip',
+        title: 'Google doesn’t penalise AI help',
+        text: 'Google says it rewards high-quality content “however it is produced”, and that appropriate use of AI is not against its guidelines. Using AI mainly to game rankings is. [Google Search Central](https://developers.google.com/search/blog/2023/02/google-search-and-ai-content)',
+      },
+
+      { t: 'h2', text: 'How do you make an educational video with AI, step by step?' },
+      {
+        t: 'p',
+        text: 'Follow these eight steps for each video. The first time takes an afternoon. By the fifth video, most of it becomes routine. You only need a phone or laptop, a free AI chat tool such as ChatGPT, Gemini or Claude, and any video editor that adds captions.',
+      },
+      {
+        t: 'checklist',
+        label: 'Eight steps to an AI educational video',
+        items: [
+          {
+            title: 'Pick one question your audience asks',
+            time: '10 min',
+            text: 'Look at student doubts, comments, sales calls and WhatsApp questions. Pick one narrow question, such as “why is (a + b)² not a² + b²?”, not “all of algebra”. One video, one idea.',
+          },
+          {
+            title: 'Research and verify the facts',
+            time: '20 min',
+            text: 'Ask AI for an outline, then check each claim against a source you trust: the textbook, the official website, the original study. If you can’t confirm a fact, cut it. AI states wrong things as confidently as right ones.',
+          },
+          {
+            title: 'Write a 45 to 60 second script',
+            time: '20 min',
+            text: 'Use the shape that works for short lessons: a question as the hook, one explanation, one example, a one-line recap and one call to action. Write the way you speak. Research on multimedia learning finds people learn better from a conversational style than a formal one. [Mayer, Multimedia Principles](https://ugc.futurelearn.com/uploads/files/7d/d6/7dd6188d-c343-4311-b064-ac98d2c95abc/Multimedia_Principles._R._E._Mayer__2020.pdf)',
+          },
+          {
+            title: 'Generate visuals that explain',
+            time: '30 min',
+            text: 'Plan one visual per sentence: a diagram, a labelled object, a step appearing on screen. Leave out decoration. Learners do better when extra material is cut and the key parts are highlighted.',
+            points: ['Check any text inside AI images. Spellings and formulas often come out wrong.', 'Keep the screen vertical (9:16) if the video is for Reels or Shorts.'],
+          },
+          {
+            title: 'Add voice-over and captions',
+            time: '15 min',
+            text: 'Use a friendly, human-sounding voice, or your own. Mayer’s voice principle says people learn better from a friendly human voice than a machine one. Add captions for people watching on mute and for learners in a second language.',
+          },
+          {
+            title: 'Edit to one idea per screen',
+            time: '20 min',
+            text: 'Cut pauses and repeats. Keep it short. In a study of 6.9 million video sessions on edX, the median watch time was at most about 6 minutes, whatever the video’s length, and viewers engaged more when instructors spoke faster. [Guo, Kim & Rubin, 2014](https://up.csail.mit.edu/other-pubs/las2014-pguo-engagement.pdf) Reels can run longer, but a short lesson rarely needs more than a minute.',
+          },
+          {
+            title: 'Publish with a label and one clear ask',
+            time: '10 min',
+            text: 'Write a caption that says what the viewer will learn. Ask for one action, such as “Comment NOTES for the practice sheet”. If the video has realistic AI footage or an AI voice that sounds real, use the platform’s AI label.',
+          },
+          {
+            title: 'Check what worked and repeat it',
+            time: '15 min a week',
+            text: 'After a week, look at watch time, saves, shares and comments in Instagram Insights or YouTube Studio. Make more videos like the ones people watched to the end and saved.',
+          },
+        ],
+      },
+      {
+        t: 'callout',
+        tone: 'warn',
+        title: 'Label realistic AI video and voice',
+        text: 'Meta requires people to use its AI disclosure label when they post photorealistic video or realistic-sounding audio that was digitally created or altered, and may apply penalties if they don’t. [Meta, 6 Feb 2024](https://about.fb.com/news/2024/02/labeling-ai-generated-images-on-facebook-instagram-and-threads/) YouTube asks the same for content that seems realistic, but not for clearly animated videos or AI-written scripts. [YouTube Help](https://support.google.com/youtube/answer/14328491)',
+      },
+
+      { t: 'h2', text: 'What does a good AI educational Reel look like?' },
+      {
+        t: 'p',
+        text: 'Here is a complete plan for one 48-second maths Reel, shot by shot. Every line on screen is checkable, and the numbers work: with a = 3 and b = 2, (a + b)² is 25, while a² + b² is only 13. The missing 12 is 2ab.',
+      },
+      {
+        t: 'storyboard',
+        label: 'Storyboard: why (a + b)² is not a² + b²',
+        frames: [
+          { time: '0–3 s', title: 'The common mistake', visual: '“(a + b)² = a² + b²” in big type, crossed out in red.', voice: 'Half the class writes this. It’s wrong.' },
+          { time: '3–12 s', title: 'Draw the square', visual: 'A square with each side labelled a + b.', voice: 'Draw a square with side a plus b. Its area is (a + b)².' },
+          { time: '12–25 s', title: 'Split it', visual: 'The square splits into a², b² and two rectangles marked ab.', voice: 'Split it up. You get a², b², and two rectangles of ab.' },
+          { time: '25–35 s', title: 'Check with numbers', visual: 'a = 3, b = 2. Then 5² = 25, but 9 + 4 = 13. The gap of 12 glows: 2 × 3 × 2.', voice: 'Try 3 and 2. The answer is 25, not 13. The missing 12 is 2ab.' },
+          { time: '35–42 s', title: 'The rule', visual: '(a + b)² = a² + 2ab + b², boxed.', voice: 'So remember: a² plus 2ab plus b².' },
+          { time: '42–48 s', title: 'One clear ask', visual: '“Comment NOTES for 10 practice questions.”', voice: 'Want ten practice questions? Comment NOTES.' },
+        ],
+        caption: 'Example storyboard written by Social ScaleX. Swipe on phones to see every shot.',
+      },
+
+      { t: 'h2', text: 'Which businesses can use AI educational videos?' },
+      {
+        t: 'p',
+        text: 'Anyone whose customers ask questions before they buy. An educational Reel answers one of those questions in public, so the next person finds the answer and finds you. These five work especially well because the topic can be shown, not just told.',
+      },
+      {
+        t: 'usecases',
+        label: 'Pick your business to see a sample Reel',
+        items: [
+          { name: 'Coaching centres', idea: 'One common maths mistake, fixed in under a minute', hook: 'Half the class writes (a + b)² = a² + b². Here’s why it’s wrong.', visuals: 'An animated square splitting into four parts, then the numbers check.', audience: 'Class 9 and 10 students, and their parents', cta: 'Comment NOTES for 10 practice questions' },
+          { name: 'Schools and institutes', idea: 'Career paths after Class 12 science', hook: 'Finished PCM? Engineering isn’t your only door.', visuals: 'AI images of each career with its entrance exam written underneath.', audience: 'Class 11 and 12 students and parents choosing a course', cta: 'Comment CAREER for the full list' },
+          { name: 'Digital agencies', idea: 'Why a website gets visits but no enquiries', hook: '500 visitors and zero calls? Check these three things.', visuals: 'A simple website mock-up with arrows on the phone number, form and offer.', audience: 'Small business owners who already have a website', cta: 'Comment AUDIT for a free checklist' },
+          { name: 'Consultants', idea: 'One tax or finance choice explained simply', hook: 'Old or new tax regime? Ask yourself two questions first.', visuals: 'Two cards side by side, each question appearing in turn.', audience: 'Salaried professionals at tax-filing time', cta: 'Comment TAX and we’ll send a booking link' },
+          { name: 'IT companies', idea: 'What phishing looks like, using one fake email', hook: 'This email looks real. Can you spot the three clues?', visuals: 'An AI-made sample email with each warning sign highlighted in turn.', audience: 'Office teams and small business owners', cta: 'Comment SAFE for a staff checklist' },
+        ],
+        note: 'Sample ideas written for this guide. Check any rule-based topic, such as tax, against the current official source before posting.',
+      },
+
+      { t: 'h2', text: 'Why is posting educational videos every week so hard?' },
+      {
+        t: 'p',
+        text: 'One video is a project. A video every week is a job. The work that wears people down is rarely the filming. It’s the routine around it:',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**Finding the next topic** when last week’s idea already used your best question.',
+          '**Writing and checking** a new script, then generating and fixing visuals.',
+          '**Posting on time**, even during exams, admissions or a busy sales week.',
+          '**Answering the same comments**, “price?”, “details?”, “link?”, one by one.',
+          '**Reading the numbers** to see what to make next.',
+        ],
+      },
+      {
+        t: 'p',
+        text: 'You can run all of that yourself with the free method above. If the routine, not the knowledge, is what stops you, that’s the part we built Reel Studio to take over.',
+      },
+      {
+        t: 'cta',
+        variant: 'mid',
+        title: 'Turn your knowledge into Reels every week',
+        text: 'Tell Reel Studio about your business once. It plans, writes and makes your Reels, and you approve each one before it posts.',
+        points: ['Comment-to-DM included in every plan', 'You approve every reel', 'Plans from ₹2,499 a month'],
+        button: 'Explore Reel Studio',
+        href: 'https://studio.socialscalex.in/',
+        whatsapp: 'Hi Social ScaleX, I read your guide on educational videos with AI. Can you tell me about Reel Studio?',
+      },
+
+      { t: 'h2', text: 'How does Social ScaleX Reel Studio make educational Reels?' },
+      {
+        t: 'p',
+        text: 'Reel Studio is our own tool at studio.socialscalex.in. You describe your business once, and it plans, writes and makes Instagram Reels for you. Nothing posts unless you approve it, or unless you switch on automatic posting yourself. Tap through the steps below.',
+      },
+      {
+        t: 'workflow',
+        label: 'How Reel Studio works, step by step',
+        steps: [
+          { title: 'Connect', text: 'Type your business details once: what you sell, your goals and the language you want your Reels in. Add your website or LinkedIn link if you have one.', points: ['Connect Instagram on Instagram’s own login page. The Studio never sees your password.', 'You can disconnect at any time.'] },
+          { title: 'Research', text: 'AI reads your details and the links you shared, and plans Reel topics around what your business actually offers.', points: ['You keep ownership of your business content. It’s used only to make your Reels and run the service.'] },
+          { title: 'Script', text: 'For each topic, AI writes the hook, the script and the call to action.', points: ['Reels must follow Instagram’s rules and Indian advertising standards.'] },
+          { title: 'Generate', text: 'The Studio makes the full Reel from AI video clips, AI images and an AI voice-over.', points: ['Upload a voice sample and Reels can use your own voice.'] },
+          { title: 'Approve', text: 'When a Reel is ready, you get an alert on the website, by email and on WhatsApp. Approve it, re-generate it or reject it.', points: ['Re-generating before approval is free within a daily fair-use limit.', 'Only an approved Reel counts against your plan.'] },
+          { title: 'Publish', text: 'Approved Reels post to your connected Instagram account.', points: ['Optional automatic posting: if you don’t act within 60 minutes, the Reel posts at the next allowed time, never between 11 PM and 7 AM.', 'Reels flagged by the Studio’s checks never post without your approval.', 'Download approved Reels within 48 hours; then the file is deleted from the Studio’s servers.'] },
+          { title: 'Engage', text: 'Comment-to-DM replies to people who comment a trigger word you choose, with the message you set.', points: ['Included in every plan at no extra cost.'] },
+          { title: 'Improve', text: 'The Studio reads your account’s performance, such as views, reach, saves and shares, to make the next Reels better.', points: ['It reads these numbers only with your permission, from your connected account.'] },
+        ],
+        note: 'Illustration of the workflow, not a screenshot. Based on Reel Studio’s [Terms](https://studio.socialscalex.in/terms) and [Privacy Policy](https://studio.socialscalex.in/privacy), effective 25 Oct 2026.',
+      },
+
+      { t: 'h2', text: 'How does comment-to-DM turn a Reel into an enquiry?' },
+      {
+        t: 'p',
+        text: 'A good educational Reel makes people want the next step: the notes, the fees, the batch timings. Instead of typing the same reply fifty times, you choose a trigger word and the message to send. When someone comments that word, they get your message in their inbox. Try it below.',
+      },
+      {
+        t: 'dmdemo',
+        label: 'Example: comment-to-DM on an educational Reel',
+        account: 'yourcoaching',
+        reel: 'Why (a + b)² is not a² + b² 📐 Comment NOTES for 10 practice questions.',
+        commenter: 'riya_09',
+        comments: [
+          { text: 'NOTES', reply: 'Hi Riya! Here are your 10 practice questions on (a + b)²: [your link]. Want the Class 10 batch timings too? Reply YES.' },
+          { text: 'PRICE', reply: 'Hi Riya! Our Class 10 maths batch fees and timings are here: [your link]. Reply with any question and our team will answer.' },
+          { text: 'Nice video!', reply: '' },
+        ],
+        note: 'Instagram limits automatic messages: one private reply per comment, sent within 7 days of the comment. The chat continues only if the person replies. [Meta for Developers](https://developers.facebook.com/docs/instagram-platform/private-replies/) Delivery depends on Instagram and isn’t guaranteed.',
+      },
+      {
+        t: 'p',
+        text: 'Every Reel Studio plan includes comment-to-DM at no extra cost. If you only want comment-to-DM for Reels you make yourself, our standalone [comment-to-DM plan](/automation/instagram-comment-to-dm) costs ₹99 a month. Prefer to set it up yourself? Follow our [free comment-to-DM guide](/guides/free-instagram-comment-to-dm-automation).',
+      },
+
+      { t: 'h2', text: 'How much does Reel Studio cost?' },
+      {
+        t: 'p',
+        text: 'Three monthly plans. The difference is how many approved Reels you get. Comment-to-DM, approvals and alerts come with all of them.',
+      },
+      { t: 'plans', title: 'Reel Studio plans', note: 'Prices per month as of 11 November 2026. No GST is added. Full rules in the [Reel Studio Terms](https://studio.socialscalex.in/terms).' },
+      {
+        t: 'p',
+        text: 'Want a person to shoot real footage instead? Our [Reels production service](/services/reels-production) films at your location in Delhi NCR. To get more reach from whatever you post, read [how Instagram decides who sees your Reels](/guides/instagram-reels-reach).',
+      },
+      {
+        t: 'cta',
+        variant: 'end',
+        title: 'Your knowledge deserves an audience',
+        text: 'Let Reel Studio turn what you know into a steady stream of educational Reels, with comment-to-DM in every plan.',
+        points: ['Plans from ₹2,499 a month', 'Comment-to-DM included, no add-on fee', 'You approve every reel before it posts', 'Reels in your own voice from a sample'],
+        button: 'Get started with Reel Studio',
+        href: 'https://studio.socialscalex.in/',
+        whatsapp: 'Hi Social ScaleX, I want to try Reel Studio for educational Reels.',
+      },
+    ],
+    faqs: [
+      {
+        q: 'Can I make educational videos with AI for free?',
+        a: 'Yes. A free AI chat tool can draft and tidy your script, and many free video editors can add captions. The time goes into checking facts, generating visuals and editing. Paid tools mainly save that time. Follow the eight steps in this guide and your first video costs nothing but an afternoon.',
+      },
+      {
+        q: 'Can I make educational videos without showing my face?',
+        a: 'Yes. Faceless educational videos use diagrams, animations, screen recordings or AI visuals with a voice-over. Your voice, or a voice made from your own sample, keeps the video personal. Research on multimedia learning finds people learn better from a friendly human voice than a robotic one.',
+      },
+      {
+        q: 'Can AI make educational videos in Hindi?',
+        a: 'Yes. AI chat tools can write Hindi and Hinglish scripts, and many voice tools offer Hindi voices. Listen to the full voice-over before posting, because names, formulas and technical terms are often mispronounced. Reel Studio lets you choose the language you want your Reels in.',
+      },
+      {
+        q: 'How long should an educational video be?',
+        a: 'As short as the idea allows. A study of 6.9 million edX video sessions found median watch time topped out at about 6 minutes, however long the video was. For Instagram Reels, one idea usually fits in 30 to 60 seconds.',
+      },
+      {
+        q: 'Do I have to label AI-made videos on Instagram and YouTube?',
+        a: 'Only when they look or sound real. Meta requires a disclosure label for photorealistic video or realistic-sounding audio that was digitally created or altered. YouTube asks the same for realistic content, but not for clearly animated videos or for using AI to write scripts, captions or ideas.',
+      },
+      {
+        q: 'Does Reel Studio post without my approval?',
+        a: 'Not unless you switch on automatic posting. With it on, a Reel you don’t act on within 60 minutes posts at the next allowed time, never between 11 PM and 7 AM. Reels flagged by the Studio’s checks always wait for your approval. You can switch automatic posting off any time.',
+      },
+    ],
+    howTo: {
+      name: 'How to make an educational video using AI',
+      tools: ['An AI chat tool', 'An AI image or video generator', 'A voice-over tool', 'A video editor with captions'],
+      steps: [
+        { name: 'Pick one question', text: 'Choose one narrow question your audience actually asks.' },
+        { name: 'Verify the facts', text: 'Draft an outline with AI, then check every claim against a trusted source.' },
+        { name: 'Write a short script', text: 'Hook, one explanation, one example, a recap and one call to action, in conversational language.' },
+        { name: 'Generate visuals', text: 'Create one explanatory visual per sentence and check any text inside AI images.' },
+        { name: 'Add voice and captions', text: 'Use a friendly human-sounding voice or your own, and add captions.' },
+        { name: 'Edit tightly', text: 'Cut pauses and keep one idea per screen.' },
+        { name: 'Publish with a label', text: 'Write a clear caption, ask for one action, and label realistic AI video or voice.' },
+        { name: 'Review and repeat', text: 'Check watch time, saves and shares, then make more of what worked.' },
+      ],
+    },
+    sources: [
+      { label: 'Google Search Central: Google Search’s guidance about AI-generated content (8 Feb 2023)', url: 'https://developers.google.com/search/blog/2023/02/google-search-and-ai-content' },
+      { label: 'Guo, Kim & Rubin: How video production affects student engagement (Learning at Scale, 2014)', url: 'https://up.csail.mit.edu/other-pubs/las2014-pguo-engagement.pdf' },
+      { label: 'R. E. Mayer: Multimedia principles, from Multimedia Learning, 3rd ed. (2020)', url: 'https://ugc.futurelearn.com/uploads/files/7d/d6/7dd6188d-c343-4311-b064-ac98d2c95abc/Multimedia_Principles._R._E._Mayer__2020.pdf' },
+      { label: 'Meta: Labeling AI-generated images on Facebook, Instagram and Threads (6 Feb 2024)', url: 'https://about.fb.com/news/2024/02/labeling-ai-generated-images-on-facebook-instagram-and-threads/' },
+      { label: 'YouTube Help: Disclosing use of altered or synthetic content', url: 'https://support.google.com/youtube/answer/14328491' },
+      { label: 'Meta for Developers: Instagram private replies', url: 'https://developers.facebook.com/docs/instagram-platform/private-replies/' },
+      { label: 'Social ScaleX Reel Studio: Terms of Service (effective 25 Oct 2026)', url: 'https://studio.socialscalex.in/terms' },
+      { label: 'Social ScaleX Reel Studio: Privacy Policy (effective 25 Oct 2026)', url: 'https://studio.socialscalex.in/privacy' },
+    ],
+    services: ['reels-production', 'instagram-marketing'],
+  },
   {
     slug: 'get-recommended-by-chatgpt-gemini-ai-mode',
     title: 'Is ChatGPT recommending your competitor? How to get your business named by ChatGPT, Gemini and Google AI Mode',
@@ -1765,6 +2108,10 @@ export function blockText(b: Block): string {
     case 'chat': return `${b.question} ${b.intro} ${b.answer.map((x) => `${x.name} ${x.note}`).join(' ')} ${b.missing} ${b.caption}`;
     case 'sources': return `${b.center} ${b.items.map((x) => `${x.title} ${x.text} ${x.usedBy.join(' ')}`).join(' ')}`;
     case 'checklist': return b.items.map((x) => [x.title, x.text, ...(x.points ?? [])].join(' ')).join(' ');
+    case 'workflow': return b.steps.map((x) => [x.title, x.text, ...x.points].join(' ')).join(' ');
+    case 'usecases': return b.items.map((x) => [x.name, x.idea, x.hook, x.visuals, x.audience, x.cta].join(' ')).join(' ');
+    case 'dmdemo': return [b.reel, ...b.comments.map((x) => `${x.text} ${x.reply}`), b.note].join(' ');
+    case 'storyboard': return b.frames.map((x) => [x.title, x.visual, x.voice].join(' ')).join(' ');
     default: return '';
   }
 }

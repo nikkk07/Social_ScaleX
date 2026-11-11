@@ -671,3 +671,6 @@ html.lenis, html.lenis body { height: auto; }
   @keyframes story-pop { from { opacity: 0; transform: translate3d(0, 0.75rem, 0) scale(0.96); } }
   @keyframes story-bar { from { transform: scaleX(0); } }
 }
+
+/* Guide interactive blocks (GuideInteractive.tsx). */
+@keyframes fade-up { from { opacity: 0; transform: translate3d(0, 0.4rem, 0); } }

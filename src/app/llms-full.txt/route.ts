@@ -2,6 +2,7 @@ import { FAQS, GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_FAQS, SERVICES, ST
 import { AUTOMATIONS, PLAN_99, DIY_VS_DFY } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
 import { GUIDES, type Block } from '@/lib/guides';
+import { STUDIO_INCLUDED, STUDIO_PLAN_RULES, STUDIO_PLANS, STUDIO_URL, rupees } from '@/lib/studio';
 import { AREAS_FAQS, CITIES, PIN_GROUPS, cityStats } from '@/lib/areas';
 import { AREAS_SERVED, CONTACTS, FOUNDING_YEAR, SITE_NAME, SITE_TAGLINE, abs } from '@/lib/site';
 
@@ -36,13 +37,23 @@ function blockMd(b: Block): string {
     case 'callout':
       return `> **${b.title}** ${absLinks(b.text)}`;
     case 'cta':
-      return `${b.title} ${absLinks(b.text)} (${abs(b.href)})`;
+      return `${b.title} ${absLinks(b.text)} (${b.href.startsWith('http') ? b.href : abs(b.href)})`;
     case 'stats':
       return list(b.items.map((x) => `${x.value}: ${x.text} (${x.source}: ${x.href})`));
     case 'chat':
       return `Example (made up): Q: ${b.question}\nA: ${b.intro}\n${b.answer.map((x, n) => `${n + 1}. ${x.name}: ${x.note}`).join('\n')}\n${b.caption}`;
     case 'sources':
       return `${b.label}:\n${list(b.items.map((x) => `${x.title}: ${absLinks(x.text)} Used by: ${x.usedBy.join(', ')}`))}`;
+    case 'workflow':
+      return `${b.label}:\n${b.steps.map((x, n) => `${n + 1}. **${x.title}**: ${absLinks(x.text)}\n${x.points.map((pt) => `   - ${absLinks(pt)}`).join('\n')}`).join('\n')}\n${absLinks(b.note)}`;
+    case 'usecases':
+      return `${b.label}:\n${list(b.items.map((x) => `**${x.name}**: ${x.idea}. Opening line: “${x.hook}” On screen: ${x.visuals}. For: ${x.audience}. Call to action: ${x.cta}`))}\n${b.note}`;
+    case 'dmdemo':
+      return `${b.label} (example). Reel: ${b.reel}\n${list(b.comments.map((x) => `Comment “${x.text}”: ${x.reply ? `automatic DM: “${x.reply}”` : 'no trigger word, so no DM'}`))}\n${absLinks(b.note)}`;
+    case 'plans':
+      return `${b.title}:\n${list(STUDIO_PLANS.map((p) => `${p.name}: ${rupees(p.price)}/month, ${p.reels} approved reels, comment-to-DM included`))}\nIn every plan: ${STUDIO_INCLUDED.join('; ')}. ${STUDIO_PLAN_RULES.join(' ')} ${absLinks(b.note)} Sign up: ${STUDIO_URL}`;
+    case 'storyboard':
+      return `${b.label}:\n${b.frames.map((x, n) => `${n + 1}. ${x.time} ${x.title}. On screen: ${absLinks(x.visual)} Voice-over: “${x.voice}”`).join('\n')}\n${b.caption}`;
     case 'checklist':
       return b.items.map((x, n) => `${n + 1}. **${x.title}**${x.time ? ` (${x.time})` : ''}: ${absLinks(x.text)}${x.points?.length ? `\n${x.points.map((pt) => `   - ${absLinks(pt)}`).join('\n')}` : ''}`).join('\n');
   }
