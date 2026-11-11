@@ -1,18 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-const isDev = process.env.NODE_ENV !== 'production';
-
-// Supabase origin for the CRM's connect-src (REST + realtime websocket).
-let supabaseOrigin = '';
-try {
-  supabaseOrigin = process.env.NEXT_PUBLIC_SUPABASE_URL
-    ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).origin
-    : '';
-} catch {
-  supabaseOrigin = '';
-}
-const supabaseWs = supabaseOrigin.replace(/^http/, 'ws');
-
 // Applied to every route.
 const baseHeaders = [
   { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -23,28 +10,6 @@ const baseHeaders = [
     key: 'Permissions-Policy',
     value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()',
   },
-];
-
-// The internal CRM (and its login) additionally get a strict CSP. Next.js
-// needs inline scripts for hydration, so 'unsafe-inline' stays for scripts,
-// but every other origin is shut: data can only go to our Supabase project.
-const crmCsp = [
-  "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`,
-  "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob:",
-  "font-src 'self' data:",
-  `connect-src 'self' ${supabaseOrigin} ${supabaseWs}${isDev ? ' ws: http://127.0.0.1:* http://localhost:*' : ''}`.trim(),
-  "frame-ancestors 'none'",
-  "base-uri 'self'",
-  "form-action 'self'",
-  "object-src 'none'",
-].join('; ');
-
-const crmHeaders = [
-  { key: 'Content-Security-Policy', value: crmCsp },
-  { key: 'Cache-Control', value: 'no-store' },
-  { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
 ];
 
 // Every request to the old production host is 301'd to the live domain, path
@@ -63,10 +28,19 @@ const hostRedirects =
     ? [{ source: '/:path*', has: [{ type: 'host', value: LEGACY_HOST }], destination: `${canonicalOrigin}/:path*`, permanent: true }]
     : [];
 
+// The CRM moved to its own app (Nov 2026). Old bookmarks land there.
+const CRM_ORIGIN = 'https://crm.socialscalex.in';
+const crmRedirects = [
+  { source: '/crm', destination: CRM_ORIGIN, permanent: true },
+  { source: '/crm/:path*', destination: `${CRM_ORIGIN}/:path*`, permanent: true },
+  { source: '/login', destination: `${CRM_ORIGIN}/login`, permanent: true },
+  { source: '/reset-password', destination: `${CRM_ORIGIN}/login`, permanent: true },
+];
+
 const nextConfig = {
   reactStrictMode: true,
   async redirects() {
-    return hostRedirects;
+    return [...hostRedirects, ...crmRedirects];
   },
   // Vercel already advertises itself; one less response header on every request.
   poweredByHeader: false,
@@ -87,10 +61,6 @@ const nextConfig = {
         source: '/guides/:dir/:file((?:.*)\\.(?:avif|webp|jpg|png))',
         headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }],
       },
-      { source: '/crm', headers: crmHeaders },
-      { source: '/crm/:path*', headers: crmHeaders },
-      { source: '/login', headers: crmHeaders },
-      { source: '/reset-password', headers: crmHeaders },
       { source: '/api/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }, { key: 'X-Robots-Tag', value: 'noindex' }] },
     ];
   },

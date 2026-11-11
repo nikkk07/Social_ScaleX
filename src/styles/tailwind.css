@@ -1,5 +1,5 @@
-/* Public site build: scans only the marketing sources, so none of the
-   CRM's utilities ship to visitors. The CRM has its own build in crm-app.css. */
+/* Public site build: scans only the marketing sources. (The CRM moved to
+   its own app at crm.socialscalex.in in Nov 2026.) */
 @import 'tailwindcss' source(none);
 @source '../app';
 @source '../components/site';

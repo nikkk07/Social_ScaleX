@@ -1,3 +1,5 @@
+> **Moved (11 Nov 2026):** the CRM is now its own app, `crm.socialscalex.in` (repo folder `Social ScaleX/crm`). Its `supabase/migrations` are the record of truth from now on, including these three files and the Ad-Ops migrations that extend them. This folder is kept for history; the website itself only inserts website enquiries.
+
 # Social ScaleX CRM — database
 
 Postgres on Supabase (project `hendwoizaxjhpwyaumsh`). `migrations/` is the

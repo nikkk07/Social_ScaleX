@@ -31,7 +31,7 @@ export default function robots(): MetadataRoute.Robots {
   if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== 'production') {
     return { rules: [{ userAgent: '*', disallow: '/' }] };
   }
-  // Auth keeps people out of the CRM; this keeps its pages out of search.
+  // /crm and /login now redirect to crm.socialscalex.in; kept disallowed so old URLs stay out of search.
   const disallow = ['/crm', '/crm/', '/login', '/api/'];
 
   return {

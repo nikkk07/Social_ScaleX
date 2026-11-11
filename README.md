@@ -1,6 +1,6 @@
 # Social ScaleX
 
-Marketing site and internal CRM for Social ScaleX, a social media marketing
+Marketing site for Social ScaleX, a social media marketing
 agency in Delhi NCR. Next.js 16 (App Router) frontend, Supabase (Postgres)
 behind it.
 
@@ -8,12 +8,10 @@ behind it.
   ink, coral; Fraunces + Inter). Pages: `/`, `/services` + 8 service pages,
   `/case-studies`, `/about`, `/contact`, `/guides` + 3 sourced guides,
   `/privacy`, `/terms`. The lead form writes into `inbound_enquiries`, which
-  the CRM shows under Enquiries.
-- **CRM** — staff-only, at `/crm`. Today view, Follow-ups (call-backs,
-  meetings, retries), Leads (list + pipeline board), lead timeline, the
-  call/WhatsApp **outcome pop-up** that drives the whole pipeline, quotations,
-  website enquiries, Insights, Team and Settings. Sign-in is email **or** phone
-  + password (no OTP); owners/admins create accounts and reset passwords.
+  the CRM shows under Leads → Website enquiries.
+- **CRM** — moved (Nov 2026) to its own app at https://crm.socialscalex.in
+  (repo folder `Social ScaleX/crm`). `/crm`, `/login` and `/reset-password`
+  here redirect there. Same Supabase project.
 
 ## Getting started
 
@@ -25,7 +23,7 @@ npm run dev                    # http://localhost:3000
 
 Without `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` the
 marketing site still renders, but anything touching Supabase — the contact
-form, all of `/crm` — fails with an explicit error rather than pretending to
+form — fails with an explicit error rather than pretending to
 work. Next.js reads env at startup, so restart after editing `.env.local`.
 
 To get a database to point at, see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
@@ -66,24 +64,18 @@ src/
 │  ├─ services/[slug]/          One page per service (generated from content.ts)
 │  ├─ guides/[slug]/            One page per guide (generated from guides.ts)
 │  ├─ case-studies|about|contact|privacy|terms/
-│  ├─ (crm)/                    /login and /crm/*, noindex, own stylesheet
 │  ├─ robots.ts, sitemap.ts     Generated from lib/site.ts + content
 │  └─ llms.txt/route.ts         Generated from lib/content.ts
 ├─ components/
 │  ├─ site/                     Header, Footer, LeadForm, cards, FAQ, page shells
-│  ├─ seo/JsonLd.tsx            Server-rendered structured data
-│  ├─ crm/CrmRoot.tsx           The one ssr:false boundary for the CRM
-│  └─ ui/                       shadcn/ui primitives (CRM only)
-├─ crm/                         CRM app
+│  └─ seo/JsonLd.tsx            Server-rendered structured data
 ├─ lib/
 │  ├─ site.ts                   Host, domain, phones, areas. One place.
 │  ├─ content.ts                Services, results, FAQs. Pages AND schema read it.
 │  ├─ guides.ts                 Guide text + official sources
-│  ├─ schema.ts                 JSON-LD builders
-│  ├─ supabase.ts               Browser client (CRM only)
-│  └─ server/crmServer.ts       Service-role client + caller auth for /api routes
-└─ styles/                      index.css (site build), crm-app.css (CRM build)
-supabase/                       Migrations, tests, README
+│  └─ schema.ts                 JSON-LD builders
+└─ styles/                      tailwind.css (site build)
+supabase/                       History only — schema now lives in the crm repo
 ```
 
 **The content rule.** `src/lib/content.ts` is the single source for services,
@@ -97,9 +89,7 @@ client components are the mobile menu and the lead form, so every word is in
 the served HTML (GPTBot, ClaudeBot and PerplexityBot don't run JavaScript).
 FAQs are native `<details>`. No motion library, no scroll hijacking.
 
-**The CSS rule.** Two Tailwind builds: `styles/index.css` scans only the
-marketing sources, `styles/crm-app.css` (imported by `(crm)/layout.tsx`) scans
-the CRM. CRM utilities never ship to visitors.
+**The CSS rule.** One Tailwind build that scans only the marketing sources.
 
 **The form rule.** The lead form posts to Supabase REST with the public anon
 key (`fetch`, no supabase-js on marketing pages). RLS lets anon only INSERT
@@ -135,9 +125,7 @@ The script refuses to run against anything but `127.0.0.1`/`localhost`.
 
 Vercel, from `main`, detected as a Next.js project — `vercel.json` only
 declares the framework; routing is Next's own. The marketing pages are
-prerendered at build time; the CRM is one client-only app mounted by
-`src/app/(crm)/layout.tsx`, and the `/api` routes run on the Node runtime.
-The CRM needs `SUPABASE_SERVICE_ROLE_KEY` set in Vercel (server-only).
+prerendered at build time. The website no longer needs `SUPABASE_SERVICE_ROLE_KEY`.
 `.github/workflows/keepalive.yml` pings the database every
 3 days so the free-tier Supabase project doesn't pause — including a warning
 about how that can die silently.
