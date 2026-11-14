@@ -6,6 +6,8 @@ import { graph, organizationNode, personNodes, websiteNode } from '@/lib/schema'
 import { OG_IMAGE, SITE_NAME, SITE_URL } from '@/lib/site';
 import { Analytics } from '@/components/seo/Analytics';
 import { GA_ID, META_PIXEL_ID } from '@/lib/tracking';
+import { CrmBeacon } from '@/components/seo/CrmBeacon';
+import { COLLECT_ON } from '@/lib/crm-collect';
 import '@/styles/index.css';
 
 // Self-hosted by next/font: no third-party request before first paint.
@@ -83,6 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         {GA_ID || META_PIXEL_ID ? <Analytics gaId={GA_ID} pixelId={META_PIXEL_ID} /> : null}
+        {COLLECT_ON ? <CrmBeacon /> : null}
       </body>
     </html>
   );
