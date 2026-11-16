@@ -8,6 +8,8 @@
 
 import type { Faq } from './content';
 import type { GuideImg } from '@/components/site/GuideImage';
+import { STUDIO_PLANS, rupees } from './studio';
+import { PLAN_99 } from './automation';
 
 export type Block =
   | { t: 'h2'; text: string }
@@ -270,7 +272,254 @@ const S = {
   oaiAds: { label: 'OpenAI: Our approach to advertising and expanding access (16 Jan 2026)', url: 'https://openai.com/index/our-approach-to-advertising-and-expanding-access/' },
 } satisfies Record<string, Source>;
 
+/** Lowest Reel Studio price, read from src/lib/studio.ts so copy never drifts from the plans. */
+const STUDIO_FROM = rupees(Math.min(...STUDIO_PLANS.map((p) => p.price)));
+
 export const GUIDES: Guide[] = [
+  {
+    slug: 'turn-text-into-video-using-ai',
+    title: 'How to turn text into a video using AI (without video editing)',
+    metaTitle: 'Turn Text Into Video With AI (No Editing)',
+    navTitle: 'Turn text into video with AI',
+    description:
+      'Turn a blog post, script or caption into a vertical video with AI in 7 steps, without a timeline editor. Tool types, verified free tiers and AI-label rules.',
+    summary:
+      'Paste text you already have, such as a blog post, script or product note, into a text-to-video tool. The AI splits it into scenes, adds visuals, a voice-over and captions, and gives you a vertical video to review. You don’t edit a timeline, but you still check every fact, the voice and the visuals before you post.',
+    keyPoints: [
+      '**Start from text you already have.** One paragraph of about 60 to 90 words becomes a 30-second Reel.',
+      '**Two kinds of tool.** Generators make new footage from a prompt; script-to-video tools build a full video from your words.',
+      '**Label realistic AI.** Meta and YouTube ask for a label when AI video or voice looks or sounds real.',
+    ],
+    published: '2026-11-16',
+    updated: '2026-11-16',
+    author: 'Social ScaleX team',
+    authorIndex: 0,
+    hero: {
+      base: '/guides/text-to-video/text-to-video-ai-hero-v1',
+      alt: 'A written page with three sentences bracketed as scenes, turned into three storyboard cards and then a vertical video with captions on a phone',
+      width: 1672,
+      height: 941,
+      widths: [480, 768, 1080, 1344],
+      blur: 'data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAACwAwCdASoYAA4APxF0slCsJqSisAgBgCIJZwABHus8C0xBMUdwAAD++ykb5RUGbcgoN9qYDK93ersOFPDh8kQWL/fR83dbmQprsHan3EdfQoczyvTAAA==',
+      og: '/guides/text-to-video/text-to-video-ai-og.jpg',
+    },
+    blocks: [
+      {
+        t: 'p',
+        text: 'Most businesses already have the words for a month of videos: blog posts, product pages, FAQs, WhatsApp replies they send every day. What stops them is the editing. Text-to-video AI removes that step. This guide shows what the tools actually do, how to go from a paragraph to a finished Reel, and where you still need to step in.',
+      },
+
+      { t: 'h2', text: 'What does text-to-video AI actually do?' },
+      {
+        t: 'p',
+        text: 'It reads what you’ve written and builds a video from it. Some tools generate brand-new footage from a short prompt. Others split your text into scenes and match each one with clips or images, an AI voice-over and captions. Either way, you review a finished video instead of cutting clips on a timeline.',
+      },
+      {
+        t: 'table',
+        caption: 'The four kinds of text-to-video tool',
+        head: ['Kind of tool', 'You give it', 'You get', 'Good for', 'Watch out for'],
+        rows: [
+          ['AI video generators', 'A short description of one scene', 'A few seconds of new footage per clip', 'Scenes you can’t film, b-roll', 'Short clips; hands, faces and on-screen text can look wrong'],
+          ['Script-to-video tools', 'A script, article or web link', 'A full video: scenes, visuals, voice-over and captions', 'Explainers, blog posts, product notes', 'Stock footage can look generic; check every scene matches its line'],
+          ['AI presenters', 'A script', 'A digital presenter reading it to camera', 'Talking-head updates without filming', 'A realistic person needs an AI label; use only likenesses you have rights to'],
+          ['Done-for-you services', 'Your business details, once', 'Finished videos to approve every week', 'Posting regularly without doing the work', 'A monthly fee; you still approve each video'],
+        ],
+        highlight: 0,
+      },
+      {
+        t: 'p',
+        text: 'This guide is about the second kind: turning text you already have into a video. If you’re starting from a topic rather than finished text, read [how to make educational videos using AI](/guides/how-to-make-educational-videos-using-ai) first. It covers choosing the idea and checking the facts.',
+      },
+
+      { t: 'h2', text: 'How do you turn text into a video, step by step?' },
+      {
+        t: 'p',
+        text: 'Pick one paragraph, rewrite it the way you’d say it out loud, and paste it into a script-to-video tool. Check the scene split, swap any visual that doesn’t fit, choose a voice and captions, then export it vertical at 9:16. Tap each step below.',
+      },
+      {
+        t: 'workflow',
+        label: 'From text to a posted video in seven steps',
+        steps: [
+          { title: 'Text', text: 'Pick one paragraph that answers one question your customers ask. A product page, an FAQ answer or a blog section works well.', points: ['One idea per video. If the paragraph covers two things, make two videos.', 'Use your own text, or text you have the rights to.'] },
+          { title: 'Script', text: 'Rewrite it for the ear: short sentences, a question or bold claim in the first line, one clear ask at the end.', points: ['About 60 to 90 words fits a 30-second Reel. Read it aloud and time it.', 'An AI chat tool can do the first rewrite. You check the facts.'] },
+          { title: 'Scenes', text: 'Paste the script into the tool. Most split it into one scene per sentence or line.', points: ['Merge scenes that are too short to read and split ones that carry two ideas.'] },
+          { title: 'Visuals', text: 'Check the clip or image the tool picked for each scene. Replace anything that doesn’t show what the line says.', points: ['Your own product photos beat generic stock.', 'Read any text inside AI images. Spellings often come out wrong.'] },
+          { title: 'Voice', text: 'Choose a voice in the language your customers speak, or record your own.', points: ['Listen to the whole thing. Names, prices and technical words are often mispronounced.'] },
+          { title: 'Captions', text: 'Turn on captions and check them word by word. Many people watch with the sound off.', points: ['Keep captions clear of the bottom of the screen, where Instagram shows the caption and buttons.'] },
+          { title: 'Approve and post', text: 'Export at 9:16, watch it once on a phone, then post with a caption and one call to action.', points: ['Add the AI label if the video or voice looks or sounds real.', 'Ask for a comment keyword, such as “PRICE”, and let comment-to-DM send the details.'] },
+        ],
+        note: 'The steps are the same in most script-to-video tools. Button names differ from tool to tool.',
+      },
+      {
+        t: 'p',
+        text: 'Here is a real example. We took the opening paragraph of our [comment-to-DM page](/automation/instagram-comment-to-dm), 45 words, and planned it as a 30-second Reel. Each sentence became a scene; we left out the price so the Reel stays true if it changes, and added one call to action.',
+      },
+      {
+        t: 'storyboard',
+        label: 'Storyboard: one paragraph of our own text as a 30-second Reel',
+        frames: [
+          { time: '0–4 s', title: 'Hook', visual: 'A Reel on a phone. A comment slides in: “PRICE”.', voice: 'Someone comments a keyword like PRICE on your post or Reel.' },
+          { time: '4–10 s', title: 'The payoff', visual: 'The DM inbox opens. A message with a link appears.', voice: 'They get your DM with the link automatically.' },
+          { time: '10–18 s', title: 'How', visual: 'A simple setup screen, labelled “Meta’s official tools”.', voice: 'We set it up on your Instagram through Meta’s official tools and keep it running.' },
+          { time: '18–25 s', title: 'What you get', visual: 'Three ticks appear: one account, unlimited posts, tool fees included.', voice: 'One account, unlimited posts, tool fees included.' },
+          { time: '25–30 s', title: 'One clear ask', visual: '“Comment DM to try it” on screen.', voice: 'Want it on your account? Comment DM.' },
+        ],
+        caption: 'Example storyboard written by Social ScaleX from our own page. Swipe on phones to see every scene.',
+      },
+      {
+        t: 'callout',
+        tone: 'warn',
+        title: 'AI doesn’t check your facts',
+        text: 'Text-to-video tools turn whatever you paste into a confident video, including mistakes. Check every price, date, name and claim before you post, and label realistic AI video or voice. If you post for clients, read the tool’s licence for commercial use first.',
+      },
+
+      { t: 'h2', text: 'Which AI tools turn text into video, free and paid?' },
+      {
+        t: 'p',
+        text: 'Pictory, Kapwing and invideo all build a video from a script or brief. Free options are limited: a trial, watermarks or a short export. Here is what each vendor’s own pages said when we checked on 16 November 2026. “Not stated” means we couldn’t find it there.',
+      },
+      {
+        t: 'table',
+        caption: 'Three script-to-video tools, from the vendors’ own pages (checked 16 Nov 2026)',
+        head: ['', 'Pictory', 'Kapwing', 'invideo'],
+        rows: [
+          ['Free option', '14-day free trial', 'Free plan with 10 credits', 'No free plan on the pricing page'],
+          ['Watermark when free', 'Yes', 'Yes on free exports, per the pricing page', 'Not stated'],
+          ['Longest video from a script', '5 minutes on the trial, 30 minutes on paid plans', 'Up to 5 minutes; free exports up to 4 minutes at 720p', 'Not stated (shots are 8 seconds each)'],
+          ['Vertical 9:16', 'Yes', 'Yes', 'Not stated as a ratio; made for Instagram, YouTube and TikTok'],
+          ['Hindi voice-over', 'Yes, in its premium voices', 'Not stated', 'Not stated'],
+          ['Paid plans from', 'US$25 a month, billed yearly', 'Pro listed at US$16', 'US$10 per seat a month, billed yearly'],
+        ],
+        highlight: 0,
+      },
+      {
+        t: 'p',
+        text: 'Kapwing’s text-to-video page says you can try that tool without watermarks, while its pricing page lists watermarks on free exports, so test an export before you rely on it. Prices are in US dollars and change often. Check the vendor’s pricing page on the day you buy.',
+      },
+
+      { t: 'h2', text: 'How long should a text-to-video be for Reels and Shorts?' },
+      {
+        t: 'p',
+        text: 'Long enough for one idea, and no longer. Instagram Reels and YouTube Shorts both allow up to 3 minutes, but a paragraph of 60 to 90 words reads in about 30 seconds. Start there. Make a longer video only when the topic genuinely needs the time, not because the platform allows it.',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**Instagram Reels:** up to 3 minutes, vertical. [MediaNama, 19 Jan 2025](https://www.medianama.com/2025/01/223-instagram-reels-3-minutes-us-tiktok-ban/)',
+          '**YouTube Shorts:** up to 3 minutes, uploaded as vertical video.',
+          '**Your test:** read the script aloud with a timer. If it runs past 45 seconds, cut a sentence or split it into two videos.',
+        ],
+      },
+      {
+        t: 'p',
+        text: 'For what Instagram looks at when it decides who sees a Reel, read [how Instagram Reels reach works](/guides/instagram-reels-reach).',
+      },
+
+      { t: 'h2', text: 'Do you have to label AI video on Instagram and YouTube?' },
+      {
+        t: 'p',
+        text: 'Only when it looks or sounds real. Meta asks you to use its AI label for photorealistic video or realistic-sounding audio that was digitally created or altered. YouTube asks the same for realistic content, but not for clearly animated video or for using AI to write the script or captions.',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**Meta (Instagram, Facebook, Threads):** label photorealistic AI video and realistic AI audio; Meta may apply penalties if you don’t. [Meta, 6 Feb 2024](https://about.fb.com/news/2024/02/labeling-ai-generated-images-on-facebook-instagram-and-threads/)',
+          '**YouTube:** disclose AI content that seems realistic, such as a real person appearing to say something they didn’t. Using AI for an outline, script or captions doesn’t need a label. [YouTube Help](https://support.google.com/youtube/answer/14328491)',
+          '**AI presenters and cloned voices:** a realistic digital person or a voice that sounds like a real one needs the label on both platforms.',
+        ],
+      },
+
+      { t: 'h2', text: 'What does it cost to turn text into video with AI?' },
+      {
+        t: 'p',
+        text: 'It can cost nothing if you accept a watermark, a trial or short exports. Listed prices for the paid tools above start at US$10 to US$25 a month. The bigger cost is your time, because you write, check and fix every video yourself. A done-for-you service trades that time for a monthly fee.',
+      },
+      {
+        t: 'table',
+        caption: 'Three ways to pay for text-to-video',
+        head: ['', 'Free tools', 'Paid tool', 'Done for you'],
+        rows: [
+          ['Money', '₹0', 'A monthly plan, usually in US dollars', `Reel Studio from ${STUDIO_FROM} a month`],
+          ['Your work per video', 'Make, check and fix it, and work around watermarks or limits', 'Make, check and fix it', 'Review and approve it'],
+          ['Who checks the facts', 'You', 'You', 'You approve every video before it posts'],
+          ['Comment-to-DM', 'Set it up yourself', 'Set it up yourself', 'Included at no extra cost'],
+        ],
+        highlight: 3,
+      },
+
+      { t: 'h2', text: 'Can turning text into video run every week without you?' },
+      {
+        t: 'p',
+        text: 'Yes. That’s what we built Reel Studio for. You describe your business once; it plans topics, writes scripts and makes the Reels from AI video, images and voice. You get an alert, approve or re-generate each Reel, and approved Reels post to your Instagram. Comment-to-DM comes with every plan.',
+      },
+      { t: 'plans', title: 'Reel Studio plans', note: 'Prices per month as of 11 November 2026. No GST is added. Full rules in the [Reel Studio Terms](https://studio.socialscalex.in/terms).' },
+      {
+        t: 'p',
+        text: `Comment-to-DM is free with every Reel Studio plan and with any Social ScaleX package, including social media management. If you only want comment-to-DM for videos you make yourself, our [standalone comment-to-DM plan](/automation/instagram-comment-to-dm) is ${rupees(PLAN_99.price)} a month, run on Meta’s official API. Prefer a person filming real footage? See our [Reels production service](/services/reels-production).`,
+      },
+      {
+        t: 'cta',
+        variant: 'end',
+        title: 'Turn the text you already have into Reels every week',
+        text: 'Tell Reel Studio about your business once. It writes and makes your Reels, and nothing posts until you approve it.',
+        points: [`Plans from ${STUDIO_FROM} a month`, 'Comment-to-DM included, no add-on fee', 'You approve every reel before it posts'],
+        button: 'Explore Reel Studio',
+        href: 'https://studio.socialscalex.in/',
+        whatsapp: 'Hi Social ScaleX, I read your guide on turning text into video with AI. Can you tell me about Reel Studio?',
+      },
+    ],
+    faqs: [
+      {
+        q: 'Can I turn a blog post into a video with AI?',
+        a: 'Yes. Most script-to-video tools accept a script, an article or a web link and split it into scenes. A whole blog post usually makes a video that’s too long for Reels, so pick one section that answers one question, rewrite it for speaking, and make one short video from each section.',
+      },
+      {
+        q: 'Is there a free text-to-video AI without a watermark?',
+        a: 'Free options are usually limited by a trial, a watermark or a short export. On 16 November 2026, Pictory offered a 14-day trial with a watermark and Kapwing’s pricing page listed watermarks on free exports. Check the vendor’s own pricing page on the day you sign up, because free plans change often.',
+      },
+      {
+        q: 'Can AI turn Hindi or Hinglish text into a video?',
+        a: 'Yes, in tools that offer Hindi voices. Pictory lists Hindi among its premium voices. Write the script the way your customers actually speak, then listen to the whole voice-over, because names, prices and English words inside Hindi sentences are often mispronounced.',
+      },
+      {
+        q: 'Do I need any video editing skills?',
+        a: 'No timeline editing is needed. You still make decisions an editor would: which paragraph to use, whether each visual matches its line, and whether the voice and captions are right. Those checks take minutes and decide whether the video looks professional.',
+      },
+      {
+        q: 'Is comment-to-DM included with Reel Studio?',
+        a: `Yes, at no extra cost, in every Reel Studio plan and every Social ScaleX package. On its own it costs ${rupees(PLAN_99.price)} a month. Instagram allows one automatic private reply per comment, within 7 days of the comment, and Meta caps these replies at 750 an hour per account.`,
+      },
+    ],
+    howTo: {
+      name: 'How to turn text into a video using AI',
+      tools: ['Text you already have', 'A script-to-video AI tool', 'A phone to check the result'],
+      steps: [
+        { name: 'Pick one paragraph', text: 'Choose text that answers one question your customers ask.' },
+        { name: 'Rewrite it for speaking', text: 'Short sentences, a strong first line and one call to action; about 60 to 90 words for 30 seconds.' },
+        { name: 'Split it into scenes', text: 'Paste the script into the tool and check it made one scene per sentence or idea.' },
+        { name: 'Fix the visuals', text: 'Replace any clip or image that doesn’t show what its line says.' },
+        { name: 'Choose the voice', text: 'Pick a voice in your customers’ language or record your own, and listen to all of it.' },
+        { name: 'Check the captions', text: 'Turn on captions and read them word by word.' },
+        { name: 'Approve and post', text: 'Export at 9:16, watch it on a phone, add the AI label if it looks real, and post.' },
+      ],
+    },
+    sources: [
+      { label: 'Pictory: Pricing (checked 16 Nov 2026)', url: 'https://pictory.ai/pricing' },
+      { label: 'Pictory Help: Which languages do Premium Voices support?', url: 'https://kb.pictory.ai/en/articles/8679976-what-languages-are-available-for-voiceover' },
+      { label: 'Kapwing: Pricing (checked 16 Nov 2026)', url: 'https://www.kapwing.com/pricing' },
+      { label: 'Kapwing: AI text to video (checked 16 Nov 2026)', url: 'https://www.kapwing.com/ai/text-to-video' },
+      { label: 'invideo: Pricing (checked 16 Nov 2026)', url: 'https://invideo.io/pricing' },
+      { label: 'invideo: Text to video AI (checked 16 Nov 2026)', url: 'https://invideo.io/make/text-to-video/' },
+      { label: 'MediaNama: Instagram Reels up to 3 minutes (19 Jan 2025)', url: 'https://www.medianama.com/2025/01/223-instagram-reels-3-minutes-us-tiktok-ban/' },
+      { label: 'YouTube Help: Upload YouTube Shorts', url: 'https://support.google.com/youtube/answer/10059070' },
+      { label: 'Meta: Labeling AI-generated images on Facebook, Instagram and Threads (6 Feb 2024)', url: 'https://about.fb.com/news/2024/02/labeling-ai-generated-images-on-facebook-instagram-and-threads/' },
+      { label: 'YouTube Help: Disclosing use of altered or synthetic content', url: 'https://support.google.com/youtube/answer/14328491' },
+      { label: 'Meta for Developers: Instagram Platform, Private Replies', url: 'https://developers.facebook.com/docs/instagram-platform/private-replies/' },
+      { label: 'Meta for Developers: Messenger Platform rate limits (Instagram private replies)', url: 'https://developers.facebook.com/docs/messenger-platform/overview/rate-limiting' },
+      { label: 'Social ScaleX Reel Studio: Terms of Service (effective 25 Oct 2026)', url: 'https://studio.socialscalex.in/terms' },
+    ],
+    services: ['reels-production', 'instagram-marketing'],
+  },
   {
     slug: 'how-to-make-educational-videos-using-ai',
     title: 'How to make educational videos using AI, step by step (free method included)',
@@ -532,7 +781,7 @@ export const GUIDES: Guide[] = [
       { t: 'plans', title: 'Reel Studio plans', note: 'Prices per month as of 11 November 2026. No GST is added. Full rules in the [Reel Studio Terms](https://studio.socialscalex.in/terms).' },
       {
         t: 'p',
-        text: 'Want a person to shoot real footage instead? Our [Reels production service](/services/reels-production) films at your location in Delhi NCR. To get more reach from whatever you post, read [how Instagram decides who sees your Reels](/guides/instagram-reels-reach).',
+        text: 'Want a person to shoot real footage instead? Our [Reels production service](/services/reels-production) films at your location in Delhi NCR. To get more reach from whatever you post, read [how Instagram decides who sees your Reels](/guides/instagram-reels-reach). Already have the words written, in a blog post or product page? Here’s [how to turn that text into a video using AI](/guides/turn-text-into-video-using-ai).',
       },
       {
         t: 'cta',
