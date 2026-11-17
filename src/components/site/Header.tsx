@@ -4,7 +4,7 @@ import { ChevronDown, ArrowRight } from 'lucide-react';
 import { Logo } from './Logo';
 import { MobileNav } from './MobileNav';
 import { AUTOMATION_LINKS, GOAL_LINKS, NAV, SERVICE_LINKS } from './nav';
-import { PRIMARY_PHONE, WHATSAPP_URL } from '@/lib/site';
+import { ACCOUNT_URL, PRIMARY_PHONE, WHATSAPP_URL } from '@/lib/site';
 
 export function Header() {
   return (
@@ -67,6 +67,7 @@ export function Header() {
           </ul>
         </nav>
         <div className="flex items-center gap-2">
+          <a href={ACCOUNT_URL} rel="nofollow" className="hidden rounded-full px-3.5 py-2 text-sm font-medium text-ink-2 hover:text-ink sm:inline-flex">Sign in</a>
           <Link href="/contact" className="btn btn-primary hidden sm:inline-flex">Free strategy call</Link>
           <MobileNav
             services={SERVICE_LINKS.map(({ href, label }) => ({ href, label }))}
@@ -75,6 +76,7 @@ export function Header() {
             phone={PRIMARY_PHONE.phone}
             phoneLabel={PRIMARY_PHONE.display}
             whatsapp={WHATSAPP_URL}
+            account={ACCOUNT_URL}
           />
         </div>
       </div>

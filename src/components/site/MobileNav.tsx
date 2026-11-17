@@ -6,7 +6,7 @@ import { Menu, X } from 'lucide-react';
 
 type L = { href: string; label: string };
 
-export function MobileNav({ services, automations, nav, phone, phoneLabel, whatsapp }: { services: L[]; automations: L[]; nav: L[]; phone: string; phoneLabel: string; whatsapp: string }) {
+export function MobileNav({ services, automations, nav, phone, phoneLabel, whatsapp, account }: { services: L[]; automations: L[]; nav: L[]; phone: string; phoneLabel: string; whatsapp: string; account: string }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const id = useId();
@@ -78,6 +78,7 @@ export function MobileNav({ services, automations, nav, phone, phoneLabel, whats
             <Link href="/contact" className="btn btn-primary btn-lg">Book a free strategy call</Link>
             <a href={`tel:${phone}`} className="btn btn-secondary btn-lg">Call {phoneLabel}</a>
             <a href={whatsapp} target="_blank" rel="noopener noreferrer" className="btn btn-secondary btn-lg">WhatsApp us</a>
+            <a href={account} rel="nofollow" className="btn btn-secondary btn-lg">Sign in to your account</a>
           </div>
         </nav>
       </div>

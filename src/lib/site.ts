@@ -49,6 +49,8 @@ export const CONTACTS: readonly [Contact, ...Contact[]] = [
 export const PRIMARY_PHONE = CONTACTS[0];
 
 export const WHATSAPP_URL = 'https://wa.me/918077727669';
+/** The one Social ScaleX account (CRM sign-in page): clients, creators of an account, and the team. */
+export const ACCOUNT_URL = 'https://crm.socialscalex.in/login?from=website';
 
 /** WhatsApp link with a first message already typed, so the chat opens with context. */
 export function whatsappLink(text: string): string {
