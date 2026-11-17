@@ -1,4 +1,5 @@
 import { FAQS, GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, SERVICES } from '@/lib/content';
+import { HUB_INTRO, getBriefs, isOpen, payText, placeText, type Brief } from '@/lib/creators';
 import { GUIDES } from '@/lib/guides';
 import { AUTOMATIONS, PLAN_99 } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
@@ -11,9 +12,21 @@ import { AREAS_SERVED, CONTACTS, FOUNDING_YEAR, SITE_NAME, SITE_TAGLINE, abs, sa
  * it doesn't need this file; other assistants may read it, and it costs
  * nothing.
  */
-export const dynamic = 'force-static';
+export const revalidate = 300;
 
-function build(): string {
+function creatorsMd(briefs: Brief[]): string {
+  const open = briefs.filter(isOpen);
+  const lines = open.map((b) => `- [${b.title}](${abs(`/creators/briefs/${b.slug}`)}): ${payText(b)}; ${placeText(b)}; apply by ${b.apply_by}. ${b.summary}`);
+  return `## Creator Hub (paid briefs for creators)
+
+${HUB_INTRO}
+
+Hub: ${abs('/creators')} · Join the network: ${abs('/creators/join')} · Applicants must be 18+; creators never pay anything.
+
+${lines.length ? `Open briefs:\n\n${lines.join('\n')}` : 'No open briefs right now.'}`;
+}
+
+function build(briefs: Brief[]): string {
   const services = SERVICES.map(
     (s) => `- [${s.name}](${abs(`/services/${s.slug}`)}): ${s.lede}`,
   ).join('\n');
@@ -79,6 +92,8 @@ ${clients}
 
 ${guides}
 
+${creatorsMd(briefs)}
+
 ## Frequently asked questions
 
 ${faqs}
@@ -94,6 +109,7 @@ ${faqs}
 - [Client results](${abs('/case-studies')})
 - [About](${abs('/about')})
 - [Contact](${abs('/contact')})
+- [Creator Hub: paid briefs for creators](${abs('/creators')})
 
 ## Contact
 
@@ -111,8 +127,8 @@ ${sameAs.length > 0 ? `\nProfiles: ${sameAs.join(' · ')}\n` : ''}
 `;
 }
 
-export function GET(): Response {
-  return new Response(build(), {
+export async function GET(): Promise<Response> {
+  return new Response(build(await getBriefs()), {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400',

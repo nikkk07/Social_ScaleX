@@ -50,3 +50,9 @@ export function trackLead(): void {
   window.gtag?.('event', 'generate_lead', { method: 'website_form', page_path: pagePath() });
   window.fbq?.('track', 'Lead');
 }
+
+/** A creator applied to a brief or joined the network. Not a sales lead, so it never fires generate_lead or Meta Lead. */
+export function trackCreatorApply(kind: 'brief' | 'network'): void {
+  if (typeof window === 'undefined') return;
+  window.gtag?.('event', 'creator_apply', { kind, page_path: pagePath() });
+}

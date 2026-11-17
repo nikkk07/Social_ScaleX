@@ -14,6 +14,7 @@ type L = { href: string; label: string };
 const COMPANY: L[] = [
   { href: '/about', label: 'About us' },
   { href: '/case-studies', label: 'Client results' },
+  { href: '/creators', label: 'Creator Hub (for creators)' },
   { href: '/services', label: 'All services' },
   { href: '/automation', label: 'All automation' },
   { href: '/contact', label: 'Contact' },

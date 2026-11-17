@@ -5,6 +5,9 @@ import { AUTOMATIONS } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
 import { CITIES } from '@/lib/areas';
 import { abs } from '@/lib/site';
+import { getBriefs, isOpen } from '@/lib/creators';
+
+export const revalidate = 300;
 
 /** Public pages only. /crm and /login are disallowed in robots.ts and must never appear here. */
 /**
@@ -20,7 +23,8 @@ const UPDATED: Record<string, string> = {
   '/automation/youtube-comment-management': '2026-10-15',
   '/case-studies': '2026-11-05',
   '/about': '2026-10-15',
-  '/privacy': '2026-10-15',
+  '/privacy': '2026-11-17',
+  '/creators/join': '2026-11-17',
   '/areas': '2026-11-04',
   '/areas/delhi': '2026-11-04',
   '/areas/noida': '2026-11-04',
@@ -34,8 +38,11 @@ const UPDATED: Record<string, string> = {
   ...Object.fromEntries(SERVICES.map((s) => [`/services/${s.slug}`, serviceUpdated(s)])),
 };
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const mod = (path: string) => new Date(UPDATED[path] ?? '2026-09-30');
+  // Open briefs only: closed ones lose their job markup and are noindex, so they leave the sitemap too.
+  const briefs = (await getBriefs()).filter(isOpen);
+  const newest = briefs.reduce((d, b) => (b.updated_at > d ? b.updated_at : d), '2026-11-17');
   return [
     { url: abs('/'), lastModified: mod('/'), changeFrequency: 'weekly', priority: 1 },
     { url: abs('/services'), lastModified: mod('/services'), changeFrequency: 'monthly', priority: 0.9 },
@@ -51,6 +58,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // The index lists every guide, so it changes when the newest one does.
     { url: abs('/guides'), lastModified: new Date(GUIDES.reduce((d, g) => (g.updated > d ? g.updated : d), '2026-09-30')), changeFrequency: 'weekly', priority: 0.7 },
     ...GUIDES.map((g) => ({ url: abs(`/guides/${g.slug}`), lastModified: new Date(g.updated), changeFrequency: 'monthly' as const, priority: 0.7 })),
+    { url: abs('/creators'), lastModified: new Date(newest), changeFrequency: 'daily', priority: 0.7 },
+    { url: abs('/creators/join'), lastModified: mod('/creators/join'), changeFrequency: 'monthly', priority: 0.5 },
+    ...briefs.map((b) => ({ url: abs(`/creators/briefs/${b.slug}`), lastModified: new Date(b.updated_at), changeFrequency: 'daily' as const, priority: 0.6 })),
     { url: abs('/privacy'), lastModified: mod('/privacy'), changeFrequency: 'yearly', priority: 0.2 },
     { url: abs('/terms'), lastModified: new Date('2026-07-01'), changeFrequency: 'yearly', priority: 0.2 },
   ];

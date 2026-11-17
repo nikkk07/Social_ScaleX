@@ -35,7 +35,7 @@ export default function Page() {
           breadcrumbNode(CRUMBS, '/privacy'),
         ])}
       />
-      <LegalPage title={TITLE} updated="October 2026" crumbs={CRUMBS}>
+      <LegalPage title={TITLE} updated="November 2026" crumbs={CRUMBS}>
       <section>
         <h2>What we collect</h2>
         <p>
@@ -54,6 +54,23 @@ export default function Page() {
           We use your contact details for one purpose: to get back to you about working
           together. We don&apos;t sell your information, we don&apos;t rent it out, and we don&apos;t add
           you to mailing lists you didn&apos;t ask for.
+        </p>
+      </section>
+      <section>
+        <h2>Creator applications</h2>
+        <p>
+          When you apply on our <a href="/creators">Creator Hub</a>, we collect what you type in: your name, WhatsApp
+          number, e-mail if you add it, city, date of birth (to confirm you&apos;re 18 or older), social media handles and
+          follower count, what you make, your niches and languages, links to your work, your rate and your message. A
+          person on our team uses them to consider you for that brief and future ones, and to contact you by WhatsApp or
+          e-mail. We don&apos;t ask for your address, PAN or bank details unless we agree to work together. To stop
+          misuse, we keep a scrambled, daily-changing code for your network connection for two days; it can&apos;t be
+          turned back into your IP address.
+        </p>
+        <p>
+          Applications that aren&apos;t taken forward, and creators who haven&apos;t applied for 12 months, are deleted
+          automatically. You can ask us to delete your details sooner, or to see what we hold, by WhatsApp or by replying
+          to any e-mail from us. We never charge creators anything.
         </p>
       </section>
       <section>

@@ -18,6 +18,7 @@ SUITES=(
   src/lib/areas.test.ts
   src/lib/results.test.ts
   src/lib/track.test.ts
+  src/lib/creators.test.ts
 )
 
 OUT=node_modules/.cache/ssx-tests

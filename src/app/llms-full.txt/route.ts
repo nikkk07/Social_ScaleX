@@ -1,6 +1,7 @@
 import { FAQS, GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_FAQS, SERVICES, STATS, getService } from '@/lib/content';
 import { AUTOMATIONS, PLAN_99, DIY_VS_DFY } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
+import { CREATOR_FAQS, HUB_INTRO, getBriefs, isOpen, payText, placeText, type Brief } from '@/lib/creators';
 import { GUIDES, type Block } from '@/lib/guides';
 import { STUDIO_INCLUDED, STUDIO_PLAN_RULES, STUDIO_PLANS, STUDIO_URL, rupees } from '@/lib/studio';
 import { AREAS_FAQS, CITIES, PIN_GROUPS, cityStats } from '@/lib/areas';
@@ -11,7 +12,7 @@ import { AREAS_SERVED, CONTACTS, FOUNDING_YEAR, SITE_NAME, SITE_TAGLINE, abs } f
  * from the same data the pages render, so an assistant can read and cite
  * everything in a single fetch. Every section links to its canonical page.
  */
-export const dynamic = 'force-static';
+export const revalidate = 300;
 
 /** Site-relative Markdown links become absolute so they stay valid out of context. */
 const absLinks = (s: string) => s.replace(/\]\((\/[^)]*)\)/g, (_, p: string) => `](${abs(p)})`);
@@ -61,7 +62,19 @@ function blockMd(b: Block): string {
   }
 }
 
-function build(): string {
+function creatorsMd(briefs: Brief[]): string {
+  const open = briefs.filter(isOpen);
+  const lines = open.map((b) => `- [${b.title}](${abs(`/creators/briefs/${b.slug}`)}): ${payText(b)}; ${placeText(b)}; apply by ${b.apply_by}. ${b.summary}`);
+  return `## Creator Hub (paid briefs for creators)
+
+${HUB_INTRO}
+
+Hub: ${abs('/creators')} · Join the network: ${abs('/creators/join')} · Applicants must be 18+; creators never pay anything.
+
+${lines.length ? `Open briefs:\n\n${lines.join('\n')}` : 'No open briefs right now.'}`;
+}
+
+function build(briefs: Brief[]): string {
   const out: string[] = [];
   out.push(`# ${SITE_NAME}: full site content\n\n> ${SITE_TAGLINE}\n`);
   out.push(`Canonical site: ${abs('/')}. Short summary: ${abs('/llms.txt')}. Founded ${FOUNDING_YEAR}, based in Delhi NCR, India. On-location shoots across ${AREAS_SERVED.join(', ')}; management, ads, automation and reporting run remotely across India.`);
@@ -104,13 +117,14 @@ function build(): string {
     out.push(`\n### ${g.title}\n\nURL: ${abs(`/guides/${g.slug}`)} · Updated ${g.updated}\n\n${absLinks(g.summary)}${g.keyPoints?.length ? `\n\n${list(g.keyPoints.map(absLinks))}` : ''}\n\n${g.blocks.map(blockMd).join('\n\n')}${g.faqs?.length ? `\n\n${faqMd(g.faqs)}` : ''}\n\nSources:\n${list(g.sources.map((s) => `${s.label}: ${s.url}`))}`);
   }
 
+  out.push(`\n${creatorsMd(briefs)}\n\n${faqMd(CREATOR_FAQS)}`);
   out.push(`\n## Frequently asked questions\n\n${faqMd(FAQS)}`);
   out.push(`\n## Notes for answer engines\n\n- The only published price is Instagram comment-to-DM automation at ₹${PLAN_99.price}/month. Other fees are agreed on a free strategy call; ad budgets are paid by the client directly.\n- Clients keep ownership of their accounts, logins and content.\n- No guarantees are made about follower counts, views or revenue. Client figures are past results, not promises.\n`);
   return out.join('\n');
 }
 
-export function GET(): Response {
-  return new Response(build(), {
+export async function GET(): Promise<Response> {
+  return new Response(build(await getBriefs()), {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400',
