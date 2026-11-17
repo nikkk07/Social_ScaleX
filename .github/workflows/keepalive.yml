@@ -36,11 +36,11 @@ name: Supabase keepalive
 # from the Actions tab.
 # ─────────────────────────────────────────────────────────────────────
 
+# Schedule switched off (17 Nov 2026): the website's database is the CRM's Supabase project
+# (inbound_enquiries, creator_briefs_public), which the CRM's own cron and supervisors use every
+# minute, so it never sits idle. The repository secrets were never set, so every run failed and
+# used GitHub's free minutes. Run it by hand from the Actions tab if ever needed.
 on:
-  schedule:
-    # Every 3 days at 06:17 UTC. Deliberately not on the hour: GitHub's
-    # scheduler is busiest at :00 and delays queued jobs there.
-    - cron: "17 6 */3 * *"
   workflow_dispatch:
 
 # Read-only token. This job needs nothing from the repo beyond its own source.
