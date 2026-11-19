@@ -160,14 +160,13 @@ export function StoryPanel({ p, index }: { p: PortfolioItem; index: number }) {
   const next = PORTFOLIO[(index + 1) % total]!;
   const services = p.services.map(getService).filter((x): x is NonNullable<typeof x> => Boolean(x));
   const hasNumbers = p.metrics.length > 0 || p.growth.length > 0;
-  const extra = p.metrics.filter((m) => !p.growth.some((g) => g.toText.replace('+', '') === m.value.replace('+', '')));
   const wa = whatsappLink(`Hi Social ScaleX, I just read the ${p.client} story on your website. Can you look at my account?`);
   const date = p.status === 'Past' ? null : formatDay(p.asOf ?? RESULTS_AS_OF);
 
   return (
     <article id={p.id} data-story={p.id} className="story" role="dialog" aria-modal="true" aria-labelledby={`${p.id}-title`}>
       <a href="#results" data-story-close tabIndex={-1} aria-hidden="true" className="story-backdrop" />
-      <div className="story-panel" data-story-panel>
+      <div className="story-panel" data-story-panel data-lenis-prevent>
         {/* Top bar: position in the set, who this is, close. */}
         <div className="story-top">
           <div aria-hidden="true" className="story-progress">
@@ -204,6 +203,16 @@ export function StoryPanel({ p, index }: { p: PortfolioItem; index: number }) {
             {l.kind === 'brief' ? 'Reels and creator collabs' : l.big}
           </p>
           <p className="mt-3 text-sm text-on-night-2">{p.category}</p>
+          {p.metrics.length ? (
+            <dl className="mt-6 grid grid-cols-2 gap-3">
+              {p.metrics.map((m) => (
+                <div key={m.label} className="flex flex-col-reverse justify-end rounded-2xl border border-on-night/15 bg-on-night/[0.06] p-4">
+                  <dt className="mt-1.5 text-xs leading-snug text-on-night-2">{m.label}</dt>
+                  <dd className="font-display text-3xl leading-none text-on-night sm:text-4xl">{m.value}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
           {p.growth.length ? (
             <div className="mt-7 grid gap-5 border-t border-on-night/15 pt-6">
               {p.growth.map((g) => <NightBars key={g.label} g={g} />)}
@@ -235,16 +244,6 @@ export function StoryPanel({ p, index }: { p: PortfolioItem; index: number }) {
             </Step>
             <Step n={4} title="What happened">
               <p>{p.story.outcome}</p>
-              {extra.length ? (
-                <dl className="mt-4 grid grid-cols-2 gap-3">
-                  {extra.map((m) => (
-                    <div key={m.label} className="flex flex-col-reverse justify-end rounded-2xl bg-paper-2 p-4">
-                      <dt className="mt-1 text-xs leading-snug text-ink-3">{m.label}</dt>
-                      <dd className="font-display text-3xl leading-none text-ink">{m.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : null}
             </Step>
           </ol>
 
