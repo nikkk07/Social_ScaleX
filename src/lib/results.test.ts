@@ -29,13 +29,13 @@ for (const p of PORTFOLIO) for (const g of p.growth) {
   check(`${p.id} ${g.label}: from/to text matches numbers`, Math.abs(num(g.fromText) - g.from) < 1 && Math.abs(num(g.toText) - g.to) < 1, `${g.fromText}/${g.from} ${g.toText}/${g.to}`);
   check(`${p.id} ${g.label}: grew`, g.to > g.from);
 }
-check('PraGo followers 2.5×', growthChange(by('prago').growth[0]!) === '2.5×', growthChange(by('prago').growth[0]!));
+check('PraGo followers 2.8×', growthChange(by('prago').growth[0]!) === '2.8×', growthChange(by('prago').growth[0]!));
 check('Big Discount Mart 13.5×', growthChange(by('big-discount-mart').growth[0]!) === '13.5×');
 check('Subh +61% (rounded down)', growthChange(by('subh').growth[0]!) === '+61%', growthChange(by('subh').growth[0]!));
 
 // Headline stats must be derivable from the data, never above it.
 const views = num(by('prago').metrics[0]!.value) + num(by('saini-telecom').metrics[0]!.value);
-check('10M+ = PraGo + Saini 30-day views', num(STATS[0]!.value) <= views, String(views));
+check('11M+ = PraGo + Saini 30-day views', num(STATS[0]!.value) <= views, String(views));
 const audience = PORTFOLIO.filter((p) => p.status === 'Active').flatMap((p) => p.metrics).filter((m) => /followers|subscribers/i.test(m.label)).reduce((n, m) => n + num(m.value), 0);
 check('570K+ ≤ active followers + subscribers', num(STATS[1]!.value) <= audience + 0.5, String(audience));
 check('Big Discount Mart 13.5×', growthChange(by('big-discount-mart').growth[0]!) === '13.5×');
@@ -44,7 +44,8 @@ check('Saini first (strongest growth)', PORTFOLIO[0]!.id === 'saini-telecom');
 check('client count stat', STATS[3]!.value === String(PORTFOLIO.length));
 check('date label', formatDay('2026-09-30') === '30 Sep 2026' && monthShort('2026-09-30') === 'Sep');
 check('per-client asOf is an ISO date on or after RESULTS_AS_OF', PORTFOLIO.every((p) => !p.asOf || (/^\d{4}-\d{2}-\d{2}$/.test(p.asOf) && p.asOf >= '2026-09-30')));
-check('Saini 13.1K / 5M+ (owner update 15 Oct 2026)', by('saini-telecom').metrics[0]!.value === '5M+' && by('saini-telecom').metrics[1]!.value === '13.1K');
+check('Saini 15.7K / 5.5M+ (owner update 19 Nov 2026)', by('saini-telecom').metrics[0]!.value === '5.5M+' && by('saini-telecom').metrics[1]!.value === '15.7K');
+check('PraGo 39.7K / 6M+ (owner update 19 Nov 2026)', by('prago').metrics[0]!.value === '6M+' && by('prago').metrics[1]!.value === '39.7K');
 check('results FAQs', RESULTS_FAQS.length >= 4);
 
 if (failures) { console.log(`\n${failures} check(s) failed`); process.exit(1); }

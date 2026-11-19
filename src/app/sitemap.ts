@@ -17,12 +17,12 @@ export const revalidate = 300;
  * visible content changes; guides use their own `updated` date.
  */
 const UPDATED: Record<string, string> = {
-  '/': '2026-11-05',
+  '/': '2026-11-19',
   '/automation': '2026-10-15',
   '/automation/instagram-comment-to-dm': '2026-10-15',
   '/automation/whatsapp-automation': '2026-10-15',
   '/automation/youtube-comment-management': '2026-10-15',
-  '/case-studies': '2026-11-05',
+  '/case-studies': '2026-11-19',
   '/about': '2026-10-15',
   '/privacy': '2026-11-19',
   '/creators/join': '2026-11-19',

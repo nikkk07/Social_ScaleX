@@ -102,7 +102,7 @@ export const SERVICES: Service[] = [
       },
       proof: {
         q: 'Which Instagram accounts have we grown?',
-        a: 'Three stores, all on Instagram. Saini Telecom grew from 400 to 13.1K followers between June and 15 October 2026. Big Discount Mart grew from 800 to 10.8K followers in two months. PraGo Outdoors grew from 14K to 35.3K followers between July and September 2026.',
+        a: 'Three stores, all on Instagram. Saini Telecom grew from 400 to 15.7K followers between June and 19 November 2026. Big Discount Mart grew from 800 to 10.8K followers in two months. PraGo Outdoors grew from 14K to 39.7K followers between July and 19 November 2026.',
       },
       faq: 'Questions about Instagram marketing services in Delhi',
     },
@@ -186,7 +186,7 @@ export const SERVICES: Service[] = [
       },
       proof: {
         q: 'Whose Reels have we made?',
-        a: 'PraGo Outdoors, AC Delhi Vlogs and Subh Journey. Between July and September 2026, PraGo grew from 14K to 35.3K Instagram followers and passed 6M views in 30 days. AC Delhi Vlogs reached 358K Instagram followers, and Subh Journey grew from 15.9K to 25.7K.',
+        a: 'PraGo Outdoors, AC Delhi Vlogs and Subh Journey. Between July and 19 November 2026, PraGo grew from 14K to 39.7K Instagram followers and passed 6M views in 30 days. AC Delhi Vlogs reached 358K Instagram followers, and Subh Journey grew from 15.9K to 25.7K.',
       },
       faq: 'Questions about Reels and short video production',
     },
@@ -946,21 +946,21 @@ export const PORTFOLIO: PortfolioItem[] = [
     goal: 'sales',
     status: 'Active',
     description:
-      'Delhi mobile, electronics and LED TV store. From 400 to 13.1K Instagram followers since June 2026.',
+      'Delhi mobile, electronics and LED TV store. From 400 to 15.7K Instagram followers since June 2026.',
     detail:
-      'A local store, so the job is enquiries and footfall. We took the account over at 400 followers at the start of June 2026. We run the page, shoot the phones and electronics in the store, and edit them into Reels. By 15 October 2026 it had 13.1K followers and passed 5M views in the last 30 days.',
-    asOf: '2026-10-15',
+      'A local store, so the job is enquiries and footfall. We took the account over at 400 followers at the start of June 2026. We run the page, shoot the phones and electronics in the store, and edit them into Reels. By 19 November 2026 it had 15.7K followers and passed 5.5M views in the last 30 days.',
+    asOf: '2026-11-19',
     metrics: [
-      { value: '5M+', label: 'Views in the last 30 days' },
-      { value: '13.1K', label: 'Instagram followers' },
+      { value: '5.5M+', label: 'Views in the last 30 days' },
+      { value: '15.7K', label: 'Instagram followers' },
     ],
-    growth: [{ label: 'Followers', from: 400, to: 13_100, fromText: '400', toText: '13.1K', period: 'Jun → Oct 2026' }],
+    growth: [{ label: 'Followers', from: 400, to: 15_700, fromText: '400', toText: '15.7K', period: 'Jun → Nov 2026' }],
     services: ['instagram-marketing', 'reels-production', 'product-shoots'],
     story: {
       start: 'The page had 400 followers when we took it over at the start of June 2026.',
       job: 'Bring enquiries and walk-in customers to a mobile, electronics and LED TV store in Delhi.',
       did: ['We run the Instagram page day to day.', 'We shoot the phones and electronics inside the store.', 'We edit that footage into Reels.'],
-      outcome: 'On 15 October 2026 the page had 13.1K followers and more than 5M views in the last 30 days.',
+      outcome: 'On 19 November 2026 the page had 15.7K followers and more than 5.5M views in the last 30 days.',
     },
   },
   {
@@ -1006,21 +1006,22 @@ export const PORTFOLIO: PortfolioItem[] = [
     description:
       'Camping, trekking, hiking and riding gear. Instagram built to sell products, not to collect likes.',
     detail:
-      'The brief is sales, so gear is shot in use rather than on white backgrounds, and the page is built to send people to the store rather than to collect followers. Product shoots and Reels come from the same shoot days. Since July the account has gone from 14K to 35.3K followers and from 3.1M to over 6M views a month.',
+      'The brief is sales, so gear is shot in use rather than on white backgrounds, and the page is built to send people to the store rather than to collect followers. Product shoots and Reels come from the same shoot days. Since July the account has gone from 14K to 39.7K followers and from 3.1M to over 6M views a month.',
+    asOf: '2026-11-19',
     metrics: [
       { value: '6M+', label: 'Views in the last 30 days' },
-      { value: '35.3K', label: 'Instagram followers' },
+      { value: '39.7K', label: 'Instagram followers' },
     ],
     growth: [
-      { label: 'Followers', from: 14_000, to: 35_300, fromText: '14K', toText: '35.3K', period: JUL },
-      { label: 'Views in 30 days', from: 3_100_000, to: 6_000_000, fromText: '3.1M', toText: '6M+', period: JUL },
+      { label: 'Followers', from: 14_000, to: 39_700, fromText: '14K', toText: '39.7K', period: 'Jul → Nov 2026' },
+      { label: 'Views in 30 days', from: 3_100_000, to: 6_000_000, fromText: '3.1M', toText: '6M+', period: 'Jul → Nov 2026' },
     ],
     services: ['instagram-marketing', 'reels-production', 'product-shoots'],
     story: {
       start: 'On 1 July 2026 the page had 14K followers and 3.1M views a month.',
       job: 'Sell camping, trekking and riding gear, not collect likes.',
       did: ['We shoot the gear in use, not on white backgrounds.', 'We get product shoots and Reels from the same shoot days.', 'We build the page to send people to the store.'],
-      outcome: 'On 30 September 2026 the page had 35.3K followers and more than 6M views in 30 days.',
+      outcome: 'On 19 November 2026 the page had 39.7K followers and more than 6M views in 30 days.',
     },
   },
   {
@@ -1148,26 +1149,25 @@ export const PORTFOLIO: PortfolioItem[] = [
 export const RESULTS_LATEST: string = PORTFOLIO.reduce((d, p) => (p.asOf && p.asOf > d ? p.asOf : d), RESULTS_AS_OF);
 
 export const PORTFOLIO_NOTE =
-  'From each client’s own Instagram or YouTube analytics, recorded 30 Sep 2026 (Saini Telecom: 15 Oct 2026) and published with permission. Follower counts checked against the public profiles the same day.';
+  'From each client’s own Instagram or YouTube analytics, recorded 30 Sep 2026 (PraGo Outdoors and Saini Telecom: 19 Nov 2026) and published with permission. Follower counts checked against the public profiles the same day.';
 
 /**
  * Headline figures, each traceable to PORTFOLIO:
- *  - 10M+  = PraGo 6M+ (30 Sep) + Saini Telecom 5M+ (15 Oct) views in each
- *            account's last 30 days = 11M; kept at 10M+ as the windows differ.
- *  - 570K+ = active accounts: 35.3 + 13.1 + 358 + 101 + 25.7 + 12 + 26 = 571.1K.
- *  - 32.7× = Saini Telecom, 400 → 13,100 followers, Jun → 15 Oct 2026.
+ *  - 11M+  = PraGo 6M+ + Saini Telecom 5.5M+ views, each account's last 30 days on 19 Nov 2026 = 11.5M, rounded down.
+ *  - 570K+ = active accounts: 39.7 + 15.7 + 358 + 101 + 25.7 + 12 + 26 = 578.1K.
+ *  - 39.2× = Saini Telecom, 400 → 15,700 followers, Jun → 19 Nov 2026 (rounded down).
  */
 export const STATS: Metric[] = [
-  { value: '10M+', label: 'Views on two retail accounts we run, each over its latest 30 days' },
+  { value: '11M+', label: 'Views on two retail accounts we run, each over its latest 30 days' },
   { value: '570K+', label: 'Followers and subscribers on the accounts we manage' },
-  { value: '32.7×', label: 'Saini Telecom’s followers vs June (400 → 13.1K)' },
+  { value: '39.2×', label: 'Saini Telecom’s followers vs June (400 → 15.7K)' },
   { value: `${PORTFOLIO.length}`, label: 'Brands and creators with published results' },
 ];
 
 export const RESULTS_FAQS: Faq[] = [
   {
     q: 'Can a social media agency really increase Instagram followers and sales?',
-    a: 'Yes, but not on a promise. Saini Telecom went from 400 to 13.1K followers between June and mid-October 2026, Big Discount Mart from 800 to 10.8K in two months, and PraGo Outdoors from 14K to 35.3K while passing 6M views a month. Results depend on your product, content and consistency, so we don’t guarantee numbers.',
+    a: 'Yes, but not on a promise. Saini Telecom went from 400 to 15.7K followers between June and November 2026, Big Discount Mart from 800 to 10.8K in two months, and PraGo Outdoors from 14K to 39.7K while passing 6M views a month. Results depend on your product, content and consistency, so we don’t guarantee numbers.',
   },
   {
     q: 'How long does it take to see results on Instagram?',
@@ -1175,7 +1175,7 @@ export const RESULTS_FAQS: Faq[] = [
   },
   {
     q: 'Where do these numbers come from?',
-    a: 'From each client’s own Instagram professional dashboard or YouTube Studio, recorded on 30 September 2026 (Saini Telecom on 15 October 2026) and shared with permission. Follower and subscriber counts were checked against the public profiles the same day. The “before” figures are the ones this site published on 1 July 2026, or the follower count when we took an account over.',
+    a: 'From each client’s own Instagram professional dashboard or YouTube Studio, recorded on 30 September 2026 (PraGo Outdoors and Saini Telecom on 19 November 2026) and shared with permission. Follower and subscriber counts were checked against the public profiles the same day. The “before” figures are the ones this site published on 1 July 2026, or the follower count when we took an account over.',
   },
   {
     q: 'Do you work with influencers and content creators?',

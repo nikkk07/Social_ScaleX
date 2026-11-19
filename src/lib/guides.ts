@@ -1848,7 +1848,7 @@ export const GUIDES: Guide[] = [
       { t: 'h2', text: 'Real numbers from accounts we manage' },
       {
         t: 'p',
-        text: 'prago.outdoors passed 6M views in 30 days with 35.3K followers, and saini_telecom__ passed 5M views in 30 days with 13.1K followers (15 Oct 2026): reach far beyond the following, driven by Reels. See the details in our [client results](/case-studies).',
+        text: 'prago.outdoors passed 6M views in 30 days with 39.7K followers, and saini_telecom__ passed 5.5M views in 30 days with 15.7K followers (19 Nov 2026): reach far beyond the following, driven by Reels. See the details in our [client results](/case-studies).',
       },
     ],
     faqs: [
@@ -2025,7 +2025,7 @@ export const GUIDES: Guide[] = [
       },
       {
         t: 'p',
-        text: 'Reels can reach far beyond your followers. prago.outdoors passed 6M views in 30 days with 35.3K followers, and saini_telecom__ passed 5M views in 30 days with 13.1K followers (15 Oct 2026). See the details in our [client results](/case-studies).',
+        text: 'Reels can reach far beyond your followers. prago.outdoors passed 6M views in 30 days with 39.7K followers, and saini_telecom__ passed 5.5M views in 30 days with 15.7K followers (19 Nov 2026). See the details in our [client results](/case-studies).',
       },
       {
         t: 'p',

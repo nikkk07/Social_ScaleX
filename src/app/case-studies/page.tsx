@@ -17,7 +17,7 @@ import { socialMeta } from '@/lib/site';
 const PATH = '/case-studies';
 const TITLE = 'Client Results: Instagram & YouTube Case Studies';
 const DESCRIPTION =
-  'Real results from brands and creators we work with: 400 to 13.1K followers since June, 10M+ Instagram views in 30 days, a 358K creator. Delhi NCR agency.';
+  'Real results from brands and creators we work with: 400 to 15.7K followers since June, 11M+ Instagram views in 30 days, a 358K creator. Delhi NCR agency.';
 const CRUMBS = [
   { name: 'Home', path: '/' },
   { name: 'Client results', path: PATH },
@@ -103,7 +103,7 @@ export default function CaseStudiesPage() {
             <ul className="grid gap-6 text-ink-2">
               {[
                 ['From the client’s dashboard', 'Views come from Instagram’s professional dashboard or YouTube Studio, not from screenshots we picked.'],
-                ['Dated', 'We recorded current figures on 30 September 2026 (Saini Telecom on 15 October 2026). “Before” figures are the ones this site published on 1 July 2026, or the count when we took the account over.'],
+                ['Dated', 'We recorded current figures on 30 September 2026 (PraGo Outdoors and Saini Telecom on 19 November 2026). “Before” figures are the ones this site published on 1 July 2026, or the count when we took the account over.'],
                 ['Rounded down', 'A figure shown as “6M+” means the dashboard showed more than 6 million. We never round up.'],
                 ['Past clients stay honest', 'For accounts we no longer run, we show the number at hand-over, not what happened after.'],
               ].map(([t, d]) => (
