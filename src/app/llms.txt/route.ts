@@ -17,7 +17,7 @@ export const revalidate = 300;
 
 function careersMd(openings: Opening[]): string {
   const open = openings.filter(isOpenNow);
-  const lines = open.map((o) => `- [${o.title}](${abs(`/careers/${o.slug}`)}): ${EMPLOYMENT_LABEL[o.employment_type]}; ${placeOf(o)}${o.hours ? `; ${o.hours}` : ''}; salary ${o.salary_text.toLowerCase()}. ${o.summary}`);
+  const lines = open.map((o) => `- [${o.title}](${abs(`/careers/${o.slug}`)}): ${o.for_client ? `for ${o.employer ?? 'a client'} (recruited by Social ScaleX); ` : ''}${EMPLOYMENT_LABEL[o.employment_type]}; ${placeOf(o)}${o.hours ? `; ${o.hours}` : ''}; salary ${o.salary_text.toLowerCase()}. ${o.summary}`);
   return `## Careers (jobs at Social ScaleX)
 
 ${CAREERS_INTRO}

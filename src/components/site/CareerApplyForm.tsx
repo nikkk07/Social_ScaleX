@@ -109,7 +109,7 @@ export function CareerApplyForm({ opening, openingTitle, ageMin, ageMax, returnU
           steps={[
             { title: 'We read it', text: 'A real person on our team reviews every application.' },
             { title: 'We call you', text: openingTitle ? 'If you’re shortlisted, we call or WhatsApp you to fix an interview.' : 'When a matching role opens, you hear from us first.' },
-            { title: 'Meet us', text: 'A short interview at our office. Never any fee, at any step.' },
+            { title: 'Interview', text: 'A short interview with the employer. Never any fee, at any step.' },
           ]}
           againLabel={opening ? 'See other jobs and send your profile' : 'Send another application'} {...(opening ? { againHref: '/careers#profile' } : { onAgain: reset })}
           footnote="If you gave an e-mail, a confirmation is on its way. Keep your phone handy: we usually call or WhatsApp."

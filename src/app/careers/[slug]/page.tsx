@@ -40,6 +40,7 @@ export default async function OpeningPage({ params }: { params: Promise<{ slug: 
   const job = openingJobNode(o);
   const crumbs = [{ name: 'Home', path: '/' }, { name: 'Careers', path: '/careers' }, { name: o.title, path }];
   const facts: [string, React.ReactNode][] = [
+    ['Employer', o.for_client ? `${o.employer ?? 'A client'} (via Social ScaleX)` : 'Social ScaleX'],
     ['Job type', EMPLOYMENT_LABEL[o.employment_type]],
     ['Where', placeOf(o)],
     ...(o.hours ? [['Hours and days', o.hours] as [string, React.ReactNode]] : []),
@@ -60,7 +61,7 @@ export default async function OpeningPage({ params }: { params: Promise<{ slug: 
         <article>
           <div className="wrap pt-8"><Breadcrumbs crumbs={crumbs} /></div>
           <header className="wrap mt-10 max-w-4xl">
-            <p className="eyebrow">Careers · {o.department ?? 'Social ScaleX'}</p>
+            <p className="eyebrow">Careers · {o.for_client ? 'Recruiting for a client' : 'Social ScaleX team'}</p>
             <h1 className="mt-4 text-4xl text-ink sm:text-5xl">{o.title}</h1>
             <p className="mt-6 max-w-2xl text-lg text-ink-2">{o.summary}</p>
             {!open ? <p role="status" className="mt-6 rounded-xl border border-line bg-paper-2 p-4 text-ink">This job is closed and no longer takes applications. <Link href="/careers#profile" className="underline">Send your profile</Link> and we’ll call you when a role fits.</p> : null}
@@ -78,7 +79,7 @@ export default async function OpeningPage({ params }: { params: Promise<{ slug: 
                 <ul className="mt-4 list-disc space-y-2 pl-5 text-ink-2">{o.requirements.map((d) => <li key={d}>{d}</li>)}</ul>
               </> : null}
               <h2 className="mt-10 text-3xl text-ink">No fee, ever</h2>
-              <p className="mt-4 text-ink-2">Social ScaleX never charges anything to apply, for an interview, for training or for joining. If anyone asks you for money in our name, it isn’t us.</p>
+              <p className="mt-4 text-ink-2">Social ScaleX never charges anything to apply, for an interview, for training or for joining{o.for_client ? ', and neither does the employer' : ''}. If anyone asks you for money in our name, it isn’t us.</p>
             </div>
             <aside className="lg:sticky lg:top-24 lg:self-start">
               <dl className="rounded-2xl border border-line bg-surface p-6 text-sm">

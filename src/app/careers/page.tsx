@@ -33,7 +33,7 @@ export default async function Careers() {
         faqNode(CAREER_FAQS, '/careers'),
       ])} />
       <SiteShell>
-        <PageIntro crumbs={CRUMBS} eyebrow="Careers" title="Jobs at Social ScaleX" lede={CAREERS_INTRO}>
+        <PageIntro crumbs={CRUMBS} eyebrow="Careers" title="Jobs in Delhi" lede={CAREERS_INTRO}>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#jobs" className="btn btn-primary btn-lg">See open jobs ({open.length})</a>
             <a href="#profile" className="btn btn-secondary btn-lg">Send your profile</a>
@@ -49,7 +49,7 @@ export default async function Careers() {
                 {open.map((o) => (
                   <li key={o.slug}>
                     <article className="card card-link relative flex h-full flex-col p-6 sm:p-7">
-                      <p className="text-sm text-ink-3">{o.department ?? 'Social ScaleX'}</p>
+                      <p className="text-sm text-ink-3">{o.for_client ? `${o.employer ?? 'A client'} · hiring through Social ScaleX` : 'Social ScaleX team'}</p>
                       <h3 className="mt-2 font-display text-2xl text-ink"><Link href={`/careers/${o.slug}`} className="after:absolute after:inset-0">{o.title}</Link></h3>
                       <p className="mt-3 text-ink-2">{o.summary}</p>
                       <ul className="mt-5 flex flex-wrap gap-2 text-sm text-ink-2">

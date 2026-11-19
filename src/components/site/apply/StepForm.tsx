@@ -17,6 +17,27 @@ const FIELD_OF: Record<string, string> = {
   age_out_of_range: 'birth_d', bad_instagram: 'instagram', bad_url: 'samples', cv_too_big: 'cv', cv_not_pdf: 'cv', no_consent: 'consent',
 };
 
+/** How much of each step is filled in: every required box, required group ("tick at least one"), required link list
+ *  and the consent tick counts once. Used for the progress bar, so it starts at 0% and only reaches 100% when done. */
+function stepFill(step: HTMLElement): { done: number; total: number } {
+  let done = 0, total = 0;
+  const count = (ok: boolean) => { total++; if (ok) done++; };
+  const grouped = new Set<Element>();
+  for (const g of Array.from(step.querySelectorAll<HTMLElement>('fieldset[data-min], [data-links][data-required], [data-dob]'))) {
+    g.querySelectorAll('input, select').forEach((el) => grouped.add(el));
+    if (g.matches('[data-dob]')) count(Array.from(g.querySelectorAll<HTMLSelectElement>('select')).every((x) => x.value));
+    else if (g.matches('[data-links]')) count(Array.from(g.querySelectorAll<HTMLInputElement>('input')).some((x) => x.value.trim()));
+    else count(Array.from(g.querySelectorAll<HTMLInputElement>('input[type=checkbox], input[type=radio]')).some((x) => x.checked));
+  }
+  for (const el of Array.from(step.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>('input[required], select[required], textarea[required]'))) {
+    if (grouped.has(el) || el.type === 'radio') continue;
+    if (el.type === 'checkbox') { count((el as HTMLInputElement).checked); continue; }
+    if (el.closest('.wa-number') && !(el as HTMLInputElement).required) continue;
+    count(el.value.trim() !== '' && el.validity.valid);
+  }
+  return { done, total };
+}
+
 function ageOn(y: number, m: number, d: number) {
   const t = new Date(Date.now() + 19_800_000);
   const ty = t.getUTCFullYear(), tm = t.getUTCMonth() + 1, td = t.getUTCDate();
@@ -75,12 +96,17 @@ export function StepForm({ action, steps, submitLabel, sendingLabel = 'Sendingâ€
   const [state, setState] = useState<'idle' | 'sending' | 'error' | 'done'>('idle');
   const [message, setMessage] = useState('');
   const [result, setResult] = useState<SendResult | null>(null);
+  const [fill, setFill] = useState<number[]>(() => steps.map(() => 0));
   const formRef = useRef<HTMLFormElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const stepRefs = useRef<(HTMLElement | null)[]>([]);
   const last = steps.length - 1;
 
   useEffect(() => { setEnhanced(true); }, []);
+  /** Re-measure how complete each step is (on every keystroke, tick and change). */
+  function measure() {
+    setFill(stepRefs.current.map((el) => { if (!el) return 0; const f = stepFill(el); return f.total ? f.done / f.total : 1; }));
+  }
   useEffect(() => {
     if (!TURNSTILE || document.querySelector('script[data-turnstile]')) return;
     const s = document.createElement('script');
@@ -117,27 +143,29 @@ export function StepForm({ action, steps, submitLabel, sendingLabel = 'Sendingâ€
   }
 
   function reset() {
-    formRef.current?.reset(); setResult(null); setState('idle'); setMessage(''); setAt(0);
+    formRef.current?.reset(); setResult(null); setState('idle'); setMessage(''); setAt(0); setFill(steps.map(() => 0));
     requestAnimationFrame(scrollTop);
   }
 
   if (state === 'done' && result) return <div ref={topRef} className="scroll-mt-28">{renderSuccess(result, reset)}</div>;
 
-  const pct = Math.round(((at + 1) / steps.length) * 100);
+  const pct = Math.floor((fill.reduce((a, b) => a + b, 0) / steps.length) * 100);
   return (
     <div ref={topRef} className={`scroll-mt-28 ${className ?? ''}`}>
       {enhanced ? (
         <div className="mb-6" aria-live="polite">
           <div className="flex items-baseline justify-between gap-3 text-sm">
             <p className="font-semibold text-ink">Step {at + 1} of {steps.length}: {steps[at]!.title}</p>
-            <p className="text-ink-3">{pct}%</p>
+            <p className="text-ink-3" aria-label={`${pct}% complete`}>{pct}% complete</p>
           </div>
           <ol className="mt-3 grid gap-2" style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` }} aria-label="Progress">
             {steps.map((s, i) => (
               <li key={s.id}>
                 <button type="button" disabled={i > at} onClick={() => i < at && go(i)} aria-current={i === at ? 'step' : undefined}
                   className="group block w-full text-left disabled:cursor-default">
-                  <span className={`block h-1.5 rounded-full transition-colors duration-300 ${i <= at ? 'bg-coral' : 'bg-line'}`} />
+                  <span className="block h-1.5 overflow-hidden rounded-full bg-line">
+                    <span className="block h-full rounded-full bg-coral transition-[width] duration-300 ease-out" style={{ width: `${Math.round((fill[i] ?? 0) * 100)}%` }} />
+                  </span>
                   <span className={`mt-1.5 hidden text-xs sm:block ${i === at ? 'font-semibold text-ink' : i < at ? 'text-ink-2 group-hover:underline' : 'text-ink-3'}`}>{s.title}</span>
                 </button>
               </li>
@@ -145,7 +173,8 @@ export function StepForm({ action, steps, submitLabel, sendingLabel = 'Sendingâ€
           </ol>
         </div>
       ) : null}
-      <form ref={formRef} action={action} method="post" encType={multipart ? 'multipart/form-data' : undefined} onSubmit={onSubmit} noValidate={enhanced}>
+      <form ref={formRef} action={action} method="post" encType={multipart ? 'multipart/form-data' : undefined} onSubmit={onSubmit} noValidate={enhanced}
+        onInput={measure} onChange={measure} onClick={() => requestAnimationFrame(measure)}>
         {Object.entries(hidden).map(([k, v]) => <input key={k} type="hidden" name={k} value={v} />)}
         <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
           <label htmlFor={`${id}-website`}>Leave this empty</label><input id={`${id}-website`} name="website" tabIndex={-1} autoComplete="off" />

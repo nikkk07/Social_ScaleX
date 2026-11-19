@@ -45,4 +45,11 @@ for (const [input, want] of [['+91 98765-43210', '9876543210'], ['09876543210', 
   check(`cleanMobile(${JSON.stringify(input)}) → ${want}`, cleanMobile(input) === want);
 }
 
+const client = openingJobNode({ ...base, for_client: true, employer: 'A retail store in Shalimar Bagh, Delhi', employer_named: false }) as { hiringOrganization: { name: string }; description: string };
+check('confidential client → hiringOrganization "confidential"', client.hiringOrganization.name === 'confidential');
+check('confidential client name never in markup', !JSON.stringify(client).includes('PraGo') && client.description.includes('on behalf of a client'));
+const named = openingJobNode({ ...base, for_client: true, employer: 'Saini Telecom', employer_named: true }) as { hiringOrganization: { name: string } };
+check('named client → its name', named.hiringOrganization.name === 'Saini Telecom');
+check('own job → Social ScaleX', (job?.hiringOrganization as { name: string }).name === 'Social ScaleX');
+
 if (failures) { console.log(`\n${failures} check(s) failed`); process.exit(1); }

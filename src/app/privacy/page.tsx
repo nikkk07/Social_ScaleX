@@ -83,7 +83,8 @@ export default function Page() {
           or older and, where a job has one, its age range), where you live, education, experience, languages, skills,
           when you can join, expected salary if you give it, your message, and your CV if you upload one or share a link.
           A person on our team uses them to consider you for that job and future ones, and to contact you by phone,
-          WhatsApp or e-mail. CVs are stored privately and only our team can open them.
+          WhatsApp or e-mail. When we recruit for a client business, we share your application with that business for
+          the job you applied to, and with no one else. CVs are stored privately and only our team can open them.
         </p>
         <p>
           Applications that don&apos;t lead to a job are deleted automatically 12 months after your last application,

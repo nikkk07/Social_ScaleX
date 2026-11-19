@@ -5,6 +5,8 @@
 //  * JobPosting only on one open opening's own page; never on /careers or the open-profile form ("resume collection")
 //  * a location is required: an office or hybrid job without a city gets no markup (the page still shows)
 //  * expired or closed openings lose the markup; baseSalary only when the CRM has real monthly numbers
+//  * jobs we recruit for on behalf of a client name that client, or "confidential" when the client stays anonymous
+//    (Google's rule for anonymous hiring through an agency); our own jobs name Social ScaleX
 //  * applicants never pay anything
 import { SITE_NAME, SITE_URL, abs } from './site';
 import type { Faq } from './content';
@@ -18,6 +20,8 @@ export interface Opening {
   postal_code: string | null; summary: string; description: string; responsibilities: string[]; requirements: string[]; hours: string | null;
   salary_text: string; salary_min: number | null; salary_max: number | null; age_min: number | null; age_max: number | null; positions: number;
   apply_by: string | null; published_at: string; updated_at: string; closed_at: string | null; status: 'open' | 'closed';
+  /** Recruiting for a client. `employer` is what may be shown: the client's name when `employer_named`, else a description. */
+  for_client?: boolean; employer?: string; employer_named?: boolean;
 }
 
 export const EMPLOYMENT_LABEL: Record<Opening['employment_type'], string> = { full_time: 'Full-time', part_time: 'Part-time', internship: 'Internship', contract: 'Contract' };
@@ -60,6 +64,7 @@ export function openingJobNode(o: Opening) {
     o.responsibilities.length ? `What you’ll do: ${o.responsibilities.join('; ')}.` : '',
     o.requirements.length ? `Who can apply: ${o.requirements.join('; ')}.` : '',
     o.hours ? `Hours: ${o.hours}.` : '',
+    o.for_client ? `${SITE_NAME} is recruiting for this job on behalf of ${o.employer_named ? o.employer : 'a client'}.` : '',
     `Salary: ${o.salary_text}. ${SITE_NAME} never charges anything for a job.`,
   ].filter(Boolean);
   const salary = o.salary_min ? {
@@ -76,7 +81,9 @@ export function openingJobNode(o: Opening) {
     datePosted: o.published_at.slice(0, 10),
     ...(o.apply_by ? { validThrough: `${o.apply_by}T23:59:59+05:30` } : {}),
     employmentType: GOOGLE_TYPE[o.employment_type],
-    hiringOrganization: { '@type': 'Organization', name: SITE_NAME, sameAs: SITE_URL, logo: abs('/logo.png') },
+    hiringOrganization: o.for_client
+      ? { '@type': 'Organization', name: o.employer_named && o.employer ? o.employer : 'confidential' }
+      : { '@type': 'Organization', name: SITE_NAME, sameAs: SITE_URL, logo: abs('/logo.png') },
     directApply: true,
     ...(o.work_mode === 'remote'
       ? { jobLocationType: 'TELECOMMUTE', applicantLocationRequirements: { '@type': 'Country', name: 'India' } }
@@ -87,28 +94,29 @@ export function openingJobNode(o: Opening) {
 }
 
 // ── Copy (pages, FAQ schema, llms.txt) ─────────────────────────────────────────────────────────────────────────────
-export const CAREERS_TITLE = 'Careers at Social ScaleX: Jobs in Delhi';
+export const CAREERS_TITLE = 'Jobs in Delhi: Careers with Social ScaleX and Our Clients';
 export const CAREERS_DESCRIPTION =
-  'Jobs at Social ScaleX, a social media agency in Shalimar Bagh, Delhi. See open roles, or send your profile in 2 minutes. Freshers welcome; we never charge a fee.';
+  'Jobs in Delhi with Social ScaleX and the businesses we recruit for. See open roles, or send your profile in 2 minutes. Freshers welcome; we never charge a fee.';
 export const CAREERS_INTRO =
-  'Social ScaleX is a social media marketing agency in Delhi. When we hire, every open role is listed below with the hours, the place and who can apply. No suitable role yet? Send your profile once and we’ll call you when one fits. Applying is free, and we never ask for money.';
+  'Social ScaleX is a social media marketing agency in Delhi. We hire for our own team and recruit for the businesses we work with. Every open role is listed below with the hours, the place and who can apply. No suitable role yet? Send your profile once and we’ll call you when one fits. Applying is free, and we never ask for money.';
 
 export const CAREER_STEPS = [
   { title: 'Apply in 2 minutes', text: 'Your details, education and a CV (PDF or a link). No account, no fee.' },
   { title: 'We call you', text: 'A person on our team reads every application and replies by phone, WhatsApp or e-mail.' },
-  { title: 'Meet us', text: 'A short interview at our office. We confirm the day, time and address on WhatsApp.' },
+  { title: 'Interview', text: 'A short interview with the employer. We confirm the day, time and address on WhatsApp.' },
   { title: 'Offer in writing', text: 'If it’s a fit, you get the offer with the joining date and terms in writing.' },
 ] as const;
 
 export const CAREERS_CONSENT =
-  'I’m 18 or older. Social ScaleX may use these details to consider me for this and future roles and to contact me by phone, WhatsApp or e-mail. They’re kept for up to 12 months after my last application, and I can ask for them to be deleted at any time.';
+  'I’m 18 or older. Social ScaleX may use these details to consider me for this and future roles, with Social ScaleX or a business it recruits for, share them with the employer for a role I apply to, and contact me by phone, WhatsApp or e-mail. They’re kept for up to 12 months after my last application, and I can ask for them to be deleted at any time.';
 
 export const CAREER_FAQS: Faq[] = [
   { q: 'Do I have to pay anything to apply for a job?', a: 'No. Social ScaleX never charges anything to apply, for an interview, for training or for joining. If anyone asks you for money in our name, it isn’t us; please tell us on WhatsApp.' },
   { q: 'Can freshers apply?', a: 'Yes. Unless a job says it needs experience, freshers are welcome. Choose “Fresher” in the form and tell us what you’re good at.' },
   { q: 'Do I need a CV?', a: `A CV helps but isn’t required. You can upload a PDF (up to ${CV_MAX_MB} MB) or paste a link to it, for example from Google Drive.` },
   { q: 'There’s no job for me right now. Can I still apply?', a: 'Yes. Send your profile with the role you want. We keep it for 12 months and contact you when a matching role opens.' },
-  { q: 'Where is the office?', a: 'Our office is in Shalimar Bagh, Delhi. Each job says whether it’s at the office, remote or hybrid; we share the full address when we fix your interview.' },
+  { q: 'Who will I work for?', a: 'Each job says who is hiring. Some roles are with Social ScaleX; others are with businesses we recruit for, and some of those keep their name private until the interview. You never pay anything, to us or to the employer.' },
+  { q: 'Where will I work?', a: 'Each job shows the area and city, and whether it’s on site, remote or hybrid. We share the full address when we fix your interview.' },
   { q: 'What happens to my details?', a: 'A person on our team uses them to consider you for roles and to contact you. We don’t sell or share them. They’re deleted 12 months after your last application, or sooner if you ask on WhatsApp or by e-mail.' },
 ];
 

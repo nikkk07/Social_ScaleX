@@ -12,7 +12,7 @@ export const NAV = [
 export const CREATOR_LINKS = [
   { href: '/creators', label: 'Paid brand briefs', outcome: 'UGC, Reels and influencer work, mostly from home. Pay shown upfront.' },
   { href: '/creators/join', label: 'Join the creator network', outcome: 'Apply once; we contact you when a paid brief fits you.' },
-  { href: '/careers', label: 'Jobs at Social ScaleX', outcome: 'Open roles at our Delhi office, or send your profile.' },
+  { href: '/careers', label: 'Jobs & careers', outcome: 'Jobs in Delhi with our team and the businesses we recruit for.' },
 ] as const;
 
 export const SERVICE_LINKS = SERVICES.map((s) => ({
