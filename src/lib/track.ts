@@ -56,3 +56,9 @@ export function trackCreatorApply(kind: 'brief' | 'network'): void {
   if (typeof window === 'undefined') return;
   window.gtag?.('event', 'creator_apply', { kind, page_path: pagePath() });
 }
+
+/** Someone applied for a job or sent their profile. Not a sales lead, so it never fires generate_lead or Meta Lead. */
+export function trackJobApply(kind: 'opening' | 'profile'): void {
+  if (typeof window === 'undefined') return;
+  window.gtag?.('event', 'job_apply', { kind, page_path: pagePath() });
+}

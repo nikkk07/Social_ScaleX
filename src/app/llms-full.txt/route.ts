@@ -2,6 +2,7 @@ import { FAQS, GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, RESULTS_FAQS, SERVICES, ST
 import { AUTOMATIONS, PLAN_99, DIY_VS_DFY } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
 import { CREATOR_FAQS, HUB_INTRO, getBriefs, isOpen, payText, placeText, type Brief } from '@/lib/creators';
+import { CAREERS_INTRO, CAREER_FAQS, EMPLOYMENT_LABEL, getOpenings, isOpenNow, placeOf, type Opening } from '@/lib/careers';
 import { GUIDES, type Block } from '@/lib/guides';
 import { STUDIO_INCLUDED, STUDIO_PLAN_RULES, STUDIO_PLANS, STUDIO_URL, rupees } from '@/lib/studio';
 import { AREAS_FAQS, CITIES, PIN_GROUPS, cityStats } from '@/lib/areas';
@@ -60,6 +61,18 @@ function blockMd(b: Block): string {
     case 'checklist':
       return b.items.map((x, n) => `${n + 1}. **${x.title}**${x.time ? ` (${x.time})` : ''}: ${absLinks(x.text)}${x.points?.length ? `\n${x.points.map((pt) => `   - ${absLinks(pt)}`).join('\n')}` : ''}`).join('\n');
   }
+}
+
+function careersMd(openings: Opening[]): string {
+  const open = openings.filter(isOpenNow);
+  const lines = open.map((o) => `- [${o.title}](${abs(`/careers/${o.slug}`)}): ${EMPLOYMENT_LABEL[o.employment_type]}; ${placeOf(o)}${o.hours ? `; ${o.hours}` : ''}; salary ${o.salary_text.toLowerCase()}. ${o.summary}`);
+  return `## Careers (jobs at Social ScaleX)
+
+${CAREERS_INTRO}
+
+Careers: ${abs('/careers')} · Send your profile: ${abs('/careers#profile')} · Applicants must be 18+; applying is free.
+
+${lines.length ? `Open jobs:\n\n${lines.join('\n')}` : 'No open jobs right now.'}`;
 }
 
 function creatorsMd(briefs: Brief[]): string {
@@ -124,7 +137,8 @@ function build(briefs: Brief[]): string {
 }
 
 export async function GET(): Promise<Response> {
-  return new Response(build(await getBriefs()), {
+  const [briefs, openings] = await Promise.all([getBriefs(), getOpenings()]);
+  return new Response(`${build(briefs)}\n\n${careersMd(openings)}\n\n${faqMd(CAREER_FAQS)}\n`, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400',

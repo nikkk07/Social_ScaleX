@@ -24,6 +24,7 @@ import { AutomationCard } from '@/components/site/AutomationCard';
 import { PriceCard } from '@/components/site/Offer';
 import { AREAS_SERVED } from '@/lib/site';
 import { faqNode, graph, itemListNode, webPageNode } from '@/lib/schema';
+import { CreatorsBand } from '@/components/site/home/CreatorsBand';
 
 export const metadata: Metadata = { alternates: { canonical: '/' } };
 
@@ -201,6 +202,8 @@ export default function HomePage() {
             </ul>
           </div>
         </section>
+
+        <CreatorsBand />
 
         <FinalCta />
 

@@ -99,7 +99,7 @@ export default async function BriefPage({ params }: { params: Promise<{ slug: st
               <div className="wrap max-w-3xl">
                 <h2 id="apply-title" className="text-4xl text-ink">Apply for this brief</h2>
                 <p className="mt-3 text-ink-2">About two minutes. No account and no fee. We reply to every application, yes or no.</p>
-                <div className="mt-8"><CreatorApplyForm brief={b.slug} briefTitle={b.title} returnUrl={abs(path)} /></div>
+                <div className="mt-8 rounded-3xl border border-line bg-surface p-5 sm:p-8"><CreatorApplyForm brief={b.slug} briefTitle={b.title} returnUrl={abs(path)} /></div>
               </div>
             </section>
           ) : null}

@@ -14,7 +14,8 @@ type L = { href: string; label: string };
 const COMPANY: L[] = [
   { href: '/about', label: 'About us' },
   { href: '/case-studies', label: 'Client results' },
-  { href: '/creators', label: 'Creator Hub (for creators)' },
+  { href: '/creators', label: 'For Creators: paid brand briefs' },
+  { href: '/careers', label: 'Careers: jobs at Social ScaleX' },
   { href: '/services', label: 'All services' },
   { href: '/automation', label: 'All automation' },
   { href: '/contact', label: 'Contact' },

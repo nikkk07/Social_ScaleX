@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import React from 'react';
 import type { Metadata } from 'next';
 import { LegalPage } from '@/components/site/LegalPage';
@@ -59,9 +60,10 @@ export default function Page() {
       <section>
         <h2>Creator applications</h2>
         <p>
-          When you apply on our <a href="/creators">Creator Hub</a>, we collect what you type in: your name, WhatsApp
-          number, e-mail if you add it, city, date of birth (to confirm you&apos;re 18 or older), social media handles and
-          follower count, what you make, your niches and languages, links to your work, your rate and your message. A
+          When you apply on our <a href="/creators">Creator Hub</a>, we collect what you type in: your name, mobile
+          number (and a separate WhatsApp number if you give one), e-mail if you add it, city, date of birth (to confirm
+          you&apos;re 18 or older), social media handles and follower range, what you make, your niches and languages,
+          links to your work, your expected charges, where you heard about us and your message. A
           person on our team uses them to consider you for that brief and future ones, and to contact you by WhatsApp or
           e-mail. We don&apos;t ask for your address, PAN or bank details unless we agree to work together. To stop
           misuse, we keep a scrambled, daily-changing code for your network connection for two days; it can&apos;t be
@@ -71,6 +73,22 @@ export default function Page() {
           Applications that aren&apos;t taken forward, and creators who haven&apos;t applied for 12 months, are deleted
           automatically. You can ask us to delete your details sooner, or to see what we hold, by WhatsApp or by replying
           to any e-mail from us. We never charge creators anything.
+        </p>
+      </section>
+      <section>
+        <h2>Job applications</h2>
+        <p>
+          When you apply for a job or send your profile on our <Link href="/careers">Careers</Link> page, we collect what you
+          type in: your name, mobile and WhatsApp number, e-mail if you add it, date of birth (to confirm you&apos;re 18
+          or older and, where a job has one, its age range), where you live, education, experience, languages, skills,
+          when you can join, expected salary if you give it, your message, and your CV if you upload one or share a link.
+          A person on our team uses them to consider you for that job and future ones, and to contact you by phone,
+          WhatsApp or e-mail. CVs are stored privately and only our team can open them.
+        </p>
+        <p>
+          Applications that don&apos;t lead to a job are deleted automatically 12 months after your last application,
+          CV included. You can ask us to delete your details sooner, or to see what we hold, by WhatsApp or by replying
+          to any e-mail from us. We never charge anything for a job.
         </p>
       </section>
       <section>

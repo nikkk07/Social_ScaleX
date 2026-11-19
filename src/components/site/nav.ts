@@ -8,6 +8,13 @@ export const NAV = [
   { href: '/contact', label: 'Contact' },
 ] as const;
 
+/** "For Creators": independent creators and job seekers. Shown in the header, the mobile menu and the footer. */
+export const CREATOR_LINKS = [
+  { href: '/creators', label: 'Paid brand briefs', outcome: 'UGC, Reels and influencer work, mostly from home. Pay shown upfront.' },
+  { href: '/creators/join', label: 'Join the creator network', outcome: 'Apply once; we contact you when a paid brief fits you.' },
+  { href: '/careers', label: 'Jobs at Social ScaleX', outcome: 'Open roles at our Delhi office, or send your profile.' },
+] as const;
+
 export const SERVICE_LINKS = SERVICES.map((s) => ({
   href: `/services/${s.slug}`,
   label: s.name,

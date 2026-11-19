@@ -6,6 +6,7 @@ import { GOALS } from '@/lib/goals';
 import { CITIES } from '@/lib/areas';
 import { abs } from '@/lib/site';
 import { getBriefs, isOpen } from '@/lib/creators';
+import { getOpenings, isOpenNow } from '@/lib/careers';
 
 export const revalidate = 300;
 
@@ -23,8 +24,9 @@ const UPDATED: Record<string, string> = {
   '/automation/youtube-comment-management': '2026-10-15',
   '/case-studies': '2026-11-05',
   '/about': '2026-10-15',
-  '/privacy': '2026-11-17',
-  '/creators/join': '2026-11-17',
+  '/privacy': '2026-11-19',
+  '/creators/join': '2026-11-19',
+  '/creators': '2026-11-19',
   '/areas': '2026-11-04',
   '/areas/delhi': '2026-11-04',
   '/areas/noida': '2026-11-04',
@@ -42,7 +44,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const mod = (path: string) => new Date(UPDATED[path] ?? '2026-09-30');
   // Open briefs only: closed ones lose their job markup and are noindex, so they leave the sitemap too.
   const briefs = (await getBriefs()).filter(isOpen);
-  const newest = briefs.reduce((d, b) => (b.updated_at > d ? b.updated_at : d), '2026-11-17');
+  const newest = briefs.reduce((d, b) => (b.updated_at > d ? b.updated_at : d), '2026-11-19');
+  // Open jobs only, for the same reason; /careers itself changes whenever one does.
+  const jobs = (await getOpenings()).filter(isOpenNow);
+  const jobsNewest = jobs.reduce((d, o) => (o.updated_at > d ? o.updated_at : d), '2026-11-19');
   return [
     { url: abs('/'), lastModified: mod('/'), changeFrequency: 'weekly', priority: 1 },
     { url: abs('/services'), lastModified: mod('/services'), changeFrequency: 'monthly', priority: 0.9 },
@@ -61,6 +66,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: abs('/creators'), lastModified: new Date(newest), changeFrequency: 'daily', priority: 0.7 },
     { url: abs('/creators/join'), lastModified: mod('/creators/join'), changeFrequency: 'monthly', priority: 0.5 },
     ...briefs.map((b) => ({ url: abs(`/creators/briefs/${b.slug}`), lastModified: new Date(b.updated_at), changeFrequency: 'daily' as const, priority: 0.6 })),
+    { url: abs('/careers'), lastModified: new Date(jobsNewest), changeFrequency: 'weekly', priority: 0.6 },
+    ...jobs.map((o) => ({ url: abs(`/careers/${o.slug}`), lastModified: new Date(o.updated_at), changeFrequency: 'weekly' as const, priority: 0.6 })),
     { url: abs('/privacy'), lastModified: mod('/privacy'), changeFrequency: 'yearly', priority: 0.2 },
     { url: abs('/terms'), lastModified: new Date('2026-07-01'), changeFrequency: 'yearly', priority: 0.2 },
   ];

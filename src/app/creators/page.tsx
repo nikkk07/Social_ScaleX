@@ -8,7 +8,7 @@ import { FaqList } from '@/components/site/FaqList';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { breadcrumbNode, faqNode, graph, itemListNode, webPageNode } from '@/lib/schema';
 import { socialMeta } from '@/lib/site';
-import { CONTENT_TYPES, CREATOR_FAQS, HOW_IT_WORKS, HUB_DESCRIPTION, HUB_INTRO, HUB_TITLE, fmtDate, getBriefs, isOpen, payText, placeText } from '@/lib/creators';
+import { CONTENT_TYPES, CREATOR_FAQS, HOW_IT_WORKS, HUB_DESCRIPTION, HUB_H1, HUB_INTRO, HUB_TITLE, fmtDate, getBriefs, isOpen, payText, placeText } from '@/lib/creators';
 
 export const revalidate = 300;
 
@@ -37,11 +37,12 @@ export default async function CreatorHub() {
         ])}
       />
       <SiteShell>
-        <PageIntro crumbs={CRUMBS} eyebrow="Creator Hub" title="Paid briefs for UGC creators and influencers" lede={HUB_INTRO}>
+        <PageIntro crumbs={CRUMBS} eyebrow="For Creators" title={HUB_H1} lede={HUB_INTRO}>
           <div className="mt-8 flex flex-wrap gap-3">
             <a href="#briefs" className="btn btn-primary btn-lg">See open briefs ({open.length})</a>
             <Link href="/creators/join" className="btn btn-secondary btn-lg">Join the creator network</Link>
           </div>
+          <p className="mt-6 text-sm text-ink-3">Looking for a job at our office instead? <Link href="/careers" className="link">See careers at Social ScaleX</Link>.</p>
         </PageIntro>
 
         <section id="briefs" aria-labelledby="briefs-title" className="py-section">

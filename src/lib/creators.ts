@@ -94,15 +94,16 @@ export function jobPostingNode(b: Brief) {
 const escapeHtml = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // ── Copy (rendered on the pages, in FAQ schema and in llms.txt) ────────────────────────────────────────────────────
-export const HUB_TITLE = 'Creator Hub: Paid UGC and Influencer Briefs';
+export const HUB_TITLE = 'UGC Creator Jobs and Paid Brand Collaborations';
 export const HUB_DESCRIPTION =
-  'Paid UGC video, Reel and influencer briefs from Social ScaleX brands in India. See the pay and dates upfront, apply in 2 minutes. Free, 18+.';
+  'Paid UGC creator jobs, Reel collabs and influencer brand deals in India, from home or in Delhi NCR. See the pay upfront and apply in 2 minutes. Free, 18+.';
+export const HUB_H1 = 'Paid UGC creator jobs and brand collaborations';
 export const HUB_INTRO =
-  'Social ScaleX runs Instagram for brands in Delhi NCR and across India, and we hire creators for their content. Each brief below is a real, paid requirement with the pay, deliverables and dates written upfront. Apply in about two minutes, no account needed. We never charge creators anything.';
+  'Social ScaleX runs Instagram for brands in Delhi NCR and across India, and we pay independent creators to make their content: UGC videos, Reel collabs, voice-overs and more, mostly from home. Each brief below is a real, paid requirement with the pay, deliverables and dates written upfront. Apply in about two minutes, no account needed. We never charge creators anything.';
 
 export const HOW_IT_WORKS = [
   { title: 'Pick a brief', text: 'Each one shows the pay, what to make, the usage rights and the dates before you apply.' },
-  { title: 'Apply in 2 minutes', text: 'Your handle, two or three sample links and your rate. No account, no fee.' },
+  { title: 'Apply in 2 minutes', text: 'Three short steps: about you, your best work and your expected charges. No account, no fee.' },
   { title: 'We shortlist', text: 'A person on our team reads every application and replies by WhatsApp or e-mail, yes or no.' },
   { title: 'Agree, create, get paid', text: 'You sign a short agreement with the deliverables, dates and pay. You post with the disclosure label, and we pay as agreed.' },
 ] as const;
@@ -115,9 +116,24 @@ export const CREATOR_FAQS: Faq[] = [
   { q: 'What is a UGC creator, and do I need followers?', a: 'A UGC (user-generated content) creator makes videos or photos that the brand posts or runs as ads, so your follower count usually doesn’t matter. Influencer briefs post on your own account, and those say if they need a minimum number of followers.' },
   { q: 'How and when do I get paid?', a: 'Each brief states the fee, or the product’s value for product-only briefs, and the payment terms. Before you start, you sign a short agreement with the deliverables, dates and pay. Tax is deducted at source where the law requires it, and you get the details in writing.' },
   { q: 'Do I need to label the post as an ad?', a: 'Yes. India’s advertising code (ASCI) and the government’s endorsement guidelines require a clear, upfront label such as “Paid partnership”, “Ad” or “Collaboration” when a brand pays you or gives you something. Every brief shows the label to use.' },
+  { q: 'Is this a job or freelance work?', a: 'Freelance. You work independently, brief by brief: you choose which briefs to apply for, and each one is paid on its own. Most are remote, so you shoot from home anywhere in India; on-location briefs say the city.' },
+  { q: 'Can small creators and beginners apply?', a: 'Yes. For UGC the brand posts your video, so the quality of your work matters more than your followers. Share your best work, even two or three phone-shot videos, and pick your follower range honestly.' },
+  { q: 'How much do UGC creators get paid?', a: 'Each brief shows its fee upfront. When you apply, you tell us your expected charges per Reel, and you can mark them negotiable. Nothing is final until you’ve agreed the fee in writing.' },
   { q: 'Who can apply?', a: 'Anyone in India who is 18 or older. Some briefs ask for a language, a city for on-location shoots, or a face on camera; it’s all written in the brief.' },
   { q: 'What happens to my details?', a: `A person on our team uses them to consider you for briefs and to contact you. We don’t sell or share them. They’re deleted ${RETENTION_MONTHS} months after your last application if you aren’t working with us, or sooner if you ask on WhatsApp or by e-mail.` },
 ];
 
 export const NICHES = ['Beauty & skincare', 'Fashion', 'Food', 'Fitness', 'Tech & gadgets', 'Travel & outdoors', 'Home & lifestyle', 'Education', 'Finance', 'Parenting', 'Comedy', 'Other'];
-export const LANGUAGES = ['Hindi', 'English', 'Hinglish', 'Punjabi', 'Marathi', 'Bengali', 'Tamil', 'Telugu', 'Gujarati', 'Kannada', 'Malayalam'];
+export const LANGUAGES = ['Hindi', 'English', 'Hinglish', 'Punjabi', 'Marathi', 'Bengali', 'Tamil', 'Telugu', 'Gujarati', 'Kannada', 'Malayalam', 'Other'];
+
+/** Follower ranges (Indian lakh notation); the CRM stores the key. */
+export const FOLLOWER_RANGES: [string, string][] = [['under_1k', 'Under 1K'], ['1k_10k', '1K–10K'], ['10k_50k', '10K–50K'], ['50k_1l', '50K–1 lakh'], ['1l_5l', '1–5 lakh'], ['5l_plus', '5 lakh+']];
+/** "How did you hear about us?" — shared by the creator and careers forms. */
+export const HEARD_FROM = ['Instagram', 'Google search', 'ChatGPT or another AI', 'A friend', 'WhatsApp', 'LinkedIn', 'Job site', 'Other'];
+
+/** The homepage band that points creators and job seekers to their pages (shown above the final call to action). */
+export const HOME_BAND = {
+  eyebrow: 'For creators and job seekers',
+  title: 'Create content for brands, or work with us',
+  text: 'Independent UGC creators and influencers get paid briefs with the fee shown upfront, mostly from home. Looking for a job? See our open roles in Delhi.',
+} as const;

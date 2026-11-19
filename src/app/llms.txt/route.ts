@@ -1,5 +1,6 @@
 import { FAQS, GOAL_LABEL, PORTFOLIO, PORTFOLIO_NOTE, SERVICES } from '@/lib/content';
 import { HUB_INTRO, getBriefs, isOpen, payText, placeText, type Brief } from '@/lib/creators';
+import { CAREERS_INTRO, EMPLOYMENT_LABEL, getOpenings, isOpenNow, placeOf, type Opening } from '@/lib/careers';
 import { GUIDES } from '@/lib/guides';
 import { AUTOMATIONS, PLAN_99 } from '@/lib/automation';
 import { GOALS } from '@/lib/goals';
@@ -13,6 +14,18 @@ import { AREAS_SERVED, CONTACTS, FOUNDING_YEAR, SITE_NAME, SITE_TAGLINE, abs, sa
  * nothing.
  */
 export const revalidate = 300;
+
+function careersMd(openings: Opening[]): string {
+  const open = openings.filter(isOpenNow);
+  const lines = open.map((o) => `- [${o.title}](${abs(`/careers/${o.slug}`)}): ${EMPLOYMENT_LABEL[o.employment_type]}; ${placeOf(o)}${o.hours ? `; ${o.hours}` : ''}; salary ${o.salary_text.toLowerCase()}. ${o.summary}`);
+  return `## Careers (jobs at Social ScaleX)
+
+${CAREERS_INTRO}
+
+Careers: ${abs('/careers')} · Send your profile: ${abs('/careers#profile')} · Applicants must be 18+; applying is free.
+
+${lines.length ? `Open jobs:\n\n${lines.join('\n')}` : 'No open jobs right now.'}`;
+}
 
 function creatorsMd(briefs: Brief[]): string {
   const open = briefs.filter(isOpen);
@@ -128,7 +141,8 @@ ${sameAs.length > 0 ? `\nProfiles: ${sameAs.join(' · ')}\n` : ''}
 }
 
 export async function GET(): Promise<Response> {
-  return new Response(build(await getBriefs()), {
+  const [briefs, openings] = await Promise.all([getBriefs(), getOpenings()]);
+  return new Response(`${build(briefs)}\n\n${careersMd(openings)}\n`, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
       'Cache-Control': 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400',

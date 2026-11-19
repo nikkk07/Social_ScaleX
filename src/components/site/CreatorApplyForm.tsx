@@ -1,131 +1,100 @@
 'use client';
-// The creator application. A real form that posts to the CRM (works with JavaScript off: the CRM redirects to
-// /creators/thanks). With JavaScript, it sends with fetch and answers in place. Nothing is stored in the browser.
-import React, { useEffect, useId, useRef, useState } from 'react';
-import { CheckCircle2 } from 'lucide-react';
-import { CONSENT_TEXT, CONTENT_TYPES, CRM_INTAKE, LANGUAGES, NICHES } from '@/lib/creators';
+// The creator application, in 3 steps: About you → Your work → Charges. A real form that posts to the CRM (works
+// with JavaScript off: the CRM redirects to /creators/thanks). With JavaScript it checks each step, sends with fetch
+// and celebrates in place. Nothing is stored in the browser.
+import React, { useId } from 'react';
+import { CONSENT_TEXT, CONTENT_TYPES, CRM_INTAKE, FOLLOWER_RANGES, HEARD_FROM, LANGUAGES, NICHES } from '@/lib/creators';
 import { trackCreatorApply } from '@/lib/track';
+import { StepForm, type SendResult } from './apply/StepForm';
+import { Chips, Consent, Dob, Field, Links, PhoneFields, Select } from './apply/fields';
+import { Success } from './apply/Success';
 
-const TURNSTILE = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? '';
-const INDIAN_MOBILE = /^(?:\+?91|0)?[6-9]\d{9}$/;
-
-/** Latest date of birth that is 18 today (IST), for the date input's max. */
-function maxBirth(): string {
-  const d = new Date(Date.now() + 19_800_000);
-  d.setUTCFullYear(d.getUTCFullYear() - 18);
-  return d.toISOString().slice(0, 10);
-}
+const many = (fd: FormData, k: string) => fd.getAll(k).map(String).map((s) => s.trim()).filter(Boolean);
+const one = (fd: FormData, k: string) => String(fd.get(k) ?? '').trim();
+const pad = (n: string) => n.padStart(2, '0');
 
 export function CreatorApplyForm({ brief, briefTitle, returnUrl }: { brief?: string; briefTitle?: string; returnUrl: string }) {
   const id = useId();
   const f = (n: string) => `${id}-${n}`;
-  const [state, setState] = useState<'idle' | 'sending' | 'done' | 'error'>('idle');
-  const [message, setMessage] = useState('');
-  const [again, setAgain] = useState(false);
-  const formRef = useRef<HTMLFormElement>(null);
 
-  useEffect(() => {
-    if (!TURNSTILE || document.querySelector('script[data-turnstile]')) return;
-    const s = document.createElement('script');
-    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
-    s.async = true; s.defer = true; s.dataset.turnstile = '1';
-    document.head.appendChild(s);
-  }, []);
-
-  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const fd = new FormData(form);
-    const phone = String(fd.get('phone') ?? '').replace(/[\s-]/g, '');
-    if (!INDIAN_MOBILE.test(phone)) { setState('error'); setMessage('Enter a 10-digit Indian mobile number.'); return; }
-    const many = (k: string) => fd.getAll(k).map(String).map((s) => s.trim()).filter(Boolean);
+  async function send(fd: FormData): Promise<SendResult> {
+    const y = one(fd, 'birth_y'), m = one(fd, 'birth_m'), d = one(fd, 'birth_d');
     const body = {
-      brief: brief ?? '', full_name: fd.get('full_name'), phone, email: fd.get('email'), city: fd.get('city'), birth_date: fd.get('birth_date'),
-      instagram: fd.get('instagram'), youtube: fd.get('youtube'), followers: fd.get('followers'), niches: many('niches'), languages: many('languages'),
-      content_types: many('content_types'), samples: many('samples'), rate: fd.get('rate'), rate_note: fd.get('rate_note'), pitch: fd.get('pitch'),
-      consent: fd.get('consent') === 'on', website: fd.get('website'), 'cf-turnstile-response': fd.get('cf-turnstile-response') ?? '',
+      brief: brief ?? '', full_name: one(fd, 'full_name'), phone: one(fd, 'phone'), whatsapp_same: one(fd, 'whatsapp_same') || 'yes', whatsapp: one(fd, 'whatsapp'),
+      email: one(fd, 'email'), city: one(fd, 'city'), birth_date: y && m && d ? `${y}-${pad(m)}-${pad(d)}` : '',
+      instagram: one(fd, 'instagram'), youtube: one(fd, 'youtube'), follower_range: one(fd, 'follower_range'),
+      content_types: many(fd, 'content_types'), other_content: one(fd, 'other_content'), niches: many(fd, 'niches'), other_niche: one(fd, 'other_niche'),
+      languages: many(fd, 'languages'), other_language: one(fd, 'other_language'), samples: [...new Set(many(fd, 'samples'))],
+      rate: one(fd, 'rate'), rate_negotiable: fd.get('rate_negotiable') === 'on', rate_note: one(fd, 'rate_note'), pitch: one(fd, 'pitch'),
+      heard_from: one(fd, 'heard_from'), consent: fd.get('consent') === 'on', website: one(fd, 'website'), 'cf-turnstile-response': one(fd, 'cf-turnstile-response'),
     };
-    setState('sending'); setMessage('');
-    try {
-      const r = await fetch(CRM_INTAKE, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
-      const j = (await r.json().catch(() => ({}))) as { ok?: boolean; message?: string; again?: boolean };
-      if (j.ok) {
-        setAgain(Boolean(j.again)); setState('done'); trackCreatorApply(brief ? 'brief' : 'network');
-        formRef.current?.closest('section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        return;
-      }
-      setState('error'); setMessage(j.message ?? 'That didn’t send. Please try again, or message us on WhatsApp.');
-    } catch {
-      setState('error'); setMessage('That didn’t send. Check your connection and try again, or message us on WhatsApp.');
-    }
+    const r = await fetch(CRM_INTAKE, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+    const j = (await r.json().catch(() => ({}))) as SendResult;
+    if (j.ok) trackCreatorApply(brief ? 'brief' : 'network');
+    return j.ok ? { ok: true, ref: j.ref, again: j.again, name: body.full_name.split(/\s+/)[0] } : { ok: false, error: j.error, message: j.message };
   }
 
-  if (state === 'done') {
-    return (
-      <div role="status" className="rounded-2xl border border-line bg-surface p-6">
-        <CheckCircle2 className="mb-3 size-7 text-positive" aria-hidden />
-        <p className="font-display text-xl text-ink">{again ? 'Updated. We have your latest details.' : 'Application sent. Thank you!'}</p>
-        <p className="mt-2 text-ink-2">A person on our team reads every application{briefTitle ? ` for “${briefTitle}”` : ''}. If you gave an e-mail, a confirmation is on its way. We reply by WhatsApp or e-mail either way.</p>
-      </div>
-    );
-  }
+  const steps = [
+    {
+      id: 'you', title: 'About you', hint: 'So we know who you are and how to reach you.',
+      content: (<>
+        <Field id={f('name')} title="Full name"><input id={f('name')} name="full_name" required minLength={2} maxLength={120} autoComplete="name" className="field" /></Field>
+        <Field id={f('email')} title="E-mail" opt hint="For your confirmation."><input id={f('email')} name="email" type="email" autoComplete="email" maxLength={200} className="field" /></Field>
+        <PhoneFields />
+        <Dob />
+        <Field id={f('city')} title="City"><input id={f('city')} name="city" required maxLength={80} autoComplete="address-level2" className="field" placeholder="e.g. Delhi" /></Field>
+        <Field id={f('ig')} title="Instagram handle"><input id={f('ig')} name="instagram" required maxLength={80} placeholder="@yourhandle" autoCapitalize="none" autoCorrect="off" spellCheck={false} className="field"
+          onBlur={(e) => { const t = e.currentTarget; t.value = t.value.trim().replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/[/?#].*$/, ''); }} /></Field>
+        <Field id={f('yt')} title="YouTube channel" opt><input id={f('yt')} name="youtube" type="url" inputMode="url" placeholder="https://youtube.com/@…" maxLength={300} className="field" /></Field>
+        <Chips legend="Instagram followers" name="follower_range" type="radio" options={FOLLOWER_RANGES} min={1} msg="Please pick your follower range." />
+      </>),
+    },
+    {
+      id: 'work', title: 'Your work', hint: 'Tick everything that applies. This is how we match you to briefs.',
+      content: (<>
+        <Chips legend="What you make" name="content_types" options={Object.entries(CONTENT_TYPES)} min={1} otherName="other_content" otherValue="other" otherPlaceholder="What else do you make?" msg="Please tick at least one." />
+        <Chips legend="Your niches" name="niches" options={NICHES.map((n) => [n, n])} min={1} otherName="other_niche" otherPlaceholder="Your niche" msg="Please tick at least one niche." />
+        <Chips legend="Languages you create in" name="languages" options={LANGUAGES.map((n) => [n, n])} min={1} otherName="other_language" otherPlaceholder="Which language?" msg="Please tick at least one language." />
+        <Links name="samples" required legend="Your best work" placeholder="https://www.instagram.com/reel/…"
+          hint="Public links: Reels, YouTube, Google Drive or a portfolio site. Add as many as you like." />
+      </>),
+    },
+    {
+      id: 'charges', title: 'Charges', hint: brief ? 'Your quote for this brief. You can still discuss it with us.' : 'What you usually charge. You can always discuss it with us.',
+      content: (<>
+        <Field id={f('rate')} title={brief ? 'Expected charges for this brief (₹)' : 'Expected charges for a Reel (₹)'}>
+          <input id={f('rate')} name="rate" inputMode="numeric" pattern="[0-9]*" maxLength={8} required placeholder="e.g. 2500" className="field"
+            onInput={(e) => { e.currentTarget.value = e.currentTarget.value.replace(/\D/g, '').replace(/^0+(?=\d)/, ''); }} /></Field>
+        <div className="flex items-end pb-1">
+          <label className="flex min-h-11 items-center gap-3 text-sm text-ink"><input type="checkbox" name="rate_negotiable" className="size-5 accent-[#C23A22]" />My charges are negotiable</label>
+        </div>
+        <Field id={f('note')} title="What’s included" opt wide><input id={f('note')} name="rate_note" maxLength={200} placeholder="e.g. script, 1 revision, raw files" className="field" /></Field>
+        <Field id={f('pitch')} title={brief ? 'Why you’re right for this brief' : 'Tell us about you'} opt wide>
+          <textarea id={f('pitch')} name="pitch" maxLength={1500} rows={4} className="field" placeholder="Brands you’ve worked with, your style, your equipment…" /></Field>
+        <Select id={f('heard')} name="heard_from" title="How did you hear about us?" opt options={HEARD_FROM.map((h) => [h, h])} />
+        <Consent text={CONSENT_TEXT} />
+      </>),
+    },
+  ];
 
-  const chip = 'inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-sm has-[:checked]:border-ink has-[:checked]:bg-paper-2';
   return (
-    <form ref={formRef} action={CRM_INTAKE} method="post" onSubmit={onSubmit} className="grid grid-cols-1 gap-5 sm:grid-cols-2" noValidate={false}>
-      <input type="hidden" name="brief" value={brief ?? ''} />
-      <input type="hidden" name="return" value={returnUrl} />
-      <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
-        <label htmlFor={f('website')}>Leave this empty</label><input id={f('website')} name="website" tabIndex={-1} autoComplete="off" />
-      </div>
-      <div><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('full_name')}>Full name</label>
-        <input id={f('full_name')} name="full_name" required minLength={2} maxLength={120} autoComplete="name" className="field" /></div>
-      <div><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('phone')}>WhatsApp number</label>
-        <input id={f('phone')} name="phone" type="tel" inputMode="tel" required autoComplete="tel" placeholder="98765 43210" className="field" /></div>
-      <div><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('email')}>E-mail <span className="font-normal text-ink-3">(for the confirmation)</span></label>
-        <input id={f('email')} name="email" type="email" autoComplete="email" maxLength={200} className="field" /></div>
-      <div><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('birth_date')}>Date of birth <span className="font-normal text-ink-3">(18+ only)</span></label>
-        <input id={f('birth_date')} name="birth_date" type="date" required max={maxBirth()} min="1930-01-01" className="field" /></div>
-      <div><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('city')}>City</label>
-        <input id={f('city')} name="city" required maxLength={80} autoComplete="address-level2" className="field" /></div>
-      <div><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('instagram')}>Instagram handle</label>
-        <input id={f('instagram')} name="instagram" required maxLength={60} placeholder="@yourhandle" className="field" /></div>
-      <div><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('followers')}>Instagram followers <span className="font-normal text-ink-3">(roughly)</span></label>
-        <input id={f('followers')} name="followers" inputMode="numeric" pattern="[0-9]*" maxLength={10} className="field" /></div>
-      <div><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('youtube')}>YouTube channel <span className="font-normal text-ink-3">(optional)</span></label>
-        <input id={f('youtube')} name="youtube" type="url" placeholder="https://youtube.com/@…" maxLength={300} className="field" /></div>
-
-      <fieldset className="sm:col-span-2"><legend className="mb-1.5 block text-sm font-semibold text-ink">What you make</legend>
-        <div className="flex flex-wrap gap-2">{Object.entries(CONTENT_TYPES).map(([k, l]) => (
-          <label key={k} className={chip}><input type="checkbox" name="content_types" value={k} className="size-4 accent-[#C23A22]" />{l}</label>))}</div></fieldset>
-      <fieldset className="sm:col-span-2"><legend className="mb-1.5 block text-sm font-semibold text-ink">Your niches</legend>
-        <div className="flex flex-wrap gap-2">{NICHES.map((n) => (
-          <label key={n} className={chip}><input type="checkbox" name="niches" value={n} className="size-4 accent-[#C23A22]" />{n}</label>))}</div></fieldset>
-      <fieldset className="sm:col-span-2"><legend className="mb-1.5 block text-sm font-semibold text-ink">Languages you create in</legend>
-        <div className="flex flex-wrap gap-2">{LANGUAGES.map((n) => (
-          <label key={n} className={chip}><input type="checkbox" name="languages" value={n} className="size-4 accent-[#C23A22]" />{n}</label>))}</div></fieldset>
-
-      <fieldset className="sm:col-span-2"><legend className="mb-1.5 block text-sm font-semibold text-ink">2–3 links to your best work</legend>
-        <div className="grid gap-2">{[0, 1, 2].map((i) => (
-          <input key={i} name="samples" type="url" required={i === 0} placeholder={i === 0 ? 'https://www.instagram.com/reel/…' : 'Another link (optional)'} maxLength={300} aria-label={`Sample link ${i + 1}`} className="field" />))}</div>
-        <p className="mt-1.5 text-xs text-ink-3">Public links: Reels, YouTube, Google Drive or a portfolio site.</p></fieldset>
-
-      <div><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('rate')}>Your rate (₹){brief ? ' for this brief' : ' per video'}</label>
-        <input id={f('rate')} name="rate" inputMode="numeric" pattern="[0-9]*" maxLength={8} className="field" /></div>
-      <div><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('rate_note')}>Rate note <span className="font-normal text-ink-3">(optional)</span></label>
-        <input id={f('rate_note')} name="rate_note" maxLength={200} placeholder="e.g. includes 1 revision" className="field" /></div>
-      <div className="sm:col-span-2"><label className="mb-1.5 block text-sm font-semibold text-ink" htmlFor={f('pitch')}>{brief ? 'Why you’re right for this brief' : 'Tell us about you'} <span className="font-normal text-ink-3">(optional)</span></label>
-        <textarea id={f('pitch')} name="pitch" maxLength={1500} rows={4} className="field" /></div>
-
-      <label className="flex items-start gap-3 text-sm text-ink-2 sm:col-span-2">
-        <input type="checkbox" name="consent" required className="mt-0.5 size-4 shrink-0 accent-[#C23A22]" />
-        <span>{CONSENT_TEXT} See our <a href="/privacy" className="underline">privacy policy</a>.</span>
-      </label>
-      {TURNSTILE ? <div className="cf-turnstile sm:col-span-2" data-sitekey={TURNSTILE} /> : null}
-      <div className="sm:col-span-2">
-        <button type="submit" disabled={state === 'sending'} className="btn btn-primary btn-lg w-full sm:w-auto">{state === 'sending' ? 'Sending…' : brief ? 'Apply for this brief' : 'Join the creator network'}</button>
-        <p role="alert" aria-live="polite" className="mt-3 text-sm text-critical">{state === 'error' ? message : ''}</p>
-      </div>
-    </form>
+    <StepForm action={CRM_INTAKE} steps={steps} hidden={{ brief: brief ?? '', return: returnUrl }}
+      submitLabel={brief ? 'Apply with Social ScaleX' : 'Start your journey with Social ScaleX'} sendingLabel="Sending your application…" send={send}
+      renderSuccess={(r, reset) => (
+        <Success
+          title={r.again ? `Updated, ${r.name ?? 'creator'}!` : `You’re in, ${r.name ?? 'creator'}!`}
+          lede={r.again ? 'We already had your application, so we’ve updated it with these details.'
+            : `Your application${briefTitle ? ` for “${briefTitle}”` : ' to the Social ScaleX creator network'} has reached our team. Here’s what happens next.`}
+          reference={r.ref}
+          steps={[
+            { title: 'We read it', text: 'A real person on our team reviews every application.' },
+            { title: 'We match you', text: brief ? 'If you’re shortlisted, we message you with the next steps.' : 'When a paid brief fits your niche, language and city, you hear first.' },
+            { title: 'You create', text: 'Agree the fee in writing, make the content, get paid. Never any fee to us.' },
+          ]}
+          againLabel={brief ? 'See other open briefs' : 'Send another application'} {...(brief ? { againHref: '/creators#briefs' } : { onAgain: reset })}
+          footnote="If you gave an e-mail, a confirmation is on its way. Save our WhatsApp number so you don’t miss our message."
+        />
+      )}
+    />
   );
 }
