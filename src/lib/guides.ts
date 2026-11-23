@@ -270,12 +270,263 @@ const S = {
   chatgptAdsIndia: { label: 'Business Today: ChatGPT ads arrive in India (27 Aug 2026)', url: 'https://www.businesstoday.in/technology/artificial-intelligence/story/chatgpt-ads-arrive-in-india-as-openai-targets-free-go-users-in-major-revenue-push-ahead-of-ipo-551655-2026-08-27' },
   googleAiAds: { label: 'TechCrunch: Google brings ads to AI Mode and AI Overviews (21 May 2025)', url: 'https://techcrunch.com/2025/05/21/google-is-bringing-ads-to-ai-mode/' },
   oaiAds: { label: 'OpenAI: Our approach to advertising and expanding access (16 Jan 2026)', url: 'https://openai.com/index/our-approach-to-advertising-and-expanding-access/' },
+  igWhatsapp: { label: 'Instagram Help: Connect or disconnect your Instagram and WhatsApp accounts', url: 'https://help.instagram.com/ipad-app/1093295047789621' },
+  singleWordCta: { label: 'Social Media Today: Instagram clarifies advice on single-word CTAs (5 Jun 2024)', url: 'https://www.socialmediatoday.com/news/instagram-clarifies-advice-single-word-ctas-longer-reels/718151/' },
 } satisfies Record<string, Source>;
 
 /** Lowest Reel Studio price, read from src/lib/studio.ts so copy never drifts from the plans. */
 const STUDIO_FROM = rupees(Math.min(...STUDIO_PLANS.map((p) => p.price)));
 
 export const GUIDES: Guide[] = [
+  {
+    slug: 'sell-on-instagram-india',
+    title: 'How to sell on Instagram in India without a website (2026)',
+    metaTitle: 'Sell on Instagram in India Without a Website',
+    navTitle: 'Sell on Instagram (India)',
+    description:
+      'Sell on Instagram in India without a website: a free business account, a profile that sells, posts that get “price?” comments, auto DMs and WhatsApp orders.',
+    summary:
+      'Yes, you can sell on Instagram in India without a website. Switch to a free business account, make your profile say what you sell and how to order, and post Reels that end with one keyword like PRICE. Meta’s free Comment to message automation DMs the price to everyone who comments it. Then close the order on WhatsApp and take payment by UPI.',
+    keyPoints: [
+      '**Your DMs are your shop.** Almost every Instagram order starts with a message, so make asking easy.',
+      '**Let people ask with one word.** “Comment PRICE” brings the question; an automatic DM answers it in seconds.',
+      '**Close on WhatsApp.** Confirm the order, share your UPI details and update delivery in one chat.',
+    ],
+    published: '2026-11-23',
+    updated: '2026-11-23',
+    author: 'Social ScaleX team',
+    authorIndex: 0,
+    blocks: [
+      { t: 'p', text: '**No website? Your Instagram can still take orders.** Shops, home businesses, coaches, institutes and service providers across India sell this way every day. This guide shows the whole system, step by step, using only free tools.' },
+      { t: 'h2', text: 'Can you sell on Instagram without a website?' },
+      {
+        t: 'p',
+        text: 'Yes. You need four things: a professional account, a profile that answers buyer questions, posts that make people ask the price, and a fast way to reply. A website helps later. It isn’t needed to start, because the order can happen in DMs and on WhatsApp.',
+      },
+      {
+        t: 'flow',
+        label: 'How one Instagram sale happens',
+        steps: [
+          { title: 'Post', text: 'A Reel or post shows the product and ends with “Comment PRICE”.' },
+          { title: 'Comment', text: 'An interested buyer comments PRICE.' },
+          { title: 'Auto DM', text: 'They get your price and order link in their inbox, automatically.' },
+          { title: 'WhatsApp', text: 'You confirm size, address and delivery date in one chat.' },
+          { title: 'Pay and deliver', text: 'They pay by UPI; you ship and share the update.' },
+        ],
+      },
+
+      { t: 'h2', text: 'Step 1: How do I make an Instagram business account?' },
+      {
+        t: 'p',
+        text: 'Open your profile, tap the menu, go to **Account type and tools** and switch to a professional account. It’s free. You can add contact details, and a business account can show a WhatsApp contact option, so buyers reach you in one tap.',
+      },
+      {
+        t: 'ol',
+        items: [
+          'Open Instagram and go to your profile.',
+          'Tap **More** (the menu) to open Settings and activity.',
+          'Under **For professionals**, tap **Account type and tools**.',
+          'Tap **Switch to professional account**, pick a category, then choose **Business**.',
+          'Add your contact details. Connecting a Facebook Page is optional.',
+        ],
+      },
+      {
+        t: 'p',
+        text: 'Heads-up: a private account becomes public when you switch. [Meta Business Help](https://www.facebook.com/business/help/502981923235522) To show WhatsApp on your profile, see [Instagram Help](https://help.instagram.com/ipad-app/1093295047789621).',
+      },
+
+      { t: 'h2', text: 'Step 2: What should a selling profile show?' },
+      {
+        t: 'p',
+        text: 'A new visitor decides in a few seconds. Your profile should answer three questions without a single tap: what do you sell, is it for me, and how do I order? If they have to DM you just to find out, many won’t.',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**Name:** what you sell and where. “Handmade candles · Jaipur” works harder than a brand name alone.',
+          '**Bio, line 1:** what you sell and who it’s for.',
+          '**Bio, line 2:** why you (delivery area, custom orders, years in business, only if true).',
+          '**Bio, line 3:** how to order: “Comment PRICE on any post or tap WhatsApp.”',
+          '**Highlights:** Price list, How to order, Delivery, Customer messages. Show only real messages, shared with the customer’s permission.',
+          '**Link:** one link to your WhatsApp chat or catalogue.',
+        ],
+      },
+
+      { t: 'h2', text: 'Step 3: What should I post to get orders?' },
+      {
+        t: 'p',
+        text: 'Post what a buyer wants to see before paying: the product in real use, the size or result, how ordering and delivery work, and what other customers asked. End every post with one clear next step, so the interested viewer knows exactly what to do.',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**Show it working.** Unboxing, before and after, a class in progress, the dish being served.',
+          '**Answer one question per post.** “Do you deliver to Noida?” is a Reel.',
+          '**Film your own footage.** Instagram says it prioritises original content over reposts. [Instagram for Creators](https://creators.instagram.com/blog/rewarding-original-creators-on-instagram)',
+          '**Use a few exact hashtags.** Instagram now allows up to five per post, so pick the ones buyers would search. [Social Samosa](https://www.socialsamosa.com/news-2/instagram-hashtags-five-per-post-10923075)',
+          '**End with one keyword:** “Comment PRICE and I’ll send the price list.”',
+        ],
+      },
+      {
+        t: 'p',
+        text: 'Want more people to see those posts? Our [Reels reach guide](/guides/instagram-reels-reach) explains what Instagram has said about ranking.',
+      },
+      {
+        t: 'cta',
+        variant: 'mid',
+        title: 'Need posts that make people ask the price?',
+        text: 'We plan, shoot and post Instagram content built around what you sell, and set up the automatic price DM for you.',
+        points: ['A content plan built around your products', 'Reels and posts made for you', 'Comment-to-DM included, no extra fee'],
+        button: 'See Instagram management',
+        href: '/services/instagram-marketing',
+        whatsapp: 'Hi Social ScaleX, I read your guide on selling on Instagram without a website. Can you help with my Instagram?',
+      },
+
+      { t: 'h2', text: 'Step 4: How do I reply to every “price?” comment automatically?' },
+      {
+        t: 'p',
+        text: 'Use Meta Business Suite’s free **Comment to message** automation. You pick a keyword like PRICE and write one DM. Everyone who comments that keyword gets your DM with the price and order link, even at 2 AM. It’s set up on a computer, not in the app.',
+      },
+      {
+        t: 'dmdemo',
+        label: 'Example: an automatic price DM for a small shop',
+        account: 'yourshop',
+        reel: 'Our new cotton kurtis, sizes S to XXL 🌸 Comment PRICE for the full price list.',
+        commenter: 'neha.k',
+        comments: [
+          { text: 'PRICE', reply: 'Hi Neha! Here’s our kurti price list and sizes: [your link]. Tap here to order on WhatsApp: [your WhatsApp link]. (This is an automatic message.)' },
+          { text: 'price', reply: 'Hi Neha! Here’s our kurti price list and sizes: [your link]. Tap here to order on WhatsApp: [your WhatsApp link]. (This is an automatic message.)' },
+          { text: 'So pretty 😍', reply: '' },
+        ],
+        note: 'Instagram sends one private reply per comment, within 7 days of the comment, and the chat continues only if the person replies. [Meta for Developers](https://developers.facebook.com/docs/instagram-platform/private-replies/) Meta’s keyword matching is exact, so add each spelling you expect, like PRICE and price.',
+      },
+      {
+        t: 'ol',
+        items: [
+          'Connect your Instagram account to Meta Business Suite on a computer.',
+          'Open **Inbox**, click **Automations**, then **Create automation**.',
+          'Choose **Comment to message**, add your keyword and write the DM.',
+          'Say in the DM that it’s automatic. Meta’s policy requires automated chats to disclose it. [Meta policy](https://developers.facebook.com/documentation/business-messaging/messenger-platform/policy)',
+          'Test it from a second account before you post.',
+        ],
+      },
+      {
+        t: 'p',
+        text: 'Full screen-by-screen steps and fixes are in our [free comment-to-DM setup guide](/guides/free-instagram-comment-to-dm-automation). Source: [Meta Business Help](https://www.facebook.com/business/help/318238182723007)',
+      },
+      {
+        t: 'callout',
+        tone: 'warn',
+        title: 'Is “Comment PRICE” engagement bait?',
+        text: 'Instagram’s @Creators account said in 2024 that asking people to comment a specific word, number or emoji can be engagement bait. It then clarified that genuine calls to action are fine and that tools like ManyChat can still be used. Use a keyword only when you really send something useful back, like a price list. [Social Media Today](https://www.socialmediatoday.com/news/instagram-clarifies-advice-single-word-ctas-longer-reels/718151/)',
+      },
+
+      { t: 'h2', text: 'Step 5: How do I take orders and payment?' },
+      {
+        t: 'p',
+        text: 'Move the buyer from Instagram DM to one WhatsApp chat. Confirm the item, size, address and delivery date in a single message, share your UPI ID or QR code, and send a confirmation once paid. One chat per order keeps every detail in one place.',
+      },
+      {
+        t: 'ul',
+        items: [
+          '**Use the free WhatsApp Business app** for a business profile, catalogue and saved replies. [WhatsApp Business](https://whatsappbusiness.com/products/business-app/)',
+          '**Send one order summary** before payment: item, price, delivery charge, date.',
+          '**Share UPI details only in the chat**, never in public comments.',
+          '**Send a delivery update**, then ask how they liked it. Happy buyers share and re-order.',
+        ],
+      },
+      {
+        t: 'p',
+        text: 'Getting more WhatsApp messages than you can answer? See [WhatsApp automation](/automation/whatsapp-automation) for greeting messages and quick replies.',
+      },
+
+      { t: 'h2', text: 'Should I run ads to sell on Instagram?' },
+      {
+        t: 'p',
+        text: 'Run ads after your posts show which product people ask about most. Then put money behind that post. Instagram lets you boost a post so people message you on WhatsApp, and Meta’s click-to-WhatsApp ads do the same from Ads Manager. Start small and track orders, not likes.',
+      },
+      {
+        t: 'p',
+        text: 'Not sure which one to use? Read [boost post vs click-to-WhatsApp ads](/guides/boost-post-vs-click-to-whatsapp-ads). Sources: [Instagram for Business](https://business.instagram.com/blog/instagram-boost-ads-whatsapp-find-customers), [Meta Business Help](https://www.facebook.com/business/help/447934475640650)',
+      },
+
+      { t: 'h2', text: 'What mistakes cost Instagram sales?' },
+      {
+        t: 'ul',
+        items: [
+          '**“DM for price” with slow replies.** The buyer was ready when they asked. Answer automatically, then follow up yourself.',
+          '**Buying followers or likes.** Instagram warns against apps that offer them, and they don’t buy anything. [Instagram Help](https://help.instagram.com/263751177667145)',
+          '**Giving your password to an app.** Use tools that connect through Meta’s official login only.',
+          '**Fake reviews or made-up numbers.** One screenshot that looks fake costs more trust than it earns.',
+          '**No clear next step.** Every post, bio and DM should say exactly how to order.',
+        ],
+      },
+
+      { t: 'h2', text: 'Do it yourself or have it done for you?' },
+      {
+        t: 'table',
+        caption: 'Two ways to start selling on Instagram',
+        head: ['', 'Do it yourself', 'Done for you by Social ScaleX'],
+        rows: [
+          ['Business account and profile', 'You follow steps 1 and 2', 'We set it up with you'],
+          ['Posts and Reels', 'You plan and film them', 'We plan, make and post them'],
+          ['Automatic price DM', 'You build it in Meta Business Suite', 'We build, test and update it'],
+          ['Cost', 'Free: Instagram, Meta Business Suite and the WhatsApp Business app', `Comment-to-DM ${rupees(PLAN_99.price)} a month alone, free with any Social ScaleX package. Content is quoted on a call.`],
+          ['Best for', 'Owners with time to learn', 'Owners who’d rather spend the time selling'],
+        ],
+        highlight: 2,
+      },
+      {
+        t: 'cta',
+        variant: 'end',
+        title: 'Turn “price?” comments into orders',
+        text: 'Send us your post and keyword on WhatsApp. We set up the automatic price DM on your Instagram through Meta’s official tools and keep it running.',
+        points: [`${rupees(PLAN_99.price)} a month, unlimited posts and keywords`, 'No password needed', 'Pay after it works'],
+        button: `Set it up for ${rupees(PLAN_99.price)}/month`,
+        href: '/automation/instagram-comment-to-dm',
+        whatsapp: 'Hi Social ScaleX, I read your guide on selling on Instagram. I want the automatic price DM set up.',
+      },
+    ],
+    faqs: [
+      {
+        q: 'Can I sell on Instagram without a website in India?',
+        a: 'Yes. Use a free Instagram business account, show what you sell and how to order on your profile, reply to price comments with an automatic DM, and take the order and UPI payment on WhatsApp.',
+      },
+      {
+        q: 'Is it free to sell on Instagram?',
+        a: 'Starting is free. The professional account, Meta Business Suite’s Comment to message automation and the WhatsApp Business app cost nothing. You pay only if you run ads or hire someone to do the work for you.',
+      },
+      {
+        q: 'How do I make an Instagram business account?',
+        a: 'Go to your profile, open the menu, tap Account type and tools, then Switch to professional account. Pick a category and choose Business. A private account becomes public when you switch.',
+      },
+      {
+        q: 'How do I reply to “price” comments automatically?',
+        a: 'In Meta Business Suite on a computer, open Inbox, then Automations, Create automation and Comment to message. Add the keyword, write the DM with your price and order link, and test it from a second account.',
+      },
+      {
+        q: 'Is “comment PRICE to get it in DM” allowed on Instagram?',
+        a: 'Yes, through Meta’s official tools. Instagram has said asking for a specific word can be engagement bait, but genuine calls to action are fine. Use a keyword only when you send something useful back, and say the DM is automatic.',
+      },
+      {
+        q: 'How do I take payment for Instagram orders?',
+        a: 'Move the buyer to one WhatsApp chat, send an order summary with the price and delivery charge, and share your UPI ID or QR code there. Never post payment details in public comments.',
+      },
+    ],
+    howTo: {
+      name: 'How to sell on Instagram in India without a website',
+      tools: ['Instagram professional account', 'Meta Business Suite (desktop)', 'WhatsApp Business app'],
+      steps: [
+        { name: 'Switch to a business account', text: 'In Instagram, open Account type and tools and switch to a professional Business account. Add contact details and WhatsApp.' },
+        { name: 'Make your profile sell', text: 'Put what you sell and where in your name, explain who it’s for and how to order in your bio, and add Price list and How to order highlights.' },
+        { name: 'Post content that gets questions', text: 'Show the product in real use and end each post with one keyword, like “Comment PRICE”.' },
+        { name: 'Reply automatically', text: 'In Meta Business Suite, create a Comment to message automation that DMs your price and order link to everyone who comments the keyword.' },
+        { name: 'Close the order on WhatsApp', text: 'Confirm the item, address and delivery date in one chat, share your UPI details and send a confirmation once paid.' },
+      ],
+    },
+    sources: [S.igProfessional, S.igWhatsapp, S.originality2026, S.hashtags, S.mbsSetup, S.privateReplies, S.msgPolicy, S.singleWordCta, S.waBusinessApp, S.igBoostWa, S.mCtwa, S.igApps],
+    services: ['instagram-marketing', 'reels-production'],
+  },
   {
     slug: 'turn-text-into-video-using-ai',
     title: 'How to turn text into a video using AI (without video editing)',
