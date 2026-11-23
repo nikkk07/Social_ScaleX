@@ -37,7 +37,7 @@ function Bars({ bars }: { bars: NonNullable<ReelItem['bars']> }) {
           <span className="reel-bar-now block h-full rounded-t-md" />
         </div>
       </div>
-      <figcaption className="mt-2 border-t border-on-night/15 pt-2 text-[11px] leading-snug text-on-night-2">
+      <figcaption className="mt-2 border-t border-on-night/15 pt-2 text-xs leading-snug text-on-night-2">
         <span className="sr-only">{bars.fromText} to {bars.toText}. </span>
         {bars.label} · {bars.period}
       </figcaption>

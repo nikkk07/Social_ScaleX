@@ -39,7 +39,7 @@ export function Header() {
             </li>
             <li className="menu">
               <Link href="/automation" className="inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 hover:text-ink xl:px-3.5">
-                Automation <span className="rounded-full bg-coral-tint px-1.5 py-0.5 text-[0.6875rem] font-semibold text-coral-text">₹99</span> <ChevronDown className="size-3.5" aria-hidden="true" />
+                Automation <span className="rounded-full bg-coral-tint px-1.5 py-0.5 text-xs font-semibold text-coral-text">₹99</span> <ChevronDown className="size-3.5" aria-hidden="true" />
               </Link>
               <div className="menu-panel">
                 <div className="card grid grid-cols-2 gap-1 p-3 shadow-lift">
@@ -61,7 +61,7 @@ export function Header() {
             </li>
             <li className="menu">
               <Link href="/creators" className="inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-2 hover:text-ink xl:px-3.5">
-                For Creators <span className="hidden rounded-full bg-coral-tint px-1.5 py-0.5 text-[0.6875rem] font-semibold text-coral-text 2xl:inline">Get paid</span> <ChevronDown className="size-3.5" aria-hidden="true" />
+                For Creators <span className="hidden rounded-full bg-coral-tint px-1.5 py-0.5 text-xs font-semibold text-coral-text 2xl:inline">Get paid</span> <ChevronDown className="size-3.5" aria-hidden="true" />
               </Link>
               <div className="menu-panel">
                 <div className="card grid w-[22rem] gap-1 p-3 shadow-lift">

@@ -774,7 +774,7 @@ export const GUIDES: Guide[] = [
   {
     slug: 'how-to-make-educational-videos-using-ai',
     title: 'How to make educational videos using AI, step by step (free method included)',
-    metaTitle: 'How to Make Educational Videos Using AI (2026 Guide)',
+    metaTitle: 'How to Make Educational Videos Using AI',
     navTitle: 'Educational videos with AI',
     description:
       'Make educational videos with AI in 8 steps: one idea, checked facts, a 45-second script, AI visuals, voice-over and captions. Free method plus a Reel example.',

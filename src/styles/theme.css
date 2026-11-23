@@ -12,6 +12,12 @@
     scroll-padding-top: 5.5rem;
     background-color: var(--color-paper);
   }
+  /* Big screens: grow text, spacing and the content column together, so a
+     1920–2560 px monitor shows a larger 1440 px layout instead of a small
+     island in empty space. 16 px at 1600 px wide → 20 px at 2560 px. */
+  @media (min-width: 1600px) {
+    html { font-size: clamp(100%, 0.5833rem + 0.4167vw, 125%); }
+  }
   @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }
   }
@@ -273,7 +279,7 @@
     background: var(--color-paper-2);
     box-shadow: inset 0 0 0 1px var(--color-line);
     color: var(--color-ink-2);
-    font-size: 0.78em;
+    font-size: max(0.78em, 0.75rem);
     font-weight: 600;
     line-height: 1.6;
     text-decoration: none;

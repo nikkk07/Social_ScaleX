@@ -94,7 +94,7 @@ export function openingJobNode(o: Opening) {
 }
 
 // ── Copy (pages, FAQ schema, llms.txt) ─────────────────────────────────────────────────────────────────────────────
-export const CAREERS_TITLE = 'Jobs in Delhi: Careers with Social ScaleX and Our Clients';
+export const CAREERS_TITLE = 'Jobs in Delhi: Careers at Social ScaleX & Clients';
 export const CAREERS_DESCRIPTION =
   'Jobs in Delhi with Social ScaleX and the businesses we recruit for. See open roles, or send your profile in 2 minutes. Freshers welcome; we never charge a fee.';
 export const CAREERS_INTRO =

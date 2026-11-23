@@ -9,7 +9,7 @@ import { abs, socialMeta } from '@/lib/site';
 
 // Not a job posting: Google bans JobPosting markup for "job requests" (people offering to work), so this page is a plain WebPage.
 const TITLE = 'Join the Social ScaleX Creator Network';
-const DESCRIPTION = 'Freelance UGC creators and influencers in India: join once in 3 short steps and we contact you when a paid brand brief fits your niche, language and city. Free, 18+.';
+const DESCRIPTION = 'Freelance UGC creators and influencers in India: join in 3 short steps and we contact you when a paid brand brief fits your niche, language and city. Free, 18+.';
 const CRUMBS = [
   { name: 'Home', path: '/' },
   { name: 'Creator Hub', path: '/creators' },
@@ -28,8 +28,8 @@ export default function JoinPage() {
       <SiteShell>
         <PageIntro crumbs={CRUMBS} eyebrow="For Creators" title="Join the Social ScaleX creator network"
           lede="Three short steps, about two minutes. Tell us what you make, once. When a client needs your niche, language or city, we contact you first with the pay and dates. It’s free, and you can ask us to delete your details at any time." />
-        <section id="apply" aria-label="Join the network" className="py-section">
-          <div className="wrap max-w-3xl"><div className="rounded-3xl border border-line bg-surface p-5 sm:p-8"><CreatorApplyForm returnUrl={abs('/creators/join')} /></div></div>
+        <section id="apply" aria-labelledby="apply-title" className="py-section">
+          <div className="wrap max-w-3xl"><h2 id="apply-title" className="sr-only">Your application</h2><div className="rounded-3xl border border-line bg-surface p-5 sm:p-8"><CreatorApplyForm returnUrl={abs('/creators/join')} /></div></div>
         </section>
       </SiteShell>
     </>

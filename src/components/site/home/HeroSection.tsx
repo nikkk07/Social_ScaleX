@@ -13,12 +13,12 @@ import { whatsappLink } from '@/lib/site';
 export function HeroSection() {
   return (
     <section aria-labelledby="hero-title" className="relative overflow-hidden">
-      <div className="wrap grid grid-cols-1 items-center gap-14 pb-20 pt-12 sm:pt-16 lg:grid-cols-[1.25fr_1fr] lg:gap-16 lg:pb-28 lg:pt-20">
+      <div className="wrap grid grid-cols-1 items-center gap-14 pb-20 pt-12 sm:pt-16 lg:grid-cols-[1.25fr_1fr] lg:gap-16 lg:pb-28 lg:pt-20 [@media(min-width:64rem)_and_(max-height:820px)]:pt-10 [@media(min-width:64rem)_and_(max-height:820px)]:pb-16 [@media(max-width:63.99rem)_and_(max-height:700px)]:pt-6">
         <div>
           <h1 id="hero-title">
             <span className="eyebrow">Social media marketing agency in Delhi NCR</span>
             <span className="sr-only">: </span>
-            <span className="mt-5 block text-6xl text-ink">
+            <span className="mt-5 block text-6xl text-ink [@media(max-height:820px)]:text-[length:min(var(--text-6xl),10.5vh)]">
               We grow brands where their customers <em className="font-normal italic text-coral-text">already</em> scroll.
             </span>
           </h1>

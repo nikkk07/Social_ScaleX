@@ -72,7 +72,7 @@ export function Workflow({ b }: { b: WorkflowBlock }) {
                   on ? 'bg-ink text-paper' : done ? 'bg-positive/10 text-positive ring-1 ring-positive/30' : 'bg-paper-2 text-ink-2 ring-1 ring-line hover:ring-line-strong'
                 }`}
               >
-                <span aria-hidden="true" className={`grid size-5 place-items-center rounded-full text-[0.6875rem] tabular-nums ${on ? 'bg-coral text-white' : done ? 'bg-positive text-white' : 'bg-surface text-ink-3 ring-1 ring-line'}`}>
+                <span aria-hidden="true" className={`grid size-5 place-items-center rounded-full text-xs tabular-nums ${on ? 'bg-coral text-white' : done ? 'bg-positive text-white' : 'bg-surface text-ink-3 ring-1 ring-line'}`}>
                   {done ? <Check className="size-3" strokeWidth={3} /> : i + 1}
                 </span>
                 {s.title}
@@ -139,10 +139,10 @@ export function UseCases({ b }: { b: UseCasesBlock }) {
           {/* Phone-shaped preview of the sample Reel. */}
           <div aria-hidden="true" className="relative mx-auto flex aspect-[9/16] w-44 flex-col justify-between overflow-hidden rounded-[1.5rem] bg-night p-4 text-on-night ring-4 ring-ink sm:w-full">
             <div className="absolute inset-0 bg-[radial-gradient(120%_70%_at_100%_0%,rgb(224_70_43/0.45),transparent_60%),radial-gradient(90%_60%_at_0%_100%,rgb(30_107_69/0.35),transparent_60%)]" />
-            <p className="relative text-[0.625rem] font-bold uppercase tracking-[0.14em] text-coral-on-night">Sample Reel</p>
+            <p className="relative text-xs font-bold uppercase tracking-[0.14em] text-coral-on-night">Sample Reel</p>
             <p className="relative font-display text-xl leading-tight">{x.hook}</p>
             <div className="relative space-y-2">
-              <p className="rounded-full bg-on-night/15 px-2.5 py-1 text-[0.6875rem] leading-snug">{x.cta}</p>
+              <p className="rounded-full bg-on-night/15 px-2.5 py-1 text-xs leading-snug">{x.cta}</p>
               <div className="flex gap-3 text-on-night-2"><Heart className="size-4" /><MessageCircle className="size-4" /><Send className="size-4" /></div>
             </div>
           </div>
@@ -228,7 +228,7 @@ export function DmDemo({ b }: { b: DmDemoBlock }) {
               ) : null}
               {stage >= 3 && match ? (
                 <div className="motion-safe:animate-[fade-up_300ms_ease-out]">
-                  <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.12em] text-ink-3">Direct message from @{b.account}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-3">Direct message from @{b.account}</p>
                   <p className="mt-1.5 max-w-[92%] rounded-2xl rounded-tl-md bg-paper-2 px-3.5 py-2.5 text-sm text-ink">{c.reply}</p>
                 </div>
               ) : null}

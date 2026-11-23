@@ -316,7 +316,7 @@ export function Plans({ title, note }: { title: string; note: string }) {
             <li key={p.name} className={`flex flex-col rounded-card p-5 sm:p-4 ${lead ? 'bg-night text-on-night shadow-lift' : 'border border-line bg-surface'}`}>
               <p className={`flex flex-wrap items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] ${lead ? 'text-coral-on-night' : 'text-coral-text'}`}>
                 {p.name}
-                {lead ? <span className="rounded-full bg-coral-on-night/20 px-2 py-0.5 text-[0.6875rem] normal-case tracking-normal">Lowest cost per reel</span> : null}
+                {lead ? <span className="rounded-full bg-coral-on-night/20 px-2 py-0.5 text-xs normal-case tracking-normal">Lowest cost per reel</span> : null}
               </p>
               <p className="mt-3 flex flex-wrap items-baseline gap-x-1.5">
                 <span className="font-display text-5xl leading-none tracking-[-0.02em] sm:text-4xl">{rupees(p.price)}</span>

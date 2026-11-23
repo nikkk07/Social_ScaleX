@@ -110,7 +110,7 @@ function MiniColumns({ before }: { before: Growth }) {
         <div key={c.label} className="flex h-full w-11 flex-col items-center justify-end">
           <span className={`mb-1 text-xs font-semibold tabular-nums ${c.now ? 'text-positive' : 'text-ink-3'}`}>{c.value}</span>
           <span className={`w-9 rounded-t-lg ${c.now ? 'bg-positive' : 'bg-line-strong'}`} style={{ height: `${c.h * 0.7}%` }} />
-          <span className="mt-1.5 text-[11px] text-ink-3">{c.label}</span>
+          <span className="mt-1.5 text-xs text-ink-3">{c.label}</span>
         </div>
       ))}
     </div>
