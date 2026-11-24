@@ -23,7 +23,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!o) return { title: 'Job not found', robots: { index: false } };
   const path = `/careers/${o.slug}`;
   const open = isOpenNow(o);
-  const title = `${o.title} Job in ${o.work_mode === 'remote' ? 'India (Remote)' : o.locality ? `${o.locality}, ${o.city}` : o.city ?? 'Delhi'}${open ? '' : ' (closed)'}`;
+  // Job titles come from the CRM and vary in length: use the most specific
+  // wording that keeps the full <title> (with " | Social ScaleX") within 65 chars.
+  const city = o.city ?? 'Delhi';
+  const short = o.title.replace(/\s*\([^)]*\)/g, '').trim();
+  const places = o.work_mode === 'remote' ? ['India (Remote)', 'India'] : [o.locality ? `${o.locality}, ${city}` : city, city];
+  const end = open ? '' : ' (closed)';
+  const candidates = [o.title, short].flatMap((t) => places.map((pl) => `${t} Job in ${pl}${end}`)).concat(`${short} Job${end}`);
+  const title = candidates.find((t) => t.length <= 49) ?? `${short} Job${end}`;
   const description = `${EMPLOYMENT_LABEL[o.employment_type]} · ${placeOf(o)}${o.hours ? ` · ${o.hours}` : ''}. ${o.summary}`.slice(0, 160);
   return {
     title, description, alternates: { canonical: path },
